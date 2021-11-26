@@ -40,7 +40,14 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
 	implementation 'org.springframework.boot:spring-boot-starter'
+
+	// Local test database (in-memory)
+	implementation 'com.h2database:h2'
+	developmentOnly 'org.hibernate:hibernate-entitymanager'
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
