@@ -58,5 +58,23 @@ public class UsersController {
         return ResponseEntity.ok(new LoginResponseModel(jwtToken));
     }
 
+    /**
+     * Endpoint for registration.
+     *
+     * @param request The registration model
+     * @return 200 OK if the registration is successful
+     * @throws Exception if a user with this netid already exists
+     */
+    @PostMapping("/register")
+    public ResponseEntity createToken(@RequestBody RegistrationRequestModel request)
+            throws Exception {
 
+        try {
+            userDetailsService.createUser(request.getNetid(), request.getPassword());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+
+        return ResponseEntity.ok().build();
+    }
 }
