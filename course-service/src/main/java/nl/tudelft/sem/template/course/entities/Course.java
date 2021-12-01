@@ -44,9 +44,9 @@ public class Course {
     )
     private int id;
 
-    //    @ManyToOne
-    //    @JoinColumn(name = "responsible_lecturer_id")
-    //    private Lecturer responsibleLecturer;
+    //    @ManyToMany
+    //    @JoinColumn(name = "lecturer_id")
+    //    private Lecturer lecturer;
 
     @Column(name = "START_DATE")  // just in case
     private Date startDate;
