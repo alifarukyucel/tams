@@ -1,25 +1,28 @@
 package nl.tudelft.sem.template.course.entities;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Date;
-
-import static javax.persistence.GenerationType.SEQUENCE;
 
 /**
- * @author Ali Faruk Yücel
- * @version 1.0
- * @created 30/11/2021, 16:37
- *
- *
  * Course class stores its start date, name, and description.
  * It has a many-to-one relationship with responsible lecturer.
  * A course can exist without a responsible lecturer assigned to it.
  *
+ * @author Ali Faruk Yücel
+ * @version 1.0
+ * @created 30/11/2021, 16:37
  */
 @Data                   // Use Lombok to get rid of getters, setters,
 @NoArgsConstructor      // constructors and other java boilerplate code
@@ -41,9 +44,9 @@ public class Course {
     )
     private int id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "responsible_lecturer_id")
-//    private Lecturer responsibleLecturer;
+    //    @ManyToOne
+    //    @JoinColumn(name = "responsible_lecturer_id")
+    //    private Lecturer responsibleLecturer;
 
     @Column(name = "START_DATE")  // just in case
     private Date startDate;
