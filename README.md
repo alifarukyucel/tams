@@ -32,3 +32,16 @@ gradle pmdTest
 - You should have a local .gitignore file to make sure that any OS-specific and IDE-specific files do not get pushed to the repo (e.g. .idea). These files do not belong in the .gitignore on the repo.
 - If you change the name of the repo to something other than template, you should also edit the build.gradle file.
 - You can add issue and merge request templates in the .gitlab folder on your repo. 
+
+## Group Members
+
+| 📸 | Name | Email |
+|---|---|---|
+| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/3525/avatar.png?width=400) | A.F. Yucel | A.F.Yucel@student.tudelft.nl |
+| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/3658/avatar.png?width=400) | J.D.M. SavelKoul | J.D.M.Savelkoul@student.tudelft.nl |
+| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/3404/avatar.png?width=400) | M. Mladenov | M.Mladenov@student.tudelft.nl |
+| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/3883/avatar.png?width=400) | M.C.A. De Wit | M.C.A.deWit@student.tudelft.nl |
+| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/3757/avatar.png?width=400) | M.A.A. Kienhuis | M.A.A.Kienhuis@student.tudelft.nl |
+| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/3776/avatar.png?width=400) | W. Smit | W.Smit-1@student.tudelft.nl |
+
+
