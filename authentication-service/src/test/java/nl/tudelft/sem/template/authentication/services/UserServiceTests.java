@@ -2,15 +2,18 @@ package nl.tudelft.sem.template.authentication.services;
 
 import nl.tudelft.sem.template.authentication.entities.AppUser;
 import nl.tudelft.sem.template.authentication.repositories.UserRepository;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -45,5 +48,29 @@ public class UserServiceTests {
         assertThat(savedUser.getNetid()).isEqualTo(testUser);
         assertThat(savedUser.getPasswordHash()).isEqualTo(testPasswordHash);
     }
-}
 
+    @Test
+    public void createUser_withExistingUser_throwsException() {
+        // Arrange
+        final String testUser = "SomeUser";
+        final String existingTestPassword = "password123";
+        final String newTestPassword = "password456";
+
+        AppUser existingAppUser = new AppUser();
+        existingAppUser.setNetid(testUser);
+        existingAppUser.setPasswordHash(existingTestPassword);
+        userRepository.save(existingAppUser);
+
+        // Act
+        ThrowingCallable action = () -> userService.createUser(testUser, newTestPassword);
+
+        // Assert
+        assertThatExceptionOfType(Exception.class)
+                .isThrownBy(action);
+
+        AppUser savedUser = userRepository.findById(testUser).orElseThrow();
+
+        assertThat(savedUser.getNetid()).isEqualTo(testUser);
+        assertThat(savedUser.getPasswordHash()).isEqualTo(existingTestPassword);
+    }
+}
