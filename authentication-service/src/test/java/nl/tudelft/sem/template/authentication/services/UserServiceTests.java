@@ -27,6 +27,22 @@ public class UserServiceTests {
     @Autowired
     private transient UserRepository userRepository;
 
+    @Test
+    public void createUser_withValidData_worksCorrectly() throws Exception {
+        // Arrange
+        final String testUser = "SomeUser";
+        final String testPassword = "password123";
+        final String testPasswordHash = "hashedTestPassword";
+        when(mockPasswordEncoder.encode(testPassword)).thenReturn(testPasswordHash);
 
+        // Act
+        userService.createUser(testUser, testPassword);
+
+        // Assert
+        AppUser savedUser = userRepository.findById(testUser).orElseThrow();
+
+        assertThat(savedUser.getNetid()).isEqualTo(testUser);
+        assertThat(savedUser.getPasswordHash()).isEqualTo(testPasswordHash);
+    }
 }
 
