@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -72,5 +73,24 @@ public class UserServiceTests {
 
         assertThat(savedUser.getNetid()).isEqualTo(testUser);
         assertThat(savedUser.getPasswordHash()).isEqualTo(existingTestPassword);
+    }
+
+    @Test
+    public void loadUserByUsername_withValidUser_returnsCorrectUser() {
+        // Arrange
+        final String testUser = "SomeUser";
+        final String testPasswordHash = "password123Hash";
+
+        AppUser appUser = new AppUser();
+        appUser.setNetid(testUser);
+        appUser.setPasswordHash(testPasswordHash);
+        userRepository.save(appUser);
+
+        // Act
+        UserDetails actual = userService.loadUserByUsername(testUser);
+
+        // Assert
+        assertThat(actual.getUsername()).isEqualTo(testUser);
+        assertThat(actual.getPassword()).isEqualTo(testPasswordHash);
     }
 }
