@@ -4,12 +4,9 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.util.List;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,15 +41,13 @@ public class Course {
     )
     private int id;
 
-    //    @ManyToMany
-    //    @JoinColumn(name = "lecturer_id")
-    //    private Lecturer lecturer;
-
     @Column(name = "START_DATE")  // just in case
     private Date startDate;
     @Column(name = "NAME")
     private String name;
     @Column(name = "DESCRIPTION")
     private String description;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> responsibleLecturers;
 
 }
