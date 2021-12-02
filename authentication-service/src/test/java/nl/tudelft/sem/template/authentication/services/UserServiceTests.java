@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -92,5 +93,26 @@ public class UserServiceTests {
         // Assert
         assertThat(actual.getUsername()).isEqualTo(testUser);
         assertThat(actual.getPassword()).isEqualTo(testPasswordHash);
+    }
+
+    @Test
+    public void loadUserByUsername_withNonexistentUser_throwsException() {
+        // Arrange
+        final String testNonexistentUser = "SomeUser";
+
+        final String testUser = "AnotherUser";
+        final String testPasswordHash = "password123Hash";
+
+        AppUser appUser = new AppUser();
+        appUser.setNetid(testUser);
+        appUser.setPasswordHash(testPasswordHash);
+        userRepository.save(appUser);
+
+        // Act
+        ThrowingCallable action = () -> userService.loadUserByUsername(testNonexistentUser);
+
+        // Assert
+        assertThatExceptionOfType(UsernameNotFoundException.class)
+                .isThrownBy(action);
     }
 }
