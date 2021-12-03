@@ -18,7 +18,7 @@ checkStyle-course-service:
 PMD-course-service:
   stage: staticAnalysis
   script:
-      gradle pmdMain pmdTest
+      gradle pmdMain
 
 test-course-service:
   stage: test

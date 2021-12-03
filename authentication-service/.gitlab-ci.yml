@@ -18,7 +18,7 @@ checkStyle-authentication-service:
 PMD-authentication-service:
   stage: staticAnalysis
   script:
-      gradle pmdMain pmdTest
+      gradle pmdMain
 
 test-authentication-service:
   stage: test
