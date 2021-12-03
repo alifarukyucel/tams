@@ -1,10 +1,5 @@
 package nl.tudelft.sem.template.hiring.entities;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
