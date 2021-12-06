@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class ApplicationController {
 
-    @RestController
-
-
-    /**
-     * endpoint for getting status
-     */
-    @GetMapping("/status")
+//    @RestController
+//
+//
+//    /**
+//     * endpoint for getting status
+//     */
+//    @GetMapping("/status")
 }

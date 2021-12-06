@@ -16,16 +16,18 @@ public class Application {
     @Id
     @Column(name = "COURSE_ID")
     //Not sure how to deal with PK
+    private int courseId;
 
-    @Column("NETID")
+    @Column(name = "NETID")
+    private int netId;
     //Not sure how to deal with PK
 
-    @Column("MOTIVATION")
+    @Column(name = "MOTIVATION")
     private String motivation;
 
-    @Column("GRADE")
+    @Column(name = "GRADE")
     private float grade;
 
-    @Column("STATUS")
+    @Column(name = "STATUS")
     private String status;
 }
