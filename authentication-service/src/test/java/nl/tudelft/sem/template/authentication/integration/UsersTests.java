@@ -52,5 +52,65 @@ public class UsersTests {
     @Autowired
     private transient UserRepository userRepository;
 
+    @Test
+    public void register_withValidData_worksCorrectly() throws Exception {
+        // Arrange
+        final String testUser = "SomeUser";
+        final String testPassword = "password123";
+        final String testPasswordHash = "hashedTestPassword";
+        when(mockPasswordEncoder.encode(testPassword)).thenReturn(testPasswordHash);
+
+        RegistrationRequestModel model = new RegistrationRequestModel();
+        model.setNetid(testUser);
+        model.setPassword(testPassword);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(model)));
+
+        // Assert
+        MvcResult result = resultActions
+                .andExpect(status().isOk())
+                .andReturn();
+
+        AppUser savedUser = userRepository.findById(testUser).orElseThrow();
+
+        assertThat(savedUser.getNetid()).isEqualTo(testUser);
+        assertThat(savedUser.getPasswordHash()).isEqualTo(testPasswordHash);
+    }
+
+    @Test
+    public void register_withExistingUser_throwsException() throws Exception {
+        // Arrange
+        final String testUser = "SomeUser";
+        final String existingTestPassword = "password123";
+        final String newTestPassword = "password456";
+
+        AppUser existingAppUser = new AppUser();
+        existingAppUser.setNetid(testUser);
+        existingAppUser.setPasswordHash(existingTestPassword);
+        userRepository.save(existingAppUser);
+
+        RegistrationRequestModel model = new RegistrationRequestModel();
+        model.setNetid(testUser);
+        model.setPassword(newTestPassword);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(model)));
+
+        // Assert
+        MvcResult result = resultActions
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        AppUser savedUser = userRepository.findById(testUser).orElseThrow();
+
+        assertThat(savedUser.getNetid()).isEqualTo(testUser);
+        assertThat(savedUser.getPasswordHash()).isEqualTo(existingTestPassword);
+    }
+
 
 }
