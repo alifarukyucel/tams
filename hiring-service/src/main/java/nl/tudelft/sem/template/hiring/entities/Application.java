@@ -16,7 +16,7 @@ public class Application {
     @Id
     @Column(name = "COURSE_ID")
     //Not sure how to deal with PK
-    private int courseId;
+    private String courseId;
 
     @Column(name = "NETID")
     private int netId;
@@ -30,4 +30,12 @@ public class Application {
 
     @Column(name = "STATUS")
     private String status;
+
+    public Application(String courseId, int netId, float grade, String motivation) {
+        this.courseId = courseId;
+        this.netId = netId;
+        this.motivation = motivation;
+        this.grade = grade;
+        this.status = "Pending";
+    }
 }
