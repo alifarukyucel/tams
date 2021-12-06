@@ -1,7 +1,7 @@
-package nl.tudelft.sem.template.course.config;
+package nl.tudelft.sem.template.ta.config;
 
-import nl.tudelft.sem.template.course.security.AuthEntryPoint;
-import nl.tudelft.sem.template.course.security.AuthFilter;
+import nl.tudelft.sem.template.ta.security.AuthEntryPoint;
+import nl.tudelft.sem.template.ta.security.AuthFilter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;

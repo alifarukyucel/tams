@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.course.config;
+package nl.tudelft.sem.template.ta.config;
 
 import javax.sql.DataSource;
 import lombok.Getter;

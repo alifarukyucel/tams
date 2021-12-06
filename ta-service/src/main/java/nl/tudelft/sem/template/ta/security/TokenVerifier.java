@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.course.security;
+package nl.tudelft.sem.template.ta.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

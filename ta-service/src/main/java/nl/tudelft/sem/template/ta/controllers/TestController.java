@@ -1,6 +1,6 @@
-package nl.tudelft.sem.template.course.controllers;
+package nl.tudelft.sem.template.ta.controllers;
 
-import nl.tudelft.sem.template.course.security.AuthManager;
+import nl.tudelft.sem.template.ta.security.AuthManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

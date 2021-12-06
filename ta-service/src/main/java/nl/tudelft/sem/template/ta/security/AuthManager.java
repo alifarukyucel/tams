@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.course.security;
+package nl.tudelft.sem.template.ta.security;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
