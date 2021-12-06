@@ -12,9 +12,14 @@ public class ApplicationService {
     private ApplicationRepository applicationRepository;
 
 
-
+    /**
+     * Checks whether an application meets the requirements and saves or discards it based on this.
+     *
+     * @param application the application to check.
+     * @return boolean whether the application was saved.
+     */
     public boolean checkAndSave(Application application) {
-        if (application.getGrade() >= 6.0) {
+        if (application.meetsRequirements()) {
             applicationRepository.save(application);
             return true;
         } else {

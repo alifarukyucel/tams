@@ -23,14 +23,18 @@ public class ApplicationController {
     }
 
     /**
-     * API Endpoint for registering a new application from a student.
+     * API Endpoint for registering a new application
+     *
+     * @param request request to apply to become a TA (with the courseId, the grade and the motivation)
+     * @return String informing if the application is being considered.
      */
-    @PostMapping("apply")
+    @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
         Application application = new Application(request.getCourseId(), authManager.getNetid(),
                 request.getGrade(), request.getMotivation());
         boolean success = applicationService.checkAndSave(application);
 
+        //TODO: Reconsider if any messages should be send back
         if (success) {
             return ResponseEntity.ok("Thanks for your application!");
         } else {

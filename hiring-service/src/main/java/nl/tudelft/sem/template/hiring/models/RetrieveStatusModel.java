@@ -2,14 +2,14 @@ package nl.tudelft.sem.template.hiring.models;
 
 public class RetrieveStatusModel {
 
-    String course_id;
+    String courseId;
     String netid;
     String motivation;
     float grade;
     String status;
 
-    public RetrieveStatusModel(String course_id, String netid, String motivation, float grade, String status) {
-        this.course_id = course_id;
+    public RetrieveStatusModel(String courseId, String netid, String motivation, float grade, String status) {
+        this.courseId = courseId;
         this.netid = netid;
         this.motivation = motivation;
         this.grade = grade;
