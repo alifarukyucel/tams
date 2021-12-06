@@ -29,12 +29,12 @@ public class ApplicationController {
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
         Application application = new Application(request.getCourseId(), authManager.getNetid(),
                 request.getGrade(), request.getMotivation());
-        boolean success = applicationService.save(application);
+        boolean success = applicationService.checkAndSave(application);
 
         if (success) {
             return ResponseEntity.ok("Thanks for your application!");
         } else {
-            return ResponseEntity.ok("Something went wrong!");
+            return ResponseEntity.ok("Your application does not meet the requirements!");
         }
     }
 }

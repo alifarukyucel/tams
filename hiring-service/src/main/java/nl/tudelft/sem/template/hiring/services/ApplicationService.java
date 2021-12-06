@@ -11,8 +11,14 @@ public class ApplicationService {
     @Autowired
     private ApplicationRepository applicationRepository;
 
-    public boolean save(Application application) {
-        applicationRepository.save(application);
-        return true;
+
+
+    public boolean checkAndSave(Application application) {
+        if (application.getGrade() >= 6.0) {
+            applicationRepository.save(application);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
