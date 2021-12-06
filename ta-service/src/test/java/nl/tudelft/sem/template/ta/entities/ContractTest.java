@@ -8,13 +8,13 @@ class ContractTest {
 
     @Test
     void testBuilder() {
-        Contract c1 = new Contract.Builder()
-            .setCourseId("build")
-            .setMaxHours(5)
-            .setId(UUID.randomUUID())
-            .setSigned(false)
-            .setNetId("PieterDelft")
-            .createContract();
+        Contract c1 = Contract.builder()
+            .courseId("build")
+            .maxHours(5)
+            .id(UUID.randomUUID())
+            .signed(false)
+            .netId("PieterDelft")
+            .build();
 
         Assertions.assertEquals("build", c1.getCourseId());
         Assertions.assertEquals(5, c1.getMaxHours());
