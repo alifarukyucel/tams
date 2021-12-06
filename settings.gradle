@@ -2,3 +2,4 @@ rootProject.name = 'template'
 
 include 'authentication-service'
 include 'course-service'
+include 'ta-service'
