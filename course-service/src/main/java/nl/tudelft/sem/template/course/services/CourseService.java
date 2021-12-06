@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.course.services;
 
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
+import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +23,17 @@ public class CourseService {
     CourseRepository courseRepository;
 
     // Getters
-    public Optional<Course> getCourseById(int id) {
-        return Optional.ofNullable(courseRepository.getById(id));
+    public Course getCourseById(int id) {
+        return courseRepository.getById(id);
     }
 
     // Setters
     @Transactional
-    public Course save(Course course) { // this method can also be used as an update method.
+    public Course createCourse(Course course) { // this method can also be used as an update method.
+        int courseId = course.getId();
+        if (getCourseById(courseId) != null) {
+            throw new ConflictException("A course already exists with that id.");
+        }
         return courseRepository.save(course);
     }
 

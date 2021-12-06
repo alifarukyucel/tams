@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.course.controllers;
 
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.services.CourseService;
+import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -13,7 +14,7 @@ import java.util.*;
  * It connects requests made from the client (redirected through the API Gateway)
  * to the server services, specifically to CourseService.
  *
- * @name Ali Faruk Yücel
+ * @author Ali Faruk Yücel
  * @version 1.0
  * @created 01/12/2021, 14:15
  */
@@ -39,11 +40,11 @@ public class CourseController {
     /**
      * Gets course by id.
      *
-     * @param id the id of course
-     * @return an Optional of course found in the database with the id
+     * @param id            the id of course
+     * @return the course found in the database with the given id
      */
     @GetMapping("get/{id}") // course/get/id
-    public Optional<Course> getCourseById(@PathVariable int id) {
+    public Course getCourseById(@PathVariable int id) {
         return courseService.getCourseById(id);
     }
 
@@ -51,22 +52,23 @@ public class CourseController {
     // ------------------------------ Setters -----------------------------------
 
     /**
-     * Saves the given course to the database. The Course object is sent to the API endpoint
-     * (URL) through a POST request body in a JSON format.
+     * POST endpoint that saves the given course to the database. The Course object is sent
+     * through a POST request body in a JSON format.
+     * Throws 409 Conflict upon already existing id
      *
-     * @param course the course
-     * @return the course returned from the database (with an auto-assigned id)
+     * @param course        the course to be created
+     * @return the course returned from the database (with a manually-assigned id)
      */
-    @PostMapping("save")
-    Course save(@RequestBody Course course) {
-        return courseService.save(course);
+    @PostMapping(value = "create", consumes = "application/json")
+    Course createCourse(@RequestBody Course course) {
+        return courseService.createCourse(course);
     }
 
     /**
      * Updates the description of the Course object that is sent through the body of the PUT request.
      * The Course is found in the database by the given course id.
      *
-     * @param id       the course id
+     * @param id the course id
      */
     @PutMapping("update-description/{id}") // course/update-description/id
     void updateContentById(@PathVariable int id,
@@ -88,7 +90,7 @@ public class CourseController {
     }
 
 
-    // Deletions
+    // ---------------------------------- Deletions -------------------------------
 
     /**
      * Deletes Course found in database by course id.

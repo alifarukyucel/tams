@@ -30,23 +30,20 @@ public class Course {
 
     @Id
     @Column(name = "COURSE_ID")
-    @SequenceGenerator(
-            name = "course_sequence",
-            sequenceName = "course_sequence",
-            allocationSize = 1 // increment by one
-    )
-    @GeneratedValue(
-            strategy = SEQUENCE,
-            generator = "course_sequence"
-    )
     private int id;
 
-    @Column(name = "START_DATE")  // just in case
+    @Column(name = "START_DATE")
     private Date startDate;
+
     @Column(name = "NAME")
     private String name;
+
     @Column(name = "DESCRIPTION")
     private String description;
+
+    @Column(name = "NUMBER_OF_STUDENTS")
+    private int numberOfStudents;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> responsibleLecturers;
 
