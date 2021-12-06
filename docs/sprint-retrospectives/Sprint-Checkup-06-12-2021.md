@@ -21,8 +21,6 @@ TA:
 Ali:
 - Creation of courses is possible through sending a serialized JSON object of the Course object in the body of the POST request. Do any of you specifically want to be able to send each parameter of a Course individually through path variables?
 
-### TA questions:
-
 
 ### General Tasks for Roles
 Scrum master creates the agenda for the TA meeting that week.
