@@ -19,7 +19,7 @@ public class Application {
     private String courseId;
 
     @Column(name = "NETID")
-    private int netId;
+    private String netId;
     //Not sure how to deal with PK
 
     @Column(name = "MOTIVATION")
@@ -31,11 +31,22 @@ public class Application {
     @Column(name = "STATUS")
     private String status;
 
-    public Application(String courseId, int netId, float grade, String motivation) {
+    public Application(String courseId, String netId, float grade, String motivation) {
         this.courseId = courseId;
         this.netId = netId;
         this.motivation = motivation;
         this.grade = grade;
+        //TODO: Make status an enum
         this.status = "Pending";
+    }
+
+    /**
+     * Checks whether the application meets the requirements
+     * As of now the only requirement is the grade >= 6.0
+     *
+     * @return if the application meets the requirements
+     */
+    public boolean meetsRequirements() {
+        return grade >= 6.0;
     }
 }
