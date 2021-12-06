@@ -112,5 +112,91 @@ public class UsersTests {
         assertThat(savedUser.getPasswordHash()).isEqualTo(existingTestPassword);
     }
 
+    @Test
+    public void login_withValidUser_returnsToken() throws Exception {
+        // Arrange
+        final String testUser = "SomeUser";
+        final String testPassword = "password123";
+        final String testPasswordHash = "hashedTestPassword";
+        when(mockPasswordEncoder.encode(testPassword)).thenReturn(testPasswordHash);
 
+        when(mockAuthenticationManager.authenticate(argThat(authentication ->
+                !testUser.equals(authentication.getPrincipal()) ||
+                        !testPassword.equals(authentication.getCredentials())
+        ))).thenThrow(new UsernameNotFoundException("User not found"));
+
+        final String testToken = "testJWTToken";
+        when(mockTokenGenerator.generateJwtToken(argThat(userDetails -> userDetails.getUsername().equals(testUser))))
+                .thenReturn(testToken);
+
+        AppUser appUser = new AppUser();
+        appUser.setNetid(testUser);
+        appUser.setPasswordHash(testPasswordHash);
+        userRepository.save(appUser);
+
+        LoginRequestModel model = new LoginRequestModel();
+        model.setNetid(testUser);
+        model.setPassword(testPassword);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(model)));
+
+
+        // Assert
+        MvcResult result = resultActions
+                .andExpect(status().isOk())
+                .andReturn();
+
+        LoginResponseModel responseModel = deserialize(result.getResponse().getContentAsString(),
+                LoginResponseModel.class);
+
+        assertThat(responseModel.getToken()).isEqualTo(testToken);
+
+        verify(mockAuthenticationManager).authenticate(argThat(authentication ->
+                testUser.equals(authentication.getPrincipal()) &&
+                        testPassword.equals(authentication.getCredentials())));
+    }
+
+    @Test
+    public void login_withInvalidCredentials_returns403() throws Exception {
+        // Arrange
+        final String testUser = "SomeUser";
+        final String wrongPassword = "password1234";
+        final String testPassword = "password123";
+        final String testPasswordHash = "hashedTestPassword";
+        when(mockPasswordEncoder.encode(testPassword)).thenReturn(testPasswordHash);
+
+        when(mockAuthenticationManager.authenticate(argThat(authentication ->
+                testUser.equals(authentication.getPrincipal()) &&
+                        wrongPassword.equals(authentication.getCredentials())
+        ))).thenThrow(new UsernameNotFoundException("User not found"));
+
+        final String testToken = "testJWTToken";
+        when(mockTokenGenerator.generateJwtToken(argThat(userDetails -> userDetails.getUsername().equals(testUser))))
+                .thenReturn(testToken);
+
+        AppUser appUser = new AppUser();
+        appUser.setNetid(testUser);
+        appUser.setPasswordHash(testPasswordHash);
+        userRepository.save(appUser);
+
+        LoginRequestModel model = new LoginRequestModel();
+        model.setNetid(testUser);
+        model.setPassword(wrongPassword);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(model)));
+
+
+        // Assert
+        resultActions.andExpect(status().isForbidden());
+
+        verify(mockAuthenticationManager).authenticate(argThat(authentication ->
+                testUser.equals(authentication.getPrincipal()) &&
+                        wrongPassword.equals(authentication.getCredentials())));
+    }
 }
