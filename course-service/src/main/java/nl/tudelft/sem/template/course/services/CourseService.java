@@ -23,14 +23,14 @@ public class CourseService {
     CourseRepository courseRepository;
 
     // Getters
-    public Course getCourseById(int id) {
+    public Course getCourseById(String id) {
         return courseRepository.getById(id);
     }
 
     // Setters
     @Transactional
     public Course createCourse(Course course) { // this method can also be used as an update method.
-        int courseId = course.getId();
+        String courseId = course.getId();
         if (getCourseById(courseId) != null) {
             throw new ConflictException("A course already exists with that id.");
         }
@@ -46,7 +46,7 @@ public class CourseService {
     }
 
     // Deletions
-    public void deleteById(int id) {
+    public void deleteById(String id) {
         courseRepository.deleteById(id);
     }
 

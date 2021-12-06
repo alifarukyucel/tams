@@ -15,7 +15,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface CourseRepository extends JpaRepository<Course, Integer> {
     // Getters
-    Course getById(int id);   // table is small enough that overhead is insignificant.
+    Course getById(String id);   // table is small enough that overhead is insignificant.
     // We can change it so that it'll return only the properties/columns we request the most.
 
     // Setters
@@ -32,5 +32,5 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     void updateNameById(int id, String name);
 
     // Deletions
-    void deleteById(int id);
+    void deleteById(String id);
 }

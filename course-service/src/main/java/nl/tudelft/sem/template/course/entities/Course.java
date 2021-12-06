@@ -29,8 +29,8 @@ import lombok.NoArgsConstructor;
 public class Course {
 
     @Id
-    @Column(name = "COURSE_ID")
-    private int id;
+    @Column(name = "ID")
+    private String id;
 
     @Column(name = "START_DATE")
     private Date startDate;

@@ -44,7 +44,7 @@ public class CourseController {
      * @return the course found in the database with the given id
      */
     @GetMapping("get/{id}") // course/get/id
-    public Course getCourseById(@PathVariable int id) {
+    public Course getCourseById(@PathVariable String id) {
         return courseService.getCourseById(id);
     }
 
@@ -98,7 +98,7 @@ public class CourseController {
      * @param id the course id
      */
     @DeleteMapping("delete/{id}") // course/delete/id
-    void deleteById(@PathVariable int id) {
+    void deleteById(@PathVariable String id) {
         courseService.deleteById(id);
     }
 }
