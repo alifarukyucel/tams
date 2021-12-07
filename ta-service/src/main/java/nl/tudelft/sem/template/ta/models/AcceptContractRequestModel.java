@@ -1,14 +1,14 @@
 package nl.tudelft.sem.template.ta.models;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
+@Builder
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Data
 public class AcceptContractRequestModel {
-    // netID of user is available in request header.
-
-    // We need have to course to find the correct contract.
     private String course;
     private boolean accept;
 }
