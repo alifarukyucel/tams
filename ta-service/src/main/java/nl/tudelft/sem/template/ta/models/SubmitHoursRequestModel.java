@@ -1,15 +1,16 @@
 package nl.tudelft.sem.template.ta.models;
 
-
-import lombok.Data;
-
 import java.util.Date;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Builder
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Data
 public class SubmitHoursRequestModel {
-    // We need the course to find the contract.
     private String course;
-
     private boolean accept;
     private int workedTime;
     private boolean approved;

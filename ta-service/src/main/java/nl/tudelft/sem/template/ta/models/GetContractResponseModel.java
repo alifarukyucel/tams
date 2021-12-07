@@ -1,10 +1,12 @@
 package nl.tudelft.sem.template.ta.models;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import java.util.UUID;
-
+@Builder
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Data
 public class GetContractResponseModel {
     private String course;
