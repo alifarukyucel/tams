@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -23,15 +24,18 @@ public class CourseService {
     CourseRepository courseRepository;
 
     // Getters
-    public Course getCourseById(String id) {
+    public Course getCourseById(String id) throws NoSuchElementException {
+        if (courseRepository.getById(id) == null) {
+            throw new NoSuchElementException("The course you're looking for doesn't exist.");
+        }
         return courseRepository.getById(id);
     }
 
     // Setters
     @Transactional
-    public Course createCourse(Course course) { // this method can also be used as an update method.
+    public Course createCourse(Course course) throws ConflictException { // this method can also be used as an update method.
         String courseId = course.getId();
-        if (getCourseById(courseId) != null) {
+        if (courseRepository.getById(courseId) != null) {
             throw new ConflictException("A course already exists with that id.");
         }
         return courseRepository.save(course);
