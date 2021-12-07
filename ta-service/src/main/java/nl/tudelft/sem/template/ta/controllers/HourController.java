@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TestController {
+public class HourController {
     private final transient AuthManager authManager;
 
-    public TestController(AuthManager authManager) {
+    public HourController(AuthManager authManager) {
         this.authManager = authManager;
     }
 
