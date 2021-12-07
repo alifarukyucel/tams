@@ -42,5 +42,15 @@ public class ContractService {
         return optionalContract.get();
     }
 
+    /**
+     * Saves a given contract object back to the database.
+     *
+     * @param contract The contract to save.
+     * @return The newly saved contract.
+     */
+    public Contract save(Contract contract) {
+        return contractRepository.save(contract);
+    }
+
 
 }
