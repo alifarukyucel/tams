@@ -107,7 +107,7 @@ class HourServiceTest {
         ThrowingCallable action = () -> hourService.approveHours(null, true);
 
         // assert
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(action);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
         assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
     }
 
@@ -126,7 +126,7 @@ class HourServiceTest {
         ThrowingCallable action = () -> hourService.getAssociatedContract(null);
 
         // assert
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(action);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
     }
 
     @Test

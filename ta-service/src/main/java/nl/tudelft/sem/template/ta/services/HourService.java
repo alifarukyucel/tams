@@ -33,7 +33,7 @@ public class HourService {
         throws NoSuchElementException, NullPointerException {
 
         if (id == null) {
-            throw new NullPointerException("An Id must be specified");
+            throw new NoSuchElementException("An Id must be specified");
         }
 
         var hours = hoursRepository.findById(id);
@@ -58,7 +58,7 @@ public class HourService {
         throws NoSuchElementException, NullPointerException {
 
         if (uuid == null) {
-            throw new NullPointerException("An Id must be specified");
+            throw new NoSuchElementException("An Id must be specified");
         }
 
         var workedHours = hoursRepository.findById(uuid);

@@ -55,7 +55,7 @@ public class HourController {
             }
 
             hourService.approveHours(request.getId(), request.getAccept());
-        } catch (NullPointerException | NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
