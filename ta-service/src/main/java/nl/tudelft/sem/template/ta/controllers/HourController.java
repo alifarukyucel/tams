@@ -3,9 +3,11 @@ package nl.tudelft.sem.template.ta.controllers;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("hours")
 public class HourController {
     private final transient AuthManager authManager;
 
