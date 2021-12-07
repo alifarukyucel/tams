@@ -5,22 +5,22 @@ stages:
   - staticAnalysis
   - test
 
-build-course-service:
+build-authentication-service:
   stage: build
   script:
     gradle build
 
-checkStyle-course-service:
+checkStyle-authentication-service:
   stage: staticAnalysis
   script:
     gradle checkstyleMain checkStyleTest
 
-PMD-course-service:
+PMD-authentication-service:
   stage: staticAnalysis
   script:
       gradle pmdMain
 
-test-course-service:
+test-authentication-service:
   stage: test
   script:
     gradle test
