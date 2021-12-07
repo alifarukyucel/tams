@@ -34,7 +34,7 @@ public class CourseController {
     /**
      * Instantiates a new Course controller.
      *
-     * @param authManager
+     * @param authManager   Spring Security component used to authenticate and authorize the user
      * @param courseService the course service
      */
     public CourseController(AuthManager authManager, CourseService courseService) {
