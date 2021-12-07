@@ -21,7 +21,7 @@ public class DatabaseLoader {
     Date date = new Date();
 
     public DatabaseLoader(CourseRepository courseRepository) {
-        Course sem = new Course(0, new Date(), "sem", "teaches you swe methods", 99999, new ArrayList<>());
+        Course sem = new Course("CSE2115-2021", new Date(), "sem", "teaches you swe methods", 99999, new ArrayList<>());
 
         courseRepository.save(sem);
     }
