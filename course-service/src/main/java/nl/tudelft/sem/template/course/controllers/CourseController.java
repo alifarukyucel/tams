@@ -1,13 +1,15 @@
 package nl.tudelft.sem.template.course.controllers;
 
 import nl.tudelft.sem.template.course.entities.Course;
+import nl.tudelft.sem.template.course.models.CourseModel;
+import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.services.CourseService;
-import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Optional;
-import java.util.*;
+import java.util.List;
 
 /**
  * An API endpoint manager for functionality related to the Course object.
@@ -22,6 +24,9 @@ import java.util.*;
 @RequestMapping("course")
 public class CourseController {
 
+    private final transient AuthManager authManager;
+
+    @Autowired
     private final CourseService courseService;
 
     Date date = new Date();
@@ -29,9 +34,11 @@ public class CourseController {
     /**
      * Instantiates a new Course controller.
      *
+     * @param authManager
      * @param courseService the course service
      */
-    public CourseController(CourseService courseService) {
+    public CourseController(AuthManager authManager, CourseService courseService) {
+        this.authManager = authManager;
         this.courseService = courseService;
     }
 
@@ -52,15 +59,18 @@ public class CourseController {
     // ------------------------------ Setters -----------------------------------
 
     /**
-     * POST endpoint that saves the given course to the database. The Course object is sent
+     * POST endpoint that saves the given course to the database. The CourseModel object is sent
      * through a POST request body in a JSON format.
      * Throws 409 Conflict upon already existing id
      *
-     * @param course        the course to be created
+     * @param courseModel   the course to be created
      * @return the course returned from the database (with a manually-assigned id)
      */
     @PostMapping(value = "create", consumes = "application/json")
-    Course createCourse(@RequestBody Course course) {
+    Course createCourse(@RequestBody CourseModel courseModel) {
+        Course course = new Course(courseModel.getId(), courseModel.getStartDate(), courseModel.getName(),
+                courseModel.getDescription(), courseModel.getNumberOfStudents(),
+                new ArrayList<>(List.of(authManager.getNetid())));
         return courseService.createCourse(course);
     }
 
