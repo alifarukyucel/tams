@@ -1,11 +1,11 @@
 package nl.tudelft.sem.template.ta.services;
 
+import java.util.NoSuchElementException;
+import java.util.UUID;
+import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.WorkedHours;
 import nl.tudelft.sem.template.ta.repositories.WorkedHoursRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
-import java.util.UUID;
 
 /**
  * The HourService.
@@ -46,6 +46,29 @@ public class HourService {
         workedHours.setApproved((!workedHours.isApproved() || !status));  // fancy nand gate
 
         hoursRepository.save(workedHours);
+    }
+
+    /**
+     * returns the contract associated with this hour UUID.
+     *
+     * @param uuid the id of the worked hours.
+     * @return The contract.
+     */
+    public Contract getAssociatedContract(UUID uuid)
+        throws NoSuchElementException, NullPointerException {
+
+        if (uuid == null) {
+            throw new NullPointerException("An Id must be specified");
+        }
+
+        var workedHours = hoursRepository.findById(uuid);
+
+        if (workedHours.isEmpty()) {
+            throw new NoSuchElementException("Specified hours do not exist");
+        }
+
+        return workedHours.get().getContract();  // This is guaranteed to give lazy errors
+
     }
 
 
