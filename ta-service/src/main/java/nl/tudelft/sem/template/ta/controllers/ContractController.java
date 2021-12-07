@@ -1,11 +1,12 @@
 package nl.tudelft.sem.template.ta.controllers;
 
-import nl.tudelft.sem.template.ta.entities.Contract;
-import nl.tudelft.sem.template.ta.models.ContractResponseModel;
+
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.services.ContractService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("contracts")
