@@ -44,19 +44,12 @@ public class ContractController {
             Contract contract = contractService.getContract(
                 authManager.getNetid(), request.getCourse());
 
-            contract.setSigned(request.isAccept());
+            contract.setSigned(!contract.getSigned() || !request.isAccept());  // keep value true.
             contractService.save(contract);
             return ResponseEntity.ok().build();
 
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-    }
-
-
-    @GetMapping("/test")
-    public ResponseEntity<String> createToken() {
-        return ResponseEntity.ok("Success! You are logged in with netId: "
-                + authManager.getNetid());
     }
 }
