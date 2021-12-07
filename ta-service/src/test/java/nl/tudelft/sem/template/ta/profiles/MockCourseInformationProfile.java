@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
 /**
  * A configuration profile to allow injection of a mock TokenGenerator.
  */
-@Profile("mockTokenVerifier")
+@Profile("mockCourseInformation")
 @Configuration
 public class MockCourseInformationProfile {
 
@@ -21,7 +21,7 @@ public class MockCourseInformationProfile {
      */
     @Bean
     @Primary
-    public CourseInformation getMockTokenGenerator() {
+    public CourseInformation getMockCourseInformation() {
         return Mockito.mock(CourseInformation.class);
     }
 }

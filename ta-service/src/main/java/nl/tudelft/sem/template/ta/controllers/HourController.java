@@ -62,10 +62,4 @@ public class HourController {
         return ResponseEntity.ok().build();
     }
 
-
-    @GetMapping("/test")
-    public ResponseEntity<String> createToken() {
-        return ResponseEntity.ok("Success! You are logged in with netid: "
-                + authManager.getNetid());
-    }
 }
