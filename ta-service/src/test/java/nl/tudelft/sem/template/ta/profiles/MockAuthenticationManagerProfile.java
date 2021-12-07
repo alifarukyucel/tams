@@ -1,4 +1,4 @@
-package profiles;
+package nl.tudelft.sem.template.ta.profiles;
 
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import org.mockito.Mockito;
