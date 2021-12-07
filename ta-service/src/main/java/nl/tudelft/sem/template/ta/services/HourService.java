@@ -67,7 +67,7 @@ public class HourService {
             throw new NoSuchElementException("Specified hours do not exist");
         }
 
-        return workedHours.get().getContract();  // This is guaranteed to give lazy errors
+        return workedHours.get().getContract();
 
     }
 
