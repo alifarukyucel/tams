@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
@@ -70,9 +71,7 @@ public class UsersTests {
                 .content(serialize(model)));
 
         // Assert
-        MvcResult result = resultActions
-                .andExpect(status().isOk())
-                .andReturn();
+        resultActions.andExpect(status().isOk());
 
         AppUser savedUser = userRepository.findById(testUser).orElseThrow();
 
@@ -102,9 +101,7 @@ public class UsersTests {
                 .content(serialize(model)));
 
         // Assert
-        MvcResult result = resultActions
-                .andExpect(status().isBadRequest())
-                .andReturn();
+        resultActions.andExpect(status().isBadRequest());
 
         AppUser savedUser = userRepository.findById(testUser).orElseThrow();
 
@@ -160,7 +157,35 @@ public class UsersTests {
     }
 
     @Test
-    public void login_withInvalidCredentials_returns403() throws Exception {
+    public void login_withNonexistentUsername_returns403() throws Exception {
+        // Arrange
+        final String testUser = "SomeUser";
+        final String testPassword = "password123";
+
+        when(mockAuthenticationManager.authenticate(argThat(authentication ->
+                testUser.equals(authentication.getPrincipal()) &&
+                        testPassword.equals(authentication.getCredentials())
+        ))).thenThrow(new UsernameNotFoundException("User not found"));
+
+        LoginRequestModel model = new LoginRequestModel();
+        model.setNetid(testUser);
+        model.setPassword(testPassword);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(model)));
+
+        // Assert
+        resultActions.andExpect(status().isForbidden());
+
+        verify(mockAuthenticationManager).authenticate(argThat(authentication ->
+                testUser.equals(authentication.getPrincipal()) &&
+                        testPassword.equals(authentication.getCredentials())));
+    }
+
+    @Test
+    public void login_withInvalidPassword_returns403() throws Exception {
         // Arrange
         final String testUser = "SomeUser";
         final String wrongPassword = "password1234";
@@ -171,11 +196,7 @@ public class UsersTests {
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
                 testUser.equals(authentication.getPrincipal()) &&
                         wrongPassword.equals(authentication.getCredentials())
-        ))).thenThrow(new UsernameNotFoundException("User not found"));
-
-        final String testToken = "testJWTToken";
-        when(mockTokenGenerator.generateJwtToken(argThat(userDetails -> userDetails.getUsername().equals(testUser))))
-                .thenReturn(testToken);
+        ))).thenThrow(new BadCredentialsException("Invalid password"));
 
         AppUser appUser = new AppUser();
         appUser.setNetid(testUser);
@@ -190,7 +211,6 @@ public class UsersTests {
         ResultActions resultActions = mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(model)));
-
 
         // Assert
         resultActions.andExpect(status().isForbidden());
