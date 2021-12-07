@@ -32,6 +32,9 @@ public class Contract {
     @Column(nullable = false)
     String courseId;
 
+    @Column(columnDefinition = "TEXT")
+    String duties;
+
     boolean signed;
 
 }
