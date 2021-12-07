@@ -48,7 +48,7 @@ public class ContractController {
         }
         contract.setSigned(request.isAccept());
 
-        // Um lol we also need a function to save >_<
+        contractService.save(contract);
 
         return ResponseEntity.ok().build();
 
