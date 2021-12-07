@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,11 +30,17 @@ public class ContractService {
      */
     public Contract getContract(String netId, String courseId) throws NoSuchElementException {
 
+        if (netId == null || courseId == null) {
+            throw new NoSuchElementException("A contract must have a netId and courseId");
+        }
+
+        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll().withIgnoreNullValues();
+
         Example<Contract> example = Example.of(
             Contract.builder()
             .courseId(courseId)
             .netId(netId)
-            .build());
+            .build(), ignoreAllFields);
 
         var optionalContract = contractRepository.findOne(example);
         if (optionalContract.isEmpty()) {
