@@ -26,9 +26,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import static nl.tudelft.sem.template.authentication.integration.utils.JsonUtil.deserialize;
 import static nl.tudelft.sem.template.authentication.integration.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -182,6 +182,8 @@ public class UsersTests {
         verify(mockAuthenticationManager).authenticate(argThat(authentication ->
                 testUser.equals(authentication.getPrincipal()) &&
                         testPassword.equals(authentication.getCredentials())));
+
+        verify(mockTokenGenerator, times(0)).generateJwtToken(any());
     }
 
     @Test
@@ -218,5 +220,7 @@ public class UsersTests {
         verify(mockAuthenticationManager).authenticate(argThat(authentication ->
                 testUser.equals(authentication.getPrincipal()) &&
                         wrongPassword.equals(authentication.getCredentials())));
+
+        verify(mockTokenGenerator, times(0)).generateJwtToken(any());
     }
 }
