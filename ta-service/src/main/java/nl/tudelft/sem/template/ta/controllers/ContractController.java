@@ -40,18 +40,17 @@ public class ContractController {
     @PutMapping("/sign")
     public ResponseEntity<String> sign(@RequestBody AcceptContractRequestModel request)
         throws ResponseStatusException {
-        Contract contract;
         try {
-            contract = contractService.getContract(authManager.getNetid(), request.getCourse());
+            Contract contract = contractService.getContract(
+                authManager.getNetid(), request.getCourse());
+
+            contract.setSigned(request.isAccept());
+            contractService.save(contract);
+            return ResponseEntity.ok().build();
+
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-        contract.setSigned(request.isAccept());
-
-        contractService.save(contract);
-
-        return ResponseEntity.ok().build();
-
     }
 
 
