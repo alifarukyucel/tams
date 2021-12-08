@@ -25,6 +25,9 @@ import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
 
 import javax.transaction.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -55,10 +58,13 @@ class ContractControllerTest {
     private ContractRepository contractRepository;
 
     private Contract defaultContract;
-
+    private List<Contract> contracts;
+    
     @BeforeEach
     void setUp() {
         contractRepository.deleteAll();
+        contracts = new ArrayList<Contract>();
+
         // Save basic contract in db.
         defaultContract = Contract.builder()
             .netId("PVeldHuis")
@@ -68,9 +74,36 @@ class ContractControllerTest {
             .signed(false)
             .build();
         defaultContract = contractRepository.save(defaultContract);
-        when(mockAuthenticationManager.getNetid()).thenReturn(defaultContract.getNetId());
+        contracts.add(defaultContract);
+
+        Contract secondContract = Contract.builder()
+                .netId("WinstijnSmit")
+                .courseId("CSE2310")
+                .maxHours(10)
+                .duties("Work really hard")
+                .signed(true)
+                .build();
+        contractRepository.save(secondContract);
+        contracts.add(secondContract);
+
+        Contract thirdContract = Contract.builder()
+                .netId("WinstijnSmit")
+                .courseId("CSE1250")
+                .maxHours(2)
+                .duties("No need to work hard")
+                .signed(false)
+                .build();
+        contractRepository.save(thirdContract);
+        contracts.add(thirdContract);
+
+        mockAuthentication(defaultContract.getNetId());
+    }
+
+    // Mock authentication to show that we are signed in as a certian user.
+    void mockAuthentication(String netId){
+        when(mockAuthenticationManager.getNetid()).thenReturn(netId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
-        when(mockTokenVerifier.parseNetid(anyString())).thenReturn(defaultContract.getNetId());
+        when(mockTokenVerifier.parseNetid(anyString())).thenReturn(netId);
     }
 
     @Test
@@ -144,6 +177,7 @@ class ContractControllerTest {
         results.andExpect(status().isNotFound());
         assertThat(savedContract.getSigned()).isFalse();
     }
+
 
 
 }
