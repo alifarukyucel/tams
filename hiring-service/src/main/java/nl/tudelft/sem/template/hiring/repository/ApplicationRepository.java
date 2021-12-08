@@ -7,13 +7,4 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface ApplicationRepository extends JpaRepository<Application, Integer> {
-
-    Application getApplication(int id);
-
-    Application setApplication(Application application);
-
-    void deleteApplication(int id);
-
-
-
 }

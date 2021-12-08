@@ -5,6 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 
 @Data
 @NoArgsConstructor
@@ -13,31 +14,35 @@ import lombok.NoArgsConstructor;
 @Table(name = "APPLICATION")
 public class Application {
 
-    @Id
     @Column(name = "COURSE_ID")
-    //Not sure how to deal with PK
     private String courseId;
 
+    @Id
     @Column(name = "NETID")
     private String netId;
     //Not sure how to deal with PK
 
-    @Column(name = "MOTIVATION")
-    private String motivation;
-
     @Column(name = "GRADE")
     private float grade;
 
-    @Column(name = "STATUS")
-    private String status;
+    @Column(name = "MOTIVATION")
+    private String motivation;
 
-    public Application(String courseId, String netId, float grade, String motivation) {
-        this.courseId = courseId;
-        this.netId = netId;
-        this.motivation = motivation;
-        this.grade = grade;
-        //TODO: Make status an enum
-        this.status = "Pending";
+    @Column(name = "STATUS")
+    private ApplicationStatus status;
+
+    public static Application createPendingApplication(String courseId, String netId, float grade, String motivation) {
+        Application application = new Application();
+        application.setCourseId(courseId);
+        application.setNetId(netId);
+        application.setGrade(grade);
+        application.setMotivation(motivation);
+        application.setStatus(ApplicationStatus.PENDING);
+        return application;
+    }
+
+    public void temporary() {
+
     }
 
     /**

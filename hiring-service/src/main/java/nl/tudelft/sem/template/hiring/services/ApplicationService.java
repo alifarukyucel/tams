@@ -16,7 +16,7 @@ public class ApplicationService {
      * Checks whether an application meets the requirements and saves or discards it based on this.
      *
      * @param application the application to check.
-     * @return boolean whether the application was saved.
+     * @return boolean whether the application meets the requirements and thus saved.
      */
     public boolean checkAndSave(Application application) {
         if (application.meetsRequirements()) {

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
+
 @RestController
 public class ApplicationController {
     private final transient AuthManager authManager;
@@ -30,15 +32,15 @@ public class ApplicationController {
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
-        Application application = new Application(request.getCourseId(), authManager.getNetid(),
+        Application application = createPendingApplication(request.getCourseId(), authManager.getNetid(),
                 request.getGrade(), request.getMotivation());
         boolean success = applicationService.checkAndSave(application);
 
-        //TODO: Reconsider if any messages should be send back
+
         if (success) {
-            return ResponseEntity.ok("Thanks for your application!");
+            return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.ok("Your application does not meet the requirements!");
+            return ResponseEntity.badRequest().build();
         }
     }
 }
