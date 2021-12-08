@@ -17,7 +17,7 @@ public class modelTests {
         AcceptHoursRequestModel ahrm = AcceptHoursRequestModel.builder().build();
         GetContractRequestModel gcrm = GetContractRequestModel.builder().build();
         GetContractResponseModel gcrm2 = GetContractResponseModel.builder().build();
-        RetrieveHoursToBeApprovedRequestModel rhtbarm = RetrieveHoursToBeApprovedRequestModel.builder().build();
+        HourResponseModel hrm = HourResponseModel.builder().build();
         SubmitHoursRequestModel shrm = SubmitHoursRequestModel.builder().build();
     }
 
@@ -31,7 +31,7 @@ public class modelTests {
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
         GetContractRequestModel gcrm = new GetContractRequestModel();
         GetContractResponseModel gcrm2 = new GetContractResponseModel();
-        RetrieveHoursToBeApprovedRequestModel rhtbarm = new RetrieveHoursToBeApprovedRequestModel();
+        HourResponseModel hrm = new HourResponseModel();
         SubmitHoursRequestModel shrm = new SubmitHoursRequestModel();
     }
 
@@ -63,9 +63,15 @@ public class modelTests {
         gcrm2.getMaxHours();
         gcrm2.isSigned();
 
-        RetrieveHoursToBeApprovedRequestModel rhtbarm = new RetrieveHoursToBeApprovedRequestModel();
-        rhtbarm.setCourse("CSE2310");
-        rhtbarm.getCourse();
+        HourResponseModel hrm = new HourResponseModel();
+        hrm.setDate(null);
+        hrm.setDescription("Work");
+        hrm.setApproved(true);
+        hrm.setWorkedTime(5);
+        hrm.getWorkedTime();
+        hrm.getDate();
+        hrm.getDescription();
+        hrm.isApproved();
 
         SubmitHoursRequestModel shrm = new SubmitHoursRequestModel();
         shrm.setCourse("CSE2310");
