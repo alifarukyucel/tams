@@ -3,10 +3,12 @@ package nl.tudelft.sem.template.ta.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
+import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.security.TokenVerifier;
 import nl.tudelft.sem.template.ta.services.ContractService;
+import nl.tudelft.sem.template.ta.utils.JsonUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +20,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static nl.tudelft.sem.template.ta.utils.JsonUtil.deserialize;
@@ -25,13 +28,13 @@ import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
 
 import javax.transaction.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -59,7 +62,7 @@ class ContractControllerTest {
 
     private Contract defaultContract;
     private List<Contract> contracts;
-    
+
     @BeforeEach
     void setUp() {
         contractRepository.deleteAll();
@@ -99,7 +102,7 @@ class ContractControllerTest {
         mockAuthentication(defaultContract.getNetId());
     }
 
-    // Mock authentication to show that we are signed in as a certian user.
+    // Mock authentication to show that we are signed in as a certain user.
     void mockAuthentication(String netId){
         when(mockAuthenticationManager.getNetid()).thenReturn(netId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
@@ -178,6 +181,89 @@ class ContractControllerTest {
         assertThat(savedContract.getSigned()).isFalse();
     }
 
+
+    @Test
+    void getContracts_multiple() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit");
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/mine")
+                .header("Authorization", "Bearer Winstijn"));
+
+        // Assert
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Assert
+        List<ContractResponseModel> responseContracts = parseContractsResult(result);
+        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isFalse();
+        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isTrue();
+        assertThat(responseContracts.contains(contracts.get(2).toResponseModel())).isTrue();
+    }
+
+    @Test
+    void getContracts_one() throws Exception {
+        // Arrange
+        mockAuthentication("PVeldHuis");
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/mine")
+                .header("Authorization", "Bearer Lol"));
+
+        // Assert
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Assert
+        List<ContractResponseModel> responseContracts = parseContractsResult(result);
+        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isTrue();
+        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isFalse();
+        assertThat(responseContracts.contains(contracts.get(2).toResponseModel())).isFalse();
+    }
+
+    @Test
+    void getContracts_notSignedIn() throws Exception {
+        // Arrange
+        mockAuthentication(null);
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/mine")
+                .header("Authorization", "Bearer Lol"));
+
+        // Assert
+        action.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getContracts_noContractsFound() throws Exception {
+        // Arrange
+        mockAuthentication("nonexistent");
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/mine")
+                .header("Authorization", "Bearer Lol"));
+
+        // Assert
+        action.andExpect(status().isNotFound());
+    }
+
+    /**
+     * Helper method to convert the MvcResult to a list of ContractResponseModel
+     */
+    private List<ContractResponseModel> parseContractsResult(MvcResult result) throws Exception {
+        String jsonString = result.getResponse().getContentAsString();
+        var list = new ArrayList<ContractResponseModel>();
+        List<Map<String, Object>> parsed = JsonUtil.deserialize(jsonString, list.getClass());
+
+        // JsonUtil returns a map of items. Parse them and put them in our list.
+        for ( Map<String, Object> map : parsed ) {
+            list.add(new ContractResponseModel((String) map.get("course"), (String) map.get("duties"), (int) map.get("maxHours"), (boolean) map.get("signed")));
+        }
+        return list;
+    }
 
 
 }

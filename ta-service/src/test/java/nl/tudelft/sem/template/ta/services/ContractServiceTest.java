@@ -149,9 +149,9 @@ class ContractServiceTest {
         List<Contract> contracts = contractService.getContractsOfNetID("PVeldHuis");
 
         // Assert
-        assertThat(contracts.size() == 2);
-        assertThat(contracts.contains(contract1));
-        assertThat(contracts.contains(contract2));
+        assertThat(contracts.size() == 2).isTrue();
+        assertThat(contracts.contains(contract1)).isTrue();
+        assertThat(contracts.contains(contract2)).isTrue();
         System.out.print((contracts));
     }
 
@@ -161,7 +161,7 @@ class ContractServiceTest {
         ThrowingCallable action_null = () -> contractService.getContractsOfNetID(null);
         ThrowingCallable action_empty  = () -> contractService.getContractsOfNetID("winstijnsmit");
 
-        // assert
+        // Assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_null);
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_empty);
     }
