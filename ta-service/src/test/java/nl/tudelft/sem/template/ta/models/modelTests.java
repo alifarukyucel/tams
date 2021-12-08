@@ -15,8 +15,8 @@ public class modelTests {
     void modelBuildersExist() {
         AcceptContractRequestModel acrm = AcceptContractRequestModel.builder().build();
         AcceptHoursRequestModel ahrm = AcceptHoursRequestModel.builder().build();
-        GetContractRequestModel gcrm = GetContractRequestModel.builder().build();
-        GetContractResponseModel gcrm2 = GetContractResponseModel.builder().build();
+        ContractRequestModel gcrm = ContractRequestModel.builder().build();
+        ContractResponseModel gcrm2 = ContractResponseModel.builder().build();
         RetrieveHoursToBeApprovedRequestModel rhtbarm = RetrieveHoursToBeApprovedRequestModel.builder().build();
         SubmitHoursRequestModel shrm = SubmitHoursRequestModel.builder().build();
     }
@@ -29,8 +29,8 @@ public class modelTests {
         acrm.getCourse();
         acrm.isAccept();
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
-        GetContractRequestModel gcrm = new GetContractRequestModel();
-        GetContractResponseModel gcrm2 = new GetContractResponseModel();
+        ContractRequestModel gcrm = new ContractRequestModel();
+        ContractResponseModel gcrm2 = new ContractResponseModel();
         RetrieveHoursToBeApprovedRequestModel rhtbarm = new RetrieveHoursToBeApprovedRequestModel();
         SubmitHoursRequestModel shrm = new SubmitHoursRequestModel();
     }
@@ -49,11 +49,11 @@ public class modelTests {
         ahrm.isAccept();
         ahrm.getId();
 
-        GetContractRequestModel gcrm = new GetContractRequestModel();
+        ContractRequestModel gcrm = new ContractRequestModel();
         gcrm.setCourse("CSE2310");
         gcrm.getCourse();
 
-        GetContractResponseModel gcrm2 = new GetContractResponseModel();
+        ContractResponseModel gcrm2 = new ContractResponseModel();
         gcrm2.setCourse("CSE2310");
         gcrm2.setDuties("WORK");
         gcrm2.setSigned(true);
