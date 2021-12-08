@@ -13,9 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class SubmitHoursRequestModel {
     private String course;
-    private boolean accept;
     private int workedTime;
-    private boolean approved;
     private Date date;
     private String desc;
 }
