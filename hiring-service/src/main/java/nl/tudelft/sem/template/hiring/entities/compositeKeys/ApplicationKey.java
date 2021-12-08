@@ -13,7 +13,5 @@ public class ApplicationKey implements Serializable {
     private String courseId;
     private String netId;
 
-
-
-
+    public static final long serialVersionUID = 1;
 }

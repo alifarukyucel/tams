@@ -31,24 +31,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier"})
 @AutoConfigureMockMvc
 public class ApplicationControllerTest {
+    private static String exampleNetId = "johndoe";
 
     @Autowired
-    private ApplicationRepository applicationRepository;
+    private transient ApplicationRepository applicationRepository;
 
     @Autowired
-    private MockMvc mockMvc;
+    private transient MockMvc mockMvc;
 
     @Autowired
-    private AuthManager mockAuthenticationManager;
+    private transient AuthManager mockAuthenticationManager;
 
     @Autowired
-    private TokenVerifier mockTokenVerifier;
+    private transient TokenVerifier mockTokenVerifier;
 
     @BeforeEach
     public void setup() {
-        when(mockAuthenticationManager.getNetid()).thenReturn("johndoe");
+        when(mockAuthenticationManager.getNetid()).thenReturn(exampleNetId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
-        when(mockTokenVerifier.parseNetid(anyString())).thenReturn("johndoe");
+        when(mockTokenVerifier.parseNetid(anyString())).thenReturn(exampleNetId);
     }
 
     @Test
@@ -59,8 +60,8 @@ public class ApplicationControllerTest {
         ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", (float) 5.9,
                 "I want to");
 
-        ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), "johndoe");
-        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), "johndoe");
+        ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
+        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
 
         //Act
         ResultActions validResults = mockMvc.perform(post("/apply")

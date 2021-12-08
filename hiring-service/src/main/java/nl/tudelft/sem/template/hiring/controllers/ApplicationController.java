@@ -15,7 +15,7 @@ public class ApplicationController {
     private final transient AuthManager authManager;
 
     @Autowired
-    private ApplicationService applicationService;
+    private transient ApplicationService applicationService;
 
     public ApplicationController(AuthManager authManager) {
         this.authManager = authManager;

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class ApplicationService {
 
     @Autowired
-    private ApplicationRepository applicationRepository;
+    private transient ApplicationRepository applicationRepository;
 
 
     /**

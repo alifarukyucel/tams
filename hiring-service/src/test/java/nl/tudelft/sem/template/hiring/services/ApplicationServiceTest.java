@@ -19,10 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class ApplicationServiceTest {
     @Autowired
-    private ApplicationRepository applicationRepository;
+    private transient ApplicationRepository applicationRepository;
 
     @Autowired
-    private ApplicationService applicationService;
+    private transient ApplicationService applicationService;
 
     @BeforeEach
     public void setup() {
@@ -34,7 +34,7 @@ public class ApplicationServiceTest {
         String motivation = "I just want to be a cool!";
         Application validApplication = new Application("CSE1200", "johndoe", (float) 6.0,
                 motivation, ApplicationStatus.PENDING);
-        Application invalidApplication = new Application("CSE1200", "jsmith", (float) 5.9,
+        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
                 motivation, ApplicationStatus.PENDING);
         assertThat(validApplication.meetsRequirements()).isTrue();
         assertThat(invalidApplication.meetsRequirements()).isFalse();
@@ -46,7 +46,7 @@ public class ApplicationServiceTest {
         //Assert
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1200", "johndoe")))
                 .isNotEmpty();
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1200", "jsmith")))
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
 
     }
