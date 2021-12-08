@@ -41,10 +41,6 @@ public class Application {
         return application;
     }
 
-    public void temporary() {
-
-    }
-
     /**
      * Checks whether the application meets the requirements
      * As of now the only requirement is the grade >= 6.0
