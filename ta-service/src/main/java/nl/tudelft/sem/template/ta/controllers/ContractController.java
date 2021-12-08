@@ -70,9 +70,9 @@ public class ContractController {
     }
 
     /**
-     * Endpoint for fetching a contract with a given course of a signed in user.
+     * Endpoint for fetching a contract of a signed in user with a given course
      *
-     * @return a singleton list containing a contract with the requested course code that belong to the signed in user.
+     * @return a singleton list containing a contract that belongs to the signed in user with the requested course code
      * @throws ResponseStatusException if user is not signed in or no contracts can be found.
      */
     @PostMapping("/mine")
@@ -85,9 +85,9 @@ public class ContractController {
 
     /**
      * Endpoint for fetching all the contracts of a certain user.
-     * Needs a netId of the requested contract and
+     * Needs a netId of the requested contract and the courseId.
      *
-     * @return a list of contracts that belong to the signed in user.
+     * @return a singleton list containing a contract that belongs to the requested user with the requested course code
      * @throws ResponseStatusException if netId is not given or when no contracts can not be found.
      */
     @PostMapping("/get")
@@ -95,7 +95,7 @@ public class ContractController {
             throws ResponseStatusException {
 
         // TODO: Implement authentication checking in next sprint.
-        // TODO: Not everyone should be allowed to make this request. Only responsible lecturers should be allowed to fetch everyones contracts.
+        // TODO: Not everyone should be allowed to make this request. Only responsible lecturers should be allowed to fetch everyone's contracts.
         // String userNetId = ensureLoggedIn();
         // authManager.isResponsibleLecturer(userNetId) .. or something like that.
 
@@ -105,13 +105,12 @@ public class ContractController {
     /**
      * Helper method that will handle requests that want to fetch a contract with a certain netId or courseId.
      *
-     * @param netId the netId of the returned contracts
-     * @param courseId the courseId of the returned contracts
+     * @param netId the netId of the returned contracts (required)
+     * @param courseId the courseId of the returned contracts (may be null)
      * @return a list of contracts
      * @throws ResponseStatusException if no contracts have been found.
      */
     private ResponseEntity<List<ContractResponseModel>> findContractBy(String netId, String courseId) throws ResponseStatusException  {
-
         try {
             List<Contract> contracts = contractService.getContractsBy(netId, courseId);
             List<ContractResponseModel> response = new ArrayList<ContractResponseModel>();
@@ -127,6 +126,7 @@ public class ContractController {
 
     /**
      * Helper method that will handle requests that want to fetch a contract with a certain netId.
+     *
      * @param netId the netId of the returned contracts
      * @return a list of contracts
      * @throws ResponseStatusException if no contracts have been found.

@@ -48,8 +48,8 @@ public class ContractService {
      * Returns all the contracts that have a certain netId and courseId.
      * If null is given to one of the arguments it will be ignored in the query.
      *
-     * @param netId The users netId
-     * @param courseId The contracts courseId
+     * @param netId The users netId (required)
+     * @param courseId The contracts courseId (may be null)
      * @return a list of contracts with the requested netId and courseId.
      * @throws NoSuchElementException Thrown when no contracts were found.
      */

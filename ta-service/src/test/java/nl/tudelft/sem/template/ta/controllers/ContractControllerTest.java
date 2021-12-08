@@ -219,7 +219,6 @@ class ContractControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // Assert
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
         assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isFalse();
         assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isTrue();
