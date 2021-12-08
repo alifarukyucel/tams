@@ -10,7 +10,7 @@ import lombok.AccessLevel;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
-public class ContractRequestModel {
+public class HourRequestModel {
     private String course;
     private String netId;
 }
