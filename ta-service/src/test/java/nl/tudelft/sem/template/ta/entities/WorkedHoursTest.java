@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.ta.entities;
 
+import nl.tudelft.sem.template.ta.models.HourResponseModel;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;
@@ -9,46 +11,59 @@ import java.util.UUID;
 
 class WorkedHoursTest {
 
+    private WorkedHours hours;
+    private Contract contract;
+    private Date time;
+
+    @BeforeEach
+    void setUp(){
+        time = Calendar.getInstance().getTime();
+        contract = new Contract();
+        hours = WorkedHours.builder()
+                .id(UUID.randomUUID())
+                .workedTime(15)
+                .approved(true)
+                .date(time)
+                .desc("test")
+                .contract(contract)
+                .build();
+    }
+
     @Test
     void testBuilder() {
-        Date time = Calendar.getInstance().getTime();
-        Contract c1 = new Contract();
-        WorkedHours hour1 = WorkedHours.builder()
-            .id(UUID.randomUUID())
-            .workedTime(15)
-            .approved(true)
-            .date(time)
-            .desc("test")
-            .contract(c1)
-            .build();
-
-        Assertions.assertNotNull(hour1.getId());
-        Assertions.assertEquals(15, hour1.getWorkedTime());
-        Assertions.assertTrue(hour1.isApproved());
-        Assertions.assertEquals(time, hour1.getDate());
-        Assertions.assertEquals("test", hour1.getDesc());
-        Assertions.assertEquals(c1, hour1.getContract());
+        Assertions.assertNotNull(hours.getId());
+        Assertions.assertEquals(15, hours.getWorkedTime());
+        Assertions.assertTrue(hours.isApproved());
+        Assertions.assertEquals(time, hours.getDate());
+        Assertions.assertEquals("test", hours.getDesc());
+        Assertions.assertEquals(contract, hours.getContract());
     }
 
 
     @Test
     void testSetters() {
-        Date time = Calendar.getInstance().getTime();
-        Contract c1 = new Contract();
-        WorkedHours hour1 = new WorkedHours();
-        hour1.setId(UUID.randomUUID());
-        hour1.setWorkedTime(15);
-        hour1.setApproved(true);
-        hour1.setDate(time);
-        hour1.setDesc("test");
-        hour1.setContract(c1);
+        Assertions.assertNotNull(hours.getId());
+        Assertions.assertEquals(15, hours.getWorkedTime());
+        Assertions.assertTrue(hours.isApproved());
+        Assertions.assertEquals(time, hours.getDate());
+        Assertions.assertEquals("test", hours.getDesc());
+        Assertions.assertEquals(contract, hours.getContract());
+    }
 
-        Assertions.assertNotNull(hour1.getId());
-        Assertions.assertEquals(15, hour1.getWorkedTime());
-        Assertions.assertTrue(hour1.isApproved());
-        Assertions.assertEquals(time, hour1.getDate());
-        Assertions.assertEquals("test", hour1.getDesc());
-        Assertions.assertEquals(c1, hour1.getContract());
+    private Date date;
+    private String desc;
+    private int workedTime;
+    private boolean approved;
+    private String ta;
+
+    @Test
+    void testToResponseModel(){
+        HourResponseModel model = hours.toResponseModel();
+        Assertions.assertNotNull(model);
+        Assertions.assertEquals(hours.getDate(), model.getDate());
+        Assertions.assertEquals(hours.getDesc(), model.getDescription());
+        Assertions.assertEquals(hours.getWorkedTime(), model.getWorkedTime());
+        Assertions.assertEquals(contract.getNetId(), model.getTa());
     }
 
 }
