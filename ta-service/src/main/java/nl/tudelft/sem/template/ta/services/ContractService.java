@@ -44,14 +44,13 @@ public class ContractService {
         return contracts.get(0);
     }
 
-
     /**
      * Returns all the contracts that have a certain netId and courseId.
      * If null is given to one of the arguments it will be ignored in the query.
      *
      * @param netId The users netId
      * @param courseId The contracts courseId
-     * @return a list of contracts with requested netId and courseId.
+     * @return a list of contracts with the requested netId and courseId.
      * @throws NoSuchElementException Thrown when no contracts were found.
      */
     public List<Contract> getContractsBy(String netId, String courseId) throws NoSuchElementException {
@@ -72,7 +71,7 @@ public class ContractService {
      * Returns all the contracts that have a certain netId.
      *
      * @param netId The users netid
-     * @return a list of contracts with requested netid.
+     * @return a list of contracts with the requested netId.
      * @throws NoSuchElementException Thrown when no contracts were found.
      */
     public List<Contract> getContractsBy(String netId) throws NoSuchElementException {
@@ -88,7 +87,6 @@ public class ContractService {
     public Contract save(Contract contract) {
         return contractRepository.save(contract);
     }
-
 
     /**
      * Creates an example which can be used to find a Contract with a certain netId and courseId inside of the database.

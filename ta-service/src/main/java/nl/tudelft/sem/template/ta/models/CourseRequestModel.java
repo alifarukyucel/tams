@@ -1,16 +1,17 @@
 package nl.tudelft.sem.template.ta.models;
 
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
 @Builder
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
-public class ContractRequestModel {
+@EqualsAndHashCode
+@Data
+public class CourseRequestModel {
     private String course;
-    private String netId;
 }
