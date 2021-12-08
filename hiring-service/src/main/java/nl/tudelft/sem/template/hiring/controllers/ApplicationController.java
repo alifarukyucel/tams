@@ -2,14 +2,11 @@ package nl.tudelft.sem.template.hiring.controllers;
 
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
-import nl.tudelft.sem.template.hiring.repository.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 

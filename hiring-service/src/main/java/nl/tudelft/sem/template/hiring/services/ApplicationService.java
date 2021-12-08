@@ -1,7 +1,7 @@
 package nl.tudelft.sem.template.hiring.services;
 
 import nl.tudelft.sem.template.hiring.entities.Application;
-import nl.tudelft.sem.template.hiring.repository.ApplicationRepository;
+import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

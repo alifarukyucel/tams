@@ -5,6 +5,7 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.hiring.entities.compositeKeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 
 @Data
@@ -12,15 +13,15 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 @AllArgsConstructor
 @Entity
 @Table(name = "APPLICATION")
+@IdClass(ApplicationKey.class)
 public class Application {
-
+    @Id
     @Column(name = "COURSE_ID")
     private String courseId;
 
     @Id
     @Column(name = "NETID")
     private String netId;
-    //Not sure how to deal with PK
 
     @Column(name = "GRADE")
     private float grade;
