@@ -5,16 +5,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
+import nl.tudelft.sem.template.ta.models.ContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
+import nl.tudelft.sem.template.ta.models.CourseRequestModel;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.services.ContractService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -58,7 +56,6 @@ public class ContractController {
         }
     }
 
-
     /**
      * Endpoint for fetching all the contracts of a signed in user.
      *
@@ -66,12 +63,57 @@ public class ContractController {
      * @throws ResponseStatusException if user is not signed in or no contracts can be found.
      */
     @GetMapping("/mine")
-    public ResponseEntity<List<ContractResponseModel>> fetch()
+    public ResponseEntity<List<ContractResponseModel>> getSignedInUserContracts()
             throws ResponseStatusException {
         String netId = ensureLoggedIn();
+        return findContractBy(netId);
+    }
+
+    /**
+     * Endpoint for fetching a contract with a given course of a signed in user.
+     *
+     * @return a singleton list containing a contract with the requested course code that belong to the signed in user.
+     * @throws ResponseStatusException if user is not signed in or no contracts can be found.
+     */
+    @PostMapping("/mine")
+    public ResponseEntity<List<ContractResponseModel>> getSignedInUserContractByCourse(@RequestBody CourseRequestModel request)
+            throws ResponseStatusException {
+
+        String netId = ensureLoggedIn();
+        return findContractBy(netId, request.getCourse());
+    }
+
+    /**
+     * Endpoint for fetching all the contracts of a certain user.
+     * Needs a netId of the requested contract and
+     *
+     * @return a list of contracts that belong to the signed in user.
+     * @throws ResponseStatusException if netId is not given or when no contracts can not be found.
+     */
+    @PostMapping("/get")
+    public ResponseEntity<List<ContractResponseModel>> getUserContracts(@RequestBody ContractRequestModel request)
+            throws ResponseStatusException {
+
+        // TODO: Implement authentication checking in next sprint.
+        // TODO: Not everyone should be allowed to make this request. Only responsible lecturers should be allowed to fetch everyones contracts.
+        // String userNetId = ensureLoggedIn();
+        // authManager.isResponsibleLecturer(userNetId) .. or something like that.
+
+        return findContractBy(request.getNetId(), request.getCourse());
+    }
+
+    /**
+     * Helper method that will handle requests that want to fetch a contract with a certain netId or courseId.
+     *
+     * @param netId the netId of the returned contracts
+     * @param courseId the courseId of the returned contracts
+     * @return a list of contracts
+     * @throws ResponseStatusException if no contracts have been found.
+     */
+    private ResponseEntity<List<ContractResponseModel>> findContractBy(String netId, String courseId) throws ResponseStatusException  {
 
         try {
-            List<Contract> contracts = contractService.getContractsOfNetID(netId);
+            List<Contract> contracts = contractService.getContractsBy(netId, courseId);
             List<ContractResponseModel> response = new ArrayList<ContractResponseModel>();
             for (var contract : contracts) {
                 response.add(contract.toResponseModel());
@@ -83,6 +125,15 @@ public class ContractController {
         }
     }
 
+    /**
+     * Helper method that will handle requests that want to fetch a contract with a certain netId.
+     * @param netId the netId of the returned contracts
+     * @return a list of contracts
+     * @throws ResponseStatusException if no contracts have been found.
+     */
+    private ResponseEntity<List<ContractResponseModel>> findContractBy(String netId) throws ResponseStatusException {
+        return findContractBy(netId, null);
+    }
 
     /**
      * We should ensure that the user is logged in when doing some request.
