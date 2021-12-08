@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.ta.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
@@ -41,9 +43,11 @@ public class ContractController {
     @PutMapping("/sign")
     public ResponseEntity<String> sign(@RequestBody AcceptContractRequestModel request)
         throws ResponseStatusException {
+        String netId = ensureLoggedIn();
+
         try {
             Contract contract = contractService.getContract(
-                authManager.getNetid(), request.getCourse());
+                netId, request.getCourse());
 
             contract.setSigned(!contract.getSigned() || !request.isAccept());  // keep value true.
             contractService.save(contract);
@@ -53,4 +57,44 @@ public class ContractController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+
+    /**
+     * Endpoint for fetching all the contracts of a signed in user.
+     *
+     * @return a list of contracts that belong to the signed in user.
+     * @throws ResponseStatusException if user is not signed in or no contracts can be found.
+     */
+    @GetMapping("/mine")
+    public ResponseEntity<List<ContractResponseModel>> fetch()
+            throws ResponseStatusException {
+        String netId = ensureLoggedIn();
+
+        try {
+            List<Contract> contracts = contractService.getContractsOfNetID(netId);
+            List<ContractResponseModel> response = new ArrayList<ContractResponseModel>();
+            for (var contract : contracts) {
+                response.add(contract.toResponseModel());
+            }
+
+            return ResponseEntity.ok(response);
+        } catch(NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+
+    /**
+     * We should ensure that the user is logged in when doing some request.
+     *
+     * @return the netId of the logged in user.
+     * @throws ResponseStatusException if the user is not logged in.
+     */
+    private String ensureLoggedIn() throws ResponseStatusException {
+        String netId = authManager.getNetid();
+        if (netId == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You need to sign in before making this request.");
+        return netId;
+    }
+
 }
