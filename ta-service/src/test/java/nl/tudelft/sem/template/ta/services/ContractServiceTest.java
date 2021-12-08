@@ -146,7 +146,7 @@ class ContractServiceTest {
         contractRepository.save(contract2);
 
         // Act
-        List<Contract> contracts = contractService.getContractsOfNetID("PVeldHuis");
+        List<Contract> contracts = contractService.getContractsBy("PVeldHuis");
 
         // Assert
         assertThat(contracts.size() == 2).isTrue();
@@ -158,8 +158,8 @@ class ContractServiceTest {
     @Test
     void getNonExistingContracts(){
         // Act
-        ThrowingCallable action_null = () -> contractService.getContractsOfNetID(null);
-        ThrowingCallable action_empty  = () -> contractService.getContractsOfNetID("winstijnsmit");
+        ThrowingCallable action_null = () -> contractService.getContractsBy(null);
+        ThrowingCallable action_empty  = () -> contractService.getContractsBy("winstijnsmit");
 
         // Assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_null);

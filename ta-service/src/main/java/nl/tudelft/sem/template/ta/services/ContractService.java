@@ -37,29 +37,28 @@ public class ContractService {
             throw new NoSuchElementException("A contract must have a netId and courseId");
         }
 
-        // Create contract example with this netId and courseId.
-        Example<Contract> example = createContractExample(netId, courseId);
-
-        var optionalContract = contractRepository.findOne(example);
-        if (optionalContract.isEmpty()) {
+        List<Contract> contracts = getContractsBy(netId, courseId);
+        if (contracts.size() == 0)
             throw new NoSuchElementException("The requested contract could not be found");
-        }
-        return optionalContract.get();
+
+        return contracts.get(0);
     }
 
 
     /**
-     * Returns all the contracts that have a certain netId.
+     * Returns all the contracts that have a certain netId and courseId.
+     * If null is given to one of the arguments it will be ignored in the query.
      *
      * @param netId The users netId
-     * @return      A list of contracts with the given netId.
+     * @param courseId The contracts courseId
+     * @return a list of contracts with requested netId and courseId.
      * @throws NoSuchElementException Thrown when no contracts were found.
      */
-    public List<Contract> getContractsOfNetID(String netId) throws NoSuchElementException {
+    public List<Contract> getContractsBy(String netId, String courseId) throws NoSuchElementException {
         if (netId == null)
             throw new NoSuchElementException("netId must be specified to search for contracts");
 
-        Example<Contract> example = createContractExample(netId);
+        Example<Contract> example = createContractExample(netId, courseId);
 
         // Search for all the contract with a certain netId.
         List<Contract> contracts = contractRepository.findAll(example);
@@ -67,6 +66,17 @@ public class ContractService {
             throw new NoSuchElementException("Could not find contracts for " + netId);
 
         return contracts;
+    }
+
+    /**
+     * Returns all the contracts that have a certain netId.
+     *
+     * @param netId The users netid
+     * @return a list of contracts with requested netid.
+     * @throws NoSuchElementException Thrown when no contracts were found.
+     */
+    public List<Contract> getContractsBy(String netId) throws NoSuchElementException {
+        return getContractsBy(netId, null);
     }
 
     /**
@@ -96,12 +106,4 @@ public class ContractService {
         return example;
     }
 
-    /**
-     * Creates an example which can be used to find a Contract with a certain netId inside of the database.
-     * @param netId the example's netId
-     * @return an example contract.
-     */
-    private Example<Contract> createContractExample(String netId) {
-        return createContractExample(netId, null);
-    }
 }
