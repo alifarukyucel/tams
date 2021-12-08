@@ -1,5 +1,9 @@
 package nl.tudelft.sem.template.ta.models;
 
+import lombok.Data;
+
+import javax.persistence.Column;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +14,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Data
-public class GetContractRequestModel {
+public class ContractResponseModel {
     private String course;
+    private String duties;
+    private int maxHours;
+    private boolean signed;
 }
