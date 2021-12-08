@@ -43,9 +43,12 @@ public class HourService {
 
         WorkedHours workedHours = hours.get();
 
-        workedHours.setApproved((!workedHours.isApproved() || !status));  // fancy nand gate
-
-        hoursRepository.save(workedHours);
+        if (status || workedHours.isApproved()) {
+            workedHours.setApproved((true));
+            hoursRepository.save(workedHours);
+        } else {
+            hoursRepository.delete(workedHours);
+        }
     }
 
     /**

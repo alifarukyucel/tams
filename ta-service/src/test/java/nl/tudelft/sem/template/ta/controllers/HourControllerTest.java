@@ -106,7 +106,7 @@ class HourControllerTest {
     }
 
     @Test
-    void unApproveExistingHours() throws Exception {
+    void unApproveApprovedExistingHours() throws Exception {
         // arrange
         defaultWorkedHours.setApproved(true);
         defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);

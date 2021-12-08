@@ -72,17 +72,25 @@ class HourServiceTest {
     }
 
     @Test
-    void unApproveExistingHours() {
+    void unApproveApprovedExistingHours() {
         // arrange
         defaultWorkedHours.setApproved(true);
         hoursRepository.save(defaultWorkedHours);
 
         // act
-
         hourService.approveHours(defaultWorkedHours.getId(), false);
 
         // assert
         assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isTrue();
+    }
+
+    @Test
+    void unApproveExistingHours() {
+        // act
+        hourService.approveHours(defaultWorkedHours.getId(), false);
+
+        // assert
+        assertThat(hoursRepository.findById(defaultWorkedHours.getId()).isEmpty()).isTrue();
     }
 
     @Test
