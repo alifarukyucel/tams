@@ -15,6 +15,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -39,23 +41,53 @@ class HourServiceTest {
 
     private Contract defaultContract;
     private WorkedHours defaultWorkedHours;
+    private List<WorkedHours> workedHoursList;
+    private List<Contract> contractList;
 
     @BeforeEach
     void setUp() {
         hoursRepository.deleteAll();
         contractRepository.deleteAll();
+        contractList = new ArrayList<Contract>();
+        workedHoursList = new ArrayList<WorkedHours>();
 
         defaultContract = Contract.builder()
             .courseId("CSE2310")
             .netId("PvdBerg")
             .maxHours(20)
             .build();
-
+        contractList.add(defaultContract);
         defaultContract = contractRepository.save(defaultContract);
 
-        defaultWorkedHours = WorkedHours.builder().contract(defaultContract).approved(false).build();
+        Contract c1  = Contract.builder()
+                .courseId("CSE2500")
+                .netId("WinstijnSmit")
+                .maxHours(40)
+                .build();
+        c1 = contractRepository.save(c1);
+        contractList.add(c1);
 
+        Contract c2 = Contract.builder()
+                .courseId("CSE2310")
+                .netId("WinstijnSmit")
+                .maxHours(40)
+                .build();
+        c2 = contractRepository.save(c2);
+        contractList.add(c2);
+
+        defaultWorkedHours = WorkedHours.builder().contract(defaultContract).approved(false).build();
         hoursRepository.save(defaultWorkedHours);
+
+        // Add more workedHours to the list used for testing.
+        workedHoursList.add(WorkedHours.builder().contract(defaultContract).build());
+        workedHoursList.add(WorkedHours.builder().contract(c1).build());
+        workedHoursList.add(WorkedHours.builder().contract(c1).build());
+        workedHoursList.add(WorkedHours.builder().contract(c1).approved(true).reviewed(true).build());
+        workedHoursList.add(WorkedHours.builder().contract(c2).build());
+        workedHoursList.add(WorkedHours.builder().contract(c2).approved(true).reviewed(true).build());
+        for ( var elm : workedHoursList) {
+            hoursRepository.save(elm);
+        }
 
     }
 
@@ -145,4 +177,42 @@ class HourServiceTest {
         // assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
     }
+
+    @Test
+    void getOpenHoursBy_nullId() {
+        // Act
+        ThrowingCallable action = () -> hourService.getNonReviewedHoursBy(null, null);
+
+        // assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
+    }
+
+    @Test
+    void getOpenHoursBy_course() {
+        // Act
+        List<WorkedHours> result = hourService.getNonReviewedHoursBy("CSE2310", null);
+
+        // Assert
+        assertThat( result.contains(workedHoursList.get(0)) ).isTrue();
+        assertThat( result.contains(workedHoursList.get(1)) ).isFalse();
+        assertThat( result.contains(workedHoursList.get(2)) ).isFalse();
+        assertThat( result.contains(workedHoursList.get(3)) ).isFalse();
+        assertThat( result.contains(workedHoursList.get(4)) ).isTrue();
+        assertThat( result.contains(workedHoursList.get(5)) ).isFalse();
+    }
+
+    @Test
+    void getOpenHoursBy_courseAndNetId() {
+        // Act
+        List<WorkedHours> result = hourService.getNonReviewedHoursBy("CSE2500", "WinstijnSmit");
+
+        // Assert
+        assertThat( result.contains(workedHoursList.get(0)) ).isFalse();
+        assertThat( result.contains(workedHoursList.get(1)) ).isTrue();
+        assertThat( result.contains(workedHoursList.get(2)) ).isTrue();
+        assertThat( result.contains(workedHoursList.get(3)) ).isFalse();
+        assertThat( result.contains(workedHoursList.get(4)) ).isFalse();
+        assertThat( result.contains(workedHoursList.get(5)) ).isFalse();
+    }
+
 }

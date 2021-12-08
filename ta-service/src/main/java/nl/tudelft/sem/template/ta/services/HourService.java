@@ -1,10 +1,13 @@
 package nl.tudelft.sem.template.ta.services;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.WorkedHours;
 import nl.tudelft.sem.template.ta.repositories.WorkedHoursRepository;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 /**
@@ -72,6 +75,23 @@ public class HourService {
 
         return workedHours.get().getContract();
 
+    }
+
+
+    /**
+     * Find and return the worked hours that are still not accepted or rejected.
+     *
+     * @param courseId the courseId of the WorkedHours (required)
+     * @param netId the netId of the WorkedHours (optional)
+     * @return a list of workedHours with requested courseId (and netId if given)
+     */
+    public List<WorkedHours> getNonReviewedHoursBy(String courseId, String netId)  {
+        if (courseId == null)
+            throw new NoSuchElementException("The courseId should be specified");
+
+        return netId == null ?
+                hoursRepository.findNonReviewedHoursBy(courseId) :
+                hoursRepository.findNonReviewedHoursBy(courseId, netId);
     }
 
 
