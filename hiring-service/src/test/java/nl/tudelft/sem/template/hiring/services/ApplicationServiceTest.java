@@ -44,8 +44,10 @@ public class ApplicationServiceTest {
         applicationService.checkAndSave(invalidApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1200", "johndoe"))).isNotEmpty();
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1200", "jsmith"))).isEmpty();
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1200", "johndoe")))
+                .isNotEmpty();
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1200", "jsmith")))
+                .isEmpty();
 
     }
 

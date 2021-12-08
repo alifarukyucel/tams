@@ -8,7 +8,6 @@ import nl.tudelft.sem.template.hiring.security.TokenVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,14 +66,14 @@ public class ApplicationControllerTest {
         ResultActions validResults = mockMvc.perform(post("/apply")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(validModel))
-                .header("Authorization", "Lorem Ipsum"));
+                .header("Authorization", "Bearer Joe"));
 
 
 
         ResultActions invalidResults = mockMvc.perform(post("/apply")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(invalidModel))
-                .header("Authorization", "Lorem Ipsum"));
+                .header("Authorization", "Bearer Joe"));
 
         //assert
         validResults.andExpect(status().isOk());

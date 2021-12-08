@@ -36,7 +36,8 @@ public class ApplicationTest {
         String motivation = defaultPendingApplication.getMotivation();
 
         //Act
-        Application pendingApplication = Application.createPendingApplication(courseId, netId, grade, motivation);
+        Application pendingApplication = Application.createPendingApplication(courseId, netId,
+                grade, motivation);
 
         //Assert
         assertThat(defaultPendingApplication).isEqualTo(pendingApplication);
