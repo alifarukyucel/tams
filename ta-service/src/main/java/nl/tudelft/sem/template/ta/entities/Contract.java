@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 
 @Entity
 @Builder
@@ -37,4 +38,11 @@ public class Contract {
 
     Boolean signed;
 
+    /**
+     * Create an instance of ContractResponseModel based on this contract.
+     * @return ContractResponseModel of this contract.
+     */
+    public ContractResponseModel toResponseModel() {
+        return new ContractResponseModel(courseId, duties, maxHours, signed);
+    }
 }

@@ -1,43 +1,55 @@
 package nl.tudelft.sem.template.ta.entities;
 
+import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.UUID;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ContractTest {
 
+    private Contract contract;
+
+    @BeforeEach
+    void setUp(){
+        contract = Contract.builder()
+                .courseId("build")
+                .maxHours(5)
+                .id(UUID.randomUUID())
+                .signed(false)
+                .netId("PieterDelft")
+                .duties("You need to work!")
+                .build();
+    }
+
     @Test
     void testBuilder() {
-        Contract c1 = Contract.builder()
-            .courseId("build")
-            .maxHours(5)
-            .id(UUID.randomUUID())
-            .signed(false)
-            .netId("PieterDelft")
-            .build();
-
-        Assertions.assertEquals("build", c1.getCourseId());
-        Assertions.assertEquals(5, c1.getMaxHours());
-        Assertions.assertNotNull(c1.getId());
-        Assertions.assertFalse(c1.getSigned());
-        Assertions.assertEquals("PieterDelft", c1.getNetId());
-
+        Assertions.assertEquals("build", contract.getCourseId());
+        Assertions.assertEquals(5, contract.getMaxHours());
+        Assertions.assertNotNull(contract.getId());
+        Assertions.assertFalse(contract.getSigned());
+        Assertions.assertEquals("PieterDelft", contract.getNetId());
+        Assertions.assertEquals("You need to work!", contract.getDuties());
     }
 
     @Test
     void testSetters() {
-        Contract c1 = new Contract();
-        c1.setCourseId("build");
-        c1.setMaxHours(5);
-        c1.setId(UUID.randomUUID());
-        c1.setSigned(false);
-        c1.setNetId("PieterDelft");
+        Assertions.assertEquals("build", contract.getCourseId());
+        Assertions.assertEquals(5, contract.getMaxHours());
+        Assertions.assertNotNull(contract.getId());
+        Assertions.assertFalse(contract.getSigned());
+        Assertions.assertEquals("PieterDelft", contract.getNetId());
+        Assertions.assertEquals("You need to work!", contract.getDuties());
+    }
 
-        Assertions.assertEquals("build", c1.getCourseId());
-        Assertions.assertEquals(5, c1.getMaxHours());
-        Assertions.assertNotNull(c1.getId());
-        Assertions.assertFalse(c1.getSigned());
-        Assertions.assertEquals("PieterDelft", c1.getNetId());
-
+    @Test
+    void testToResponseModel(){
+        ContractResponseModel model = contract.toResponseModel();
+        Assertions.assertNotNull(model);
+        Assertions.assertEquals(contract.getCourseId(), model.getCourse());
+        Assertions.assertEquals(contract.getMaxHours(), model.getMaxHours());
+        Assertions.assertEquals(contract.getDuties(), model.getDuties());
+        Assertions.assertEquals(contract.getSigned(), model.isSigned());
     }
 }
