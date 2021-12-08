@@ -29,7 +29,10 @@ import java.util.UUID;
 
 import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -100,6 +103,8 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
+        verify(courseInformation).isResponsibleLecturer(defaultContract.getNetId(), defaultContract.getCourseId());
+        verify(courseInformation, times(1)).isResponsibleLecturer(any(), any());
         results.andExpect(status().isOk());
         WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
         assertThat(hour.isApproved()).isTrue();
@@ -119,9 +124,32 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
+        verify(courseInformation).isResponsibleLecturer(defaultContract.getNetId(), defaultContract.getCourseId());
+        verify(courseInformation, times(1)).isResponsibleLecturer(any(), any());
         results.andExpect(status().isOk());
         WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
         assertThat(hour.isApproved()).isTrue();
+    }
+
+    @Test
+    void approveHoursYouAreNotResponsibleFor() throws Exception{
+        when(courseInformation.isResponsibleLecturer(anyString(), anyString())).thenReturn(false);
+        // arrange
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder().accept(true).id(defaultWorkedHours.getId()).build();
+
+        // act
+        ResultActions results = mockMvc.perform(put("/hours/approve")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        verify(courseInformation).isResponsibleLecturer(defaultContract.getNetId(), defaultContract.getCourseId());
+        verify(courseInformation, times(1)).isResponsibleLecturer(any(), any());
+        results.andExpect(status().isUnauthorized());
+        WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
+        assertThat(hour.isApproved()).isFalse();
+
     }
 
     @Test

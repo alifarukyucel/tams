@@ -46,7 +46,7 @@ public class modelTests {
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
         ahrm.setAccept(true);
         ahrm.setId(UUID.randomUUID());
-        ahrm.isAccept();
+        ahrm.getAccept();
         ahrm.getId();
 
         GetContractRequestModel gcrm = new GetContractRequestModel();
