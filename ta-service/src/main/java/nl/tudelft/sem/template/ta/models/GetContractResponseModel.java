@@ -14,5 +14,5 @@ public class GetContractResponseModel {
     private String course;
     private String duties;
     private int maxHours;
-    boolean signed;
+    private boolean signed;
 }
