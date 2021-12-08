@@ -24,6 +24,7 @@ class WorkedHoursTest {
                 .workedTime(15)
                 .approved(true)
                 .date(time)
+                .reviewed(true)
                 .desc("test")
                 .contract(contract)
                 .build();
@@ -34,6 +35,7 @@ class WorkedHoursTest {
         Assertions.assertNotNull(hours.getId());
         Assertions.assertEquals(15, hours.getWorkedTime());
         Assertions.assertTrue(hours.isApproved());
+        Assertions.assertTrue(hours.isReviewed());
         Assertions.assertEquals(time, hours.getDate());
         Assertions.assertEquals("test", hours.getDesc());
         Assertions.assertEquals(contract, hours.getContract());
@@ -42,19 +44,25 @@ class WorkedHoursTest {
 
     @Test
     void testSetters() {
+        time = Calendar.getInstance().getTime();
+        contract = new Contract();
+        hours = new WorkedHours();
+        hours.setId(UUID.randomUUID());
+        hours.setWorkedTime(15);
+        hours.setApproved(true);
+        hours.setDate(time);
+        hours.setReviewed(true);
+        hours.setDesc("test");
+        hours.setContract(contract);
+
         Assertions.assertNotNull(hours.getId());
         Assertions.assertEquals(15, hours.getWorkedTime());
         Assertions.assertTrue(hours.isApproved());
+        Assertions.assertTrue(hours.isReviewed());
         Assertions.assertEquals(time, hours.getDate());
         Assertions.assertEquals("test", hours.getDesc());
         Assertions.assertEquals(contract, hours.getContract());
     }
-
-    private Date date;
-    private String desc;
-    private int workedTime;
-    private boolean approved;
-    private String ta;
 
     @Test
     void testToResponseModel(){
