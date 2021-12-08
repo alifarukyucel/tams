@@ -3,7 +3,9 @@ package nl.tudelft.sem.template.ta.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
+import nl.tudelft.sem.template.ta.models.ContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
+import nl.tudelft.sem.template.ta.models.CourseRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.security.TokenVerifier;
@@ -35,6 +37,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -181,6 +184,26 @@ class ContractControllerTest {
         assertThat(savedContract.getSigned()).isFalse();
     }
 
+    @Test
+    void getSignedInContracts_one() throws Exception {
+        // Arrange
+        mockAuthentication("PVeldHuis");
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/mine")
+                .header("Authorization", "Bearer Lol"));
+
+        // Assert
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Assert
+        List<ContractResponseModel> responseContracts = parseContractsResult(result);
+        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isTrue();
+        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isFalse();
+        assertThat(responseContracts.contains(contracts.get(2).toResponseModel())).isFalse();
+    }
 
     @Test
     void getContracts_multiple() throws Exception {
@@ -204,28 +227,32 @@ class ContractControllerTest {
     }
 
     @Test
-    void getContracts_one() throws Exception {
+    void getSignedInContracts_filterCourse() throws Exception {
         // Arrange
-        mockAuthentication("PVeldHuis");
+        mockAuthentication("WinstijnSmit");
+        CourseRequestModel model = new CourseRequestModel();
+        model.setCourse("CSE2310");
 
         // Act
-        ResultActions action = mockMvc.perform(get("/contracts/mine")
-                .header("Authorization", "Bearer Lol"));
+        ResultActions action = mockMvc.perform(post("/contracts/mine")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Winstijn")
+                .content(serialize(model)));
 
         // Assert
         MvcResult result = action
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // Assert
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
-        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isTrue();
-        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isFalse();
+        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isFalse();
+        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isTrue();
         assertThat(responseContracts.contains(contracts.get(2).toResponseModel())).isFalse();
     }
 
+
     @Test
-    void getContracts_notSignedIn() throws Exception {
+    void getSignedInContracts_notSignedIn() throws Exception {
         // Arrange
         mockAuthentication(null);
 
@@ -238,7 +265,7 @@ class ContractControllerTest {
     }
 
     @Test
-    void getContracts_noContractsFound() throws Exception {
+    void getSignedInContracts_noContractsFound() throws Exception {
         // Arrange
         mockAuthentication("nonexistent");
 
@@ -249,6 +276,50 @@ class ContractControllerTest {
         // Assert
         action.andExpect(status().isNotFound());
     }
+
+    @Test
+    void getContracts() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit");
+        ContractRequestModel model = new ContractRequestModel();
+        model.setCourse("CSE2310");
+        model.setNetId("PVeldHuis");
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/get")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Winstijn")
+                .content(serialize(model)));
+
+        // Assert
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<ContractResponseModel> responseContracts = parseContractsResult(result);
+        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isTrue();
+        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isFalse();
+        assertThat(responseContracts.contains(contracts.get(2).toResponseModel())).isFalse();
+    }
+
+    @Test
+    void getContracts_notFound() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit");
+        ContractRequestModel model = new ContractRequestModel();
+        model.setCourse("CSE1000");
+        model.setNetId("WinstijnSmit");
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/get")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Winstijn")
+                .content(serialize(model)));
+
+        // Assert
+        action.andExpect(status().isNotFound());
+    }
+
 
     /**
      * Helper method to convert the MvcResult to a list of ContractResponseModel
