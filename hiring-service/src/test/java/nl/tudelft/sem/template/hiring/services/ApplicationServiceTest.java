@@ -48,8 +48,5 @@ public class ApplicationServiceTest {
                 .isNotEmpty();
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
-
     }
-
-
 }
