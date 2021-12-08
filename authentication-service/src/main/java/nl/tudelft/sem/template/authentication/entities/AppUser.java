@@ -4,9 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "users")
+@Data
 public class AppUser {
     @Id
     @Column(name = "netid", nullable = false)
@@ -14,20 +16,4 @@ public class AppUser {
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
-
-    public String getNetid() {
-        return netid;
-    }
-
-    public void setNetid(String netid) {
-        this.netid = netid;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
 }

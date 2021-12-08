@@ -46,7 +46,7 @@ public class UsersController {
      * @throws Exception if the user does not exist or the password is incorrect
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseModel> createToken(@RequestBody LoginRequestModel request)
+    public ResponseEntity<LoginResponseModel> login(@RequestBody LoginRequestModel request)
             throws Exception {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -66,7 +66,7 @@ public class UsersController {
      * @throws Exception if a user with this netid already exists
      */
     @PostMapping("/register")
-    public ResponseEntity createToken(@RequestBody RegistrationRequestModel request)
+    public ResponseEntity register(@RequestBody RegistrationRequestModel request)
             throws Exception {
 
         try {

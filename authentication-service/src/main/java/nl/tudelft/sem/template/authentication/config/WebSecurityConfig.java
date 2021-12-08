@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.authentication.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Getter
+    @Setter(onMethod = @__({@Autowired})) // add autowired annotation on setter
     private transient UserDetailsService userDetailsService;
 
     /**
@@ -46,25 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().anyRequest().permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    /**
-     * Gets user details service.
-     *
-     * @return the user details service
-     */
-    public UserDetailsService getUserDetailsService() {
-        return userDetailsService;
-    }
-
-    /**
-     * Sets user details service.
-     *
-     * @param userDetailsService the user details service
-     */
-    @Autowired
-    public void setUserDetailsService(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
     }
 
 }
