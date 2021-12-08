@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,6 +115,57 @@ class ContractServiceTest {
         // assert
         assertThat(foundContract).isEqualTo(contract);
     }
+
+    @Test
+    void getAllContracts(){
+        // Arrange
+        Contract contract1 = Contract.builder()
+                .netId("PVeldHuis")
+                .courseId("CSE2550")
+                .maxHours(5)
+                .duties("Work really hard")
+                .signed(false)
+                .build();
+        contractRepository.save(contract1);
+
+        contractRepository.save(Contract.builder()
+                .netId("GerryEik")
+                .courseId("CSE2310")
+                .maxHours(5)
+                .duties("Work really hard")
+                .signed(false)
+                .build());
+
+        Contract contract2 = Contract.builder()
+                .netId("PVeldHuis")
+                .courseId("CSE2310")
+                .maxHours(5)
+                .duties("Work really hard")
+                .signed(false)
+                .build();
+        contractRepository.save(contract2);
+
+        // Act
+        List<Contract> contracts = contractService.getContractsOfNetID("PVeldHuis");
+
+        // Assert
+        assertThat(contracts.size() == 2);
+        assertThat(contracts.contains(contract1));
+        assertThat(contracts.contains(contract2));
+        System.out.print((contracts));
+    }
+
+    @Test
+    void getNonExistingContracts(){
+        // Act
+        ThrowingCallable action_null = () -> contractService.getContractsOfNetID(null);
+        ThrowingCallable action_empty  = () -> contractService.getContractsOfNetID("winstijnsmit");
+
+        // assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_null);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_empty);
+    }
+
 
     @Test
     void save() {
