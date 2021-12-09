@@ -27,10 +27,10 @@ public class HourService {
      * @param id The ID of the hours worked
      * @param status The status to set to the hours, false is ignored.
      * @throws NoSuchElementException Thrown if the worked hours could not be found.
-     * @throws NullPointerException Thrown if no id was specified.
+     * @throws IllegalArgumentException Thrown is hours were already approved.
      */
     public void approveHours(UUID id, boolean status)
-        throws NoSuchElementException, NullPointerException {
+        throws NoSuchElementException, IllegalArgumentException {
 
         if (id == null) {
             throw new NoSuchElementException("An Id must be specified");
@@ -43,7 +43,10 @@ public class HourService {
 
         WorkedHours workedHours = hours.get();
 
-        if (status || workedHours.isApproved()) {
+        if (workedHours.isApproved()) {
+            throw new IllegalArgumentException("Hours have already been approved");
+        }
+        if (status) {
             workedHours.setApproved((true));
             hoursRepository.save(workedHours);
         } else {

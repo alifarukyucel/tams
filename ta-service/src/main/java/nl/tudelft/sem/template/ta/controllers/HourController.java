@@ -53,10 +53,12 @@ public class HourController {
 
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             }
-
             hourService.approveHours(request.getId(), request.getAccept());
+            
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
         return ResponseEntity.ok().build();
