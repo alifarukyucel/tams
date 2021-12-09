@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.hiring.controllers;
 
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
+import nl.tudelft.sem.template.hiring.models.RetrieveStatusModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import static nl.tudelft.sem.template.hiring.entities.Application.createPendingA
 @RestController
 public class ApplicationController {
     private final transient AuthManager authManager;
+
+    private String status;
 
     @Autowired
     private transient ApplicationService applicationService;
@@ -40,4 +43,10 @@ public class ApplicationController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("/status")
+    public ResponseEntity<String> getStatus(@RequestBody RetrieveStatusModel status) {
+        return ResponseEntity.ok("Status: " + status);
+    }
+
 }

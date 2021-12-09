@@ -51,4 +51,5 @@ public class Application {
     public boolean meetsRequirements() {
         return grade >= 6.0;
     }
+
 }
