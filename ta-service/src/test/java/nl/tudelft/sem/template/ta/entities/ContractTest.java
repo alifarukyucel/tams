@@ -1,8 +1,8 @@
 package nl.tudelft.sem.template.ta.entities;
 
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import java.util.UUID;
 
 class ContractTest {
 
