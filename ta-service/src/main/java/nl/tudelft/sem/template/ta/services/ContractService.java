@@ -50,6 +50,24 @@ public class ContractService {
     }
 
     /**
+     * Set a contracts signed status to true.
+     *
+     * @param netId     The netId of the user whose contract we are changing.
+     * @param courseId  The course to which the contract belongs.
+     * @throws NoSuchElementException Thrown if contract could not be found.
+     * @throws IllegalArgumentException Thrown if the contract was already signed.
+     */
+    public void sign(String netId, String courseId)
+        throws NoSuchElementException, IllegalArgumentException {
+        Contract contract = getContract(netId, courseId);
+        if (contract.getSigned()) {
+            throw new IllegalArgumentException("Contract was already accepted.");
+        }
+        contract.setSigned(true);
+        contractRepository.save(contract);
+    }
+
+    /**
      * Saves a given contract object back to the database.
      *
      * @param contract The contract to save.

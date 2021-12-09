@@ -73,7 +73,6 @@ class ContractControllerTest {
     void signExistingContract() throws Exception {
         // arrange
         AcceptContractRequestModel model = AcceptContractRequestModel.builder()
-            .accept(true)
             .course(defaultContract.getCourseId())
             .build();
 
@@ -92,12 +91,11 @@ class ContractControllerTest {
     }
 
     @Test
-    void unSignExistingContract() throws Exception {
+    void reSignAlreadySignedExistingContract() throws Exception {
         // arrange
         defaultContract.setSigned(true);
         defaultContract = contractRepository.save(defaultContract);
         AcceptContractRequestModel model = AcceptContractRequestModel.builder()
-            .accept(false)
             .course(defaultContract.getCourseId())
             .build();
 
@@ -111,14 +109,13 @@ class ContractControllerTest {
         Contract savedContract = contractService
             .getContract(defaultContract.getNetId(), defaultContract.getCourseId());
 
-        results.andExpect(status().isOk());
+        results.andExpect(status().isConflict());
         assertThat(savedContract.getSigned()).isTrue();
     }
 
     @Test
     void signNonExistingContract() throws Exception {
         AcceptContractRequestModel model = AcceptContractRequestModel.builder()
-            .accept(true)
             .course("CSEISFAKE")
             .build();
 
@@ -139,7 +136,6 @@ class ContractControllerTest {
     @Test
     void signExistingContractByPassingNullValues() throws Exception {
         AcceptContractRequestModel model = AcceptContractRequestModel.builder()
-            .accept(true)
             .course(null)
             .build();
 

@@ -34,6 +34,65 @@ class ContractServiceTest {
     }
 
     @Test
+    void signExistingContract() {
+        // arrange
+        Contract contract = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // act
+        contractService.sign(contract.getNetId(), contract.getCourseId());
+
+        // assert
+        assertThat(contractRepository.getOne(contract.getId()).getSigned()).isTrue();
+    }
+
+    @Test
+    void signNonExistingContract() {
+        // arrange
+        Contract contract = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+        final Contract contract1 = contract;
+
+        ThrowingCallable signNonExisting = () ->
+            contractService.sign("GerryEik", contract1.getCourseId());
+
+        // assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(signNonExisting);
+    }
+
+    @Test
+    void signAlreadySignedContract() {
+        // arrange
+        Contract contract = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(true)
+            .build();
+        contract = contractRepository.save(contract);
+        final Contract contract1 = contract;
+
+        ThrowingCallable signSigned = () ->
+            contractService.sign(contract1.getNetId(), contract1.getCourseId());
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(signSigned);
+    }
+
+    @Test
     void getContractSupplementingNullValues() {
         // arrange
         Contract contract = Contract.builder()
