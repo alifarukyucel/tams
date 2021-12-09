@@ -1,13 +1,32 @@
 package nl.tudelft.sem.template.ta.models;
 
+import nl.tudelft.sem.template.ta.entities.Contract;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
 public class ModelTests {
 
+    @Test
+    void testContractResponseFromContract(){
+        Contract contract = Contract.builder()
+            .courseId("CSETEST")
+            .maxHours(5)
+            .duties("Your duties")
+            .signed(true)
+            .build();
+
+        ContractResponseModel model = ContractResponseModel.fromContract(contract);
+        Assertions.assertNotNull(model);
+        Assertions.assertEquals(contract.getCourseId(), model.getCourse());
+        Assertions.assertEquals(contract.getMaxHours(), model.getMaxHours());
+        Assertions.assertEquals(contract.getDuties(), model.getDuties());
+        Assertions.assertEquals(contract.getSigned(), model.isSigned());
+    }
+
     /**
-     * This class is purely to bump the code coverage.
+     * This following is purely to bump the code coverage.
      * Since the models are pure data objects anyways this is not an issue.
      */
     @Test

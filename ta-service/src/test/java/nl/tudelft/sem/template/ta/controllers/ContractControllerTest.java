@@ -200,9 +200,9 @@ class ContractControllerTest {
 
         // Assert
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
-        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isTrue();
-        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isFalse();
-        assertThat(responseContracts.contains(contracts.get(2).toResponseModel())).isFalse();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(0)))).isTrue();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(1)))).isFalse();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(2)))).isFalse();
     }
 
     @Test
@@ -220,9 +220,9 @@ class ContractControllerTest {
                 .andReturn();
 
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
-        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isFalse();
-        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isTrue();
-        assertThat(responseContracts.contains(contracts.get(2).toResponseModel())).isTrue();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(0)))).isFalse();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(1)))).isTrue();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(2)))).isTrue();
     }
 
     @Test
@@ -244,9 +244,9 @@ class ContractControllerTest {
                 .andReturn();
 
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
-        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isFalse();
-        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isTrue();
-        assertThat(responseContracts.contains(contracts.get(2).toResponseModel())).isFalse();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(0)))).isFalse();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(1)))).isTrue();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(2)))).isFalse();
     }
 
 
@@ -296,9 +296,9 @@ class ContractControllerTest {
                 .andReturn();
 
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
-        assertThat(responseContracts.contains(contracts.get(0).toResponseModel())).isTrue();
-        assertThat(responseContracts.contains(contracts.get(1).toResponseModel())).isFalse();
-        assertThat(responseContracts.contains(contracts.get(2).toResponseModel())).isFalse();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(0)))).isTrue();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(1)))).isFalse();
+        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(2)))).isFalse();
     }
 
     @Test

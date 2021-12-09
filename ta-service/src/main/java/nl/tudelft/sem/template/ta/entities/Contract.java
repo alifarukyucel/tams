@@ -37,12 +37,4 @@ public class Contract {
     String duties;
 
     Boolean signed;
-
-    /**
-     * Create an instance of ContractResponseModel based on this contract.
-     * @return ContractResponseModel of this contract.
-     */
-    public ContractResponseModel toResponseModel() {
-        return new ContractResponseModel(courseId, duties, maxHours, signed);
-    }
 }

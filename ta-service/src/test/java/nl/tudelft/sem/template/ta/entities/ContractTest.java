@@ -35,6 +35,14 @@ class ContractTest {
 
     @Test
     void testSetters() {
+        contract = new Contract();
+        contract.setCourseId("build");
+        contract.setMaxHours(5);
+        contract.setId(UUID.randomUUID());
+        contract.setSigned(false);
+        contract.setNetId("PieterDelft");
+        contract.setDuties("You need to work!");
+
         Assertions.assertEquals("build", contract.getCourseId());
         Assertions.assertEquals(5, contract.getMaxHours());
         Assertions.assertNotNull(contract.getId());
@@ -43,13 +51,4 @@ class ContractTest {
         Assertions.assertEquals("You need to work!", contract.getDuties());
     }
 
-    @Test
-    void testToResponseModel(){
-        ContractResponseModel model = contract.toResponseModel();
-        Assertions.assertNotNull(model);
-        Assertions.assertEquals(contract.getCourseId(), model.getCourse());
-        Assertions.assertEquals(contract.getMaxHours(), model.getMaxHours());
-        Assertions.assertEquals(contract.getDuties(), model.getDuties());
-        Assertions.assertEquals(contract.getSigned(), model.isSigned());
-    }
 }

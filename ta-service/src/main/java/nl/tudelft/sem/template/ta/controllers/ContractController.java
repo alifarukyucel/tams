@@ -115,7 +115,7 @@ public class ContractController {
             List<Contract> contracts = contractService.getContractsBy(netId, courseId);
             List<ContractResponseModel> response = new ArrayList<ContractResponseModel>();
             for (var contract : contracts) {
-                response.add(contract.toResponseModel());
+                response.add(ContractResponseModel.fromContract(contract));
             }
 
             return ResponseEntity.ok(response);
