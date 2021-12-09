@@ -1,5 +1,10 @@
 package nl.tudelft.sem.template.ta.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import java.util.NoSuchElementException;
+import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -10,12 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import javax.transaction.Transactional;
-import java.util.NoSuchElementException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -48,12 +47,14 @@ class ContractServiceTest {
         final Contract contract1 = contract;
 
         // act
-        ThrowingCallable action_different_course = () -> contractService.getContract(contract1.getNetId(), null);
-        ThrowingCallable action_different_netId  = () -> contractService.getContract(null, contract1.getCourseId());
+        ThrowingCallable actionDifferentCourse = () ->
+            contractService.getContract(contract1.getNetId(), null);
+        ThrowingCallable actionDifferentNetId  = () ->
+            contractService.getContract(null, contract1.getCourseId());
 
         // assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_different_course);
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_different_netId);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionDifferentCourse);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionDifferentNetId);
     }
 
     @Test
@@ -70,13 +71,17 @@ class ContractServiceTest {
         final Contract contract1 = contract;
 
         // act
-        ThrowingCallable action_different_course = () -> contractService.getContract(contract1.getNetId(), "CSE2550");
-        ThrowingCallable action_different_netId  = () -> contractService.getContract("GerryEiko", contract1.getCourseId());
-        Contract foundContract = contractService.getContract(contract.getNetId(), contract.getCourseId());
+        ThrowingCallable actionDifferentCourse = () ->
+            contractService.getContract(contract1.getNetId(), "CSE2550");
+        ThrowingCallable actionDifferentNetId  = () ->
+            contractService.getContract("GerryEiko", contract1.getCourseId());
+
+        Contract foundContract = contractService
+            .getContract(contract.getNetId(), contract.getCourseId());
 
         // assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_different_course);
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_different_netId);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionDifferentCourse);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionDifferentNetId);
         assertThat(foundContract).isEqualTo(contract);
     }
 
@@ -109,7 +114,8 @@ class ContractServiceTest {
         contract = contractRepository.save(contract);
 
         // act
-        Contract foundContract = contractService.getContract(contract.getNetId(), contract.getCourseId());
+        Contract foundContract = contractService
+            .getContract(contract.getNetId(), contract.getCourseId());
 
         // assert
         assertThat(foundContract).isEqualTo(contract);

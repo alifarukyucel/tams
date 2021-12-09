@@ -1,6 +1,13 @@
 package nl.tudelft.sem.template.ta.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
@@ -19,17 +26,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static nl.tudelft.sem.template.ta.utils.JsonUtil.deserialize;
-import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
-
-import javax.transaction.Transactional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -74,9 +70,12 @@ class ContractControllerTest {
     }
 
     @Test
-    void signExistingContract() throws Exception{
+    void signExistingContract() throws Exception {
         // arrange
-        AcceptContractRequestModel model = AcceptContractRequestModel.builder().accept(true).course(defaultContract.getCourseId()).build();
+        AcceptContractRequestModel model = AcceptContractRequestModel.builder()
+            .accept(true)
+            .course(defaultContract.getCourseId())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/contracts/sign")
@@ -85,7 +84,8 @@ class ContractControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        Contract savedContract = contractService.getContract(defaultContract.getNetId(), defaultContract.getCourseId());
+        Contract savedContract = contractService
+            .getContract(defaultContract.getNetId(), defaultContract.getCourseId());
 
         results.andExpect(status().isOk());
         assertThat(savedContract.getSigned()).isTrue();
@@ -96,7 +96,10 @@ class ContractControllerTest {
         // arrange
         defaultContract.setSigned(true);
         defaultContract = contractRepository.save(defaultContract);
-        AcceptContractRequestModel model = AcceptContractRequestModel.builder().accept(false).course(defaultContract.getCourseId()).build();
+        AcceptContractRequestModel model = AcceptContractRequestModel.builder()
+            .accept(false)
+            .course(defaultContract.getCourseId())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/contracts/sign")
@@ -105,7 +108,8 @@ class ContractControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        Contract savedContract = contractService.getContract(defaultContract.getNetId(), defaultContract.getCourseId());
+        Contract savedContract = contractService
+            .getContract(defaultContract.getNetId(), defaultContract.getCourseId());
 
         results.andExpect(status().isOk());
         assertThat(savedContract.getSigned()).isTrue();
@@ -113,7 +117,10 @@ class ContractControllerTest {
 
     @Test
     void signNonExistingContract() throws Exception {
-        AcceptContractRequestModel model = AcceptContractRequestModel.builder().accept(true).course("CSEISFAKE").build();
+        AcceptContractRequestModel model = AcceptContractRequestModel.builder()
+            .accept(true)
+            .course("CSEISFAKE")
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/contracts/sign")
@@ -122,7 +129,8 @@ class ContractControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        Contract savedContract = contractService.getContract(defaultContract.getNetId(), defaultContract.getCourseId());
+        Contract savedContract = contractService
+            .getContract(defaultContract.getNetId(), defaultContract.getCourseId());
 
         results.andExpect(status().isNotFound());
         assertThat(savedContract.getSigned()).isFalse();
@@ -130,7 +138,10 @@ class ContractControllerTest {
 
     @Test
     void signExistingContractByPassingNullValues() throws Exception {
-        AcceptContractRequestModel model = AcceptContractRequestModel.builder().accept(true).course(null).build();
+        AcceptContractRequestModel model = AcceptContractRequestModel.builder()
+            .accept(true)
+            .course(null)
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/contracts/sign")
@@ -139,7 +150,8 @@ class ContractControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        Contract savedContract = contractService.getContract(defaultContract.getNetId(), defaultContract.getCourseId());
+        Contract savedContract = contractService
+            .getContract(defaultContract.getNetId(), defaultContract.getCourseId());
 
         results.andExpect(status().isNotFound());
         assertThat(savedContract.getSigned()).isFalse();
