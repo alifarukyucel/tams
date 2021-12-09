@@ -1,11 +1,10 @@
 package nl.tudelft.sem.template.ta.models;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-public class modelTests {
+public class ModelTests {
 
     /**
      * This class is purely to bump the code coverage.
