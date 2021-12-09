@@ -1,9 +1,15 @@
 package nl.tudelft.sem.template.course;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.services.CourseService;
 import org.assertj.core.api.ThrowableAssert;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Unit tests for CourseService
@@ -39,6 +40,11 @@ public class CourseServiceTests {
     final static String testDescription = "swe methods";
     final static int testNumberOfStudents = 300;
     final static String responsibleLecturer = "fmulder";
+
+    @BeforeEach
+    void setUp() {
+        courseRepository.deleteAll();
+    }
 
     @Test
     public void createCourse_withValidData_worksCorrectly() {
