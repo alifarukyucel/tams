@@ -78,10 +78,24 @@ class HourServiceTest {
         hoursRepository.save(defaultWorkedHours);
 
         // act
-        hourService.approveHours(defaultWorkedHours.getId(), false);
+        ThrowingCallable action = () -> hourService.approveHours(defaultWorkedHours.getId(), false);
 
         // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
         assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isTrue();
+    }
+
+    @Test
+    void reApproveApprovedExistingHours() {
+        // arrange
+        defaultWorkedHours.setApproved(true);
+        hoursRepository.save(defaultWorkedHours);
+
+        // act
+        ThrowingCallable action = () -> hourService.approveHours(defaultWorkedHours.getId(), true);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
     }
 
     @Test

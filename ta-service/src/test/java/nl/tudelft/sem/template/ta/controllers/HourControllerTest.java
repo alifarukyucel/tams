@@ -105,7 +105,7 @@ class HourControllerTest {
     }
 
     @Test
-    void unApproveApprovedExistingHours() throws Exception {
+    void reApproveApprovedExistingHours() throws Exception {
         // arrange
         defaultWorkedHours.setApproved(true);
         defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);
@@ -121,7 +121,7 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        results.andExpect(status().isOk());
+        results.andExpect(status().isConflict());
         WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
         assertThat(hour.isApproved()).isTrue();
     }
