@@ -25,10 +25,15 @@ public class WorkedHours {
     @Id
     @GeneratedValue
     private UUID id;
+
     int workedTime;
+
     boolean approved;
+
     Date date;
+
     String desc;
+
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     Contract contract;
 
