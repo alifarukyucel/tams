@@ -1,11 +1,10 @@
 package nl.tudelft.sem.template.ta.models;
 
-import org.junit.jupiter.api.Assertions;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
 
-public class modelTests {
+public class ModelTests {
 
     /**
      * This class is purely to bump the code coverage.
@@ -17,7 +16,8 @@ public class modelTests {
         AcceptHoursRequestModel ahrm = AcceptHoursRequestModel.builder().build();
         GetContractRequestModel gcrm = GetContractRequestModel.builder().build();
         GetContractResponseModel gcrm2 = GetContractResponseModel.builder().build();
-        RetrieveHoursToBeApprovedRequestModel rhtbarm = RetrieveHoursToBeApprovedRequestModel.builder().build();
+        RetrieveHoursToBeApprovedRequestModel rhtbarm = RetrieveHoursToBeApprovedRequestModel
+            .builder().build();
         SubmitHoursRequestModel shrm = SubmitHoursRequestModel.builder().build();
     }
 
