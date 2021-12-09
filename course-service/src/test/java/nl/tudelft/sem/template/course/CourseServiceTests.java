@@ -33,7 +33,7 @@ public class CourseServiceTests {
     @Autowired
     private transient CourseRepository courseRepository;
 
-    final static String testCourseID = "CSE2115-2021";
+    final static String testCourseID = "CSE2115";
     final static LocalDateTime testStartDate = LocalDateTime.of(2021, 12, 1, 0, 0);
     final static String testCourseName = "SEM";
     final static String testDescription = "swe methods";
@@ -52,7 +52,7 @@ public class CourseServiceTests {
         courseService.createCourse(newCourse);
 
         // Assert
-        Course savedCourse = courseRepository.getById("CSE2115-2021");
+        Course savedCourse = courseRepository.getById("CSE2115");
         assertThat(savedCourse.getId()).isEqualTo(testCourseID);
         assertThat(savedCourse.getName()).isEqualTo(testCourseName);
         assertThat(savedCourse.getDescription()).isEqualTo(testDescription);
