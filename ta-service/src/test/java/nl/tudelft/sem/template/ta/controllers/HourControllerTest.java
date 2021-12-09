@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.ta.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.WorkedHours;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
@@ -9,7 +8,6 @@ import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.repositories.WorkedHoursRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.security.TokenVerifier;
-import nl.tudelft.sem.template.ta.services.ContractService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,10 +27,7 @@ import java.util.UUID;
 
 import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,9 +42,6 @@ class HourControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ContractService contractService;
 
     @Autowired
     private TokenVerifier mockTokenVerifier;
@@ -103,8 +95,6 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        verify(courseInformation).isResponsibleLecturer(defaultContract.getNetId(), defaultContract.getCourseId());
-        verify(courseInformation, times(1)).isResponsibleLecturer(any(), any());
         results.andExpect(status().isOk());
         WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
         assertThat(hour.isApproved()).isTrue();
@@ -124,8 +114,6 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        verify(courseInformation).isResponsibleLecturer(defaultContract.getNetId(), defaultContract.getCourseId());
-        verify(courseInformation, times(1)).isResponsibleLecturer(any(), any());
         results.andExpect(status().isOk());
         WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
         assertThat(hour.isApproved()).isTrue();
@@ -144,8 +132,6 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        verify(courseInformation).isResponsibleLecturer(defaultContract.getNetId(), defaultContract.getCourseId());
-        verify(courseInformation, times(1)).isResponsibleLecturer(any(), any());
         results.andExpect(status().isUnauthorized());
         WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
         assertThat(hour.isApproved()).isFalse();
