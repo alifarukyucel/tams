@@ -97,9 +97,10 @@ class HourServiceTest {
     void approveNonExistingHours() {
         // precondition
         assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        UUID id = UUID.randomUUID();
 
         // act
-        ThrowingCallable action = () -> hourService.approveHours(UUID.randomUUID(), true);
+        ThrowingCallable action = () -> hourService.approveHours(id, true);
 
         // assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
@@ -139,8 +140,11 @@ class HourServiceTest {
 
     @Test
     void getAssociatedContractNonExistingHours() {
+        // arrange
+        UUID id = UUID.randomUUID();
+
         // act
-        ThrowingCallable action = () -> hourService.getAssociatedContract(UUID.randomUUID());
+        ThrowingCallable action = () -> hourService.getAssociatedContract(id);
 
         // assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
