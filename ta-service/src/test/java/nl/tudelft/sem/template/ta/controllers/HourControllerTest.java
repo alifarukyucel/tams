@@ -1,5 +1,14 @@
 package nl.tudelft.sem.template.ta.controllers;
 
+import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.UUID;
+import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.WorkedHours;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
@@ -20,17 +29,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import javax.transaction.Transactional;
-
-import java.util.UUID;
-
-import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -74,7 +72,10 @@ class HourControllerTest {
             .signed(false)
             .build();
         defaultContract = contractRepository.save(defaultContract);
-        defaultWorkedHours = WorkedHours.builder().contract(defaultContract).approved(false).build();
+        defaultWorkedHours = WorkedHours.builder()
+            .contract(defaultContract)
+            .approved(false)
+            .build();
         defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);
 
         when(mockAuthenticationManager.getNetid()).thenReturn(defaultContract.getNetId());
@@ -86,7 +87,10 @@ class HourControllerTest {
     @Test
     void approveExistingHours() throws Exception {
         // arrange
-        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder().accept(true).id(defaultWorkedHours.getId()).build();
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(true)
+            .id(defaultWorkedHours.getId())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/hours/approve")
@@ -105,7 +109,10 @@ class HourControllerTest {
         // arrange
         defaultWorkedHours.setApproved(true);
         defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);
-        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder().accept(false).id(defaultWorkedHours.getId()).build();
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(false)
+            .id(defaultWorkedHours.getId())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/hours/approve")
@@ -120,10 +127,13 @@ class HourControllerTest {
     }
 
     @Test
-    void approveHoursYouAreNotResponsibleFor() throws Exception{
+    void approveHoursYouAreNotResponsibleFor() throws Exception {
         when(courseInformation.isResponsibleLecturer(anyString(), anyString())).thenReturn(false);
         // arrange
-        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder().accept(true).id(defaultWorkedHours.getId()).build();
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(true)
+            .id(defaultWorkedHours.getId())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/hours/approve")
@@ -141,7 +151,10 @@ class HourControllerTest {
     @Test
     void approveNonExistingHours() throws Exception {
         // arrange
-        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder().accept(true).id(UUID.randomUUID()).build();
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(true)
+            .id(UUID.randomUUID())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/hours/approve")

@@ -1,5 +1,11 @@
 package nl.tudelft.sem.template.ta.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import java.util.NoSuchElementException;
+import java.util.UUID;
+import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.WorkedHours;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
@@ -12,15 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import javax.transaction.Transactional;
-
-import java.util.NoSuchElementException;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -53,7 +50,10 @@ class HourServiceTest {
 
         defaultContract = contractRepository.save(defaultContract);
 
-        defaultWorkedHours = WorkedHours.builder().contract(defaultContract).approved(false).build();
+        defaultWorkedHours = WorkedHours.builder()
+            .contract(defaultContract)
+            .approved(false)
+            .build();
 
         hoursRepository.save(defaultWorkedHours);
 
