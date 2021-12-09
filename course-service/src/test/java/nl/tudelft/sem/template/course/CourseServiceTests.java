@@ -41,11 +41,6 @@ public class CourseServiceTests {
     final static int testNumberOfStudents = 300;
     final static String responsibleLecturer = "fmulder";
 
-    @BeforeEach
-    void setUp() {
-        courseRepository.deleteAll();
-    }
-
     @Test
     public void createCourse_withValidData_worksCorrectly() {
         // Arrange
