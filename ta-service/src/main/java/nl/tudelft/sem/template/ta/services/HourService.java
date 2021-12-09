@@ -59,9 +59,10 @@ public class HourService {
      *
      * @param uuid the id of the worked hours.
      * @return The contract.
+     * @throws NoSuchElementException Thrown if the contract or worked hours do not exist.
      */
     public Contract getAssociatedContract(UUID uuid)
-        throws NoSuchElementException, NullPointerException {
+        throws NoSuchElementException {
 
         if (uuid == null) {
             throw new NoSuchElementException("An Id must be specified");
