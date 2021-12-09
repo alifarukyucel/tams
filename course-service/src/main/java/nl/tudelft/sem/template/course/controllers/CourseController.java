@@ -27,7 +27,7 @@ public class CourseController {
     private final transient AuthManager authManager;
 
     @Autowired
-    private final CourseService courseService;
+    private final transient CourseService courseService;
 
     Date date = new Date();
 

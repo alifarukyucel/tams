@@ -20,8 +20,9 @@ import java.util.Optional;
  */
 @Service
 public class CourseService {
+
     @Autowired
-    CourseRepository courseRepository;
+    private transient CourseRepository courseRepository;
 
     // Getters
     public Course getCourseById(String id) throws NoSuchElementException {
