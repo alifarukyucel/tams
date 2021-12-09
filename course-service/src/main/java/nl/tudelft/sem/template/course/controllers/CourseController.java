@@ -47,12 +47,24 @@ public class CourseController {
     /**
      * Gets course by id.
      *
-     * @param id            the id of course
+     * @param id            id of course
      * @return the course found in the database with the given id
      */
-    @GetMapping("get/{id}") // course/get/id
+    @GetMapping("{id}") // course/id
     public Course getCourseById(@PathVariable String id) {
         return courseService.getCourseById(id);
+    }
+
+    /**
+     * Gets whether a user is a responsible lecturer for the given course.
+     *
+     * @param netId             id of user
+     * @param courseId          id of course
+     * @return the course found in the database with the given id
+     */
+    @GetMapping("lecturer/{netId}/{courseId}") // course/lecturer/{netId}/{courseId}
+    public boolean isResponsibleLecturer(@PathVariable String netId, @PathVariable String courseId) {
+        return courseService.isResponsibleLecturer(netId, courseId);
     }
 
 
@@ -66,7 +78,7 @@ public class CourseController {
      * @param courseModel   the course to be created
      * @return the course returned from the database (with a manually-assigned id)
      */
-    @PostMapping(value = "create", consumes = "application/json")
+    @PostMapping(value = "create", consumes = "application/json") // course/create
     Course createCourse(@RequestBody CourseModel courseModel) {
         Course course = new Course(courseModel.getId(), courseModel.getStartDate(), courseModel.getName(),
                 courseModel.getDescription(), courseModel.getNumberOfStudents(),

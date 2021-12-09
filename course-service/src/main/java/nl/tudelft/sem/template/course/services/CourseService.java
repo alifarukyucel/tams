@@ -31,6 +31,10 @@ public class CourseService {
         return courseRepository.getById(id);
     }
 
+    public boolean isResponsibleLecturer(String netId, String courseId) {
+        return courseRepository.getById(courseId).getResponsibleLecturers().contains(netId);
+    }
+
     // Setters
     @Transactional
     public Course createCourse(Course course) throws ConflictException { // this method can also be used as an update method.
