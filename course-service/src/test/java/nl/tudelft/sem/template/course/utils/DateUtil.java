@@ -5,8 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author Ali Faruk Yücel
- * @version 1.0
+ * Date is deprecated, this is an easier way to convert a String to a Date.
  * @created 09/12/2021, 16:05
  */
 public class DateUtil {

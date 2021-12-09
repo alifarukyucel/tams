@@ -1,9 +1,6 @@
 package nl.tudelft.sem.template.course.entities;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.*;
 
@@ -34,7 +31,7 @@ public class Course {
     private String id;
 
     @Column(name = "StartDate")
-    private Date startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "Name")
     private String name;

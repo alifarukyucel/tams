@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.course;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -21,7 +23,7 @@ public class DatabaseLoader {
     Date date = new Date();
 
     public DatabaseLoader(CourseRepository courseRepository) {
-        Course sem = new Course("CSE2115-2021", new Date(), "sem", "teaches you swe methods", 99999, new ArrayList<>());
+        Course sem = new Course("CSE2115-2021", LocalDateTime.now(), "sem", "teaches you swe methods", 99999, new ArrayList<>());
 
         courseRepository.save(sem);
     }

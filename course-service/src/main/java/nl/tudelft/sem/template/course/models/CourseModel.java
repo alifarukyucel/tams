@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -17,13 +17,13 @@ import java.util.List;
 public class CourseModel {
 
     private String id;
-    private Date startDate;
+    private LocalDateTime startDate;
     private String name;
     private String description;
     private int numberOfStudents;
     private List<String> responsibleLecturers;
 
-    public CourseModel(String id, Date startDate, String name, String description, int numberOfStudents) {
+    public CourseModel(String id, LocalDateTime startDate, String name, String description, int numberOfStudents) {
         this.id = id;
         this.startDate = startDate;
         this.name = name;
