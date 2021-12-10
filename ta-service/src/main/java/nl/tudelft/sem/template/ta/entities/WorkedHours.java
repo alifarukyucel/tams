@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.ta.entities;
 import java.util.Date;
 import java.util.UUID;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -33,7 +34,7 @@ public class WorkedHours {
 
     String desc;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     Contract contract;
 
 }
