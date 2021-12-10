@@ -18,14 +18,21 @@ public class ApplicationTest {
 
     @Test
     public void meetsRequirementsTest() {
+        //Act + assert
+        assertThat(defaultPendingApplication.meetsRequirements()).isTrue();
+    }
+
+    @Test
+    public void doesNotMeetRequirementsTest() {
         //Arrange
         Application lowGradeApplication = new Application("CSE1200", "johndoe", (float) 5.9,
                 "Let me in!", ApplicationStatus.PENDING);
 
         //Act + assert
-        assertThat(defaultPendingApplication.meetsRequirements()).isTrue();
         assertThat(lowGradeApplication.meetsRequirements()).isFalse();
     }
+
+
 
     @Test
     public void createPendingApplicationTest() {
