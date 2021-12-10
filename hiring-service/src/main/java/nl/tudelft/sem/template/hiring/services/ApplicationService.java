@@ -99,8 +99,11 @@ public class ApplicationService {
         if(status.equals(ApplicationStatus.ACCEPTED)) {
             return "Congratulations, you have been accepted";
         }
-        else{
+        if(status.equals(ApplicationStatus.REJECTED)){
             return "Unfortunately you have been rejected";
+        }
+        else{
+            return "The selection procedure is still pending";
         }
     }
 }
