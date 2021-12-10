@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
@@ -37,7 +38,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier"})
+@ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier", "mockCourseInformation"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 @Transactional
@@ -57,6 +58,9 @@ class ContractControllerTest {
 
     @Autowired
     private ContractRepository contractRepository;
+
+    @Autowired
+    private CourseInformation courseInformation;
 
     private Contract defaultContract;
     private List<Contract> contracts;
@@ -101,10 +105,15 @@ class ContractControllerTest {
     }
 
     // Mock authentication to show that we are signed in as a certain user.
-    void mockAuthentication(String netId) {
+    void mockAuthentication(String netId, boolean isResponsibleLecturer) {
         when(mockAuthenticationManager.getNetid()).thenReturn(netId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(netId);
+        when(courseInformation.isResponsibleLecturer(anyString(), anyString())).thenReturn(isResponsibleLecturer);
+    }
+
+    void mockAuthentication(String netId) {
+        mockAuthentication(netId, false);
     }
 
     @Test
@@ -269,7 +278,7 @@ class ContractControllerTest {
     @Test
     void getContracts() throws Exception {
         // Arrange
-        mockAuthentication("WinstijnSmit");
+        mockAuthentication("Stefan", true);
 
         // Act
         ResultActions action = mockMvc.perform(get("/contracts/CSE2310/PVeldHuis")
@@ -284,14 +293,13 @@ class ContractControllerTest {
 
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
         assertThatResponseContains(responseContracts, contracts.get(0)).isTrue();
-        assertThatResponseContains(responseContracts, contracts.get(1)).isFalse();
-        assertThatResponseContains(responseContracts, contracts.get(2)).isFalse();
+        assertThat(responseContracts.size()).isEqualTo(1);
     }
 
     @Test
     void getContracts_notFound() throws Exception {
         // Arrange
-        mockAuthentication("WinstijnSmit");
+        mockAuthentication("Stefan", true);
 
         // Act
         ResultActions action = mockMvc.perform(get("/contracts/CSE1000/WinstijnSmit")
@@ -302,6 +310,43 @@ class ContractControllerTest {
         // Assert
         action.andExpect(status().isNotFound());
     }
+
+    @Test
+    void getContracts_ownContract() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit", false);
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/CSE2310/WinstijnSmit")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isOk())
+            .andReturn();
+
+        List<ContractResponseModel> responseContracts = parseContractsResult(result);
+        assertThatResponseContains(responseContracts, contracts.get(1)).isTrue();
+        assertThat(responseContracts.size()).isEqualTo(1);
+    }
+
+    @Test
+    void getContracts_unauthorized() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit", false);
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/CSE2310/PVeldHuis")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isUnauthorized());
+    }
+
 
     /**
      * Helper method that asserts whether the response contains the contract.
