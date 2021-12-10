@@ -24,7 +24,7 @@ public class Contract {
     @GeneratedValue
     private UUID id;
 
-    int maxHours;
+    Integer maxHours;
 
     @Column(nullable = false)
     String netId;
@@ -35,6 +35,6 @@ public class Contract {
     @Column(columnDefinition = "TEXT")
     String duties;
 
-    boolean signed;
+    Boolean signed;
 
 }

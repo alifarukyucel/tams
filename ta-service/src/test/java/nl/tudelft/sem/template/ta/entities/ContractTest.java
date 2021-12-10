@@ -19,7 +19,7 @@ class ContractTest {
         Assertions.assertEquals("build", c1.getCourseId());
         Assertions.assertEquals(5, c1.getMaxHours());
         Assertions.assertNotNull(c1.getId());
-        Assertions.assertFalse(c1.isSigned());
+        Assertions.assertFalse(c1.getSigned());
         Assertions.assertEquals("PieterDelft", c1.getNetId());
 
     }
@@ -36,7 +36,7 @@ class ContractTest {
         Assertions.assertEquals("build", c1.getCourseId());
         Assertions.assertEquals(5, c1.getMaxHours());
         Assertions.assertNotNull(c1.getId());
-        Assertions.assertFalse(c1.isSigned());
+        Assertions.assertFalse(c1.getSigned());
         Assertions.assertEquals("PieterDelft", c1.getNetId());
 
     }
