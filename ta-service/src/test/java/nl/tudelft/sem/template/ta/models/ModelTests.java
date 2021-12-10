@@ -1,36 +1,49 @@
 package nl.tudelft.sem.template.ta.models;
 
 import java.util.UUID;
+import nl.tudelft.sem.template.ta.entities.Contract;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
 public class ModelTests {
 
+    @Test
+    void testContractResponseFromContract() {
+        Contract contract = Contract.builder()
+            .courseId("CSETEST")
+            .maxHours(5)
+            .duties("Your duties")
+            .signed(true)
+            .build();
+
+        ContractResponseModel model = ContractResponseModel.fromContract(contract);
+        Assertions.assertNotNull(model);
+        Assertions.assertEquals(contract.getCourseId(), model.getCourse());
+        Assertions.assertEquals(contract.getMaxHours(), model.getMaxHours());
+        Assertions.assertEquals(contract.getDuties(), model.getDuties());
+        Assertions.assertEquals(contract.getSigned(), model.isSigned());
+    }
+
     /**
-     * This class is purely to bump the code coverage.
+     * This following is purely to bump the code coverage.
      * Since the models are pure data objects anyways this is not an issue.
      */
     @Test
     void modelBuildersExist() {
         AcceptContractRequestModel acrm = AcceptContractRequestModel.builder().build();
         AcceptHoursRequestModel ahrm = AcceptHoursRequestModel.builder().build();
-        GetContractRequestModel gcrm = GetContractRequestModel.builder().build();
-        GetContractResponseModel gcrm2 = GetContractResponseModel.builder().build();
+        ContractResponseModel gcrm2 = ContractResponseModel.builder().build();
         RetrieveHoursToBeApprovedRequestModel rhtbarm = RetrieveHoursToBeApprovedRequestModel
-            .builder().build();
+                                                        .builder().build();
         SubmitHoursRequestModel shrm = SubmitHoursRequestModel.builder().build();
     }
 
     @Test
     void noArgExists() {
         AcceptContractRequestModel acrm = new AcceptContractRequestModel();
-        acrm.setAccept(true);
-        acrm.setCourse("CSE2310");
-        acrm.getCourse();
-        acrm.isAccept();
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
-        GetContractRequestModel gcrm = new GetContractRequestModel();
-        GetContractResponseModel gcrm2 = new GetContractResponseModel();
+        ContractResponseModel gcrm2 = new ContractResponseModel();
         RetrieveHoursToBeApprovedRequestModel rhtbarm = new RetrieveHoursToBeApprovedRequestModel();
         SubmitHoursRequestModel shrm = new SubmitHoursRequestModel();
     }
@@ -38,22 +51,16 @@ public class ModelTests {
     @Test
     void checkGetterSettersExist() {
         AcceptContractRequestModel acrm = new AcceptContractRequestModel();
-        acrm.setAccept(true);
         acrm.setCourse("CSE2310");
         acrm.getCourse();
-        acrm.isAccept();
 
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
         ahrm.setAccept(true);
         ahrm.setId(UUID.randomUUID());
-        ahrm.isAccept();
+        ahrm.getAccept();
         ahrm.getId();
 
-        GetContractRequestModel gcrm = new GetContractRequestModel();
-        gcrm.setCourse("CSE2310");
-        gcrm.getCourse();
-
-        GetContractResponseModel gcrm2 = new GetContractResponseModel();
+        ContractResponseModel gcrm2 = new ContractResponseModel();
         gcrm2.setCourse("CSE2310");
         gcrm2.setDuties("WORK");
         gcrm2.setSigned(true);
