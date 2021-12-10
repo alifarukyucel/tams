@@ -29,4 +29,6 @@ PMD-ta-service:
 test-ta-service:
   stage: test
   script:
-    gradle ta-service:test
+    - gradle ta-service:test ta-service:jacocoTestReport
+    - cat server/build/reports/jacoco/html/index.html | grep -Po "Total.*?([0-9]{1,3})%"
+  coverage: /([0-9]{1,3})%/

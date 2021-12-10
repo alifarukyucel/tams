@@ -30,4 +30,6 @@ PMD-course-service:
 test-course-service:
   stage: test
   script:
-    gradle course-service:test
+    - gradle course-service:test course-service:jacocoTestReport
+    - cat server/build/reports/jacoco/html/index.html | grep -Po "Total.*?([0-9]{1,3})%"
+  coverage: /([0-9]{1,3})%/

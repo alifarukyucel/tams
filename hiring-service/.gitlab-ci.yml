@@ -29,4 +29,6 @@ PMD-hiring-service:
 test-hiring-service:
   stage: test
   script:
-    gradle hiring-service:test
+    - gradle hiring-service:test hiring-service:jacocoTestReport
+    - cat server/build/reports/jacoco/html/index.html | grep -Po "Total.*?([0-9]{1,3})%"
+  coverage: /([0-9]{1,3})%/

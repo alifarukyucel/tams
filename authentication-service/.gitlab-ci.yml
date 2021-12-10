@@ -29,4 +29,6 @@ PMD-authentication-service:
 test-authentication-service:
   stage: test
   script:
-    gradle authentication-service:test
+    - gradle authentication-service:test authentication-service:jacocoTestReport
+    - cat server/build/reports/jacoco/html/index.html | grep -Po "Total.*?([0-9]{1,3})%"
+  coverage: /([0-9]{1,3})%/
