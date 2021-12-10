@@ -42,6 +42,26 @@ public class Application {
         return application;
     }
 
+    public static Application createRejectedApplication(String courseId, String netId, float grade, String motivation) {
+        Application application = new Application();
+        application.setCourseId(courseId);
+        application.setNetId(netId);
+        application.setGrade(grade);
+        application.setMotivation(motivation);
+        application.setStatus(ApplicationStatus.REJECTED);
+        return application;
+    }
+
+    public static Application createAcceptedApplication(String courseId, String netId, float grade, String motivation) {
+        Application application = new Application();
+        application.setCourseId(courseId);
+        application.setNetId(netId);
+        application.setGrade(grade);
+        application.setMotivation(motivation);
+        application.setStatus(ApplicationStatus.REJECTED);
+        return application;
+    }
+
     /**
      * Checks whether the application meets the requirements
      * As of now the only requirement is the grade >= 6.0
