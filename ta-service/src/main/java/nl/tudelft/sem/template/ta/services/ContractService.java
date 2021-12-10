@@ -107,7 +107,7 @@ public class ContractService {
     }
 
     /**
-     * Creates an example which can be used to find a Contract with a certain netId and courseId inside of the database.
+     * Creates an example which can be used to find a Contract with a certain netId and courseId inside the database.
      * @param netId the example's netId
      * @param courseId  the example's courseId
      * @return an example contract.
