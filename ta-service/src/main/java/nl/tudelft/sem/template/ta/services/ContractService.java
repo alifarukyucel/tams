@@ -2,8 +2,6 @@ package nl.tudelft.sem.template.ta.services;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
-
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import org.springframework.data.domain.Example;
@@ -32,15 +30,11 @@ public class ContractService {
      * @throws NoSuchElementException Thrown if the contract was not found.
      */
     public Contract getContract(String netId, String courseId) throws NoSuchElementException {
-
         if (netId == null || courseId == null) {
             throw new NoSuchElementException("A contract must have a netId and courseId");
         }
 
         List<Contract> contracts = getContractsBy(netId, courseId);
-        if (contracts.size() == 0)
-            throw new NoSuchElementException("The requested contract could not be found");
-
         return contracts.get(0);
     }
 
@@ -53,16 +47,19 @@ public class ContractService {
      * @return a list of contracts with the requested netId and courseId.
      * @throws NoSuchElementException Thrown when no contracts were found.
      */
-    public List<Contract> getContractsBy(String netId, String courseId) throws NoSuchElementException {
-        if (netId == null)
+    public List<Contract> getContractsBy(String netId, String courseId)
+            throws NoSuchElementException {
+        if (netId == null) {
             throw new NoSuchElementException("netId must be specified to search for contracts");
+        }
 
         Example<Contract> example = createContractExample(netId, courseId);
 
         // Search for all the contract with a certain netId.
         List<Contract> contracts = contractRepository.findAll(example);
-        if (contracts.size() == 0)
+        if (contracts.size() == 0) {
             throw new NoSuchElementException("Could not find contracts for " + netId);
+        }
 
         return contracts;
     }
@@ -107,13 +104,16 @@ public class ContractService {
     }
 
     /**
-     * Creates an example which can be used to find a Contract with a certain netId and courseId inside the database.
+     * Creates an example which can be used to find a Contract
+     * with a certain netId and courseId inside the database.
+     *
      * @param netId the example's netId
      * @param courseId  the example's courseId
      * @return an example contract.
      */
-    private Example<Contract> createContractExample(String netId, String courseId){
-        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll().withIgnoreNullValues();
+    private Example<Contract> createContractExample(String netId, String courseId) {
+        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
+                                                        .withIgnoreNullValues();
         Example<Contract> example = Example.of(
                 Contract.builder()
                         .courseId(courseId)
