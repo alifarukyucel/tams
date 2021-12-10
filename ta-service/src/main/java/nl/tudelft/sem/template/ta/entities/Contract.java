@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 
 @Entity
 @Builder

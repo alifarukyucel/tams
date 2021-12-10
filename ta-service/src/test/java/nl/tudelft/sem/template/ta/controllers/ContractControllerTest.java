@@ -1,11 +1,9 @@
 package nl.tudelft.sem.template.ta.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
-import nl.tudelft.sem.template.ta.models.CourseRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.security.TokenVerifier;
@@ -25,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static nl.tudelft.sem.template.ta.utils.JsonUtil.deserialize;
 import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
 
 import javax.transaction.Transactional;
@@ -198,7 +195,6 @@ class ContractControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // Assert
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
         assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(0)))).isTrue();
         assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(1)))).isFalse();
