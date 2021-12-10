@@ -14,4 +14,6 @@ import lombok.NoArgsConstructor;
 public class ContractId implements Serializable {
     private String netId;
     private String courseId;
+
+    public static final long serialVersionUID = "ContractId".hashCode();
 }
