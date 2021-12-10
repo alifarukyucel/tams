@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.ta.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractRequestModel;
@@ -107,10 +108,9 @@ public class ContractController {
     private ResponseEntity<List<ContractResponseModel>> findContractBy(String netId, String courseId) throws ResponseStatusException  {
         try {
             List<Contract> contracts = contractService.getContractsBy(netId, courseId);
-            List<ContractResponseModel> response = new ArrayList<ContractResponseModel>();
-            for (var contract : contracts) {
-                response.add(ContractResponseModel.fromContract(contract));
-            }
+            List<ContractResponseModel> response = contracts.stream().map(contract ->
+                    ContractResponseModel.fromContract(contract)
+                ).collect(Collectors.toList());
 
             return ResponseEntity.ok(response);
         } catch(NoSuchElementException e) {
