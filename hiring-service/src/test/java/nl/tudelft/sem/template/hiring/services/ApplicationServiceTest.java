@@ -25,23 +25,33 @@ public class ApplicationServiceTest {
     private transient ApplicationService applicationService;
 
     @Test
-    public void checkAndSaveTest() {
+    public void validCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
         Application validApplication = new Application("CSE1200", "johndoe", (float) 6.0,
                 motivation, ApplicationStatus.PENDING);
-        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
-                motivation, ApplicationStatus.PENDING);
         assertThat(validApplication.meetsRequirements()).isTrue();
-        assertThat(invalidApplication.meetsRequirements()).isFalse();
 
         //Act
         applicationService.checkAndSave(validApplication);
-        applicationService.checkAndSave(invalidApplication);
 
         //Assert
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1200", "johndoe")))
                 .isNotEmpty();
+    }
+
+    @Test
+    public void invalidCheckAndSaveTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
+                motivation, ApplicationStatus.PENDING);
+        assertThat(invalidApplication.meetsRequirements()).isFalse();
+
+        //Act
+        applicationService.checkAndSave(invalidApplication);
+
+        //Assert
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
