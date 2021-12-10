@@ -24,10 +24,6 @@ public class ApplicationServiceTest {
     @Autowired
     private transient ApplicationService applicationService;
 
-    @BeforeEach
-    public void setup() {
-    }
-
     @Test
     public void checkAndSaveTest() {
         //Arrange

@@ -32,6 +32,15 @@ public class Application {
     @Column(name = "STATUS")
     private ApplicationStatus status;
 
+    /**
+     * Create an application with the status "Pending"
+     *
+     * @param courseId String courseId
+     * @param netId String netId
+     * @param grade float grade
+     * @param motivation String motivation
+     * @return a newly created instance of an Application with the status "Pending" and the given parameters.
+     */
     public static Application createPendingApplication(String courseId, String netId, float grade, String motivation) {
         Application application = new Application();
         application.setCourseId(courseId);

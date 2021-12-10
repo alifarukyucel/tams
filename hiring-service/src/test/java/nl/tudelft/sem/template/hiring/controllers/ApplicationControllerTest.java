@@ -55,35 +55,41 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void applyTest() throws Exception {
+    public void validApplicationTest() throws Exception {
         //Arrange
         ApplicationRequestModel validModel = new ApplicationRequestModel("cse1200", (float) 6.0,
                 "I want to");
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", (float) 5.9,
-                "I want to");
 
         ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
-        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
 
         //Act
         ResultActions validResults = mockMvc.perform(post("/apply")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(validModel))
                 .header("Authorization", "Bearer Joe"));
+        //assert
+        validResults.andExpect(status().isOk());
+        assertThat(applicationRepository.findById(validKey)).isNotEmpty();
 
+    }
 
+    @Test
+    public void invalidApplicationTest() throws Exception {
+        //Arrange
+        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", (float) 5.9,
+                "I want to");
 
+        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
+
+        //Act
         ResultActions invalidResults = mockMvc.perform(post("/apply")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(invalidModel))
                 .header("Authorization", "Bearer Joe"));
 
         //assert
-        validResults.andExpect(status().isOk());
         invalidResults.andExpect(status().isBadRequest());
-        assertThat(applicationRepository.findById(validKey)).isNotEmpty();
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
-
     }
 
 }
