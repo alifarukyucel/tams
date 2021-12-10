@@ -1,6 +1,13 @@
 package nl.tudelft.sem.template.hiring.controllers;
 
-import nl.tudelft.sem.template.hiring.entities.compositeKeys.ApplicationKey;
+import static nl.tudelft.sem.template.hiring.utils.JsonUtil.serialize;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
@@ -17,15 +24,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static nl.tudelft.sem.template.hiring.utils.JsonUtil.serialize;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -47,6 +45,9 @@ public class ApplicationControllerTest {
     @Autowired
     private transient TokenVerifier mockTokenVerifier;
 
+    /**
+     * Setup mocking before tests run.
+     */
     @BeforeEach
     public void setup() {
         when(mockAuthenticationManager.getNetid()).thenReturn(exampleNetId);

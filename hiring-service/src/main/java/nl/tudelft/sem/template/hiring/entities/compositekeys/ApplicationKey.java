@@ -1,10 +1,9 @@
-package nl.tudelft.sem.template.hiring.entities.compositeKeys;
+package nl.tudelft.sem.template.hiring.entities.compositekeys;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
