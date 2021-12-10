@@ -1,18 +1,16 @@
 package nl.tudelft.sem.template.ta.entities;
 
-import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ContractTest {
 
     private Contract contract;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         contract = Contract.builder()
                 .courseId("build")
                 .maxHours(5)

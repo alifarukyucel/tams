@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -109,7 +108,8 @@ class ContractControllerTest {
         when(mockAuthenticationManager.getNetid()).thenReturn(netId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(netId);
-        when(courseInformation.isResponsibleLecturer(anyString(), anyString())).thenReturn(isResponsibleLecturer);
+        when(courseInformation.isResponsibleLecturer(anyString(), anyString()))
+            .thenReturn(isResponsibleLecturer);
     }
 
     void mockAuthentication(String netId) {

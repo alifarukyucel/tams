@@ -1,15 +1,15 @@
 package nl.tudelft.sem.template.ta.models;
 
+import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import org.junit.jupiter.api.Assertions;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 
 public class ModelTests {
 
     @Test
-    void testContractResponseFromContract(){
+    void testContractResponseFromContract() {
         Contract contract = Contract.builder()
             .courseId("CSETEST")
             .maxHours(5)
@@ -34,7 +34,8 @@ public class ModelTests {
         AcceptContractRequestModel acrm = AcceptContractRequestModel.builder().build();
         AcceptHoursRequestModel ahrm = AcceptHoursRequestModel.builder().build();
         ContractResponseModel gcrm2 = ContractResponseModel.builder().build();
-        RetrieveHoursToBeApprovedRequestModel rhtbarm = RetrieveHoursToBeApprovedRequestModel.builder().build();
+        RetrieveHoursToBeApprovedRequestModel rhtbarm = RetrieveHoursToBeApprovedRequestModel
+                                                        .builder().build();
         SubmitHoursRequestModel shrm = SubmitHoursRequestModel.builder().build();
     }
 

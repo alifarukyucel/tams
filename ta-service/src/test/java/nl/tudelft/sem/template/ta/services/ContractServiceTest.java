@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.ta.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
@@ -15,13 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -188,7 +182,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void getAllContracts(){
+    void getAllContracts() {
         // Arrange
         Contract contract1 = Contract.builder()
                 .netId("PVeldHuis")
@@ -227,14 +221,14 @@ class ContractServiceTest {
     }
 
     @Test
-    void getNonExistingContracts(){
+    void getNonExistingContracts() {
         // Act
-        ThrowingCallable action_null = () -> contractService.getContractsBy(null);
-        ThrowingCallable action_empty  = () -> contractService.getContractsBy("winstijnsmit");
+        ThrowingCallable actionNull = () -> contractService.getContractsBy(null);
+        ThrowingCallable actionEmpty  = () -> contractService.getContractsBy("winstijnsmit");
 
         // Assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_null);
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action_empty);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNull);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionEmpty);
     }
 
 
