@@ -52,6 +52,7 @@ public class ApplicationController {
 
     @GetMapping("/status")
     public ResponseEntity<String> getStatus(@RequestBody RetrieveStatusModel status) {
+
         return findStatus(authManager.getNetid(), courseId);
     }
 
