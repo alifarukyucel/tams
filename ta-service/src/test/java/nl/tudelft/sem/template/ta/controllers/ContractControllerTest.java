@@ -249,20 +249,6 @@ class ContractControllerTest {
         assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(2)))).isFalse();
     }
 
-
-    @Test
-    void getSignedInContracts_notSignedIn() throws Exception {
-        // Arrange
-        mockAuthentication(null);
-
-        // Act
-        ResultActions action = mockMvc.perform(get("/contracts/mine")
-                .header("Authorization", "Bearer Lol"));
-
-        // Assert
-        action.andExpect(status().isUnauthorized());
-    }
-
     @Test
     void getSignedInContracts_noContractsFound() throws Exception {
         // Arrange

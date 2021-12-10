@@ -41,11 +41,8 @@ public class ContractController {
     @PutMapping("/sign")
     public ResponseEntity<String> sign(@RequestBody AcceptContractRequestModel request)
         throws ResponseStatusException {
-        String netId = ensureLoggedIn();
-
         try {
-            Contract contract = contractService.getContract(
-                netId, request.getCourse());
+            Contract contract = contractService.getContract(authManager.getNetid(), request.getCourse());
 
             contract.setSigned(!contract.getSigned() || !request.isAccept());  // keep value true.
             contractService.save(contract);
@@ -57,30 +54,27 @@ public class ContractController {
     }
 
     /**
-     * Endpoint for fetching all the contracts of a signed in user.
+     * Endpoint for fetching all the contracts of a signed-in user.
      *
-     * @return a list of contracts that belong to the signed in user.
-     * @throws ResponseStatusException if user is not signed in or no contracts can be found.
+     * @return a list of contracts that belong to the signed-in user.
+     * @throws ResponseStatusException if user is not signed-in or no contracts can be found.
      */
     @GetMapping("/mine")
     public ResponseEntity<List<ContractResponseModel>> getSignedInUserContracts()
             throws ResponseStatusException {
-        String netId = ensureLoggedIn();
-        return findContractBy(netId);
+        return findContractBy(authManager.getNetid());
     }
 
     /**
-     * Endpoint for fetching a contract of a signed in user with a given course
+     * Endpoint for fetching a contract of a signed-in user with a given course
      *
-     * @return a singleton list containing a contract that belongs to the signed in user with the requested course code
-     * @throws ResponseStatusException if user is not signed in or no contracts can be found.
+     * @return a singleton list containing a contract that belongs to the signed-in user with the requested course code
+     * @throws ResponseStatusException if user is not signed-in or no contracts can be found.
      */
     @PostMapping("/mine")
     public ResponseEntity<List<ContractResponseModel>> getSignedInUserContractByCourse(@RequestBody CourseRequestModel request)
             throws ResponseStatusException {
-
-        String netId = ensureLoggedIn();
-        return findContractBy(netId, request.getCourse());
+        return findContractBy(authManager.getNetid(), request.getCourse());
     }
 
     /**
@@ -133,19 +127,6 @@ public class ContractController {
      */
     private ResponseEntity<List<ContractResponseModel>> findContractBy(String netId) throws ResponseStatusException {
         return findContractBy(netId, null);
-    }
-
-    /**
-     * We should ensure that the user is logged in when doing some request.
-     *
-     * @return the netId of the logged in user.
-     * @throws ResponseStatusException if the user is not logged in.
-     */
-    private String ensureLoggedIn() throws ResponseStatusException {
-        String netId = authManager.getNetid();
-        if (netId == null)
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You need to sign in before making this request.");
-        return netId;
     }
 
 }
