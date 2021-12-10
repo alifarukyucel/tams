@@ -1,21 +1,17 @@
 package nl.tudelft.sem.template.ta.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
-import nl.tudelft.sem.template.ta.models.ContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
-import nl.tudelft.sem.template.ta.models.CourseRequestModel;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.services.ContractService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -93,9 +89,9 @@ public class ContractController {
      *          belongs to the requested user with the requested course code
      * @throws ResponseStatusException if netId is not given or when no contracts can not be found.
      */
-    @PostMapping("/get")
+    @GetMapping("/{course}/{netId}")
     public ResponseEntity<List<ContractResponseModel>>
-        getUserContracts(@RequestBody ContractRequestModel request) throws ResponseStatusException {
+        getUserContracts(@PathVariable String course, @PathVariable String netId) throws ResponseStatusException {
 
         // TODO: Implement authentication checking in next sprint.
         // TODO: Not everyone should be allowed to make this request.
@@ -103,7 +99,7 @@ public class ContractController {
         // String userNetId = ensureLoggedIn();
         // authManager.isResponsibleLecturer(userNetId) .. or something like that.
 
-        return findContractBy(request.getNetId(), request.getCourse());
+        return findContractBy(netId, course);
     }
 
     /**

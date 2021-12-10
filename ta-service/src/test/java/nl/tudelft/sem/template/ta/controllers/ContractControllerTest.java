@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
-import nl.tudelft.sem.template.ta.models.ContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
@@ -271,15 +270,12 @@ class ContractControllerTest {
     void getContracts() throws Exception {
         // Arrange
         mockAuthentication("WinstijnSmit");
-        ContractRequestModel model = new ContractRequestModel();
-        model.setCourse("CSE2310");
-        model.setNetId("PVeldHuis");
 
         // Act
-        ResultActions action = mockMvc.perform(post("/contracts/get")
+        ResultActions action = mockMvc.perform(get("/contracts/CSE2310/PVeldHuis")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Winstijn")
-                .content(serialize(model)));
+        );
 
         // Assert
         MvcResult result = action
@@ -296,15 +292,12 @@ class ContractControllerTest {
     void getContracts_notFound() throws Exception {
         // Arrange
         mockAuthentication("WinstijnSmit");
-        ContractRequestModel model = new ContractRequestModel();
-        model.setCourse("CSE1000");
-        model.setNetId("WinstijnSmit");
 
         // Act
-        ResultActions action = mockMvc.perform(post("/contracts/get")
+        ResultActions action = mockMvc.perform(get("/contracts/CSE1000/WinstijnSmit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Winstijn")
-                .content(serialize(model)));
+        );
 
         // Assert
         action.andExpect(status().isNotFound());

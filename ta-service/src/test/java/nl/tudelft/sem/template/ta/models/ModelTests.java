@@ -33,7 +33,6 @@ public class ModelTests {
     void modelBuildersExist() {
         AcceptContractRequestModel acrm = AcceptContractRequestModel.builder().build();
         AcceptHoursRequestModel ahrm = AcceptHoursRequestModel.builder().build();
-        ContractRequestModel gcrm = ContractRequestModel.builder().build();
         ContractResponseModel gcrm2 = ContractResponseModel.builder().build();
         RetrieveHoursToBeApprovedRequestModel rhtbarm = RetrieveHoursToBeApprovedRequestModel.builder().build();
         SubmitHoursRequestModel shrm = SubmitHoursRequestModel.builder().build();
@@ -43,7 +42,6 @@ public class ModelTests {
     void noArgExists() {
         AcceptContractRequestModel acrm = new AcceptContractRequestModel();
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
-        ContractRequestModel gcrm = new ContractRequestModel();
         ContractResponseModel gcrm2 = new ContractResponseModel();
         RetrieveHoursToBeApprovedRequestModel rhtbarm = new RetrieveHoursToBeApprovedRequestModel();
         SubmitHoursRequestModel shrm = new SubmitHoursRequestModel();
@@ -60,10 +58,6 @@ public class ModelTests {
         ahrm.setId(UUID.randomUUID());
         ahrm.getAccept();
         ahrm.getId();
-
-        ContractRequestModel gcrm = new ContractRequestModel();
-        gcrm.setCourse("CSE2310");
-        gcrm.getCourse();
 
         ContractResponseModel gcrm2 = new ContractResponseModel();
         gcrm2.setCourse("CSE2310");
