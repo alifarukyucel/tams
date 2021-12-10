@@ -1,5 +1,9 @@
 package nl.tudelft.sem.template.authentication.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.when;
+
 import nl.tudelft.sem.template.authentication.entities.AppUser;
 import nl.tudelft.sem.template.authentication.repositories.UserRepository;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -13,10 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest

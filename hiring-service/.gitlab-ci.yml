@@ -1,0 +1,26 @@
+image: gradle:6.7-jdk15
+
+stages:
+  - build
+  - staticAnalysis
+  - test
+
+build-hiring-service:
+  stage: build
+  script:
+    gradle build
+
+checkStyle-hiring-service:
+  stage: staticAnalysis
+  script:
+    gradle checkstyleMain checkStyleTest
+
+PMD-hiring-service:
+  stage: staticAnalysis
+  script:
+      gradle pmdMain
+
+test-hiring-service:
+  stage: test
+  script:
+    gradle test
