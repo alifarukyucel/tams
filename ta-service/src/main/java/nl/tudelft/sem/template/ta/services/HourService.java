@@ -47,7 +47,7 @@ public class HourService {
             throw new IllegalArgumentException("Hours have already been approved");
         }
         if (status) {
-            workedHours.setApproved((true));
+            workedHours.setApproved(true);
             hoursRepository.save(workedHours);
         } else {
             hoursRepository.delete(workedHours);
