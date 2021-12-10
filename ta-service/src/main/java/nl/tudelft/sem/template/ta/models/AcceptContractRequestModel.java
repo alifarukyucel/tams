@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 @Data
 public class AcceptContractRequestModel {
     private String course;
-    private boolean accept;
 }

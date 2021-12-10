@@ -24,10 +24,6 @@ public class ModelTests {
     @Test
     void noArgExists() {
         AcceptContractRequestModel acrm = new AcceptContractRequestModel();
-        acrm.setAccept(true);
-        acrm.setCourse("CSE2310");
-        acrm.getCourse();
-        acrm.isAccept();
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
         GetContractRequestModel gcrm = new GetContractRequestModel();
         GetContractResponseModel gcrm2 = new GetContractResponseModel();
@@ -38,10 +34,8 @@ public class ModelTests {
     @Test
     void checkGetterSettersExist() {
         AcceptContractRequestModel acrm = new AcceptContractRequestModel();
-        acrm.setAccept(true);
         acrm.setCourse("CSE2310");
         acrm.getCourse();
-        acrm.isAccept();
 
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
         ahrm.setAccept(true);
