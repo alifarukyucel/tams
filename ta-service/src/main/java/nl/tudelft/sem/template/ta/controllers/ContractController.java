@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import nl.tudelft.sem.template.ta.security.AuthManager;
@@ -23,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ContractController {
     private final transient AuthManager authManager;
     private final transient ContractService contractService;
+    private final transient CourseInformation courseInformation;
 
     /**
      * Instantiates a new ContractController.
@@ -30,9 +32,10 @@ public class ContractController {
      * @param authManager the authentication manager
      * @param contractService the contract service
      */
-    public ContractController(AuthManager authManager, ContractService contractService) {
+    public ContractController(AuthManager authManager, ContractService contractService, CourseInformation courseInformation) {
         this.authManager = authManager;
         this.contractService = contractService;
+        this.courseInformation = courseInformation;
     }
 
     /**
@@ -82,9 +85,12 @@ public class ContractController {
     }
 
     /**
-     * Endpoint for fetching all the contracts of a certain user.
-     * Needs a netId of the requested contract and the courseId.
+     * Endpoint for fetching the contract of a certain user for a certain course
+     * Note that you need to be a responsible lecturer of the course
+     * to request contracts other than the one you have
      *
+     * @params the course of the contract
+     * @params the netId of the requested contract (not always the signed in user)
      * @return a singleton list containing a contract that
      *          belongs to the requested user with the requested course code
      * @throws ResponseStatusException if netId is not given or when no contracts can not be found.
@@ -93,11 +99,10 @@ public class ContractController {
     public ResponseEntity<List<ContractResponseModel>>
         getUserContracts(@PathVariable String course, @PathVariable String netId) throws ResponseStatusException {
 
-        // TODO: Implement authentication checking in next sprint.
-        // TODO: Not everyone should be allowed to make this request.
-        // Only responsible lecturers should be allowed to fetch everyone's contracts.
-        // String userNetId = ensureLoggedIn();
-        // authManager.isResponsibleLecturer(userNetId) .. or something like that.
+        boolean authorized = courseInformation.isResponsibleLecturer(authManager.getNetid(), course);
+        if (!authManager.getNetid().equals(netId) && !authorized) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
 
         return findContractBy(netId, course);
     }
