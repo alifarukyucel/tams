@@ -44,8 +44,6 @@ public class ApplicationService {
         }
     }
 
-
-
     /**
      * Retrieving the status of the application to see whether someone is accepted or rejected.
      * @param key the key to find the application in the database.

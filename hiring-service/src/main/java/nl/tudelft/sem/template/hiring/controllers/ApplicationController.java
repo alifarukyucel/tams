@@ -1,13 +1,20 @@
 package nl.tudelft.sem.template.hiring.controllers;
 
 import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.compositeKeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.RetrieveStatusModel;
+import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.NoSuchElementException;
 
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
@@ -46,14 +53,18 @@ public class ApplicationController {
 
     /**
      * Endpoint for fetching the status of a specific course for a signed in user
-     * @param status
+     * @param course
      * @return
      */
 
-    @GetMapping("/status")
-    public ResponseEntity<String> getStatus(@RequestBody RetrieveStatusModel status) {
+    @GetMapping("/{course}/status")
+    public ResponseEntity<RetrieveStatusModel> getStatusByCourse(@PathVariable String course) {
+        try {
+            //ApplicationStatus status = applicationService.retrieveStatus()???
 
-        return findStatus(authManager.getNetid(), courseId);
+            return ResponseEntity.ok(status);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
-
 }
