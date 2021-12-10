@@ -62,13 +62,13 @@ class HourServiceTest {
     @Test
     void approveHoursExistingHours() {
         // pre-condition
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).getApproved()).isFalse();
 
         // act
         hourService.approveHours(defaultWorkedHours.getId(), true);
 
         // assert
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isTrue();
+        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).getApproved()).isTrue();
     }
 
     @Test
@@ -82,7 +82,7 @@ class HourServiceTest {
 
         // assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isTrue();
+        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).getApproved()).isTrue();
     }
 
     @Test
@@ -110,7 +110,7 @@ class HourServiceTest {
     @Test
     void approveNonExistingHours() {
         // precondition
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).getApproved()).isFalse();
         UUID id = UUID.randomUUID();
 
         // act
@@ -118,20 +118,20 @@ class HourServiceTest {
 
         // assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).getApproved()).isFalse();
     }
 
     @Test
     void approveNullHours() {
         // precondition
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).getApproved()).isFalse();
 
         // act
         ThrowingCallable action = () -> hourService.approveHours(null, true);
 
         // assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).getApproved()).isFalse();
     }
 
     @Test

@@ -43,7 +43,7 @@ public class HourService {
 
         WorkedHours workedHours = hours.get();
 
-        if (workedHours.isApproved()) {
+        if (workedHours.getApproved()) {
             throw new IllegalArgumentException("Hours have already been approved");
         }
         if (status) {

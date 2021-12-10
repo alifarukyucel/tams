@@ -101,7 +101,7 @@ class HourControllerTest {
         // assert
         results.andExpect(status().isOk());
         WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
-        assertThat(hour.isApproved()).isTrue();
+        assertThat(hour.getApproved()).isTrue();
     }
 
     @Test
@@ -123,7 +123,7 @@ class HourControllerTest {
         // assert
         results.andExpect(status().isConflict());
         WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
-        assertThat(hour.isApproved()).isTrue();
+        assertThat(hour.getApproved()).isTrue();
     }
 
     @Test
@@ -144,8 +144,7 @@ class HourControllerTest {
         // assert
         results.andExpect(status().isUnauthorized());
         WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
-        assertThat(hour.isApproved()).isFalse();
-
+        assertThat(hour.getApproved()).isFalse();
     }
 
     @Test
