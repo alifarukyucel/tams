@@ -32,7 +32,9 @@ public class ContractController {
      * @param authManager the authentication manager
      * @param contractService the contract service
      */
-    public ContractController(AuthManager authManager, ContractService contractService, CourseInformation courseInformation) {
+    public ContractController(AuthManager authManager,
+                              ContractService contractService,
+                              CourseInformation courseInformation) {
         this.authManager = authManager;
         this.contractService = contractService;
         this.courseInformation = courseInformation;
@@ -74,7 +76,7 @@ public class ContractController {
      * Endpoint for fetching a contract of a signed-in user with a given course.
      *
      * @return a singleton list containing a contract that
-     *          belongs to the signed-in user with the requested course code
+     *          belongs to the signed-in user with the requested course code.
      * @throws ResponseStatusException if user is not signed-in or no contracts can be found.
      */
     @GetMapping("/{course}/mine")
@@ -87,7 +89,7 @@ public class ContractController {
     /**
      * Endpoint for fetching the contract of a certain user for a certain course
      * Note that you need to be a responsible lecturer of the course
-     * to request contracts other than the one you have
+     * to request contracts other than the one you have.
      *
      * @params the course of the contract
      * @params the netId of the requested contract (not always the signed in user)
@@ -97,9 +99,12 @@ public class ContractController {
      */
     @GetMapping("/{course}/{netId}")
     public ResponseEntity<List<ContractResponseModel>>
-        getUserContracts(@PathVariable String course, @PathVariable String netId) throws ResponseStatusException {
+        getUserContracts(@PathVariable String course, @PathVariable String netId)
+        throws ResponseStatusException {
 
-        boolean authorized = courseInformation.isResponsibleLecturer(authManager.getNetid(), course);
+        boolean authorized = courseInformation
+                            .isResponsibleLecturer(authManager.getNetid(), course);
+
         if (!authManager.getNetid().equals(netId) && !authorized) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
