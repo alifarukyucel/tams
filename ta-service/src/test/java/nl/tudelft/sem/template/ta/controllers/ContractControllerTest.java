@@ -4,9 +4,14 @@ import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
@@ -30,20 +35,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
-
-import javax.transaction.Transactional;
-
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -111,7 +102,7 @@ class ContractControllerTest {
     }
 
     // Mock authentication to show that we are signed in as a certain user.
-    void mockAuthentication(String netId){
+    void mockAuthentication(String netId) {
         when(mockAuthenticationManager.getNetid()).thenReturn(netId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(netId);
@@ -216,9 +207,9 @@ class ContractControllerTest {
                 .andReturn();
 
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(0)))).isTrue();
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(1)))).isFalse();
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(2)))).isFalse();
+        assertThatResponseContains(responseContracts, contracts.get(0)).isTrue();
+        assertThatResponseContains(responseContracts, contracts.get(1)).isFalse();
+        assertThatResponseContains(responseContracts, contracts.get(2)).isFalse();
     }
 
     @Test
@@ -236,9 +227,9 @@ class ContractControllerTest {
                 .andReturn();
 
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(0)))).isFalse();
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(1)))).isTrue();
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(2)))).isTrue();
+        assertThatResponseContains(responseContracts, contracts.get(0)).isFalse();
+        assertThatResponseContains(responseContracts, contracts.get(1)).isTrue();
+        assertThatResponseContains(responseContracts, contracts.get(2)).isTrue();
     }
 
     @Test
@@ -258,9 +249,9 @@ class ContractControllerTest {
                 .andReturn();
 
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(0)))).isFalse();
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(1)))).isTrue();
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(2)))).isFalse();
+        assertThatResponseContains(responseContracts, contracts.get(0)).isFalse();
+        assertThatResponseContains(responseContracts, contracts.get(1)).isTrue();
+        assertThatResponseContains(responseContracts, contracts.get(2)).isFalse();
     }
 
     @Test
@@ -296,9 +287,9 @@ class ContractControllerTest {
                 .andReturn();
 
         List<ContractResponseModel> responseContracts = parseContractsResult(result);
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(0)))).isTrue();
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(1)))).isFalse();
-        assertThat(responseContracts.contains(ContractResponseModel.fromContract(contracts.get(2)))).isFalse();
+        assertThatResponseContains(responseContracts, contracts.get(0)).isTrue();
+        assertThatResponseContains(responseContracts, contracts.get(1)).isFalse();
+        assertThatResponseContains(responseContracts, contracts.get(2)).isFalse();
     }
 
     @Test
@@ -319,9 +310,21 @@ class ContractControllerTest {
         action.andExpect(status().isNotFound());
     }
 
+    /**
+     * Helper method that asserts whether the response contains the contract.
+     *
+     * @param response list of ContractResponseModel
+     * @param contract contract
+     * @return assert that the response contains
+     *         the contract response model of the contract.
+     */
+    private org.assertj.core.api.AbstractBooleanAssert<?>
+        assertThatResponseContains(List<ContractResponseModel> response, Contract contract) {
+        return assertThat(response.contains(ContractResponseModel.fromContract(contract)));
+    }
 
     /**
-     * Helper method to convert the MvcResult to a list of ContractResponseModel
+     * Helper method to convert the MvcResult to a list of ContractResponseModel.
      */
     private List<ContractResponseModel> parseContractsResult(MvcResult result) throws Exception {
         String jsonString = result.getResponse().getContentAsString();
@@ -329,8 +332,13 @@ class ContractControllerTest {
         List<Map<String, Object>> parsed = JsonUtil.deserialize(jsonString, list.getClass());
 
         // JsonUtil returns a map of items. Parse them and put them in our list.
-        for ( Map<String, Object> map : parsed ) {
-            list.add(new ContractResponseModel((String) map.get("course"), (String) map.get("duties"), (int) map.get("maxHours"), (boolean) map.get("signed")));
+        for (Map<String, Object> map : parsed) {
+            list.add(new ContractResponseModel(
+                        (String) map.get("course"),
+                        (String) map.get("duties"),
+                        (int) map.get("maxHours"),
+                        (boolean) map.get("signed")
+            ));
         }
         return list;
     }
