@@ -44,9 +44,15 @@ public class ApplicationController {
         }
     }
 
+    /**
+     * Endpoint for fetching the status of a specific course for a signed in user
+     * @param status
+     * @return
+     */
+
     @GetMapping("/status")
     public ResponseEntity<String> getStatus(@RequestBody RetrieveStatusModel status) {
-        return ResponseEntity.ok("Status: " + status);
+        return findStatus(authManager.getNetid(), courseId);
     }
 
 }

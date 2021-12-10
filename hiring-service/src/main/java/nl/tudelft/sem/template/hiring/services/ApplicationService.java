@@ -85,8 +85,6 @@ public class ApplicationService {
      * @return String containing the status in readable format.
      * @throws NoSuchElementException
      */
-
-
     public String retrieveStatus(ApplicationKey key) throws NoSuchElementException {
         Optional<Application> application = applicationRepository.findById(key);
         if(!application.isPresent()) throw new NoSuchElementException("Application does not exist");
