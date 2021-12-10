@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +51,9 @@ class ContractServiceTest {
         contractService.sign(contract.getNetId(), contract.getCourseId());
 
         // assert
-        assertThat(contractRepository.getOne(contract.getId()).getSigned()).isTrue();
+        Contract fetchedContract = contractRepository.getOne(
+            new ContractId(contract.getNetId(), contract.getCourseId()));
+        assertThat(fetchedContract.getSigned()).isTrue();
     }
 
     @Test
@@ -241,8 +244,8 @@ class ContractServiceTest {
         contract = contractService.save(contract);
 
         // assert
-        Contract expected = contractRepository.getOne(contract.getId());
-        assertThat(contract.getId()).isNotNull();
+        Contract expected = contractRepository.getOne(
+            new ContractId(contract.getNetId(), contract.getCourseId()));
         assertThat(contract).isEqualTo(expected);
     }
 }
