@@ -71,10 +71,10 @@ public class ContractController {
      * @return a singleton list containing a contract that belongs to the signed-in user with the requested course code
      * @throws ResponseStatusException if user is not signed-in or no contracts can be found.
      */
-    @PostMapping("/mine")
-    public ResponseEntity<List<ContractResponseModel>> getSignedInUserContractByCourse(@RequestBody CourseRequestModel request)
+    @GetMapping("/{course}/mine")
+    public ResponseEntity<List<ContractResponseModel>> getSignedInUserContractByCourse(@PathVariable String course)
             throws ResponseStatusException {
-        return findContractBy(authManager.getNetid(), request.getCourse());
+        return findContractBy(authManager.getNetid(), course);
     }
 
     /**

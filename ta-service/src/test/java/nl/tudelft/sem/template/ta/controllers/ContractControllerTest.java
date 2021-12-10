@@ -229,14 +229,12 @@ class ContractControllerTest {
     void getSignedInContracts_filterCourse() throws Exception {
         // Arrange
         mockAuthentication("WinstijnSmit");
-        CourseRequestModel model = new CourseRequestModel();
-        model.setCourse("CSE2310");
 
         // Act
-        ResultActions action = mockMvc.perform(post("/contracts/mine")
+        ResultActions action = mockMvc.perform(get("/contracts/CSE2310/mine")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Winstijn")
-                .content(serialize(model)));
+        );
 
         // Assert
         MvcResult result = action
