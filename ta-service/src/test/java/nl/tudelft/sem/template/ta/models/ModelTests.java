@@ -2,9 +2,9 @@ package nl.tudelft.sem.template.ta.models;
 
 import nl.tudelft.sem.template.ta.entities.Contract;
 import org.junit.jupiter.api.Assertions;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
 
 public class ModelTests {
 
@@ -42,10 +42,6 @@ public class ModelTests {
     @Test
     void noArgExists() {
         AcceptContractRequestModel acrm = new AcceptContractRequestModel();
-        acrm.setAccept(true);
-        acrm.setCourse("CSE2310");
-        acrm.getCourse();
-        acrm.isAccept();
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
         ContractRequestModel gcrm = new ContractRequestModel();
         ContractResponseModel gcrm2 = new ContractResponseModel();
@@ -56,15 +52,13 @@ public class ModelTests {
     @Test
     void checkGetterSettersExist() {
         AcceptContractRequestModel acrm = new AcceptContractRequestModel();
-        acrm.setAccept(true);
         acrm.setCourse("CSE2310");
         acrm.getCourse();
-        acrm.isAccept();
 
         AcceptHoursRequestModel ahrm = new AcceptHoursRequestModel();
         ahrm.setAccept(true);
         ahrm.setId(UUID.randomUUID());
-        ahrm.isAccept();
+        ahrm.getAccept();
         ahrm.getId();
 
         ContractRequestModel gcrm = new ContractRequestModel();

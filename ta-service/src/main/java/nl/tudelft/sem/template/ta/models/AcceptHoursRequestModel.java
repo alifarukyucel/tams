@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class AcceptHoursRequestModel {
     private UUID id;
-    private boolean accept;
+    private Boolean accept;
 }

@@ -13,7 +13,10 @@ import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.services.ContractService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -43,14 +46,13 @@ public class ContractController {
     public ResponseEntity<String> sign(@RequestBody AcceptContractRequestModel request)
         throws ResponseStatusException {
         try {
-            Contract contract = contractService.getContract(authManager.getNetid(), request.getCourse());
-
-            contract.setSigned(!contract.getSigned() || !request.isAccept());  // keep value true.
-            contractService.save(contract);
+            contractService.sign(authManager.getNetid(), request.getCourse());
             return ResponseEntity.ok().build();
 
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
 
