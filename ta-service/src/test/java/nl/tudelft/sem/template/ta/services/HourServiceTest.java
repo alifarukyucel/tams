@@ -53,6 +53,7 @@ class HourServiceTest {
         defaultWorkedHours = WorkedHours.builder()
             .contract(defaultContract)
             .approved(false)
+            .reviewed(false)
             .build();
 
         hoursRepository.save(defaultWorkedHours);
@@ -75,6 +76,7 @@ class HourServiceTest {
     void unApproveApprovedExistingHours() {
         // arrange
         defaultWorkedHours.setApproved(true);
+        defaultWorkedHours.setReviewed(true);
         hoursRepository.save(defaultWorkedHours);
 
         // act
@@ -89,6 +91,7 @@ class HourServiceTest {
     void reApproveApprovedExistingHours() {
         // arrange
         defaultWorkedHours.setApproved(true);
+        defaultWorkedHours.setReviewed(true);
         hoursRepository.save(defaultWorkedHours);
 
         // act
@@ -104,7 +107,33 @@ class HourServiceTest {
         hourService.approveHours(defaultWorkedHours.getId(), false);
 
         // assert
-        assertThat(hoursRepository.findById(defaultWorkedHours.getId()).isEmpty()).isTrue();
+        var optionalWorkedHours = hoursRepository.findById(defaultWorkedHours.getId());
+        assertThat(optionalWorkedHours.isPresent()).isTrue();
+        WorkedHours workedHours = optionalWorkedHours.get();
+        assertThat(workedHours.getReviewed()).isTrue();
+        assertThat(workedHours.getApproved()).isFalse();
+    }
+
+    @Test
+    void unApproveApprovedHours() {
+        // arrange
+        defaultWorkedHours.setApproved(true);
+        defaultWorkedHours.setReviewed(true);
+        hoursRepository.save(defaultWorkedHours);
+
+        // act
+        ThrowingCallable action = () ->
+            hourService.approveHours(defaultWorkedHours.getId(), false);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+
+        var optionalWorkedHours = hoursRepository.findById(defaultWorkedHours.getId());
+        assertThat(optionalWorkedHours.isPresent()).isTrue();
+        WorkedHours workedHours = optionalWorkedHours.get();
+
+        assertThat(workedHours.getReviewed()).isTrue();
+        assertThat(workedHours.getApproved()).isTrue();
     }
 
     @Test

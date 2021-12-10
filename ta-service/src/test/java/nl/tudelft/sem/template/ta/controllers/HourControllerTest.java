@@ -75,6 +75,7 @@ class HourControllerTest {
         defaultWorkedHours = WorkedHours.builder()
             .contract(defaultContract)
             .approved(false)
+            .reviewed(false)
             .build();
         defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);
 
@@ -108,6 +109,7 @@ class HourControllerTest {
     void reApproveApprovedExistingHours() throws Exception {
         // arrange
         defaultWorkedHours.setApproved(true);
+        defaultWorkedHours.setReviewed(true);
         defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);
         AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
             .accept(false)

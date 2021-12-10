@@ -43,15 +43,16 @@ public class HourService {
 
         WorkedHours workedHours = hours.get();
 
-        if (workedHours.getApproved()) {
+        if (workedHours.getReviewed()) {
             throw new IllegalArgumentException("Hours have already been approved");
         }
+
         if (status) {
             workedHours.setApproved(true);
-            hoursRepository.save(workedHours);
-        } else {
-            hoursRepository.delete(workedHours);
         }
+        workedHours.setReviewed(true);
+        hoursRepository.save(workedHours);
+
     }
 
     /**
