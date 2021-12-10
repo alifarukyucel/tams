@@ -74,7 +74,8 @@ public class CourseTests {
         // Act
         ResultActions resultActions = mockMvc.perform(post("/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serialize(newCourse)));
+                .content(serialize(newCourse))
+                .header("Authorization", "Bearer Mulder"));
 
         // Assert
         resultActions.andExpect(status().isOk());

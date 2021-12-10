@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.course.models.CourseModel;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -79,11 +80,12 @@ public class CourseController {
      * @return the course returned from the database (with a manually-assigned id)
      */
     @PostMapping(value = "create", consumes = "application/json") // course/create
-    Course createCourse(@RequestBody CourseModel courseModel) {
+    ResponseEntity<String> createCourse(@RequestBody CourseModel courseModel) {
         Course course = new Course(courseModel.getId(), courseModel.getStartDate(), courseModel.getName(),
                 courseModel.getDescription(), courseModel.getNumberOfStudents(),
                 new ArrayList<>(List.of(authManager.getNetid())));
-        return courseService.createCourse(course);
+        courseService.createCourse(course);
+        return ResponseEntity.ok().build();
     }
 
     /**
