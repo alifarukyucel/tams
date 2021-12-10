@@ -36,5 +36,4 @@ public class Contract {
     String duties;
 
     Boolean signed;
-
 }

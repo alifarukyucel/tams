@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.ta.services;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
@@ -29,24 +30,49 @@ public class ContractService {
      * @throws NoSuchElementException Thrown if the contract was not found.
      */
     public Contract getContract(String netId, String courseId) throws NoSuchElementException {
-
         if (netId == null || courseId == null) {
             throw new NoSuchElementException("A contract must have a netId and courseId");
         }
 
-        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll().withIgnoreNullValues();
+        List<Contract> contracts = getContractsBy(netId, courseId);
+        return contracts.get(0);
+    }
 
-        Example<Contract> example = Example.of(
-            Contract.builder()
-            .courseId(courseId)
-            .netId(netId)
-            .build(), ignoreAllFields);
-
-        var optionalContract = contractRepository.findOne(example);
-        if (optionalContract.isEmpty()) {
-            throw new NoSuchElementException("The requested contract could not be found");
+    /**
+     * Returns all the contracts that have a certain netId and courseId.
+     * If null is given to one of the arguments it will be ignored in the query.
+     *
+     * @param netId The users netId (required)
+     * @param courseId The contracts courseId (may be null)
+     * @return a list of contracts with the requested netId and courseId.
+     * @throws NoSuchElementException Thrown when no contracts were found.
+     */
+    public List<Contract> getContractsBy(String netId, String courseId)
+            throws NoSuchElementException {
+        if (netId == null) {
+            throw new NoSuchElementException("netId must be specified to search for contracts");
         }
-        return optionalContract.get();
+
+        Example<Contract> example = createContractExample(netId, courseId);
+
+        // Search for all the contract with a certain netId.
+        List<Contract> contracts = contractRepository.findAll(example);
+        if (contracts.size() == 0) {
+            throw new NoSuchElementException("Could not find contracts for " + netId);
+        }
+
+        return contracts;
+    }
+
+    /**
+     * Returns all the contracts that have a certain netId.
+     *
+     * @param netId The users netid
+     * @return a list of contracts with the requested netId.
+     * @throws NoSuchElementException Thrown when no contracts were found.
+     */
+    public List<Contract> getContractsBy(String netId) throws NoSuchElementException {
+        return getContractsBy(netId, null);
     }
 
     /**
@@ -77,5 +103,23 @@ public class ContractService {
         return contractRepository.save(contract);
     }
 
+    /**
+     * Creates an example which can be used to find a Contract
+     * with a certain netId and courseId inside the database.
+     *
+     * @param netId the example's netId
+     * @param courseId  the example's courseId
+     * @return an example contract.
+     */
+    private Example<Contract> createContractExample(String netId, String courseId) {
+        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
+                                                        .withIgnoreNullValues();
+        Example<Contract> example = Example.of(
+                Contract.builder()
+                        .courseId(courseId)
+                        .netId(netId)
+                        .build(), ignoreAllFields);
+        return example;
+    }
 
 }
