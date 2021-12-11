@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.course;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -33,6 +35,8 @@ public class CourseServiceTests {
 
     @Autowired
     private transient CourseRepository courseRepository;
+
+    private final CourseRepository mockCourseRepository = Mockito.mock(CourseRepository.class);
 
     final static String testCourseID = "CSE2115";
     final static LocalDateTime testStartDate = LocalDateTime.of(2021, 12, 1, 0, 0);
@@ -76,5 +80,37 @@ public class CourseServiceTests {
         // Assert
         assertThatExceptionOfType(Exception.class)
                 .isThrownBy(action);
+    }
+
+    @Test
+    public void isLecturer_withValidData_worksCorrectly() {
+        // Arrange
+        final ArrayList<String> responsibleLecturers = new ArrayList<>();
+        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        Course savedCourse = courseRepository.getById(course.getId());
+
+        // Assert
+        assertThat(courseService.isResponsibleLecturer(responsibleLecturer, course.getId())).isTrue();
+    }
+
+    @Test
+    public void isLecturer_withInvalidData_returnsFalse() {
+        // Arrange
+        final ArrayList<String> responsibleLecturers = new ArrayList<>();
+        responsibleLecturers.add("someOtherGuy");
+        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        Course savedCourse = courseRepository.getById(course.getId());
+
+        // Assert
+        assertThat(courseService.isResponsibleLecturer(responsibleLecturer, course.getId())).isFalse();
     }
 }
