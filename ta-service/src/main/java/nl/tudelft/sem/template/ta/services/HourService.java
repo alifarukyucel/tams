@@ -15,11 +15,9 @@ import org.springframework.stereotype.Service;
 public class HourService {
 
     private final transient HourDeclarationRepository hoursRepository;
-    private final transient ContractService contractService;
 
-    public HourService(HourDeclarationRepository hoursRepository, ContractService contractService) {
+    public HourService(HourDeclarationRepository hoursRepository) {
         this.hoursRepository = hoursRepository;
-        this.contractService = contractService;
     }
 
     /**
