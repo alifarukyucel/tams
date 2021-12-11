@@ -141,4 +141,22 @@ public class CourseTests {
         // Assert
         assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isFalse();
     }
+
+    @Test
+    public void isResponsibleLecturer_courseDoesNotExist_throws404() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(get("/course/randomCourse/lecturer/fmulder")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        resultActions.andExpect(status().isNotFound());
+
+    }
 }
