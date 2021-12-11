@@ -63,8 +63,7 @@ public class HourService {
      * @return Saved version of the declaration.
      * @throws IllegalArgumentException if declaration does not meet requirements.
      */
-    public HourDeclaration checkAndSave(HourDeclaration hourDeclaration)
-        throws IllegalArgumentException {
+    public HourDeclaration checkAndSave(HourDeclaration hourDeclaration) {
 
         return hoursRepository.save(hourDeclaration);
     }

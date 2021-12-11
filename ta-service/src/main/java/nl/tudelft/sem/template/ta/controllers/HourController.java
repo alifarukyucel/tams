@@ -98,8 +98,6 @@ public class HourController {
             hourDeclaration = hourService.checkAndSave(hourDeclaration);
 
             return ResponseEntity.ok(hourDeclaration.getId());
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
