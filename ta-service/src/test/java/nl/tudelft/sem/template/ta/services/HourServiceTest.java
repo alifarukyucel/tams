@@ -45,6 +45,7 @@ class HourServiceTest {
         defaultContract = Contract.builder()
             .courseId("CSE2310")
             .netId("PvdBerg")
+            .signed(true)
             .maxHours(20)
             .signed(true)
             .build();

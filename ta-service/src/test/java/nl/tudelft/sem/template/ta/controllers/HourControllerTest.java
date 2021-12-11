@@ -77,6 +77,7 @@ class HourControllerTest {
         defaultContract = contractRepository.save(defaultContract);
         defaultHourDeclaration = HourDeclaration.builder()
             .contract(defaultContract)
+            .workedTime(0)
             .approved(false)
             .workedTime(5)
             .reviewed(false)
