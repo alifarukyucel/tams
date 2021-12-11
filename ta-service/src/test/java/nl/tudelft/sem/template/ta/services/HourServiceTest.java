@@ -3,6 +3,8 @@ package nl.tudelft.sem.template.ta.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import javax.transaction.Transactional;
@@ -59,6 +61,38 @@ class HourServiceTest {
 
         hoursRepository.save(defaultHourDeclaration);
 
+    }
+
+    @Test
+    void findAllHours() {
+        // arrange
+        Contract contract = Contract.builder()
+            .courseId("CSE2550")
+            .netId("PvdBerg")
+            .maxHours(20)
+            .build();
+
+        contract = contractRepository.save(contract);
+
+        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(5)
+            .approved(false)
+            .reviewed(false)
+            .build());
+
+        hoursRepository.save(HourDeclaration.builder()
+            .contract(contract)
+            .workedTime(5)
+            .approved(false)
+            .reviewed(false)
+            .build());
+
+        // act
+        var hours = hourService.findHoursOfContract(defaultContract);
+
+        // assert
+        assertThat(hours).containsExactlyInAnyOrder(defaultHourDeclaration, hourDeclaration);
     }
 
     @Test
