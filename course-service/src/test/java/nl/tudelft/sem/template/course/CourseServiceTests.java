@@ -44,11 +44,12 @@ public class CourseServiceTests {
     final static String testDescription = "swe methods";
     final static int testNumberOfStudents = 300;
     final static String responsibleLecturer = "fmulder";
-    final ArrayList<String> responsibleLecturers = new ArrayList<>();
+    ArrayList<String> responsibleLecturers;
 
     @BeforeEach
     void setUp() {
         courseRepository.deleteAll();
+        responsibleLecturers = new ArrayList<>();
     }
 
     @Test
@@ -89,32 +90,51 @@ public class CourseServiceTests {
     @Test
     public void isLecturer_withValidData_worksCorrectly() {
         // Arrange
-        final ArrayList<String> responsibleLecturers = new ArrayList<>();
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
-
-        // Act
-        Course savedCourse = courseRepository.getById(course.getId());
 
         // Assert
         assertThat(courseService.isResponsibleLecturer(responsibleLecturer, course.getId())).isTrue();
     }
 
     @Test
-    public void isLecturer_withInvalidData_returnsFalse() {
+    public void isLecturer_withDifferentLecturer_returnsFalse() {
         // Arrange
-        final ArrayList<String> responsibleLecturers = new ArrayList<>();
         responsibleLecturers.add("someOtherGuy");
         Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
 
         // Act
-        Course savedCourse = courseRepository.getById(course.getId());
+        boolean isResponsibleLecturer = courseService.isResponsibleLecturer(responsibleLecturer, course.getId());
 
         // Assert
-        assertThat(courseService.isResponsibleLecturer(responsibleLecturer, course.getId())).isFalse();
+        assertThat(isResponsibleLecturer).isFalse();
+    }
+
+    @Test
+    public void isLecturer_withDifferentCourse_returnsFalse() {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+
+        ArrayList<String> FalseResponsiblelecturers = new ArrayList<>();
+        FalseResponsiblelecturers.add("someOtherGuy");
+
+        Course courseWithCorrectLecturer = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+
+        Course course = new Course("CourseWithWrongTeacher", testStartDate, testCourseName, testDescription,
+                testNumberOfStudents,FalseResponsiblelecturers);
+
+        courseRepository.save(course);
+        courseRepository.save(courseWithCorrectLecturer);
+
+        // Act
+        boolean isResponsibleLecturer = courseService.isResponsibleLecturer(responsibleLecturer, course.getId());
+
+        // Assert
+        assertThat(isResponsibleLecturer).isFalse();
     }
 }
