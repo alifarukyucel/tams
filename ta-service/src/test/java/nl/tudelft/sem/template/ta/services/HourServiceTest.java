@@ -52,6 +52,7 @@ class HourServiceTest {
 
         defaultHourDeclaration = HourDeclaration.builder()
             .contract(defaultContract)
+            .workedTime(5)
             .approved(false)
             .reviewed(false)
             .build();
@@ -67,6 +68,7 @@ class HourServiceTest {
             .contract(defaultContract)
             .approved(true)
             .reviewed(true)
+            .workedTime(5)
             .desc("This is a test.")
             .build();
 
@@ -78,6 +80,66 @@ class HourServiceTest {
 
         assertThat(optionalFound.isPresent()).isTrue();
         assertThat(hourDeclaration).isEqualTo(optionalFound.get());
+    }
+
+    @Test
+    void submitHoursCloseToMax() {
+        //arrange
+        hoursRepository.deleteAll();
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(defaultContract.getMaxHours() - 1)
+            .approved(false)
+            .reviewed(false)
+            .build();
+
+        // act
+        hourDeclaration = hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        var optionalFound = hoursRepository.findById(hourDeclaration.getId());
+
+        assertThat(optionalFound.isPresent()).isTrue();
+        assertThat(hourDeclaration).isEqualTo(optionalFound.get());
+    }
+
+    @Test
+    void submitHoursEqualToMax() {
+        //arrange
+        hoursRepository.deleteAll();
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(defaultContract.getMaxHours())
+            .approved(false)
+            .reviewed(false)
+            .build();
+
+        // act
+        hourDeclaration = hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        var optionalFound = hoursRepository.findById(hourDeclaration.getId());
+
+        assertThat(optionalFound.isPresent()).isTrue();
+        assertThat(hourDeclaration).isEqualTo(optionalFound.get());
+    }
+
+    @Test
+    void submitHoursOverMax() {
+        //arrange
+        hoursRepository.deleteAll();
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(defaultContract.getMaxHours() + 1)
+            .approved(false)
+            .reviewed(false)
+            .build();
+
+        ThrowingCallable action = () -> hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+        assertThat(hoursRepository.findAll().size()).isEqualTo(0);
     }
 
     @Test

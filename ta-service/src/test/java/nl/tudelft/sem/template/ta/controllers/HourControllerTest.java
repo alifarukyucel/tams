@@ -78,6 +78,7 @@ class HourControllerTest {
         defaultHourDeclaration = HourDeclaration.builder()
             .contract(defaultContract)
             .approved(false)
+            .workedTime(5)
             .reviewed(false)
             .build();
         defaultHourDeclaration = hourDeclarationRepository.save(defaultHourDeclaration);
@@ -167,6 +168,28 @@ class HourControllerTest {
         results.andExpect(status().isNotFound());
 
         assertThat(hourDeclarationRepository.findAll().size()).isEqualTo(1);  // account for setup()
+    }
+
+    @Test
+    void submitMoreHoursThanAllowed() throws Exception {
+        // arrange
+        hourDeclarationRepository.deleteAll();
+        SubmitHoursRequestModel model = SubmitHoursRequestModel.builder()
+            .course("CSE2310")
+            .desc("this is a test.")
+            .workedTime(defaultContract.getMaxHours() + 1)
+            .build();
+
+        // act
+        ResultActions results = mockMvc.perform(post("/hours/submit")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isConflict());
+
+        assertThat(hourDeclarationRepository.findAll().size()).isEqualTo(0);  // account for setup()
     }
 
     @Test
