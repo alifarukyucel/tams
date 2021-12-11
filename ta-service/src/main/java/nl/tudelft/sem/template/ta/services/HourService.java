@@ -1,10 +1,15 @@
 package nl.tudelft.sem.template.ta.services;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+
+import nl.tudelft.sem.template.ta.controllers.HourController;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 /**
@@ -61,9 +66,41 @@ public class HourService {
      * @return Saved version of the declaration.
      * @throws IllegalArgumentException if declaration does not meet requirements.
      */
-    public HourDeclaration checkAndSave(HourDeclaration hourDeclaration) {
+    public HourDeclaration checkAndSave(HourDeclaration hourDeclaration)
+        throws IllegalArgumentException {
+
+        List<HourDeclaration> hourDeclarations = findHoursOfContract(hourDeclaration.getContract());
+
+        int totalWorkedTime = hourDeclarations
+            .stream()
+            .mapToInt(HourDeclaration::getWorkedTime)
+            .sum();
+
+        if (totalWorkedTime + hourDeclaration.getWorkedTime()
+            > hourDeclaration.getContract().getMaxHours()) {
+            throw new IllegalArgumentException("Contract does not have enough hours remaining.");
+        }
 
         return hoursRepository.save(hourDeclaration);
+    }
+
+    /**
+     * Returns all hourDeclarations belonging to the passed contract.
+     *
+     * @param contract The contract whose declarations to fetch.
+     * @return A list of hour declarations.
+     */
+    public List<HourDeclaration> findHoursOfContract(Contract contract) {
+        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
+            .withIgnoreNullValues();
+
+        Example<HourDeclaration> example = Example.of(
+            HourDeclaration.builder()
+                .contract(contract)
+                .build(),
+            ignoreAllFields);
+
+        return hoursRepository.findAll(example);
     }
 
     /**
