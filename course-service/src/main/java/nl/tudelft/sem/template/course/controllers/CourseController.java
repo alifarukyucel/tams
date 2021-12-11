@@ -1,16 +1,23 @@
 package nl.tudelft.sem.template.course.controllers;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.models.CourseModel;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
 
 /**
  * An API endpoint manager for functionality related to the Course object.
@@ -64,7 +71,8 @@ public class CourseController {
      * @return the course found in the database with the given id
      */
     @GetMapping("lecturer/{netId}/{courseId}") // course/lecturer/{netId}/{courseId}
-    public boolean isResponsibleLecturer(@PathVariable String netId, @PathVariable String courseId) {
+    public boolean isResponsibleLecturer(@PathVariable String netId,
+                                         @PathVariable String courseId) {
         return courseService.isResponsibleLecturer(netId, courseId);
     }
 
@@ -81,15 +89,17 @@ public class CourseController {
      */
     @PostMapping(value = "create", consumes = "application/json") // course/create
     ResponseEntity<String> createCourse(@RequestBody CourseModel courseModel) {
-        Course course = new Course(courseModel.getId(), courseModel.getStartDate(), courseModel.getName(),
-                courseModel.getDescription(), courseModel.getNumberOfStudents(),
+        Course course = new Course(courseModel.getId(),
+                courseModel.getStartDate(), courseModel.getDescription(),
+                courseModel.getName(), courseModel.getNumberOfStudents(),
                 new ArrayList<>(List.of(authManager.getNetid())));
         courseService.createCourse(course);
         return ResponseEntity.ok().build();
     }
 
     /**
-     * Updates the description of the Course object that is sent through the body of the PUT request.
+     * Updates the description of the Course object that is sent through
+     * the body of the PUT request.
      * The Course is found in the database by the given course id.
      *
      * @param id the course id
