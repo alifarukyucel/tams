@@ -6,13 +6,13 @@ import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class WorkedHoursTest {
+class HourDeclarationTest {
 
     @Test
     void testBuilder() {
         Date time = Calendar.getInstance().getTime();
         Contract c1 = new Contract();
-        WorkedHours hour1 = WorkedHours.builder()
+        HourDeclaration hour1 = HourDeclaration.builder()
             .id(UUID.randomUUID())
             .workedTime(15)
             .approved(true)
@@ -36,7 +36,7 @@ class WorkedHoursTest {
     void testSetters() {
         Date time = Calendar.getInstance().getTime();
         Contract c1 = new Contract();
-        WorkedHours hour1 = new WorkedHours();
+        HourDeclaration hour1 = new HourDeclaration();
         hour1.setId(UUID.randomUUID());
         hour1.setWorkedTime(15);
         hour1.setApproved(true);

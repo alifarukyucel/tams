@@ -3,8 +3,8 @@ package nl.tudelft.sem.template.ta.services;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
-import nl.tudelft.sem.template.ta.entities.WorkedHours;
-import nl.tudelft.sem.template.ta.repositories.WorkedHoursRepository;
+import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class HourService {
 
-    private final transient WorkedHoursRepository hoursRepository;
+    private final transient HourDeclarationRepository hoursRepository;
 
-    public HourService(WorkedHoursRepository hoursRepository) {
+    public HourService(HourDeclarationRepository hoursRepository) {
         this.hoursRepository = hoursRepository;
     }
 
@@ -41,17 +41,17 @@ public class HourService {
             throw new NoSuchElementException("Specified hours do not exist");
         }
 
-        WorkedHours workedHours = hours.get();
+        HourDeclaration hourDeclaration = hours.get();
 
-        if (workedHours.getReviewed()) {
+        if (hourDeclaration.getReviewed()) {
             throw new IllegalArgumentException("Hours have already been approved");
         }
 
         if (status) {
-            workedHours.setApproved(true);
+            hourDeclaration.setApproved(true);
         }
-        workedHours.setReviewed(true);
-        hoursRepository.save(workedHours);
+        hourDeclaration.setReviewed(true);
+        hoursRepository.save(hourDeclaration);
 
     }
 

@@ -10,11 +10,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.UUID;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
-import nl.tudelft.sem.template.ta.entities.WorkedHours;
+import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
-import nl.tudelft.sem.template.ta.repositories.WorkedHoursRepository;
+import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.security.TokenVerifier;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,18 +51,18 @@ class HourControllerTest {
     private ContractRepository contractRepository;
 
     @Autowired
-    private WorkedHoursRepository workedHoursRepository;
+    private HourDeclarationRepository hourDeclarationRepository;
 
     @Autowired
     private CourseInformation courseInformation;
 
     private Contract defaultContract;
-    private WorkedHours defaultWorkedHours;
+    private HourDeclaration defaultHourDeclaration;
 
     @BeforeEach
     void setUp() {
         contractRepository.deleteAll();
-        workedHoursRepository.deleteAll();
+        hourDeclarationRepository.deleteAll();
 
         defaultContract = Contract.builder()
             .netId("PVeldHuis")
@@ -72,12 +72,12 @@ class HourControllerTest {
             .signed(false)
             .build();
         defaultContract = contractRepository.save(defaultContract);
-        defaultWorkedHours = WorkedHours.builder()
+        defaultHourDeclaration = HourDeclaration.builder()
             .contract(defaultContract)
             .approved(false)
             .reviewed(false)
             .build();
-        defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);
+        defaultHourDeclaration = hourDeclarationRepository.save(defaultHourDeclaration);
 
         when(mockAuthenticationManager.getNetid()).thenReturn(defaultContract.getNetId());
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
@@ -90,7 +90,7 @@ class HourControllerTest {
         // arrange
         AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
             .accept(true)
-            .id(defaultWorkedHours.getId())
+            .id(defaultHourDeclaration.getId())
             .build();
 
         // act
@@ -101,19 +101,19 @@ class HourControllerTest {
 
         // assert
         results.andExpect(status().isOk());
-        WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
+        HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
         assertThat(hour.getApproved()).isTrue();
     }
 
     @Test
     void reApproveApprovedExistingHours() throws Exception {
         // arrange
-        defaultWorkedHours.setApproved(true);
-        defaultWorkedHours.setReviewed(true);
-        defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);
+        defaultHourDeclaration.setApproved(true);
+        defaultHourDeclaration.setReviewed(true);
+        defaultHourDeclaration = hourDeclarationRepository.save(defaultHourDeclaration);
         AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
             .accept(false)
-            .id(defaultWorkedHours.getId())
+            .id(defaultHourDeclaration.getId())
             .build();
 
         // act
@@ -124,7 +124,7 @@ class HourControllerTest {
 
         // assert
         results.andExpect(status().isConflict());
-        WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
+        HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
         assertThat(hour.getApproved()).isTrue();
     }
 
@@ -134,7 +134,7 @@ class HourControllerTest {
         // arrange
         AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
             .accept(true)
-            .id(defaultWorkedHours.getId())
+            .id(defaultHourDeclaration.getId())
             .build();
 
         // act
@@ -145,7 +145,7 @@ class HourControllerTest {
 
         // assert
         results.andExpect(status().isUnauthorized());
-        WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
+        HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
         assertThat(hour.getApproved()).isFalse();
     }
 
