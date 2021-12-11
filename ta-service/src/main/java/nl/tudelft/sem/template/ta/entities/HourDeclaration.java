@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.ta.entities;
 
 import java.util.Date;
 import java.util.UUID;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,10 +27,13 @@ public class HourDeclaration {
     @GeneratedValue
     private UUID id;
 
+    @Column(nullable = false)
     private Integer workedTime;
 
+    @Column(nullable = false)
     private Boolean approved;
 
+    @Column(nullable = false)
     private Boolean reviewed;
 
     private Date date;

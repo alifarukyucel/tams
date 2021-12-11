@@ -27,10 +27,12 @@ public class Contract {
     @Id
     String courseId;
 
+    @Column(nullable = false)
     Integer maxHours;
 
     @Column(columnDefinition = "TEXT")
     String duties;
 
+    @Column(nullable = false)
     Boolean signed;
 }
