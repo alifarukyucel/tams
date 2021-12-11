@@ -69,6 +69,7 @@ class HourServiceTest {
             .contract(defaultContract)
             .approved(true)
             .reviewed(true)
+            .workedTime(2)
             .desc("This is a test.")
             .build();
 
