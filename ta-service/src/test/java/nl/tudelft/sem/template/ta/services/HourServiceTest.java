@@ -3,8 +3,6 @@ package nl.tudelft.sem.template.ta.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import javax.transaction.Transactional;
@@ -62,6 +60,25 @@ class HourServiceTest {
 
         hoursRepository.save(defaultHourDeclaration);
 
+    }
+
+    @Test
+    void blockSubmittingNegativeHours() {
+        //arrange
+        hoursRepository.deleteAll();
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(-5)
+            .approved(false)
+            .reviewed(false)
+            .build();
+
+        //act
+        ThrowingCallable action = () -> hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+        assertThat(hoursRepository.findAll().size()).isEqualTo(0);
     }
 
     @Test
