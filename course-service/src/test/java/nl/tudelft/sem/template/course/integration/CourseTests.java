@@ -19,11 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import static nl.tudelft.sem.template.course.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,11 +57,12 @@ public class CourseTests {
     final static String testDescription = "swe methods";
     final static int testNumberOfStudents = 300;
     final static String responsibleLecturer = "fmulder";
+    ArrayList<String> responsibleLecturers;
 
     @BeforeEach
     void setUp() {
         courseRepository.deleteAll();
-        // Save a basic course in db.
+        responsibleLecturers = new ArrayList<>();
         when(mockAuthenticationManager.getNetid()).thenReturn(responsibleLecturer);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(responsibleLecturer);
@@ -85,5 +88,57 @@ public class CourseTests {
         assertThat(savedCourse.getId()).isEqualTo(testCourseID);
         assertThat(savedCourse.getName()).isEqualTo(testCourseName);
         assertThat(savedCourse.getResponsibleLecturers()).containsExactly(responsibleLecturer);
+    }
+
+    @Test
+    public void isResponsibleLecturer_withValidData_returnsTrue() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isTrue();
+    }
+
+    @Test
+    public void isResponsibleLecturer_withValidDataMultipleLecturers_returnsTrue() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+        responsibleLecturers.add("anniballePanichella");
+        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isTrue();
+    }
+
+    @Test
+    public void isResponsibleLecturer_invalidLecturer_returnsFalse() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fForRespect")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isFalse();
     }
 }
