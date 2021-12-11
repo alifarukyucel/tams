@@ -141,7 +141,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    public void isLecturer_courseDoesNotExists_returnsFalse() {
+    public void isLecturer_courseDoesNotExists_throwsNoSuchElementException() {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
 
