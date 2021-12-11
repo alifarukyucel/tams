@@ -71,7 +71,7 @@ public class CourseController {
      * @param courseId          id of course
      * @return the course found in the database with the given id
      */
-    @GetMapping("lecturer/{netId}/{courseId}") // course/lecturer/{netId}/{courseId}
+    @GetMapping("{courseId}/lecturer/{netId}") // course/{courseId}/lecturer/{netId}
     public boolean isResponsibleLecturer(@PathVariable String netId,
                                          @PathVariable String courseId) {
         return courseService.isResponsibleLecturer(netId, courseId);
