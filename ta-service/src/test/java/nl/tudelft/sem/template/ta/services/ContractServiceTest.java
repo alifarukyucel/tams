@@ -238,7 +238,12 @@ class ContractServiceTest {
     @Test
     void save() {
         // arrange
-        Contract contract = Contract.builder().netId("Gert").courseId("CSE2310").build();
+        Contract contract = Contract.builder()
+            .netId("Gert")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .build();
 
         // act
         contract = contractService.save(contract);
