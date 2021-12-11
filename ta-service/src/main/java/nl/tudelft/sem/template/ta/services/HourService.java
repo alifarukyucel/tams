@@ -61,6 +61,8 @@ public class HourService {
 
     /**
      * Saves an hourDeclaration if it is a valid declaration.
+     * An invalid declaration occurs when submitting more hours than allowed,
+     * or submitting to an unsigned contract.
      *
      * @param hourDeclaration The declaration to save.
      * @return Saved version of the declaration.
@@ -68,6 +70,10 @@ public class HourService {
      */
     public HourDeclaration checkAndSave(HourDeclaration hourDeclaration)
         throws IllegalArgumentException {
+
+        if (!hourDeclaration.getContract().getSigned()) {
+            throw new IllegalArgumentException("Contract has not been signed by student.");
+        }
 
         List<HourDeclaration> hourDeclarations = findHoursOfContract(hourDeclaration.getContract());
 

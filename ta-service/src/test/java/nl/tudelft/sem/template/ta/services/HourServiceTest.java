@@ -48,6 +48,7 @@ class HourServiceTest {
             .courseId("CSE2310")
             .netId("PvdBerg")
             .maxHours(20)
+            .signed(true)
             .build();
 
         defaultContract = contractRepository.save(defaultContract);
@@ -61,6 +62,28 @@ class HourServiceTest {
 
         hoursRepository.save(defaultHourDeclaration);
 
+    }
+
+    @Test
+    void submitHoursUnsignedContract() {
+        //arrange
+        defaultContract.setSigned(false);
+        contractRepository.save(defaultContract);
+
+        hoursRepository.deleteAll();
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(5)
+            .approved(false)
+            .reviewed(false)
+            .build();
+
+        //act
+        ThrowingCallable action = () -> hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+        assertThat(hoursRepository.findAll().size()).isEqualTo(0);
     }
 
     @Test

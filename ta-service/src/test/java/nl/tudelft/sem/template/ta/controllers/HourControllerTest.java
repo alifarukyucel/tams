@@ -72,7 +72,7 @@ class HourControllerTest {
             .courseId("CSE2310")
             .maxHours(20)
             .duties("Work really hard")
-            .signed(false)
+            .signed(true)
             .build();
         defaultContract = contractRepository.save(defaultContract);
         defaultHourDeclaration = HourDeclaration.builder()
