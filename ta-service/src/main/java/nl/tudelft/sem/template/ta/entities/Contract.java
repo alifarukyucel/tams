@@ -22,17 +22,17 @@ import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 public class Contract {
 
     @Id
-    String netId;
+    private String netId;
 
     @Id
-    String courseId;
+    private String courseId;
 
     @Column(nullable = false)
-    Integer maxHours;
+    private Integer maxHours;
 
     @Column(columnDefinition = "TEXT")
-    String duties;
+    private String duties;
 
     @Column(nullable = false)
-    Boolean signed;
+    private Boolean signed;
 }
