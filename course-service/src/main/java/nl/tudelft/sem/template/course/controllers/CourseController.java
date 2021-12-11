@@ -37,9 +37,7 @@ public class CourseController {
 
     @Autowired
     private final transient CourseService courseService;
-
-    Date date = new Date();
-
+    
     /**
      * Instantiates a new Course controller.
      *
