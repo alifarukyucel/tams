@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 public class HourService {
 
     private final transient HourDeclarationRepository hoursRepository;
+    private final transient ContractService contractService;
 
-    public HourService(HourDeclarationRepository hoursRepository) {
+    public HourService(HourDeclarationRepository hoursRepository, ContractService contractService) {
         this.hoursRepository = hoursRepository;
+        this.contractService = contractService;
     }
 
     /**
@@ -52,7 +54,19 @@ public class HourService {
         }
         hourDeclaration.setReviewed(true);
         hoursRepository.save(hourDeclaration);
+    }
 
+    /**
+     * Saves an hourDeclaration if it is a valid declaration.
+     *
+     * @param hourDeclaration The declaration to save.
+     * @return Saved version of the declaration.
+     * @throws IllegalArgumentException if declaration does not meet requirements.
+     */
+    public HourDeclaration checkAndSave(HourDeclaration hourDeclaration)
+        throws IllegalArgumentException {
+
+        return hoursRepository.save(hourDeclaration);
     }
 
     /**
@@ -76,7 +90,6 @@ public class HourService {
         }
 
         return workedHours.get().getContract();
-
     }
 
 

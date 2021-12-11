@@ -61,6 +61,26 @@ class HourServiceTest {
     }
 
     @Test
+    void checkAndSave() {
+        // arrange
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .contract(defaultContract)
+            .approved(true)
+            .reviewed(true)
+            .desc("This is a test.")
+            .build();
+
+        // act
+        hourDeclaration = hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        var optionalFound = hoursRepository.findById(hourDeclaration.getId());
+
+        assertThat(optionalFound.isPresent()).isTrue();
+        assertThat(hourDeclaration).isEqualTo(optionalFound.get());
+    }
+
+    @Test
     void approveHoursExistingHours() {
         // pre-condition
         assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isFalse();
