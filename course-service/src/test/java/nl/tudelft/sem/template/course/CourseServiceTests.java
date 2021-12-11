@@ -40,11 +40,16 @@ public class CourseServiceTests {
     final static String testDescription = "swe methods";
     final static int testNumberOfStudents = 300;
     final static String responsibleLecturer = "fmulder";
+    final ArrayList<String> responsibleLecturers = new ArrayList<>();
+
+    @BeforeEach
+    void setUp() {
+        courseRepository.deleteAll();
+    }
 
     @Test
     public void createCourse_withValidData_worksCorrectly() {
         // Arrange
-        final ArrayList<String> responsibleLecturers = new ArrayList<>();
         responsibleLecturers.add(responsibleLecturer);
         Course newCourse = new Course(testCourseID, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
@@ -64,7 +69,6 @@ public class CourseServiceTests {
     @Test
     public void createCourse_withExistingCourse_throwsConflictException() throws Exception {
         // Arrange
-        final ArrayList<String> responsibleLecturers = new ArrayList<>();
         responsibleLecturers.add(responsibleLecturer);
         Course existingCourse = new Course(testCourseID,
                 testStartDate, testCourseName, testDescription, testNumberOfStudents, responsibleLecturers);
