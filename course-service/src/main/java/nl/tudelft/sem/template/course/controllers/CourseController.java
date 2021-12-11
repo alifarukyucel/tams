@@ -3,11 +3,14 @@ package nl.tudelft.sem.template.course.controllers;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.models.CourseModel;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.server.ResponseStatusException;
 
 
 /**
@@ -72,7 +75,13 @@ public class CourseController {
     @GetMapping("{courseId}/lecturer/{netId}") // course/{courseId}/lecturer/{netId}
     public boolean isResponsibleLecturer(@PathVariable String netId,
                                          @PathVariable String courseId) {
-        return courseService.isResponsibleLecturer(netId, courseId);
+        boolean isResponsibleLecturer;
+        try {
+            isResponsibleLecturer = courseService.isResponsibleLecturer(netId, courseId);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        return isResponsibleLecturer;
     }
 
 

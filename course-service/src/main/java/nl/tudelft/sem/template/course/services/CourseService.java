@@ -47,7 +47,11 @@ public class CourseService {
      * @return the boolean
      */
     public boolean isResponsibleLecturer(String netId, String courseId) {
-        return courseRepository.getById(courseId).getResponsibleLecturers().contains(netId);
+        Course course = courseRepository.getById(courseId);
+        if (course == null) {
+            throw new NoSuchElementException("The course you're looking for doesn't exist.");
+        }
+        return course.getResponsibleLecturers().contains(netId);
     }
 
     // ------------------------- Setters ------------------------
