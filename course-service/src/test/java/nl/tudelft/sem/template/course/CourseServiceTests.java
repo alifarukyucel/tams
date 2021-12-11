@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
+
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.services.CourseService;
@@ -136,5 +138,19 @@ public class CourseServiceTests {
 
         // Assert
         assertThat(isResponsibleLecturer).isFalse();
+    }
+
+    @Test
+    public void isLecturer_courseDoesNotExists_returnsFalse() {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+
+        // Act
+        ThrowableAssert.ThrowingCallable action = () ->
+                courseService.isResponsibleLecturer(responsibleLecturer, testCourseID);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(action);
     }
 }
