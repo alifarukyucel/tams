@@ -110,6 +110,7 @@ class HourServiceTest {
         Contract contract = Contract.builder()
             .courseId("CSE2550")
             .netId("PvdBerg")
+            .signed(true)
             .maxHours(20)
             .build();
 
