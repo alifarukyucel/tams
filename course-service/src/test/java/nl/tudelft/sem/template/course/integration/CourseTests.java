@@ -72,7 +72,7 @@ public class CourseTests {
                 testNumberOfStudents);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(post("/create")
+        ResultActions resultActions = mockMvc.perform(post("/course/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(newCourse))
                 .header("Authorization", "Bearer Mulder"));
@@ -84,5 +84,6 @@ public class CourseTests {
 
         assertThat(savedCourse.getId()).isEqualTo(testCourseID);
         assertThat(savedCourse.getName()).isEqualTo(testCourseName);
+        assertThat(savedCourse.getResponsibleLecturers()).containsExactly(responsibleLecturer);
     }
 }
