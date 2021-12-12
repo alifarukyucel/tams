@@ -90,7 +90,7 @@ public class CourseServiceTests {
     public void isLecturer_withValidData_worksCorrectly() {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
-        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
 
@@ -102,7 +102,7 @@ public class CourseServiceTests {
     public void isLecturer_withDifferentLecturer_returnsFalse() {
         // Arrange
         responsibleLecturers.add("someOtherGuy");
-        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
 
@@ -121,7 +121,7 @@ public class CourseServiceTests {
         ArrayList<String> falseResponsiblelecturers = new ArrayList<>();
         falseResponsiblelecturers.add("someOtherGuy");
 
-        Course courseWithCorrectLecturer = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+        Course courseWithCorrectLecturer = new Course(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
 
         Course course = new Course("CourseWithWrongTeacher", testStartDate, testCourseName, testDescription,
@@ -144,7 +144,7 @@ public class CourseServiceTests {
 
         // Act
         ThrowableAssert.ThrowingCallable action = () ->
-                courseService.isResponsibleLecturer(responsibleLecturer, testCourseID);
+                courseService.isResponsibleLecturer(responsibleLecturer, testCourseId);
 
         // Assert
         assertThatExceptionOfType(NoSuchElementException.class)
