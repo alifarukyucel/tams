@@ -61,16 +61,15 @@ public class CourseService {
      * Create a course.
      *
      * @param course the course
-     * @return the course
      * @throws ConflictException the conflict exception
      */
     @Transactional
-    public Course createCourse(Course course) throws ConflictException {
+    public void createCourse(Course course) throws ConflictException {
         String courseId = course.getId();
         if (courseRepository.getById(courseId) != null) {
             throw new ConflictException("A course already exists with that id.");
         }
-        return courseRepository.save(course);
+        courseRepository.save(course);
     }
 
     /**
