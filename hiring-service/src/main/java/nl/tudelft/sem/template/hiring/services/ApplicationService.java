@@ -1,6 +1,9 @@
 package nl.tudelft.sem.template.hiring.services;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,5 +28,25 @@ public class ApplicationService {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Retrieves an application by its course id and netid.
+     *
+     * @param courseId the course id of the application
+     * @param netId    the netid of the application
+     * @return the application
+     * @throws NoSuchElementException if the application is not found
+     */
+    public Application get(String courseId, String netId) throws NoSuchElementException {
+        ApplicationKey key = new ApplicationKey(courseId, netId);
+        Optional<Application> applicationOptional = applicationRepository.findById(key);
+
+        if (applicationOptional.isEmpty()) {
+            // Application does not exist
+            throw new NoSuchElementException();
+        }
+
+        return applicationOptional.get();
     }
 }
