@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.hiring.controllers;
 
 import nl.tudelft.sem.template.hiring.entities.compositeKeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
+import nl.tudelft.sem.template.hiring.models.RetrieveStatusModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.security.TokenVerifier;
@@ -84,6 +85,15 @@ public class ApplicationControllerTest {
         assertThat(applicationRepository.findById(validKey)).isNotEmpty();
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
 
+    }
+
+    @Test
+    public void getStatusByCourseTest() throws Exception {
+        //Arrange
+
+        //Act
+
+        //Assert
     }
 
 }
