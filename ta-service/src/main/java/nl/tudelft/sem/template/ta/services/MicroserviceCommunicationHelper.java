@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class MicroserviceCommunicationHelper {
-    private transient HttpServletRequest request;
+    private final transient HttpServletRequest request;
 
     public MicroserviceCommunicationHelper(HttpServletRequest request) {
         this.request = request;
@@ -38,5 +38,9 @@ public class MicroserviceCommunicationHelper {
 
     public <T> ResponseEntity<T> get(String url, Class<T> responseType, String... variables) {
         return send(url, responseType, null, HttpMethod.GET, variables);
+    }
+
+    public <T, J> ResponseEntity<T> post(String url, Class<T> responseType, J body, String... variables) {
+        return send(url, responseType, body, HttpMethod.POST, variables);
     }
 }
