@@ -40,6 +40,9 @@ public class ApplicationControllerTest {
     private transient MockMvc mockMvc;
 
     @Autowired
+    private transient CourseInformation mockCourseInformation;
+
+    @Autowired
     private transient AuthManager mockAuthenticationManager;
 
     @Autowired
