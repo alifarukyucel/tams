@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.ta.services;
 
+import java.util.Optional;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.services.models.CourseInformationResponseModel;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,8 +19,17 @@ public class ConnectedCourseInformationService implements CourseInformation {
 
     @Override
     public boolean isResponsibleLecturer(String netId, String courseId) {
+        if (netId == null || courseId == null) {
+            return false;
+        }
 
-        return false;
+        try {
+            var response = comm.get(baseUrl + "/lecturer/{netId}/{courseId}",
+                    Boolean.class, netId, courseId);
+            return Optional.ofNullable(response.getBody()).orElse(false);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     @Override
