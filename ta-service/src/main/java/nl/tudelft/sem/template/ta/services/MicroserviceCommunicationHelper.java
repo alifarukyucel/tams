@@ -43,4 +43,8 @@ public class MicroserviceCommunicationHelper {
     public <T, J> ResponseEntity<T> post(String url, Class<T> responseType, J body, String... variables) {
         return send(url, responseType, body, HttpMethod.POST, variables);
     }
+
+    public <T, J> ResponseEntity<T> put(String url, Class<T> responseType, J body, String... variables) {
+        return send(url, responseType, body, HttpMethod.PUT, variables);
+    }
 }
