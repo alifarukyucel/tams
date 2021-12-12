@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.course.controllers;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.models.CourseModel;
@@ -89,8 +88,8 @@ public class CourseController {
     @PostMapping(value = "create", consumes = "application/json") // course/create
     ResponseEntity<String> createCourse(@RequestBody CourseModel courseModel) {
         Course course = new Course(courseModel.getId(),
-                courseModel.getStartDate(), courseModel.getDescription(),
-                courseModel.getName(), courseModel.getNumberOfStudents(),
+                courseModel.getStartDate(), courseModel.getName(),
+                courseModel.getDescription(), courseModel.getNumberOfStudents(),
                 new ArrayList<>(List.of(authManager.getNetid())));
         courseService.createCourse(course);
         return ResponseEntity.ok().build();
