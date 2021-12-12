@@ -23,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
 /**
- * Unit tests for CourseService
+ * Unit tests for CourseService.
  *
  * @created 09/12/2021, 12:20
  */
@@ -38,15 +38,13 @@ public class CourseServiceTests {
     @Autowired
     private transient CourseRepository courseRepository;
 
-    private final CourseRepository mockCourseRepository = Mockito.mock(CourseRepository.class);
-
-    final static String testCourseID = "CSE2115";
-    final static LocalDateTime testStartDate = LocalDateTime.of(2021, 12, 1, 0, 0);
-    final static String testCourseName = "SEM";
-    final static String testDescription = "swe methods";
-    final static int testNumberOfStudents = 300;
-    final static String responsibleLecturer = "fmulder";
-    ArrayList<String> responsibleLecturers;
+    final String testCourseId = "CSE2115";
+    final LocalDateTime testStartDate = LocalDateTime.of(2021, 12, 1, 0, 0);
+    final String testCourseName = "SEM";
+    final String testDescription = "swe methods";
+    final int testNumberOfStudents = 300;
+    final String responsibleLecturer = "fmulder";
+    final ArrayList<String> responsibleLecturers = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -58,7 +56,7 @@ public class CourseServiceTests {
     public void createCourse_withValidData_worksCorrectly() {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
-        Course newCourse = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+        Course newCourse = new Course(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
 
         // Act
@@ -66,7 +64,7 @@ public class CourseServiceTests {
 
         // Assert
         Course savedCourse = courseRepository.getById("CSE2115");
-        assertThat(savedCourse.getId()).isEqualTo(testCourseID);
+        assertThat(savedCourse.getId()).isEqualTo(testCourseId);
         assertThat(savedCourse.getName()).isEqualTo(testCourseName);
         assertThat(savedCourse.getDescription()).isEqualTo(testDescription);
         assertThat(savedCourse.getNumberOfStudents()).isEqualTo(testNumberOfStudents);
@@ -77,7 +75,7 @@ public class CourseServiceTests {
     public void createCourse_withExistingCourse_throwsConflictException() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
-        Course existingCourse = new Course(testCourseID,
+        Course existingCourse = new Course(testCourseId,
                 testStartDate, testCourseName, testDescription, testNumberOfStudents, responsibleLecturers);
         courseRepository.save(existingCourse);
 

@@ -20,9 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CourseService {
 
-    @Autowired
-    private transient CourseRepository courseRepository;
+    private final transient CourseRepository courseRepository;
 
+    public CourseService(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
+    }
     // --------------------- Getters -------------------------
 
     /**
