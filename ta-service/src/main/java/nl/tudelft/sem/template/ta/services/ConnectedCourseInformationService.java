@@ -23,8 +23,20 @@ public class ConnectedCourseInformationService implements CourseInformation {
         return false;
     }
 
+    @Override
+    public CourseInformationResponseModel getCourseById(String id) {
+        if (id == null) {
+            return null;
+        }
 
+        ResponseEntity<CourseInformationResponseModel> response;
 
+        try {
+            response = comm.get(baseUrl + "/{id}", CourseInformationResponseModel.class, id);
+        } catch (Exception ex) {
+            return null;
+        }
 
-
+        return response.getBody();
+    }
 }
