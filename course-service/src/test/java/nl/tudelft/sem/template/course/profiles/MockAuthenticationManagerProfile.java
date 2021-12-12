@@ -1,11 +1,11 @@
 package nl.tudelft.sem.template.course.profiles;
 
+import nl.tudelft.sem.template.course.security.AuthManager;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import nl.tudelft.sem.template.course.security.AuthManager;
 
 /**
  * A configuration profile to allow injection of a mock AuthenticationManager.

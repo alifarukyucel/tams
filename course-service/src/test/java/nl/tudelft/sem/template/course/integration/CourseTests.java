@@ -1,5 +1,13 @@
 package nl.tudelft.sem.template.course.integration;
 
+import static nl.tudelft.sem.template.course.utils.JsonUtil.serialize;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.LocalDateTime;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.models.CourseModel;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
@@ -18,17 +26,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDateTime;
-
-import static nl.tudelft.sem.template.course.utils.JsonUtil.serialize;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * @created 09/12/2021, 20:58
+ * Integration tests mainly for courseController.
+ *
+ * @created 09 /12/2021, 20:58
  */
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -36,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class CourseTests {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -48,14 +51,16 @@ public class CourseTests {
     @Autowired
     private transient AuthManager mockAuthenticationManager;
 
+    final String testCourseId = "CSE2115";
+    final LocalDateTime testStartDate = LocalDateTime.of(2021, 12, 1, 0, 0);
+    final String testCourseName = "SEM";
+    final String testDescription = "swe methods";
+    final int testNumberOfStudents = 300;
+    final String responsibleLecturer = "fmulder";
 
-    final static String testCourseID = "CSE2115";
-    final static LocalDateTime testStartDate = LocalDateTime.of(2021, 12, 1, 0, 0);
-    final static String testCourseName = "SEM";
-    final static String testDescription = "swe methods";
-    final static int testNumberOfStudents = 300;
-    final static String responsibleLecturer = "fmulder";
-
+    /**
+     * Sets up the environment before each test.
+     */
     @BeforeEach
     void setUp() {
         courseRepository.deleteAll();
@@ -65,10 +70,15 @@ public class CourseTests {
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(responsibleLecturer);
     }
 
+    /**
+     * Create course with valid data works correctly.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void createCourse_withValidData_worksCorrectly() throws Exception {
         // Arrange
-        CourseModel newCourse = new CourseModel(testCourseID, testStartDate, testCourseName, testDescription,
+        CourseModel newCourse = new CourseModel(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents);
 
         // Act
@@ -80,9 +90,9 @@ public class CourseTests {
         // Assert
         resultActions.andExpect(status().isOk());
 
-        Course savedCourse = courseRepository.getById(testCourseID);
+        Course savedCourse = courseRepository.getById(testCourseId);
 
-        assertThat(savedCourse.getId()).isEqualTo(testCourseID);
+        assertThat(savedCourse.getId()).isEqualTo(testCourseId);
         assertThat(savedCourse.getName()).isEqualTo(testCourseName);
         assertThat(savedCourse.getResponsibleLecturers()).containsExactly(responsibleLecturer);
     }
