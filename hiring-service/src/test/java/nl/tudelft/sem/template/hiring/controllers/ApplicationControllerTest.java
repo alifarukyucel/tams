@@ -192,4 +192,35 @@ public class ApplicationControllerTest {
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
 
+    @ParameterizedTest
+    @CsvSource({"ACCEPTED", "REJECTED"})
+    public void rejectNonPendingApplication(String status) throws Exception {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.valueOf(status));
+        applicationRepository.save(application);
+
+        ApplicationLookupModel lookup = ApplicationLookupModel.builder()
+                .courseId(application.getCourseId())
+                .netid(application.getNetId())
+                .build();
+
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+                .thenReturn(true);
+
+        // Act
+        ResultActions result = mockMvc.perform(post("/reject")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(lookup))
+                .header("Authorization", "Bearer Joe"));
+
+        // Assert
+        result.andExpect(status().isConflict());
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .get();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
+    }
+
 }
