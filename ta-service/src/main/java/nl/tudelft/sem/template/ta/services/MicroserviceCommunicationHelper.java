@@ -2,7 +2,11 @@ package nl.tudelft.sem.template.ta.services;
 
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,5 +34,9 @@ public class MicroserviceCommunicationHelper {
                 (Object[]) variables
         );
         return response;
+    }
+
+    public <T> ResponseEntity<T> get(String url, Class<T> responseType, String... variables) {
+        return send(url, responseType, null, HttpMethod.GET, variables);
     }
 }
