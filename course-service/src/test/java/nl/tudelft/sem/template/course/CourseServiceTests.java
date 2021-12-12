@@ -43,7 +43,7 @@ public class CourseServiceTests {
     final String testDescription = "swe methods";
     final int testNumberOfStudents = 300;
     final String responsibleLecturer = "fmulder";
-    final ArrayList<String> responsibleLecturers = new ArrayList<>();
+    ArrayList<String> responsibleLecturers = new ArrayList<>();
 
     @BeforeEach
     void setUp() {

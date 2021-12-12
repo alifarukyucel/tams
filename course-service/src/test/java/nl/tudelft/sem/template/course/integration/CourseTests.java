@@ -5,9 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.models.CourseModel;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
@@ -57,6 +60,7 @@ public class CourseTests {
     final String testDescription = "swe methods";
     final int testNumberOfStudents = 300;
     final String responsibleLecturer = "fmulder";
+    ArrayList<String> responsibleLecturers = new ArrayList<String>();
 
     /**
      * Sets up the environment before each test.
@@ -101,7 +105,7 @@ public class CourseTests {
     public void isResponsibleLecturer_withValidData_returnsTrue() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
-        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
 
@@ -119,7 +123,7 @@ public class CourseTests {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         responsibleLecturers.add("anniballePanichella");
-        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
 
@@ -136,7 +140,7 @@ public class CourseTests {
     public void isResponsibleLecturer_invalidLecturer_returnsFalse() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
-        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
 
@@ -153,7 +157,7 @@ public class CourseTests {
     public void isResponsibleLecturer_courseDoesNotExist_throws404() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
-        Course course = new Course(testCourseID, testStartDate, testCourseName, testDescription,
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
 
