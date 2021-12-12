@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.Query;
  * @version 1.0
  * @created 30/11/2021, 17:16
  */
-public interface CourseRepository extends JpaRepository<Course, Integer> {
+public interface CourseRepository extends JpaRepository<Course, String> {
     // Getters
     Course getById(String id);   // table is small enough that overhead is insignificant.
     // We can change it so that it'll return only the properties/columns we request the most.
