@@ -1,40 +1,38 @@
 package nl.tudelft.sem.template.ta.entities;
 
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 
 @Entity
 @Builder
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Data
+@IdClass(ContractId.class)
 @Table(name = "contracts")
 public class Contract {
 
     @Id
-    @GeneratedValue
-    private UUID id;
+    private String netId;
 
-    int maxHours;
-
-    @Column(nullable = false)
-    String netId;
+    @Id
+    private String courseId;
 
     @Column(nullable = false)
-    String courseId;
+    private Integer maxHours;
 
     @Column(columnDefinition = "TEXT")
-    String duties;
+    private String duties;
 
-    boolean signed;
-
+    @Column(nullable = false)
+    private Boolean signed;
 }

@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
-import nl.tudelft.sem.template.ta.entities.WorkedHours;
-import nl.tudelft.sem.template.ta.repositories.WorkedHoursRepository;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,9 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class HourService {
 
-    private final transient WorkedHoursRepository hoursRepository;
+    private final transient HourDeclarationRepository hoursRepository;
 
-    public HourService(WorkedHoursRepository hoursRepository) {
+    public HourService(HourDeclarationRepository hoursRepository) {
         this.hoursRepository = hoursRepository;
     }
 
@@ -30,10 +28,10 @@ public class HourService {
      * @param id The ID of the hours worked
      * @param status The status to set to the hours, false is ignored.
      * @throws NoSuchElementException Thrown if the worked hours could not be found.
-     * @throws NullPointerException Thrown if no id was specified.
+     * @throws IllegalArgumentException Thrown is hours were already approved.
      */
     public void approveHours(UUID id, boolean status)
-        throws NoSuchElementException, NullPointerException {
+        throws NoSuchElementException, IllegalArgumentException {
 
         if (id == null) {
             throw new NoSuchElementException("An Id must be specified");
@@ -44,14 +42,29 @@ public class HourService {
             throw new NoSuchElementException("Specified hours do not exist");
         }
 
-        WorkedHours workedHours = hours.get();
+        HourDeclaration hourDeclaration = hours.get();
 
-        if (status || workedHours.isApproved()) {
-            workedHours.setApproved((true));
-            hoursRepository.save(workedHours);
-        } else {
-            hoursRepository.delete(workedHours);
+        if (hourDeclaration.getReviewed()) {
+            throw new IllegalArgumentException("Hours have already been approved");
         }
+
+        if (status) {
+            hourDeclaration.setApproved(true);
+        }
+        hourDeclaration.setReviewed(true);
+        hoursRepository.save(hourDeclaration);
+    }
+
+    /**
+     * Saves an hourDeclaration if it is a valid declaration.
+     *
+     * @param hourDeclaration The declaration to save.
+     * @return Saved version of the declaration.
+     * @throws IllegalArgumentException if declaration does not meet requirements.
+     */
+    public HourDeclaration checkAndSave(HourDeclaration hourDeclaration) {
+
+        return hoursRepository.save(hourDeclaration);
     }
 
     /**
@@ -59,9 +72,10 @@ public class HourService {
      *
      * @param uuid the id of the worked hours.
      * @return The contract.
+     * @throws NoSuchElementException Thrown if the contract or worked hours do not exist.
      */
     public Contract getAssociatedContract(UUID uuid)
-        throws NoSuchElementException, NullPointerException {
+        throws NoSuchElementException {
 
         if (uuid == null) {
             throw new NoSuchElementException("An Id must be specified");
@@ -74,7 +88,6 @@ public class HourService {
         }
 
         return workedHours.get().getContract();
-
     }
 
 
@@ -85,14 +98,13 @@ public class HourService {
      * @param netId the netId of the WorkedHours (optional)
      * @return a list of workedHours with requested courseId (and netId if given)
      */
-    public List<WorkedHours> getNonReviewedHoursBy(String courseId, String netId)  {
+    public List<HourDeclaration> getNonReviewedHoursBy(String courseId, String netId)  {
         if (courseId == null)
-            throw new NoSuchElementException("The courseId should be specified");
+            throw new IllegalArgumentException("The courseId should be specified");
 
         return netId == null ?
                 hoursRepository.findNonReviewedHoursBy(courseId) :
                 hoursRepository.findNonReviewedHoursBy(courseId, netId);
     }
-
 
 }

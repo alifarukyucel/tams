@@ -1,14 +1,18 @@
 package nl.tudelft.sem.template.ta.controllers;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptHoursRequestModel;
+import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.security.AuthManager;
+import nl.tudelft.sem.template.ta.services.ContractService;
 import nl.tudelft.sem.template.ta.services.HourService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +25,7 @@ public class HourController {
     private final transient AuthManager authManager;
     private final transient HourService hourService;
     private final transient CourseInformation courseInformation;
+    private final transient ContractService contractService;
 
     /**
      * Instantiates a new HourController.
@@ -31,10 +36,12 @@ public class HourController {
      */
     public HourController(AuthManager authManager,
                           HourService hourService,
-                          CourseInformation courseInformation) {
+                          CourseInformation courseInformation,
+                          ContractService contractService) {
         this.authManager = authManager;
         this.hourService = hourService;
         this.courseInformation = courseInformation;
+        this.contractService = contractService;
     }
 
     /**
@@ -53,13 +60,46 @@ public class HourController {
 
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             }
-
             hourService.approveHours(request.getId(), request.getAccept());
+
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Endpoint where worked hours can be submitted.
+     *
+     * @param request the submit hours request model containing all necessary information to
+     *                process the request.
+     * @return 200 OK UUID of the submitted hours for future reference.
+     *         409 if a conflict arose due to the request (declaration exceeded parameters)
+     *         404 if the associated contract could not be found.
+     */
+    @PostMapping("/submit")
+    public ResponseEntity<UUID> submit(@RequestBody SubmitHoursRequestModel request) {
+        try {
+            Contract contract = contractService.getContract(
+                authManager.getNetid(), request.getCourse());
+
+            HourDeclaration hourDeclaration = HourDeclaration.builder()
+                .workedTime(request.getWorkedTime())
+                .reviewed(false)
+                .approved(false)
+                .contract(contract)
+                .date(request.getDate())
+                .desc(request.getDesc())
+                .build();
+
+            hourDeclaration = hourService.checkAndSave(hourDeclaration);
+
+            return ResponseEntity.ok(hourDeclaration.getId());
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
 }

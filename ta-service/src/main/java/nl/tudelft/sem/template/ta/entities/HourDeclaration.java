@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.ta.entities;
 
 import java.util.Date;
 import java.util.UUID;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,28 +21,37 @@ import nl.tudelft.sem.template.ta.models.HourResponseModel;
 
 @Entity
 @Builder
-@Table(name = "workedHours")
+@Table(name = "HourDeclarations")
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Data
-@EqualsAndHashCode
-public class WorkedHours {
+public class HourDeclaration {
 
     @Id
     @GeneratedValue
     private UUID id;
-    int workedTime;
-    boolean approved;
-    boolean reviewed; // internal flag to see if it has been processed by an responsible lecturer yet.
-    Date date;
-    String desc;
+
+    @Column(nullable = false)
+    private Integer workedTime;
+
+    @Column(nullable = false)
+    private Boolean approved;
+
+    @Column(nullable = false)
+    private Boolean reviewed;
+
+    private Date date;
+
+    private String desc;
+
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    Contract contract;
+    private Contract contract;
 
     /**
      * Create an instance of HourResponseModel based on this WorkedHours.
      * @return ContractResponseModel of this contract.
      */
+    // TODO: Move this to the HourResponseModel itself (as per Martin request).
     public HourResponseModel toResponseModel(){
         return new HourResponseModel(date, desc, workedTime, approved, contract.getNetId());
     }

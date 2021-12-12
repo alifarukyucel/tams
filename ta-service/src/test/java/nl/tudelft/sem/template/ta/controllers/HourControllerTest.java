@@ -1,15 +1,25 @@
 package nl.tudelft.sem.template.ta.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static nl.tudelft.sem.template.ta.utils.JsonUtil.deserialize;
+import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.UUID;
+import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
-import nl.tudelft.sem.template.ta.entities.WorkedHours;
+import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptHoursRequestModel;
+import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
-import nl.tudelft.sem.template.ta.repositories.WorkedHoursRepository;
+import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.security.TokenVerifier;
-import nl.tudelft.sem.template.ta.services.ContractService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,20 +33,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import javax.transaction.Transactional;
-
-import java.util.UUID;
-
-import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier", "mockCourseInformation"})
@@ -49,9 +45,6 @@ class HourControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ContractService contractService;
-
-    @Autowired
     private TokenVerifier mockTokenVerifier;
 
     @Autowired
@@ -61,29 +54,34 @@ class HourControllerTest {
     private ContractRepository contractRepository;
 
     @Autowired
-    private WorkedHoursRepository workedHoursRepository;
+    private HourDeclarationRepository hourDeclarationRepository;
 
     @Autowired
     private CourseInformation courseInformation;
 
     private Contract defaultContract;
-    private WorkedHours defaultWorkedHours;
+    private HourDeclaration defaultHourDeclaration;
 
     @BeforeEach
     void setUp() {
         contractRepository.deleteAll();
-        workedHoursRepository.deleteAll();
+        hourDeclarationRepository.deleteAll();
 
         defaultContract = Contract.builder()
             .netId("PVeldHuis")
             .courseId("CSE2310")
-            .maxHours(5)
+            .maxHours(20)
             .duties("Work really hard")
             .signed(false)
             .build();
         defaultContract = contractRepository.save(defaultContract);
-        defaultWorkedHours = WorkedHours.builder().contract(defaultContract).approved(false).build();
-        defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);
+        defaultHourDeclaration = HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(0)
+            .approved(false)
+            .reviewed(false)
+            .build();
+        defaultHourDeclaration = hourDeclarationRepository.save(defaultHourDeclaration);
 
         when(mockAuthenticationManager.getNetid()).thenReturn(defaultContract.getNetId());
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
@@ -92,9 +90,93 @@ class HourControllerTest {
     }
 
     @Test
+    void submitHoursWithExistingContract() throws Exception {
+        // arrange
+        SubmitHoursRequestModel model = SubmitHoursRequestModel.builder()
+            .course("CSE2310")
+            .desc("this is a test.")
+            .workedTime(5)
+            .build();
+
+        HourDeclaration expected = HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(5)
+            .reviewed(false)
+            .approved(false)
+            .desc("this is a test.")
+            .build();
+
+        // act
+        ResultActions results = mockMvc.perform(post("/hours/submit")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+
+        // assert
+        var result = results.andExpect(status().isOk()).andReturn();
+
+        UUID responseModel = deserialize(result.getResponse().getContentAsString(),
+            UUID.class);
+
+        var submitted = hourDeclarationRepository.findById(responseModel).orElseThrow();
+
+        assertThat(submitted.getId()).isNotNull();
+        submitted.setId(null);
+        assertThat(submitted).isEqualTo(expected);
+    }
+
+
+    @Test
+    void submitHoursWithNonExistingCourse() throws Exception {
+        // arrange
+        SubmitHoursRequestModel model = SubmitHoursRequestModel.builder()
+            .course("CSE8764")
+            .desc("this is a test.")
+            .workedTime(5)
+            .build();
+
+        // act
+        ResultActions results = mockMvc.perform(post("/hours/submit")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isNotFound());
+
+        assertThat(hourDeclarationRepository.findAll().size()).isEqualTo(1);  // account for setup()
+    }
+
+    @Test
+    void submitHoursWithNonExistingContract() throws Exception {
+        // arrange
+        when(mockAuthenticationManager.getNetid()).thenReturn("JohnDoe");
+        SubmitHoursRequestModel model = SubmitHoursRequestModel.builder()
+            .course("CSE2310")
+            .desc("this is a test.")
+            .workedTime(5)
+            .build();
+
+        // act
+        ResultActions results = mockMvc.perform(post("/hours/submit")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isNotFound());
+
+        assertThat(hourDeclarationRepository.findAll().size()).isEqualTo(1);  // account for setup()
+    }
+
+    @Test
     void approveExistingHours() throws Exception {
         // arrange
-        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder().accept(true).id(defaultWorkedHours.getId()).build();
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(true)
+            .id(defaultHourDeclaration.getId())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/hours/approve")
@@ -103,19 +185,21 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        verify(courseInformation).isResponsibleLecturer(defaultContract.getNetId(), defaultContract.getCourseId());
-        verify(courseInformation, times(1)).isResponsibleLecturer(any(), any());
         results.andExpect(status().isOk());
-        WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
-        assertThat(hour.isApproved()).isTrue();
+        HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
+        assertThat(hour.getApproved()).isTrue();
     }
 
     @Test
-    void unApproveApprovedExistingHours() throws Exception {
+    void reApproveApprovedExistingHours() throws Exception {
         // arrange
-        defaultWorkedHours.setApproved(true);
-        defaultWorkedHours = workedHoursRepository.save(defaultWorkedHours);
-        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder().accept(false).id(defaultWorkedHours.getId()).build();
+        defaultHourDeclaration.setApproved(true);
+        defaultHourDeclaration.setReviewed(true);
+        defaultHourDeclaration = hourDeclarationRepository.save(defaultHourDeclaration);
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(false)
+            .id(defaultHourDeclaration.getId())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/hours/approve")
@@ -124,18 +208,19 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        verify(courseInformation).isResponsibleLecturer(defaultContract.getNetId(), defaultContract.getCourseId());
-        verify(courseInformation, times(1)).isResponsibleLecturer(any(), any());
-        results.andExpect(status().isOk());
-        WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
-        assertThat(hour.isApproved()).isTrue();
+        results.andExpect(status().isConflict());
+        HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
+        assertThat(hour.getApproved()).isTrue();
     }
 
     @Test
-    void approveHoursYouAreNotResponsibleFor() throws Exception{
+    void approveHoursYouAreNotResponsibleFor() throws Exception {
         when(courseInformation.isResponsibleLecturer(anyString(), anyString())).thenReturn(false);
         // arrange
-        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder().accept(true).id(defaultWorkedHours.getId()).build();
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(true)
+            .id(defaultHourDeclaration.getId())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/hours/approve")
@@ -144,18 +229,18 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        verify(courseInformation).isResponsibleLecturer(defaultContract.getNetId(), defaultContract.getCourseId());
-        verify(courseInformation, times(1)).isResponsibleLecturer(any(), any());
         results.andExpect(status().isUnauthorized());
-        WorkedHours hour = workedHoursRepository.getOne(defaultWorkedHours.getId());
-        assertThat(hour.isApproved()).isFalse();
-
+        HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
+        assertThat(hour.getApproved()).isFalse();
     }
 
     @Test
     void approveNonExistingHours() throws Exception {
         // arrange
-        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder().accept(true).id(UUID.randomUUID()).build();
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(true)
+            .id(UUID.randomUUID())
+            .build();
 
         // act
         ResultActions results = mockMvc.perform(put("/hours/approve")
