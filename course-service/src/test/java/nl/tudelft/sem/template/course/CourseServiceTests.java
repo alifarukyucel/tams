@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
-
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.services.CourseService;
@@ -119,14 +118,14 @@ public class CourseServiceTests {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
 
-        ArrayList<String> FalseResponsiblelecturers = new ArrayList<>();
-        FalseResponsiblelecturers.add("someOtherGuy");
+        ArrayList<String> falseResponsiblelecturers = new ArrayList<>();
+        falseResponsiblelecturers.add("someOtherGuy");
 
         Course courseWithCorrectLecturer = new Course(testCourseID, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
 
         Course course = new Course("CourseWithWrongTeacher", testStartDate, testCourseName, testDescription,
-                testNumberOfStudents,FalseResponsiblelecturers);
+                testNumberOfStudents, falseResponsiblelecturers);
 
         courseRepository.save(course);
         courseRepository.save(courseWithCorrectLecturer);

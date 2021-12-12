@@ -3,7 +3,6 @@ package nl.tudelft.sem.template.course.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.models.CourseModel;
 import nl.tudelft.sem.template.course.security.AuthManager;
