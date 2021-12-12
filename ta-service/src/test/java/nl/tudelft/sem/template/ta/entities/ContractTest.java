@@ -14,7 +14,6 @@ class ContractTest {
         contract = Contract.builder()
                 .courseId("build")
                 .maxHours(5)
-                .id(UUID.randomUUID())
                 .signed(false)
                 .netId("PieterDelft")
                 .duties("You need to work!")
@@ -25,7 +24,6 @@ class ContractTest {
     void testBuilder() {
         Assertions.assertEquals("build", contract.getCourseId());
         Assertions.assertEquals(5, contract.getMaxHours());
-        Assertions.assertNotNull(contract.getId());
         Assertions.assertFalse(contract.getSigned());
         Assertions.assertEquals("PieterDelft", contract.getNetId());
         Assertions.assertEquals("You need to work!", contract.getDuties());
@@ -36,14 +34,12 @@ class ContractTest {
         contract = new Contract();
         contract.setCourseId("build");
         contract.setMaxHours(5);
-        contract.setId(UUID.randomUUID());
         contract.setSigned(false);
         contract.setNetId("PieterDelft");
         contract.setDuties("You need to work!");
 
         Assertions.assertEquals("build", contract.getCourseId());
         Assertions.assertEquals(5, contract.getMaxHours());
-        Assertions.assertNotNull(contract.getId());
         Assertions.assertFalse(contract.getSigned());
         Assertions.assertEquals("PieterDelft", contract.getNetId());
         Assertions.assertEquals("You need to work!", contract.getDuties());
