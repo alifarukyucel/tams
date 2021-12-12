@@ -70,7 +70,8 @@ public class ApplicationController {
      * @param model The course id and the application id
      * @return 200 OK if the request is successful
      * @throws ResponseStatusException 403 if the user is not the responsible lecturer of the course
-     * @throws ResponseStatusException 403 if the user is not the responsible lecturer of the course
+     * @throws ResponseStatusException 404 if the application does not exist
+     * @throws ResponseStatusException 409 if the application is not pending
      */
     @PostMapping("/reject")
     public ResponseEntity<String> reject(@RequestBody ApplicationLookupModel model) {
