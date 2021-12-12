@@ -1,5 +1,9 @@
 package nl.tudelft.sem.template.hiring.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
@@ -14,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -142,6 +144,11 @@ public class ApplicationServiceTest {
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
 
+    /**
+     * Test for rejecting an application in a non-pending state.
+     *
+     * @param status the test status (non-pending)
+     */
     @ParameterizedTest
     @CsvSource({"ACCEPTED", "REJECTED"})
     public void rejectNonPendingApplication(String status) {

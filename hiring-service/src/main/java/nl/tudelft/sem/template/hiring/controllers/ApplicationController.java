@@ -74,15 +74,13 @@ public class ApplicationController {
      */
     @PostMapping("/reject")
     public ResponseEntity<String> reject(@RequestBody ApplicationLookupModel model) {
-        String applicationNetid = model.getNetid();
-        String courseId = model.getCourseId();
 
-        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
+        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), model.getCourseId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         try {
-            this.applicationService.reject(courseId, applicationNetid);
+            this.applicationService.reject(model.getCourseId(), model.getNetid());
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
