@@ -11,6 +11,12 @@ public class ConnectedCourseInformationService implements CourseInformation {
     @Value("${microservice.course.base_url}")
     private transient String baseUrl;
 
+    private MicroserviceCommunicationHelper comm;
+
+    public ConnectedCourseInformationService(MicroserviceCommunicationHelper comm) {
+        this.comm = comm;
+    }
+
     @Override
     public boolean isResponsibleLecturer(String netId, String courseId) {
 
