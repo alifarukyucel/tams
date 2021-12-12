@@ -1,6 +1,6 @@
 Author: Maurits Kienhuis  
 feel free to modify and update this document.
-##A guide to testing 101
+## A guide to testing 101
 
 Hey everybody, welcome to this short document about how you should test your code.
 In this document I'm planning to quickly explain some pitfalls of testing with our current framework.
@@ -176,9 +176,14 @@ If you are throwing a bad_request manually you might want to double-check if it 
 
 #### 401 UNAUTHORIZED
 Double check that your mocking of the auth pipeline works correctly and ask others to check.
-Might in the future also be thrown if a non-responsible lecturer is touching responsible lecturer endpoints.
+Also make sure you are sending at least a token with the request.
+If you are receiving a 401 then your requests failed to get through the authentication of the module.
+Don't throw this yourself.
 
-(I don't recall us doing that?!)
+#### 403 FORBIDDEN
+But what if I want to throw 401? You throw this one.
+This means they are authenticated by the server, hence not 401, but do not have the permissions to do this action.
+Think of a non-responsible lecturer trying to touch responsible lecturer endpoints.
 
 #### 404 NOT FOUND
 This error will occur in 2 ways.
