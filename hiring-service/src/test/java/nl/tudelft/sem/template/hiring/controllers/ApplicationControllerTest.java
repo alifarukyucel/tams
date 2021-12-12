@@ -162,4 +162,34 @@ public class ApplicationControllerTest {
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
 
+    @Test
+    public void rejectNonexistentApplication() throws Exception {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        ApplicationLookupModel lookup = ApplicationLookupModel.builder()
+                .courseId(application.getCourseId())
+                .netid("invalidNetid")
+                .build();
+
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+                .thenReturn(true);
+
+        // Act
+        ResultActions result = mockMvc.perform(post("/reject")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(lookup))
+                .header("Authorization", "Bearer Joe"));
+
+        // Assert
+        result.andExpect(status().isNotFound());
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .get();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+    }
+
 }
