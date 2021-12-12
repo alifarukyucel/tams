@@ -71,15 +71,14 @@ public class CourseController {
      * @return the course found in the database with the given id
      */
     @GetMapping("{courseId}/lecturer/{netId}") // course/{courseId}/lecturer/{netId}
-    public boolean isResponsibleLecturer(@PathVariable String netId,
+    public ResponseEntity<String> isResponsibleLecturer(@PathVariable String netId,
                                          @PathVariable String courseId) {
-        boolean isResponsibleLecturer;
         try {
-            isResponsibleLecturer = courseService.isResponsibleLecturer(netId, courseId);
+            courseService.isResponsibleLecturer(netId, courseId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-        return isResponsibleLecturer;
+        return ResponseEntity.ok().build();
     }
 
 

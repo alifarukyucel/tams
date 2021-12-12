@@ -46,12 +46,14 @@ public class CourseService {
      *
      * @param netId    the net id
      * @param courseId the course id
-     * @return the boolean
+     * @return true if netId is a responsible lecturer of the given course
      */
     public boolean isResponsibleLecturer(String netId, String courseId) {
         Course course = courseRepository.getById(courseId);
         if (course == null) {
             throw new NoSuchElementException("The course you're looking for doesn't exist.");
+        } else if (!course.getResponsibleLecturers().contains(netId)) {
+            throw new NoSuchElementException("The user is not a lecturer for the given course.");
         }
         return course.getResponsibleLecturers().contains(netId);
     }
