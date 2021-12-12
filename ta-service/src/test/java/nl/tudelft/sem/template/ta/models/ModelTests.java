@@ -1,22 +1,41 @@
 package nl.tudelft.sem.template.ta.models;
 
+import java.util.Date;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
 public class ModelTests {
 
-    @Test
-    void testContractResponseFromContract() {
-        Contract contract = Contract.builder()
+
+    private HourDeclaration defaultHourDeclaration;
+    private Contract defaultContract;
+
+    @BeforeEach
+    void setup(){
+        defaultContract = Contract.builder()
             .courseId("CSETEST")
             .maxHours(5)
             .duties("Your duties")
+            .netId("WinstijnSmit")
             .signed(true)
             .build();
 
+        defaultHourDeclaration =  HourDeclaration.builder()
+            .workedTime(3)
+            .contract(defaultContract)
+            .approved(false)
+            .reviewed(false)
+            .build();
+    }
+
+    @Test
+    void testContractResponseFromContract() {
+        Contract contract = defaultContract;
         ContractResponseModel model = ContractResponseModel.fromContract(contract);
         Assertions.assertNotNull(model);
         Assertions.assertEquals(contract.getCourseId(), model.getCourse());
@@ -24,6 +43,20 @@ public class ModelTests {
         Assertions.assertEquals(contract.getDuties(), model.getDuties());
         Assertions.assertEquals(contract.getSigned(), model.isSigned());
     }
+
+
+    @Test
+    void testHourResponseFromHourDeclaration() {
+        HourDeclaration declaration = defaultHourDeclaration;
+        HourResponseModel model = HourResponseModel.fromHourDeclaration(declaration);
+        Assertions.assertNotNull(model);
+        Assertions.assertEquals(declaration.getDate(), model.getDate());
+        Assertions.assertEquals(declaration.getDesc(), model.getDescription());
+        Assertions.assertEquals(declaration.getWorkedTime(), model.getWorkedTime());
+        Assertions.assertEquals(declaration.getApproved(), model.isApproved());
+        Assertions.assertEquals(declaration.getContract().getNetId(), model.getTa());
+    }
+
 
     /**
      * This following is purely to bump the code coverage.
