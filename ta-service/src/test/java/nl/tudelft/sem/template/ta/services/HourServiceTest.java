@@ -39,9 +39,6 @@ class HourServiceTest {
 
     @BeforeEach
     void setUp() {
-        hoursRepository.deleteAll();
-        contractRepository.deleteAll();
-
         defaultContract = Contract.builder()
             .courseId("CSE2310")
             .netId("PvdBerg")

@@ -21,12 +21,12 @@ public class HourService {
     }
 
     /**
-     * Allow a lecturer to approve hours.
-     * Approved hours cannot be unapproved.
+     * Allow a lecturer to approve declarations.
+     * Approved declarations cannot be unapproved.
      *
-     * @param id The ID of the hours worked
+     * @param id The ID of the hour declaration
      * @param status The status to set to the hours, false is ignored.
-     * @throws NoSuchElementException Thrown if the worked hours could not be found.
+     * @throws NoSuchElementException Thrown if the hour declaration could not be found.
      * @throws IllegalArgumentException Thrown is hours were already approved.
      */
     public void approveHours(UUID id, boolean status)
@@ -67,11 +67,11 @@ public class HourService {
     }
 
     /**
-     * returns the contract associated with this hour UUID.
+     * returns the contract associated with this declaration UUID.
      *
-     * @param uuid the id of the worked hours.
+     * @param uuid the id of the hour declaration.
      * @return The contract.
-     * @throws NoSuchElementException Thrown if the contract or worked hours do not exist.
+     * @throws NoSuchElementException Thrown if the contract or hour declaration do not exist.
      */
     public Contract getAssociatedContract(UUID uuid)
         throws NoSuchElementException {

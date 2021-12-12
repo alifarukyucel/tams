@@ -1,6 +1,6 @@
 package nl.tudelft.sem.template.ta.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,7 +36,7 @@ public class HourDeclaration {
     @Column(nullable = false)
     private Boolean reviewed;
 
-    private Date date;
+    private LocalDateTime date;
 
     private String desc;
 
