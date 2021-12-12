@@ -79,6 +79,27 @@ public class ApplicationService {
             actualApplication.setStatus(ApplicationStatus.PENDING);
         }
         return status;
-
     }
+
+
+    /**
+     * Retrieves an application by its course id and netid.
+     *
+     * @param courseId the course id of the application
+     * @param netId    the netid of the application
+     * @return the application
+     * @throws NoSuchElementException if the application is not found
+     */
+    public Application get(String courseId, String netId) throws NoSuchElementException {
+        ApplicationKey key = new ApplicationKey(courseId, netId);
+        Optional<Application> applicationOptional = applicationRepository.findById(key);
+
+        if (applicationOptional.isEmpty()) {
+            // Application does not exist
+            throw new NoSuchElementException();
+        }
+
+        return applicationOptional.get();
+    }
+
 }

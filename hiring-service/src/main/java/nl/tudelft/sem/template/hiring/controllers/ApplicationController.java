@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.hiring.controllers;
 
+import java.util.stream.Collectors;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositeKeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
@@ -60,11 +61,13 @@ public class ApplicationController {
     @GetMapping("/{course}/status")
     public ResponseEntity<RetrieveStatusModel> getStatusByCourse(@PathVariable String course) {
         try {
-            //ApplicationStatus status = applicationService.retrieveStatus()???
+            Application application = applicationService.get(authManager.getNetid(), course);
+            RetrieveStatusModel status = RetrieveStatusModel.fromApplication(application);
 
             return ResponseEntity.ok(status);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
 }
