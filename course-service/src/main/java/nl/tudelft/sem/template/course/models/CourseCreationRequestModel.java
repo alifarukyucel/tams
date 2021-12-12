@@ -3,26 +3,32 @@ package nl.tudelft.sem.template.course.models;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import java.time.LocalDateTime;
-import lombok.AccessLevel;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 /**
- * Course model to be sent through HTTP requests.
+ * CourseCreationRequestModel to be received through HTTP requests to create courses.
  *
- * @created 07/12/2021, 17:37
+ * @created 09/12/2021, 19:47
  */
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CourseModel {
+public class CourseCreationRequestModel {
+
+    @NotNull
     private String id;
+
     @JsonSerialize(using = ToStringSerializer.class)
     private LocalDateTime startDate;
-    private String name;
-    private String description;
-    private int numberOfStudents;
 
-    
+    private String name;
+
+    private String description;
+
+    @NotNull
+    private int numberOfStudents;
 }
