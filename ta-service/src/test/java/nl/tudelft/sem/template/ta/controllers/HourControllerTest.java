@@ -61,8 +61,6 @@ class HourControllerTest {
 
     @BeforeEach
     void setUp() {
-        contractRepository.deleteAll();
-        hourDeclarationRepository.deleteAll();
 
         defaultContract = Contract.builder()
             .netId("PVeldHuis")
