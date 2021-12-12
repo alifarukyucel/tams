@@ -99,7 +99,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    public void isLecturer_withDifferentLecturer_returnsFalse() {
+    public void isLecturer_withDifferentLecturer_throwsException() {
         // Arrange
         responsibleLecturers.add("someOtherGuy");
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -107,14 +107,15 @@ public class CourseServiceTests {
         courseRepository.save(course);
 
         // Act
-        boolean isResponsibleLecturer = courseService.isResponsibleLecturer(responsibleLecturer, course.getId());
+        ThrowableAssert.ThrowingCallable action = () -> courseService.createCourse(course);
 
         // Assert
-        assertThat(isResponsibleLecturer).isFalse();
+        assertThatExceptionOfType(Exception.class)
+                .isThrownBy(action);
     }
 
     @Test
-    public void isLecturer_withDifferentCourse_returnsFalse() {
+    public void isLecturer_withDifferentCourse_throwsException() {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
 
@@ -131,10 +132,11 @@ public class CourseServiceTests {
         courseRepository.save(courseWithCorrectLecturer);
 
         // Act
-        boolean isResponsibleLecturer = courseService.isResponsibleLecturer(responsibleLecturer, course.getId());
+        ThrowableAssert.ThrowingCallable action = () -> courseService.createCourse(course);
 
         // Assert
-        assertThat(isResponsibleLecturer).isFalse();
+        assertThatExceptionOfType(Exception.class)
+                .isThrownBy(action);
     }
 
     @Test
