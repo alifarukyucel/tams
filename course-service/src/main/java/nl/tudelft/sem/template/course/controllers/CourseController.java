@@ -3,8 +3,9 @@ package nl.tudelft.sem.template.course.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import javax.validation.Valid;
 import nl.tudelft.sem.template.course.entities.Course;
-import nl.tudelft.sem.template.course.models.CourseModel;
+import nl.tudelft.sem.template.course.models.CourseCreationRequestModel;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,20 +87,25 @@ public class CourseController {
     // ------------------------------ Setters -----------------------------------
 
     /**
-     * POST endpoint that saves the given course to the database. The CourseModel object is sent
-     * through a POST request body in a JSON format.
+     * POST endpoint that saves the given course to the database. The
+     * CourseCreationRequestModel is sent through a POST request body in a JSON format.
      * Throws 409 Conflict upon already existing id
      *
      * @param courseModel   the course to be created
      * @return the course returned from the database (with a manually-assigned id)
      */
     @PostMapping(value = "create", consumes = "application/json") // course/create
-    ResponseEntity<String> createCourse(@RequestBody CourseModel courseModel) {
+    ResponseEntity<String> createCourse(@RequestBody @Valid CourseCreationRequestModel courseModel)
+            throws Exception {
         Course course = new Course(courseModel.getId(),
                 courseModel.getStartDate(), courseModel.getName(),
                 courseModel.getDescription(), courseModel.getNumberOfStudents(),
                 new ArrayList<>(List.of(authManager.getNetid())));
-        courseService.createCourse(course);
+        try {
+            courseService.createCourse(course);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
         return ResponseEntity.ok().build();
     }
 
