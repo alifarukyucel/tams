@@ -132,4 +132,34 @@ public class ApplicationControllerTest {
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
 
+    @Test
+    public void rejectValidApplicationWhileNotBeingResponsibleLecturer() throws Exception {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        ApplicationLookupModel lookup = ApplicationLookupModel.builder()
+                .courseId(application.getCourseId())
+                .netid(application.getNetId())
+                .build();
+
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+                .thenReturn(false);
+
+        // Act
+        ResultActions result = mockMvc.perform(post("/reject")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(lookup))
+                .header("Authorization", "Bearer Joe"));
+
+        // Assert
+        result.andExpect(status().isForbidden());
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .get();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+    }
+
 }
