@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import javax.transaction.Transactional;
@@ -21,6 +23,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -37,18 +41,25 @@ class HourServiceTest {
     private transient ContractRepository contractRepository;
 
     private Contract defaultContract;
+    private List<HourDeclaration> hourDeclarations;
+    private List<Contract> contracts;
     private HourDeclaration defaultHourDeclaration;
 
     @BeforeEach
     void setUp() {
+        hoursRepository.deleteAll();
+        contractRepository.deleteAll();
+        contracts = new ArrayList<Contract>();
+        hourDeclarations = new ArrayList<HourDeclaration>();
+
         defaultContract = Contract.builder()
             .courseId("CSE2310")
             .netId("PvdBerg")
             .signed(true)
             .maxHours(20)
             .build();
-
         defaultContract = contractRepository.save(defaultContract);
+        contracts.add(defaultContract);
 
         defaultHourDeclaration = HourDeclaration.builder()
             .contract(defaultContract)
@@ -56,9 +67,56 @@ class HourServiceTest {
             .approved(false)
             .reviewed(false)
             .build();
+        defaultHourDeclaration = hoursRepository.save(defaultHourDeclaration);
+        hourDeclarations.add(defaultHourDeclaration);
 
-        hoursRepository.save(defaultHourDeclaration);
+        setupContracts();
+        setupHourDeclarations();
+    }
 
+    void setupContracts() {
+
+        contracts.add(Contract.builder()
+            .courseId("CSE2500")
+            .netId("Maurits")
+            .maxHours(40)
+            .signed(true)
+            .build()
+        );
+
+        contracts.add(Contract.builder()
+            .courseId("CSE2310")
+            .netId("WinstijnSmit")
+            .maxHours(40)
+            .signed(true)
+            .build()
+        );
+
+        for (int i = 1; i < contracts.size(); i++) {
+            contracts.set(i, contractRepository.save(contracts.get(i)));
+        }
+    }
+
+    void setupHourDeclarations() {
+        Contract c1 = contracts.get(1);
+        Contract c2 = contracts.get(2);
+
+        // Add more workedHours to the list used for testing.
+        hourDeclarations.add(HourDeclaration.builder()
+                            .workedTime(2).contract(c1).approved(true).reviewed(true).build());
+        hourDeclarations.add(HourDeclaration.builder()
+                            .workedTime(7).contract(c1).approved(false).reviewed(false).build());
+        hourDeclarations.add(HourDeclaration.builder()
+                            .workedTime(6).contract(c1).approved(true).reviewed(true).build());
+
+        hourDeclarations.add(HourDeclaration.builder()
+                            .workedTime(3).contract(c2).approved(false).reviewed(false).build());
+        hourDeclarations.add(HourDeclaration.builder()
+                            .workedTime(1).contract(c2).approved(true).reviewed(true).build());
+
+        for (int i = 1; i < hourDeclarations.size(); i++) {
+            hourDeclarations.set(i, hoursRepository.save(hourDeclarations.get(i)));
+        }
     }
 
     @Test
@@ -248,4 +306,68 @@ class HourServiceTest {
         // assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
     }
+
+    @Test
+    void getOpenHoursBy_null() {
+        // Act
+        ThrowingCallable action = () -> hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId(null, null);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+    }
+
+    @Test
+    void getOpenHoursBy_course() {
+        // Act
+        List<HourDeclaration> result = hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId("CSE2310", null);
+
+        // Assert
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result.contains(hourDeclarations.get(0))).isTrue();
+        assertThat(result.contains(hourDeclarations.get(5))).isFalse();
+        assertThat(result.contains(hourDeclarations.get(4))).isTrue();
+    }
+
+    @Test
+    void getOpenHoursBy_courseAndNetId_1() {
+        // Act
+        List<HourDeclaration> result = hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId(
+                                            "CSE2500", "Maurits");
+
+        // Assert
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.contains(hourDeclarations.get(2))).isTrue();
+    }
+
+    @Test
+    void getOpenHoursBy_courseAndNetId_2() {
+        // Act
+        List<HourDeclaration> result = hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId(
+                                            "CSE2310", "WinstijnSmit");
+
+        // Assert
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.contains(hourDeclarations.get(4))).isTrue();
+    }
+
+    @Test
+    void getOpenHoursBy_noResult() {
+        // Act
+        List<HourDeclaration> result1 = hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId(
+                                            "CSE2500", "WinstijnSmit");
+        List<HourDeclaration> result2 = hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId(
+                                            "CSE3500", "");
+
+        // Assert
+        assertThat(result1.size()).isEqualTo(0);
+        assertThat(result2.size()).isEqualTo(0);
+    }
+
+
 }
