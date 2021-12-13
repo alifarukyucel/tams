@@ -1,9 +1,11 @@
 package nl.tudelft.sem.template.ta.controllers;
 
+import static nl.tudelft.sem.template.ta.utils.JsonUtil.deserialize;
 import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,6 +15,7 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptHoursRequestModel;
+import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
@@ -65,7 +68,7 @@ class HourControllerTest {
         defaultContract = Contract.builder()
             .netId("PVeldHuis")
             .courseId("CSE2310")
-            .maxHours(5)
+            .maxHours(20)
             .duties("Work really hard")
             .signed(false)
             .build();
@@ -82,6 +85,87 @@ class HourControllerTest {
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(defaultContract.getNetId());
         when(courseInformation.isResponsibleLecturer(anyString(), anyString())).thenReturn(true);
+    }
+
+    @Test
+    void submitHoursWithExistingContract() throws Exception {
+        // arrange
+        SubmitHoursRequestModel model = SubmitHoursRequestModel.builder()
+            .course("CSE2310")
+            .desc("this is a test.")
+            .workedTime(5)
+            .build();
+
+        HourDeclaration expected = HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(5)
+            .reviewed(false)
+            .approved(false)
+            .desc("this is a test.")
+            .build();
+
+        // act
+        ResultActions results = mockMvc.perform(post("/hours/submit")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+
+        // assert
+        var result = results.andExpect(status().isOk()).andReturn();
+
+        UUID responseModel = deserialize(result.getResponse().getContentAsString(),
+            UUID.class);
+
+        var submitted = hourDeclarationRepository.findById(responseModel).orElseThrow();
+
+        assertThat(submitted.getId()).isNotNull();
+        submitted.setId(null);
+        assertThat(submitted).isEqualTo(expected);
+    }
+
+
+    @Test
+    void submitHoursWithNonExistingCourse() throws Exception {
+        // arrange
+        SubmitHoursRequestModel model = SubmitHoursRequestModel.builder()
+            .course("CSE8764")
+            .desc("this is a test.")
+            .workedTime(5)
+            .build();
+
+        // act
+        ResultActions results = mockMvc.perform(post("/hours/submit")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isNotFound());
+
+        assertThat(hourDeclarationRepository.findAll().size()).isEqualTo(1);  // account for setup()
+    }
+
+    @Test
+    void submitHoursWithNonExistingContract() throws Exception {
+        // arrange
+        when(mockAuthenticationManager.getNetid()).thenReturn("JohnDoe");
+        SubmitHoursRequestModel model = SubmitHoursRequestModel.builder()
+            .course("CSE2310")
+            .desc("this is a test.")
+            .workedTime(5)
+            .build();
+
+        // act
+        ResultActions results = mockMvc.perform(post("/hours/submit")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isNotFound());
+
+        assertThat(hourDeclarationRepository.findAll().size()).isEqualTo(1);  // account for setup()
     }
 
     @Test
