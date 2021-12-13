@@ -81,7 +81,7 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions result = mockMvc.perform(get("/course/CSE2115")
+        ResultActions result = mockMvc.perform(get("/CSE2115")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer SomeHackingProdigy"));
 
@@ -102,7 +102,7 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(get("/course/CSE9999")
+        ResultActions resultActions = mockMvc.perform(get("/CSE9999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Andy"));
 

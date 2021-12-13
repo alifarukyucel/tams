@@ -26,7 +26,6 @@ import org.springframework.web.server.ResponseStatusException;
  * @created 01/12/2021, 14:15
  */
 @RestController
-@RequestMapping("course")
 public class CourseController {
 
     private final transient AuthManager authManager;
@@ -52,7 +51,7 @@ public class CourseController {
      * @param id            id of course
      * @return the course found in the database with the given id
      */
-    @GetMapping("{id}") // course/id
+    @GetMapping("/{id}") // course/id
     public ResponseEntity<CourseResponseModel> getCourseById(@PathVariable String id)
             throws NoSuchElementException {
         try {
