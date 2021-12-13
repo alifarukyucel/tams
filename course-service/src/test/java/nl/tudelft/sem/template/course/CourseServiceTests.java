@@ -55,7 +55,7 @@ public class CourseServiceTests {
                 testDescription, testNumberOfStudents, responsibleLecturers);
 
         // Act
-        courseService.save(course);
+        courseRepository.save(course);
 
         // Assert
         Course expected = courseService.getCourseById(testCourseId);
