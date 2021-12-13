@@ -300,8 +300,17 @@ class ContractServiceTest {
 
     @Test
     void createUnsignedContract_createSame() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2525")
+            .maxHours(10)
+            .duties("Duties")
+            .signed(false)
+            .build();
+        contractRepository.save(contract);
+
         // Act
-        contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 10, "Duties");
         ThrowingCallable actionConflict = () ->
             contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 5, "Duties");
 
@@ -332,6 +341,24 @@ class ContractServiceTest {
 
     @Test
     void contractExists_false() {
+        // Arrange
+        Contract c1 = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CS2310")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contractService.save(c1);
+        Contract c2 = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2300")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contractService.save(c2);
+
         // Act
         boolean exists = contractService.contractExists("WinstijnSmit", "CSE2310");
 
