@@ -79,12 +79,13 @@ public class HourService {
             throw new IllegalArgumentException("Hours have already been approved");
         }
 
-        if (hourDeclaration.getWorkedTime() + totalHoursApproved(hourDeclaration.getContract())
-            > hourDeclaration.getContract().getMaxHours()) {
-            throw new IllegalArgumentException("Contract does not have enough hours left");
-        }
-
         if (status) {
+            // don't allow hours to be approved if over contract.
+            if (hourDeclaration.getWorkedTime() + totalHoursApproved(hourDeclaration.getContract())
+                > hourDeclaration.getContract().getMaxHours()) {
+                throw new IllegalArgumentException("Contract does not have enough hours left");
+            }
+
             hourDeclaration.setApproved(true);
         }
         hourDeclaration.setReviewed(true);

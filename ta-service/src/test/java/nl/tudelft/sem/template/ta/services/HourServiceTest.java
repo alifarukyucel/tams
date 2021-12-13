@@ -162,6 +162,46 @@ class HourServiceTest {
     }
 
     @Test
+    void totalHoursApprovedTest() {
+        // arrange
+        // populate default contract.
+        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(5)
+            .approved(true)
+            .reviewed(true)
+            .build());
+
+        HourDeclaration hourDeclaration2 = hoursRepository.save(HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(11)
+            .approved(true)
+            .reviewed(true)
+            .build());
+
+        hoursRepository.save(HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(3)
+            .approved(false)
+            .reviewed(true)
+            .build());
+
+        hoursRepository.save(HourDeclaration.builder()
+            .contract(defaultContract)
+            .workedTime(1)
+            .approved(true)
+            .reviewed(false)
+            .build());
+
+        // act
+        int totalTime = hourService.totalHoursApproved(defaultContract);
+
+        // assert
+        assertThat(totalTime).isEqualTo(
+            hourDeclaration.getWorkedTime() + hourDeclaration2.getWorkedTime());
+    }
+
+    @Test
     void findAllHours() {
         // arrange
         Contract contract = Contract.builder()
@@ -248,6 +288,44 @@ class HourServiceTest {
     }
 
     @Test
+    void submitMaxRemainingHoursPopulatedDatabase() {
+        // arrange
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .contract(contracts.get(1))
+            .workedTime(32)  // hardcoded from default contract c1. via setupContracts()
+            .approved(false) // contract has 32 hours remaining
+            .reviewed(false)
+            .build();
+
+        // act
+        hourDeclaration = hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        var optionalFound = hoursRepository.findById(hourDeclaration.getId());
+
+        assertThat(optionalFound.isPresent()).isTrue();
+        assertThat(hourDeclaration).isEqualTo(optionalFound.get());
+    }
+
+    @Test
+    void submitMoreThanMaxRemainingHoursPopulatedDatabase() {
+        // arrange
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .contract(contracts.get(1))
+            .workedTime(33)  // hardcoded from default contract c1. via setupContracts()
+            .approved(false) // contract has 32 hours remaining
+            .reviewed(false)
+            .build();
+
+        // act
+        ThrowingCallable action = () -> hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+        assertThat(hoursRepository.findAll().size()).isEqualTo(hourDeclarations.size());
+    }
+
+    @Test
     void submitHoursCloseToMax() {
         //arrange
         hoursRepository.deleteAll();
@@ -308,6 +386,63 @@ class HourServiceTest {
     }
 
     @Test
+    void approveHoursOverContract() {
+        // arrange
+
+        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
+            .contract(contracts.get(1))
+            .workedTime(33)  // hardcoded from default contract c1. via setupContracts()
+            .approved(false) // contract has 32 hours remaining
+            .reviewed(false)
+            .build());
+
+        // act
+        ThrowingCallable action = () -> hourService.approveHours(hourDeclaration.getId(), true);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+        assertThat(hoursRepository.getOne(hourDeclaration.getId()).getApproved()).isFalse();
+        assertThat(hoursRepository.getOne(hourDeclaration.getId()).getReviewed()).isFalse();
+    }
+
+    @Test
+    void rejectHoursOverContract() {
+        // arrange
+
+        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
+            .contract(contracts.get(1))
+            .workedTime(33)  // hardcoded from default contract c1. via setupContracts()
+            .approved(false) // contract has 32 hours remaining
+            .reviewed(false)
+            .build());
+
+        // act
+        hourService.approveHours(hourDeclaration.getId(), false);
+
+        // assert
+        assertThat(hoursRepository.getOne(hourDeclaration.getId()).getApproved()).isFalse();
+        assertThat(hoursRepository.getOne(hourDeclaration.getId()).getReviewed()).isTrue();
+    }
+
+    @Test
+    void approveHoursExactMaxContract() {
+        // arrange
+        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
+            .contract(contracts.get(1))
+            .workedTime(32)  // hardcoded from default contract c1. via setupContracts()
+            .approved(false) // contract has 32 hours remaining
+            .reviewed(false)
+            .build());
+
+        // act
+        hourService.approveHours(hourDeclaration.getId(), true);
+
+        // assert
+        assertThat(hoursRepository.getOne(hourDeclaration.getId()).getApproved()).isTrue();
+        assertThat(hoursRepository.getOne(hourDeclaration.getId()).getReviewed()).isTrue();
+    }
+
+    @Test
     void approveHoursExistingHours() {
         // pre-condition
         assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isFalse();
@@ -317,6 +452,7 @@ class HourServiceTest {
 
         // assert
         assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isTrue();
+        assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getReviewed()).isTrue();
     }
 
     @Test
