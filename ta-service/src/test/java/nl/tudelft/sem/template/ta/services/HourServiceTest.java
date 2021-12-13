@@ -276,7 +276,8 @@ class HourServiceTest {
     @Test
     void getOpenHoursBy_null() {
         // Act
-        ThrowingCallable action = () -> hourService.getNonReviewedHoursBy(null, null);
+        ThrowingCallable action = () -> hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId(null, null);
 
         // assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
@@ -285,7 +286,8 @@ class HourServiceTest {
     @Test
     void getOpenHoursBy_course() {
         // Act
-        List<HourDeclaration> result = hourService.getNonReviewedHoursBy("CSE2310", null);
+        List<HourDeclaration> result = hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId("CSE2310", null);
 
         // Assert
         assertThat(result.size()).isEqualTo(2);
@@ -297,7 +299,9 @@ class HourServiceTest {
     @Test
     void getOpenHoursBy_courseAndNetId_1() {
         // Act
-        List<HourDeclaration> result = hourService.getNonReviewedHoursBy("CSE2500", "Maurits");
+        List<HourDeclaration> result = hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId(
+                                            "CSE2500", "Maurits");
 
         // Assert
         assertThat(result.size()).isEqualTo(1);
@@ -307,7 +311,9 @@ class HourServiceTest {
     @Test
     void getOpenHoursBy_courseAndNetId_2() {
         // Act
-        List<HourDeclaration> result = hourService.getNonReviewedHoursBy("CSE2310", "WinstijnSmit");
+        List<HourDeclaration> result = hourService
+                                        .getNonReviewedHoursByCourseIdAndNetId(
+                                            "CSE2310", "WinstijnSmit");
 
         // Assert
         assertThat(result.size()).isEqualTo(1);
@@ -318,9 +324,11 @@ class HourServiceTest {
     void getOpenHoursBy_noResult() {
         // Act
         List<HourDeclaration> result1 = hourService
-                                        .getNonReviewedHoursBy("CSE2500", "WinstijnSmit");
+                                        .getNonReviewedHoursByCourseIdAndNetId(
+                                            "CSE2500", "WinstijnSmit");
         List<HourDeclaration> result2 = hourService
-                                        .getNonReviewedHoursBy("CSE3500", "");
+                                        .getNonReviewedHoursByCourseIdAndNetId(
+                                            "CSE3500", "");
 
         // Assert
         assertThat(result1.size()).isEqualTo(0);

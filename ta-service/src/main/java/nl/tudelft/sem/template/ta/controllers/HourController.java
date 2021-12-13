@@ -160,8 +160,9 @@ public class HourController {
      * @return a list of hour declarations (empty if non were found)
      */
     private ResponseEntity<List<HourResponseModel>>
-        findNonReviewedHoursBy(String courseId, String netId) {
-        List<HourDeclaration> declarations = hourService.getNonReviewedHoursBy(courseId, netId);
+            findNonReviewedHoursBy(String courseId, String netId) {
+        List<HourDeclaration> declarations = hourService
+                                            .getNonReviewedHoursByCourseIdAndNetId(courseId, netId);
         List<HourResponseModel> response = declarations.stream().map(contract ->
             HourResponseModel.fromHourDeclaration(contract)
         ).collect(Collectors.toList());
