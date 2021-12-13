@@ -14,6 +14,7 @@ class ContractTest {
         contract = Contract.builder()
                 .courseId("build")
                 .maxHours(5)
+                .rating(5)
                 .signed(false)
                 .netId("PieterDelft")
                 .duties("You need to work!")

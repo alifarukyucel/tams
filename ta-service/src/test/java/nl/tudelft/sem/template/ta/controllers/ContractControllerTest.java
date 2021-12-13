@@ -87,6 +87,7 @@ class ContractControllerTest {
                 .courseId("CSE2310")
                 .maxHours(10)
                 .duties("Work really hard")
+                .rating(8)
                 .signed(true)
                 .build();
         contractRepository.save(secondContract);
@@ -97,6 +98,7 @@ class ContractControllerTest {
                 .courseId("CSE1250")
                 .maxHours(2)
                 .duties("No need to work hard")
+                .rating(8.6)
                 .signed(false)
                 .build();
         contractRepository.save(thirdContract);
@@ -463,12 +465,14 @@ class ContractControllerTest {
         var list = new ArrayList<ContractResponseModel>();
         List<Map<String, Object>> parsed = JsonUtil.deserialize(jsonString, list.getClass());
 
+
         // JsonUtil returns a map of items. Parse them and put them in our list.
         for (Map<String, Object> map : parsed) {
             list.add(new ContractResponseModel(
                         (String) map.get("course"),
                         (String) map.get("netId"),
                         (String) map.get("duties"),
+                        (Double) map.get("rating"),
                         (int) map.get("maxHours"),
                         (boolean) map.get("signed")
             ));

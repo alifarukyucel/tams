@@ -36,11 +36,18 @@ public class Contract {
     @Column(nullable = false)
     private Boolean signed;
 
-    @Column
+    @Column(columnDefinition = "double precision default 0")
     private double rating;
 
+    /**
+     * Set the rating of this contract.
+     * Rating needs to be >= 0 and <= 10
+     *
+     * @param rating
+     * @throws IllegalArgumentException if rating is < 0 or > 10
+     */
     public void setRating(double rating) {
-        if (rating <= 0 || rating >= 10) {
+        if (rating < 0 || rating > 10) {
             throw new IllegalArgumentException("Rating must be between 0 and 10.");
         }
 
