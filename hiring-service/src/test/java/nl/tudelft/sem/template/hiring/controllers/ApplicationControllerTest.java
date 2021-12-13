@@ -58,9 +58,9 @@ public class ApplicationControllerTest {
         when(mockAuthenticationManager.getNetid()).thenReturn(exampleNetId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(exampleNetId);
-
+        applicationRepository.deleteAll();
         // Save applications in db (Not sure whether this is necessary)
-        pendingApplication = nl.tudelft.sem.template.hiring.entities.Application.builder()
+        pendingApplication = Application.builder()
                 .netId("kverhoef")
                 .courseId("CSE1200")
                 .grade(9)
@@ -69,7 +69,7 @@ public class ApplicationControllerTest {
                 .build();
         applicationRepository.save(pendingApplication);
 
-        acceptedApplication = nl.tudelft.sem.template.hiring.entities.Application.builder()
+        acceptedApplication = Application.builder()
                 .netId("dsmith")
                 .courseId("CSE1200")
                 .grade(9)
@@ -78,7 +78,7 @@ public class ApplicationControllerTest {
                 .build();
         applicationRepository.save(acceptedApplication);
 
-        rejectedApplication = nl.tudelft.sem.template.hiring.entities.Application.builder()
+        rejectedApplication = Application.builder()
                 .netId("lbrown")
                 .courseId("CSE1200")
                 .grade(9)
@@ -123,6 +123,8 @@ public class ApplicationControllerTest {
     @Test
     public void getStatusByCourseTest() throws Exception {
         //Arrange
+
+        // Your function /get status doesn't take a model so you don't need to use one.
         RetrieveStatusModel pendingModel = new RetrieveStatusModel(
                 "CSE1200", "kverhoef", "I like TAs",
                 9, ApplicationStatus.PENDING);
@@ -138,25 +140,53 @@ public class ApplicationControllerTest {
         ApplicationKey rejectedKey = new ApplicationKey(rejectedModel.getCourseId(), exampleNetId);
 
         //Act
+        // This isn't used by anything.
         ResultActions validResults = mockMvc.perform(post("/apply")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(pendingModel))
                 .header("Authorization", "Bearer Joe"));
 
-        ResultActions pendingResult = mockMvc.perform(get("/CSE1200/status").header("Authorization", "Bearer"));
-        ResultActions acceptedResult = mockMvc.perform(get("/CSE1200/status").header("Authorization", "Bearer"));
-        ResultActions rejectedResult = mockMvc.perform(get("/CSE1200/status").header("Authorization", "Bearer"));
+        // below actions throw user defined error, does not exist.
+        // reason for this is that the netId is fetched from the authmanager which returns johndoe, This person is not saved in the db.
+
+        // what you want to be doing is the following
+        when(mockAuthenticationManager.getNetid()).thenReturn("kverhoef");
+        // you do this because the auth manager is what is used to get the net id.
+        // and the default is not used in this test, hence we want to change it.
+        // Note the netId is the same one as used in the setUp() function above as this is a pending apllication.
+
+        ResultActions pendingResult  = mockMvc.perform(get("/status/CSE1200").header("Authorization", "Bearer Joe"));
+        ResultActions acceptedResult = mockMvc.perform(get("/status/CSE1200").header("Authorization", "Bearer Joe"));
+        ResultActions rejectedResult = mockMvc.perform(get("/status/CSE1200").header("Authorization", "Bearer Joe"));
 
         //Assert
         pendingResult.andExpect(status().isOk());
         acceptedResult.andExpect(status().isOk());
         rejectedResult.andExpect(status().isOk());
 
+        // these asserts are checking your hardcoded variables from above.
+        // ApplicationKey pendingKey = new ApplicationKey(pendingModel.getCourseId(), exampleNetId);
+        // I assume you are trying to chech the repsonse from the server, in which case you want to deserialize the result you obtain.
+        // There are of examples in other integration tests that go into it.
+        // But you will need to use Martin's json util
         assertThat(applicationRepository.findById(pendingKey).get().getStatus().equals(ApplicationStatus.PENDING));
         assertThat(applicationRepository.findById(acceptedKey).get().getStatus().equals(ApplicationStatus.ACCEPTED));
         assertThat(applicationRepository.findById(rejectedKey).get().getStatus().equals(ApplicationStatus.REJECTED));
-
-
     }
 
+    @Test
+    void exampleTest() throws Exception {
+        // What you want to be doing is writing smaller tests and focus on those.
+
+        // arrange
+        when(mockAuthenticationManager.getNetid()).thenReturn("kverhoef");
+
+        // act
+        ResultActions pendingResult  = mockMvc.perform(get("/status/CSE1200").header("Authorization", "Bearer Joe"));
+
+        // assert
+        pendingResult.andExpect(status().isOk());
+        // other asserts removed for brevity
+        // But in reality you would want to also check the returned types.
+    }
 }

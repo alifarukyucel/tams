@@ -58,10 +58,11 @@ public class ApplicationController {
      * @return
      */
 
-    @GetMapping("/{course}/status")
+    @GetMapping("/status/{course}")
     public ResponseEntity<RetrieveStatusModel> getStatusByCourse(@PathVariable String course) {
         try {
-            Application application = applicationService.get(authManager.getNetid(), course);
+            // below arguments were in the wrong order
+            Application application = applicationService.get(course, authManager.getNetid());
             RetrieveStatusModel status = RetrieveStatusModel.fromApplication(application);
 
             return ResponseEntity.ok(status);
