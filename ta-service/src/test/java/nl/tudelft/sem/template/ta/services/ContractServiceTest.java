@@ -349,7 +349,7 @@ class ContractServiceTest {
             .duties("Work really hard")
             .signed(false)
             .build();
-        contractService.save(c1);
+        contractRepository.save(c1);
         Contract c2 = Contract.builder()
             .netId("WinstijnSmit")
             .courseId("CSE2300")
@@ -357,7 +357,7 @@ class ContractServiceTest {
             .duties("Work really hard")
             .signed(false)
             .build();
-        contractService.save(c2);
+        contractRepository.save(c2);
 
         // Act
         boolean exists = contractService.contractExists("WinstijnSmit", "CSE2310");
