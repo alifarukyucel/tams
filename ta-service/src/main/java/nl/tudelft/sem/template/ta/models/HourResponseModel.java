@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.ta.models;
 
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -16,6 +17,7 @@ import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 @EqualsAndHashCode
 @Data
 public class HourResponseModel {
+    private UUID id;
     private Date date;
     private String description;
     private int workedTime;
@@ -29,6 +31,7 @@ public class HourResponseModel {
      */
     public static HourResponseModel fromHourDeclaration(HourDeclaration declaration) {
         return new HourResponseModel(
+            declaration.getId(),
             declaration.getDate(),
             declaration.getDesc(),
             declaration.getWorkedTime(),

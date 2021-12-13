@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 public class ModelTests {
 
-
     private HourDeclaration defaultHourDeclaration;
     private Contract defaultContract;
 
@@ -27,6 +26,7 @@ public class ModelTests {
 
         defaultHourDeclaration =  HourDeclaration.builder()
             .workedTime(3)
+            .id(UUID.randomUUID())
             .contract(defaultContract)
             .approved(false)
             .reviewed(false)
@@ -50,6 +50,7 @@ public class ModelTests {
         HourDeclaration declaration = defaultHourDeclaration;
         HourResponseModel model = HourResponseModel.fromHourDeclaration(declaration);
         Assertions.assertNotNull(model);
+        Assertions.assertEquals(declaration.getId(), model.getId());
         Assertions.assertEquals(declaration.getDate(), model.getDate());
         Assertions.assertEquals(declaration.getDesc(), model.getDescription());
         Assertions.assertEquals(declaration.getWorkedTime(), model.getWorkedTime());

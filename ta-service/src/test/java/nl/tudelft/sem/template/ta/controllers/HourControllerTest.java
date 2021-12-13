@@ -447,6 +447,7 @@ class HourControllerTest {
         // JsonUtil returns a map of items. Parse them and put them in our list.
         for (Map<String, Object> map : parsed) {
             list.add(new HourResponseModel(
+                UUID.fromString((String) map.get("id")),
                 (Date) map.get("date"),
                 (String) map.get("description"),
                 (int) map.get("workedTime"),
