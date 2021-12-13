@@ -2,13 +2,13 @@ package nl.tudelft.sem.template.ta.services;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * The ContractService.
@@ -41,8 +41,9 @@ public class ContractService {
                                             throws IllegalArgumentException {
 
         // Check if parameters were given are valid.
-        if (netId == null || netId.equals("")
-            || courseId == null || courseId.equals("")
+
+        if (StringUtils.isEmpty(netId)
+            || StringUtils.isEmpty(courseId)
             || maxHours <= 0 || duties == null) {
             throw new IllegalArgumentException("netId, courseId, maxHours and duties should be given and valid.");
         }
