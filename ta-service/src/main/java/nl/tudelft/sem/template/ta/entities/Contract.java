@@ -43,7 +43,7 @@ public class Contract {
      * Set the rating of this contract.
      * Rating needs to be >= 0 and <= 10
      *
-     * @param rating
+     * @param rating new value
      * @throws IllegalArgumentException if rating is < 0 or > 10
      */
     public void setRating(double rating) {

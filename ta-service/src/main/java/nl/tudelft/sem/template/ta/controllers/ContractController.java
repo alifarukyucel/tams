@@ -101,13 +101,13 @@ public class ContractController {
      */
     @PostMapping("/rate")
     public ResponseEntity<String>
-    rateContract(@RequestBody RateContractRequestModel request)
+        rateContract(@RequestBody RateContractRequestModel request)
         throws ResponseStatusException {
 
         checkAuthorized(authManager.getNetid());
 
         try {
-             contractService.rate(request.getNetId(), request.getCourseId(), request.getRating());
+            contractService.rate(request.getNetId(), request.getCourseId(), request.getRating());
             return ResponseEntity.ok("Successfully saved rating!");
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
