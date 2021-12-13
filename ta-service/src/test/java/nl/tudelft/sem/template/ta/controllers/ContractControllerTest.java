@@ -335,7 +335,7 @@ class ContractControllerTest {
     }
 
     @Test
-    void getContracts_unauthorized() throws Exception {
+    void getContracts_forbidden() throws Exception {
         // Arrange
         mockAuthentication("WinstijnSmit", false);
 
@@ -346,7 +346,7 @@ class ContractControllerTest {
         );
 
         // Assert
-        action.andExpect(status().isUnauthorized());
+        action.andExpect(status().isForbidden());
     }
 
     @Test
@@ -382,7 +382,7 @@ class ContractControllerTest {
     }
 
     @Test
-    void createContract_unauthorized() throws Exception {
+    void createContract_forbidden() throws Exception {
         // Arrange
         mockAuthentication("WinstijnSmit", false);
         CreateContractRequestModel model = CreateContractRequestModel.builder()
@@ -397,7 +397,7 @@ class ContractControllerTest {
         );
 
         // Assert
-        action.andExpect(status().isUnauthorized());
+        action.andExpect(status().isForbidden());
         assertThat(contractRepository.findAll().size()).isEqualTo(size);
     }
 

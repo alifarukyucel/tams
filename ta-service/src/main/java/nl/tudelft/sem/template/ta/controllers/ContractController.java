@@ -50,7 +50,7 @@ public class ContractController {
      * @param request a CreateContractRequestModel
      * @return 200 OK with ContractResponseModel if saving was a success.
      *         400 Bad Request if contract already exists or parameters are invalid.
-     *         401 Unauthorized if not a responsible lecturer for the course.
+     *         403 Forbidden if not a responsible lecturer for the course.
      */
     @PostMapping("/create")
     public ResponseEntity<ContractResponseModel> createContract(@RequestBody CreateContractRequestModel request)
@@ -59,7 +59,7 @@ public class ContractController {
         boolean authorized = courseInformation
             .isResponsibleLecturer(authManager.getNetid(), request.getCourseId());
         if (!authorized) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                 "Only a responsible lecturer is allowed to make this request.");
         }
 
@@ -139,7 +139,7 @@ public class ContractController {
                             .isResponsibleLecturer(authManager.getNetid(), course);
 
         if (!authManager.getNetid().equals(netId) && !authorized) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         return findContractBy(netId, course);
