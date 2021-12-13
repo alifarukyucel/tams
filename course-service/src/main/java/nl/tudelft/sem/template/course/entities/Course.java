@@ -1,12 +1,20 @@
 package nl.tudelft.sem.template.course.entities;
 
-import lombok.*;
-import org.hibernate.Hibernate;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 
 
 /**
@@ -22,7 +30,7 @@ import java.util.Objects;
 @Setter
 @ToString                                            // Not using @Data because of excessive memory consumption
 @RequiredArgsConstructor                             // Use Lombok to get rid of getters, setters,
-@AllArgsConstructor(access = AccessLevel.PUBLIC)     // constructors and other java boilerplate code
+@AllArgsConstructor                                  // constructors and other java boilerplate code
 @Entity
 @Table(name = "course")
 public class Course {
@@ -55,7 +63,7 @@ public class Course {
             return false;
         }
         Course course = (Course) o;
-        return id != null && Objects.equals(id, course.id);
+        return id != null && id.equals(course.id);
     }
 
     @Override

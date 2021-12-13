@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.security.AuthManager;
