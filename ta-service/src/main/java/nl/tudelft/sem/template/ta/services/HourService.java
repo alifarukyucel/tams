@@ -59,7 +59,7 @@ public class HourService {
      * @param id The ID of the hour declaration
      * @param status The status to set to the hours, false is ignored.
      * @throws NoSuchElementException Thrown if the hour declaration could not be found.
-     * @throws IllegalArgumentException Thrown is hours were already approved.
+     * @throws IllegalArgumentException Thrown is hours were already approved or if going over budget.
      */
     public void approveHours(UUID id, boolean status)
         throws NoSuchElementException, IllegalArgumentException {
@@ -77,6 +77,11 @@ public class HourService {
 
         if (hourDeclaration.getReviewed()) {
             throw new IllegalArgumentException("Hours have already been approved");
+        }
+
+        if (hourDeclaration.getWorkedTime() + totalHoursApproved(hourDeclaration.getContract())
+            > hourDeclaration.getContract().getMaxHours()) {
+            throw new IllegalArgumentException("Contract does not have enough hours left");
         }
 
         if (status) {
