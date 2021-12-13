@@ -7,12 +7,14 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
+import nl.tudelft.sem.template.ta.models.CreateContractRequestModel;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.services.ContractService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +40,37 @@ public class ContractController {
         this.authManager = authManager;
         this.contractService = contractService;
         this.courseInformation = courseInformation;
+    }
+
+    /**
+     * Endpoint for creating a new unsigned contract for a course.
+     * Only a responsible lecturer from that course is allowed to make this request.
+     * This request will be called from the Hiring Microservice.
+     *
+     * @param request a CreateContractRequestModel
+     * @return 200 OK with ContractResponseModel if saving was a success.
+     *         400 Bad Request if contract already exists or parameters are invalid.
+     *         401 Unauthorized if not a responsible lecturer for the course.
+     */
+    @PostMapping("/create")
+    public ResponseEntity<ContractResponseModel> createContract(@RequestBody CreateContractRequestModel request)
+        throws ResponseStatusException {
+
+        boolean authorized = courseInformation
+            .isResponsibleLecturer(authManager.getNetid(), request.getCourseId());
+        if (!authorized) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                "Only a responsible lecturer is allowed to make this request.");
+        }
+
+        try {
+            Contract contract = contractService.createUnsignedContract(
+                request.getNetId(), request.getCourseId(), request.getMaxHours(), request.getDuties());
+            return ResponseEntity.ok(ContractResponseModel.fromContract(contract));
+
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     /**
