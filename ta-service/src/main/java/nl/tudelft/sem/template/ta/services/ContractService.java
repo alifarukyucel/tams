@@ -32,8 +32,9 @@ public class ContractService {
      * @param netId netId of TA.
      * @param maxHours max amount of hours g a TA can work
      * @param duties of the TA
-     * @return a newly created instance of an Application with the status "Pending".
-     * @throws IllegalArgumentException if any of the parameters are null.
+     * @return a saved instance of Contract.
+     * @throws IllegalArgumentException if any of the parameters are null or invalid
+     *                                  or when contract already exists.
      */
     public Contract createUnsignedContract(String netId, String courseId,
                                                         int maxHours, String duties)
@@ -51,7 +52,7 @@ public class ContractService {
             throw new IllegalArgumentException("This contract already exists!");
         }
 
-        // Create the actual contract.
+        // Create the actual contract with the builder.
         Contract contract = Contract.builder()
             .netId(netId)
             .courseId(courseId)
@@ -128,8 +129,8 @@ public class ContractService {
     /**
      * Returns whether a contract already exists.
      *
-     * @param netId The users netId (required)
-     * @param courseId The contracts courseId (may be null)
+     * @param netId The contract's netId (required)
+     * @param courseId The contract's courseId (required)
      * @returns boolean whether contract exists.
      */
     public boolean contractExists(String netId, String courseId) {
