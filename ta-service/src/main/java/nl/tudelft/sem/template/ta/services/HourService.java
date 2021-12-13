@@ -3,8 +3,6 @@ package nl.tudelft.sem.template.ta.services;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-
-import nl.tudelft.sem.template.ta.controllers.HourController;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
