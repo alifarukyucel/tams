@@ -30,10 +30,11 @@ public class CourseService {
      * @throws NoSuchElementException if there is no such course
      */
     public Course getCourseById(String id) throws NoSuchElementException {
-        if (courseRepository.getById(id) == null) {
+        Course course = courseRepository.getById(id);
+        if (course == null) {
             throw new NoSuchElementException("The course you're looking for doesn't exist.");
         }
-        return courseRepository.getById(id);
+        return course;
     }
 
     // --------------------- Setters -------------------------
