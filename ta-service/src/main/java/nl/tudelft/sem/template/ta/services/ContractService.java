@@ -41,11 +41,10 @@ public class ContractService {
                                             throws IllegalArgumentException {
 
         // Check if parameters were given are valid.
-
         if (StringUtils.isEmpty(netId)
             || StringUtils.isEmpty(courseId)
-            || maxHours <= 0 || duties == null) {
-            throw new IllegalArgumentException("netId, courseId, maxHours and duties should be given and valid.");
+            || maxHours <= 0 ) {
+            throw new IllegalArgumentException("netId, courseId, maxHours are required and need to be valid.");
         }
 
         // Check if contract already exists - return an error if not.
