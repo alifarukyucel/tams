@@ -8,7 +8,6 @@ import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptHoursRequestModel;
 import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.security.AuthManager;
-import nl.tudelft.sem.template.ta.services.ContractService;
 import nl.tudelft.sem.template.ta.services.HourService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,6 @@ public class HourController {
     private final transient AuthManager authManager;
     private final transient HourService hourService;
     private final transient CourseInformation courseInformation;
-    private final transient ContractService contractService;
 
     /**
      * Instantiates a new HourController.
@@ -36,12 +34,10 @@ public class HourController {
      */
     public HourController(AuthManager authManager,
                           HourService hourService,
-                          CourseInformation courseInformation,
-                          ContractService contractService) {
+                          CourseInformation courseInformation) {
         this.authManager = authManager;
         this.hourService = hourService;
         this.courseInformation = courseInformation;
-        this.contractService = contractService;
     }
 
     /**
@@ -83,19 +79,8 @@ public class HourController {
     @PostMapping("/submit")
     public ResponseEntity<UUID> submit(@RequestBody SubmitHoursRequestModel request) {
         try {
-            Contract contract = contractService.getContract(
-                authManager.getNetid(), request.getCourse());
-
-            HourDeclaration hourDeclaration = HourDeclaration.builder()
-                .workedTime(request.getWorkedTime())
-                .reviewed(false)
-                .approved(false)
-                .contract(contract)
-                .date(request.getDate())
-                .desc(request.getDesc())
-                .build();
-
-            hourDeclaration = hourService.checkAndSave(hourDeclaration);
+            HourDeclaration hourDeclaration =
+                hourService.createAndSaveDeclaration(authManager.getNetid(), request);
 
             return ResponseEntity.ok(hourDeclaration.getId());
         } catch (NoSuchElementException e) {

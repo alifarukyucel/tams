@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,37 @@ import org.springframework.stereotype.Service;
 public class HourService {
 
     private final transient HourDeclarationRepository hoursRepository;
+    private final transient ContractService contractService;
 
-    public HourService(HourDeclarationRepository hoursRepository) {
+    public HourService(HourDeclarationRepository hoursRepository, ContractService contractService) {
         this.hoursRepository = hoursRepository;
+        this.contractService = contractService;
+    }
+
+    /**
+     * Automatically create a new hourDeclaration and save it to the database if it is valid.
+     *
+     * @param netId     The netId of the user declaring the hours.
+     * @param request   The SubmitHoursRequestModel.
+     * @return The saved HourDeclaration object.
+     * @throws NoSuchElementException if the required contract does not exist.
+     */
+    public HourDeclaration createAndSaveDeclaration(String netId, SubmitHoursRequestModel request)
+        throws NoSuchElementException {
+        
+        Contract contract = contractService.getContract(
+            netId, request.getCourse());
+
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .workedTime(request.getWorkedTime())
+            .reviewed(false)
+            .approved(false)
+            .contract(contract)
+            .date(request.getDate())
+            .desc(request.getDesc())
+            .build();
+
+        return checkAndSave(hourDeclaration);
     }
 
     /**
