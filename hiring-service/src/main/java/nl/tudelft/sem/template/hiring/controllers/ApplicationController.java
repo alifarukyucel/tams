@@ -36,8 +36,8 @@ public class ApplicationController {
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
-        List<Application> applicationList = applicationService.getApplicationFromStudent(authManager.getNetid());
-        if(applicationService.maxApplication(applicationList)){
+        //List<Application> applicationList = applicationService.getApplicationFromStudent(authManager.getNetid());
+        if(applicationService.maxApplication(authManager.getNetid())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         Application application = createPendingApplication(

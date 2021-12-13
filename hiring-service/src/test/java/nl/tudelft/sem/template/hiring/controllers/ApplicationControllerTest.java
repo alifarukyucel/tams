@@ -12,6 +12,7 @@ import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.security.TokenVerifier;
+import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,6 +42,9 @@ public class ApplicationControllerTest {
 
     @Autowired
     private transient AuthManager mockAuthenticationManager;
+
+    @Autowired
+    private transient ApplicationService mockApplicationService;
 
     @Autowired
     private transient TokenVerifier mockTokenVerifier;
@@ -99,6 +103,7 @@ public class ApplicationControllerTest {
         ApplicationRequestModel tooManyAlready = new ApplicationRequestModel("cse1300", 7.0f,
                 "I want to");
         ApplicationKey key = new ApplicationKey(tooManyAlready.getCourseId(), exampleNetId);
+        when(mockApplicationService.maxApplication(exampleNetId)).thenReturn(true);
 
         //Act
         ResultActions reachedLimit = mockMvc.perform(post("/apply")

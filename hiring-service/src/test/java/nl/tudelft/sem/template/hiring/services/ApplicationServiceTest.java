@@ -66,12 +66,10 @@ public class ApplicationServiceTest {
         Application thirdApplication = new Application("CSE1400", "johndoe", 7.0f,
                 motivation, ApplicationStatus.PENDING);
 
+        //Act
         applicationRepository.save(firstApplication);
         applicationRepository.save(secondApplication);
         applicationRepository.save(thirdApplication);
-
-        //Act
-
 
         //Assert
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))

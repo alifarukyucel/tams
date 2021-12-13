@@ -44,8 +44,8 @@ public class ApplicationService {
         return result;
     }
 
-    public boolean maxApplication(List<Application> applications) {
-        if(applications.size() < 3) return false;
+    public boolean maxApplication(String netId) {
+        if(getApplicationFromStudent(netId).size() < 3) return false;
         return true;
     }
 }
