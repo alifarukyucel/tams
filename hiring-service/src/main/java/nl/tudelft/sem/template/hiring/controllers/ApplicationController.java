@@ -32,6 +32,7 @@ public class ApplicationController {
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
+
         Application application = createPendingApplication(
                 request.getCourseId(),
                 authManager.getNetid(),
