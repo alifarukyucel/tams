@@ -72,9 +72,7 @@ public class ApplicationServiceTest {
         Application actual = applicationService.get(expected.getCourseId(), expected.getNetId());
 
         // Assert
-        assertThat(actual.getCourseId()).isEqualTo(expected.getCourseId());
-        assertThat(actual.getNetId()).isEqualTo(expected.getNetId());
-        assertThat(actual.getMotivation()).isEqualTo(expected.getMotivation());
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
