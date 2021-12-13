@@ -55,8 +55,8 @@ public class HourController {
      * @throws ResponseStatusException if netId is unauthorized.
      */
     @GetMapping("/open/{course}")
-    public ResponseEntity<List<HourResponseModel>>
-        getOpenHours(@PathVariable String course)
+    public ResponseEntity<List<HourResponseModel>> getOpenHours(
+        @PathVariable String course)
         throws ResponseStatusException {
 
         checkAuthorized(course);
@@ -75,8 +75,8 @@ public class HourController {
      * @throws ResponseStatusException if netId is unauthorized.
      */
     @GetMapping("/open/{course}/{netId}")
-    public ResponseEntity<List<HourResponseModel>>
-        getOpenHours(@PathVariable String course, @PathVariable String netId)
+    public ResponseEntity<List<HourResponseModel>> getOpenHours(
+        @PathVariable String course, @PathVariable String netId)
         throws ResponseStatusException {
 
         // Check if authorized when fetching someone elses data.

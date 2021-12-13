@@ -428,9 +428,9 @@ class HourControllerTest {
      * @return assert that the response contains
      *         the hour response model of the hour declaration.
      */
-    private org.assertj.core.api.AbstractBooleanAssert<?>
-        assertThatResponseContains(List<HourResponseModel> response,
-                                   HourDeclaration hourDeclaration) {
+    private org.assertj.core.api.AbstractBooleanAssert<?> assertThatResponseContains(
+        List<HourResponseModel> response, HourDeclaration hourDeclaration) {
+
         return assertThat(response.contains(
                         HourResponseModel.fromHourDeclaration(hourDeclaration)
                          ));
