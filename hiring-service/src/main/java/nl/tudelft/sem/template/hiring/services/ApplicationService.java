@@ -5,6 +5,8 @@ import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ApplicationService {
 
@@ -25,5 +27,10 @@ public class ApplicationService {
         } else {
             return false;
         }
+    }
+
+    public boolean maxApplication(List<Application> applications) {
+        if(applications.size() < 3) return false;
+        return true;
     }
 }
