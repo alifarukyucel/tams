@@ -11,7 +11,6 @@ import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
-import nl.tudelft.sem.template.hiring.models.ApplicationLookupModel;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
@@ -109,9 +108,9 @@ public class ApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(application);
 
-        ApplicationLookupModel lookup = ApplicationLookupModel.builder()
+        ApplicationKey lookup = ApplicationKey.builder()
                 .courseId(application.getCourseId())
-                .netid(application.getNetId())
+                .netId(application.getNetId())
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -139,9 +138,9 @@ public class ApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(application);
 
-        ApplicationLookupModel lookup = ApplicationLookupModel.builder()
+        ApplicationKey lookup = ApplicationKey.builder()
                 .courseId(application.getCourseId())
-                .netid(application.getNetId())
+                .netId(application.getNetId())
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -169,9 +168,9 @@ public class ApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(application);
 
-        ApplicationLookupModel lookup = ApplicationLookupModel.builder()
+        ApplicationKey lookup = ApplicationKey.builder()
                 .courseId(application.getCourseId())
-                .netid("invalidNetid")
+                .netId("invalidNetid")
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -205,9 +204,9 @@ public class ApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
         applicationRepository.save(application);
 
-        ApplicationLookupModel lookup = ApplicationLookupModel.builder()
+        ApplicationKey lookup = ApplicationKey.builder()
                 .courseId(application.getCourseId())
-                .netid(application.getNetId())
+                .netId(application.getNetId())
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
