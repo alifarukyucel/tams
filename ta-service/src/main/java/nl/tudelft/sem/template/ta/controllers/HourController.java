@@ -38,9 +38,9 @@ public class HourController {
     }
 
     /**
-     * Set a worked hour's status to approved.
+     * Set a declaration's status to approved.
      *
-     * @param request The request containing
+     * @param request The request containing what declaration to update.
      * @return 200 OK if successful
      */
     @PutMapping("/approve")

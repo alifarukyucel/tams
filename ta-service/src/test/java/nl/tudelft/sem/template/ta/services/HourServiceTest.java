@@ -7,9 +7,9 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
-import nl.tudelft.sem.template.ta.entities.WorkedHours;
+import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
-import nl.tudelft.sem.template.ta.repositories.WorkedHoursRepository;
+import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,67 +29,74 @@ class HourServiceTest {
     private transient HourService hourService;
 
     @Autowired
-    private transient WorkedHoursRepository hoursRepository;
+    private transient HourDeclarationRepository hoursRepository;
 
     @Autowired
     private transient ContractRepository contractRepository;
 
     private Contract defaultContract;
-    private WorkedHours defaultWorkedHours;
+    private HourDeclaration defaultHourDeclaration;
 
     @BeforeEach
     void setUp() {
         defaultContract = Contract.builder()
             .courseId("CSE2310")
             .netId("PvdBerg")
+            .signed(true)
             .maxHours(20)
             .build();
 
         defaultContract = contractRepository.save(defaultContract);
 
-        defaultWorkedHours = WorkedHours.builder()
+        defaultHourDeclaration = HourDeclaration.builder()
             .contract(defaultContract)
+            .workedTime(0)
             .approved(false)
+            .reviewed(false)
             .build();
 
-        hoursRepository.save(defaultWorkedHours);
+        hoursRepository.save(defaultHourDeclaration);
 
     }
 
     @Test
     void approveHoursExistingHours() {
         // pre-condition
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isFalse();
 
         // act
-        hourService.approveHours(defaultWorkedHours.getId(), true);
+        hourService.approveHours(defaultHourDeclaration.getId(), true);
 
         // assert
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isTrue();
+        assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isTrue();
     }
 
     @Test
     void unApproveApprovedExistingHours() {
         // arrange
-        defaultWorkedHours.setApproved(true);
-        hoursRepository.save(defaultWorkedHours);
+        defaultHourDeclaration.setApproved(true);
+        defaultHourDeclaration.setReviewed(true);
+        hoursRepository.save(defaultHourDeclaration);
 
         // act
-        ThrowingCallable action = () -> hourService.approveHours(defaultWorkedHours.getId(), false);
+        ThrowingCallable action = () -> hourService.approveHours(
+            defaultHourDeclaration.getId(), false);
 
         // assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isTrue();
+        assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isTrue();
     }
 
     @Test
     void reApproveApprovedExistingHours() {
         // arrange
-        defaultWorkedHours.setApproved(true);
-        hoursRepository.save(defaultWorkedHours);
+        defaultHourDeclaration.setApproved(true);
+        defaultHourDeclaration.setReviewed(true);
+        hoursRepository.save(defaultHourDeclaration);
 
         // act
-        ThrowingCallable action = () -> hourService.approveHours(defaultWorkedHours.getId(), true);
+        ThrowingCallable action = () -> hourService.approveHours(
+            defaultHourDeclaration.getId(), true);
 
         // assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
@@ -98,16 +105,42 @@ class HourServiceTest {
     @Test
     void unApproveExistingHours() {
         // act
-        hourService.approveHours(defaultWorkedHours.getId(), false);
+        hourService.approveHours(defaultHourDeclaration.getId(), false);
 
         // assert
-        assertThat(hoursRepository.findById(defaultWorkedHours.getId()).isEmpty()).isTrue();
+        var optionalWorkedHours = hoursRepository.findById(defaultHourDeclaration.getId());
+        assertThat(optionalWorkedHours.isPresent()).isTrue();
+        HourDeclaration hourDeclaration = optionalWorkedHours.get();
+        assertThat(hourDeclaration.getReviewed()).isTrue();
+        assertThat(hourDeclaration.getApproved()).isFalse();
+    }
+
+    @Test
+    void unApproveApprovedHours() {
+        // arrange
+        defaultHourDeclaration.setApproved(true);
+        defaultHourDeclaration.setReviewed(true);
+        hoursRepository.save(defaultHourDeclaration);
+
+        // act
+        ThrowingCallable action = () ->
+            hourService.approveHours(defaultHourDeclaration.getId(), false);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+
+        var optionalWorkedHours = hoursRepository.findById(defaultHourDeclaration.getId());
+        assertThat(optionalWorkedHours.isPresent()).isTrue();
+        HourDeclaration hourDeclaration = optionalWorkedHours.get();
+
+        assertThat(hourDeclaration.getReviewed()).isTrue();
+        assertThat(hourDeclaration.getApproved()).isTrue();
     }
 
     @Test
     void approveNonExistingHours() {
         // precondition
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isFalse();
         UUID id = UUID.randomUUID();
 
         // act
@@ -115,26 +148,26 @@ class HourServiceTest {
 
         // assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isFalse();
     }
 
     @Test
     void approveNullHours() {
         // precondition
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isFalse();
 
         // act
         ThrowingCallable action = () -> hourService.approveHours(null, true);
 
         // assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
-        assertThat(hoursRepository.getOne(defaultWorkedHours.getId()).isApproved()).isFalse();
+        assertThat(hoursRepository.getOne(defaultHourDeclaration.getId()).getApproved()).isFalse();
     }
 
     @Test
     void getAssociatedContract() {
         // act
-        Contract found = hourService.getAssociatedContract(defaultWorkedHours.getId());
+        Contract found = hourService.getAssociatedContract(defaultHourDeclaration.getId());
 
         // assert
         assertThat(found).isEqualTo(defaultContract);
