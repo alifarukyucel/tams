@@ -7,10 +7,14 @@ import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 
 @RestController
@@ -32,7 +36,10 @@ public class ApplicationController {
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
-
+        List<Application> applicationList = applicationService.getApplicationFromStudent(authManager.getNetid());
+        if(applicationService.maxApplication(applicationList)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         Application application = createPendingApplication(
                 request.getCourseId(),
                 authManager.getNetid(),
