@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.ta.entities;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -10,31 +11,31 @@ class HourDeclarationTest {
 
     @Test
     void testBuilder() {
-        Date time = Calendar.getInstance().getTime();
-        Contract contract = new Contract();
-        HourDeclaration hours = HourDeclaration.builder()
-                .id(UUID.randomUUID())
-                .workedTime(15)
-                .approved(true)
-                .date(time)
-                .reviewed(true)
-                .desc("test")
-                .contract(contract)
-                .build();
+        LocalDateTime time = LocalDateTime.now();
+        Contract c1 = new Contract();
+        HourDeclaration hour1 = HourDeclaration.builder()
+            .id(UUID.randomUUID())
+            .workedTime(15)
+            .approved(true)
+            .reviewed(true)
+            .date(time)
+            .desc("test")
+            .contract(c1)
+            .build();
 
-        Assertions.assertNotNull(hours.getId());
-        Assertions.assertEquals(15, hours.getWorkedTime());
-        Assertions.assertTrue(hours.getApproved());
-        Assertions.assertTrue(hours.getReviewed());
-        Assertions.assertEquals(time, hours.getDate());
-        Assertions.assertEquals("test", hours.getDesc());
-        Assertions.assertEquals(contract, hours.getContract());
+        Assertions.assertNotNull(hour1.getId());
+        Assertions.assertEquals(15, hour1.getWorkedTime());
+        Assertions.assertTrue(hour1.getApproved());
+        Assertions.assertTrue(hour1.getReviewed());
+        Assertions.assertEquals(time, hour1.getDate());
+        Assertions.assertEquals("test", hour1.getDesc());
+        Assertions.assertEquals(c1, hour1.getContract());
     }
 
 
     @Test
     void testSetters() {
-        Date time = Calendar.getInstance().getTime();
+        LocalDateTime time = LocalDateTime.now();
         Contract c1 = new Contract();
         HourDeclaration hour1 = new HourDeclaration();
         hour1.setId(UUID.randomUUID());

@@ -66,7 +66,6 @@ class ContractControllerTest {
 
     @BeforeEach
     void setUp() {
-        contractRepository.deleteAll();
         contracts = new ArrayList<Contract>();
 
         // Save basic contract in db.

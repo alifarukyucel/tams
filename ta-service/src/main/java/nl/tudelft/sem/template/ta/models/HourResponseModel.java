@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.ta.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -18,7 +19,7 @@ import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 public class HourResponseModel {
     private UUID id;
     private String netId;
-    private Date date;
+    private LocalDateTime date;
     private String description;
     private int workedTime;
     private boolean approved;

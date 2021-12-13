@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +17,46 @@ import org.springframework.stereotype.Service;
 public class HourService {
 
     private final transient HourDeclarationRepository hoursRepository;
+    private final transient ContractService contractService;
 
-    public HourService(HourDeclarationRepository hoursRepository) {
+    public HourService(HourDeclarationRepository hoursRepository, ContractService contractService) {
         this.hoursRepository = hoursRepository;
+        this.contractService = contractService;
     }
 
     /**
-     * Allow a lecturer to approve hours.
-     * Approved hours cannot be unapproved.
+     * Automatically create a new hourDeclaration and save it to the database if it is valid.
      *
-     * @param id The ID of the hours worked
+     * @param netId     The netId of the user declaring the hours.
+     * @param request   The SubmitHoursRequestModel.
+     * @return The saved HourDeclaration object.
+     * @throws NoSuchElementException if the required contract does not exist.
+     */
+    public HourDeclaration createAndSaveDeclaration(String netId, SubmitHoursRequestModel request)
+        throws NoSuchElementException {
+        
+        Contract contract = contractService.getContract(
+            netId, request.getCourse());
+
+        HourDeclaration hourDeclaration = HourDeclaration.builder()
+            .workedTime(request.getWorkedTime())
+            .reviewed(false)
+            .approved(false)
+            .contract(contract)
+            .date(request.getDate())
+            .desc(request.getDesc())
+            .build();
+
+        return checkAndSave(hourDeclaration);
+    }
+
+    /**
+     * Allow a lecturer to approve declarations.
+     * Approved declarations cannot be unapproved.
+     *
+     * @param id The ID of the hour declaration
      * @param status The status to set to the hours, false is ignored.
-     * @throws NoSuchElementException Thrown if the worked hours could not be found.
+     * @throws NoSuchElementException Thrown if the hour declaration could not be found.
      * @throws IllegalArgumentException Thrown is hours were already approved.
      */
     public void approveHours(UUID id, boolean status)
@@ -68,11 +97,11 @@ public class HourService {
     }
 
     /**
-     * returns the contract associated with this hour UUID.
+     * returns the contract associated with this declaration UUID.
      *
-     * @param uuid the id of the worked hours.
+     * @param uuid the id of the hour declaration.
      * @return The contract.
-     * @throws NoSuchElementException Thrown if the contract or worked hours do not exist.
+     * @throws NoSuchElementException Thrown if the contract or hour declaration do not exist.
      */
     public Contract getAssociatedContract(UUID uuid)
         throws NoSuchElementException {

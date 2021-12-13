@@ -11,6 +11,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -449,7 +451,7 @@ class HourControllerTest {
             list.add(new HourResponseModel(
                 UUID.fromString((String) map.get("id")),
                 (String) map.get("netId"),
-                (Date) map.get("date"),
+                (LocalDateTime) map.get("date"),
                 (String) map.get("description"),
                 (int) map.get("workedTime"),
                 (boolean) map.get("approved")

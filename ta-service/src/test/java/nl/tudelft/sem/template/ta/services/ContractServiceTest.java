@@ -30,11 +30,6 @@ class ContractServiceTest {
     @Autowired
     private transient ContractRepository contractRepository;
 
-    @BeforeEach
-    void setUp() {
-        contractRepository.deleteAll();
-    }
-
     @Test
     void signExistingContract() {
         // arrange
