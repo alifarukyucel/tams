@@ -93,4 +93,25 @@ public class ApplicationControllerTest {
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
     }
 
+    @Test
+    public void tooManyApplicationsTest() throws Exception {
+        //Arrange
+        ApplicationRequestModel tooManyAlready = new ApplicationRequestModel("cse1300", 7.0f,
+                "I want to");
+        ApplicationKey key = new ApplicationKey(tooManyAlready.getCourseId(), exampleNetId);
+
+        //Act
+        ResultActions reachedLimit = mockMvc.perform(post("/apply")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(tooManyAlready))
+                .header("Authorization", "Bearer Joe"));
+
+
+        //Assert
+        reachedLimit.andExpect(status().isForbidden());
+        assertThat(applicationRepository.findById(key)).isEmpty();
+
+
+    }
+
 }
