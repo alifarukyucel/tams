@@ -40,11 +40,12 @@ public class ApplicationService {
      * Deletes an application from the database, if more than 3 weeks before start of the course
      * @param application the application to withdraw
      */
-    public void withdraw(Application application) {
+    public boolean checkAndWithdraw(Application application) {
         LocalDate deadline = courseInformation.startDate(application.getCourseId()).minusWeeks(3);
         if(LocalDate.now().compareTo(deadline) < 0) {
             applicationRepository.delete(application);
+            return true;
         }
-        return;
+        return false;
     }
 }
