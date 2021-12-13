@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,9 +14,11 @@ import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
+import nl.tudelft.sem.template.ta.models.CreateContractRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.security.TokenVerifier;
@@ -344,6 +347,98 @@ class ContractControllerTest {
 
         // Assert
         action.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void createContract() throws Exception {
+        // Arrange
+        mockAuthentication("Stefan", true);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("BillGates").maxHours(10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isOk())
+            .andReturn();
+
+        ContractResponseModel response =
+            JsonUtil.deserialize(result.getResponse().getContentAsString(), ContractResponseModel.class);
+
+        assertThat(response).isNotNull();
+        assertThat(ContractResponseModel.fromContract(
+                        contractRepository.getOne(new ContractId("BillGates", "CSE2310"))
+                    ))
+                    .isEqualTo(response); // verify that is saved is ours.
+        assertThat(contractRepository.findAll().size()).isEqualTo(size + 1);
+
+    }
+
+    @Test
+    void createContract_unauthorized() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit", false);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("WinstijnSmit").maxHours(10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isUnauthorized());
+        assertThat(contractRepository.findAll().size()).isEqualTo(size);
+    }
+
+    @Test
+    void createContract_badRequest() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit", true);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("SteveJobs").maxHours(-10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isBadRequest());
+        assertThat(contractRepository.findAll().size()).isEqualTo(size);
+    }
+
+    @Test
+    void createContract_alreadyExists() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit", true);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("WinstijnSmit").maxHours(10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isBadRequest());
+        assertThat(contractRepository.findAll().size()).isEqualTo(size);
     }
 
 
