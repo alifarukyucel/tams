@@ -91,6 +91,32 @@ public class ContractController {
     }
 
     /**
+     * Endpoint for rating a TA's performance.
+     *
+     * @param request a RateContractRequestModel
+     * @return 200 OK if rating was saved successfully.
+     *         400 Bad Request if rating was invalid
+     *         404
+     *         403 Forbidden if not a responsible lecturer for the course.
+     */
+    @PostMapping("/rate")
+    public ResponseEntity<String>
+    rateContract(@RequestBody RateContractRequestModel request)
+        throws ResponseStatusException {
+
+        checkAuthorized(authManager.getNetid());
+
+        try {
+             contractService.rate(request.getNetId(), request.getCourseId(), request.getRating());
+            return ResponseEntity.ok("Successfully saved rating!");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    /**
      * Endpoint for fetching all the contracts of a signed-in user.
      *
      * @return a list of contracts that belong to the signed-in user.
