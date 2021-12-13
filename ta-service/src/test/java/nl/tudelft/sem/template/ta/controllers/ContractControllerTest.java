@@ -372,6 +372,7 @@ class ContractControllerTest {
         for (Map<String, Object> map : parsed) {
             list.add(new ContractResponseModel(
                         (String) map.get("course"),
+                        (String) map.get("netId"),
                         (String) map.get("duties"),
                         (int) map.get("maxHours"),
                         (boolean) map.get("signed")
