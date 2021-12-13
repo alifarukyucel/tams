@@ -31,7 +31,6 @@ public class CourseController {
 
     private final transient AuthManager authManager;
 
-    @Autowired
     private final transient CourseService courseService;
     
     /**
