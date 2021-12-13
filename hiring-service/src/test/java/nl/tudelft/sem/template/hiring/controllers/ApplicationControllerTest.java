@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.hiring.controllers;
 
+import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositeKeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.RetrieveStatusModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
@@ -20,13 +22,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static nl.tudelft.sem.template.hiring.utils.JsonUtil.serialize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -48,11 +49,43 @@ public class ApplicationControllerTest {
     @Autowired
     private transient TokenVerifier mockTokenVerifier;
 
+    private Application pendingApplication;
+    private Application acceptedApplication;
+    private Application rejectedApplication;
+
     @BeforeEach
     public void setup() {
         when(mockAuthenticationManager.getNetid()).thenReturn(exampleNetId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(exampleNetId);
+
+        // Save applications in db (Not sure whether this is necessary)
+        pendingApplication = nl.tudelft.sem.template.hiring.entities.Application.builder()
+                .netId("kverhoef")
+                .courseId("CSE1200")
+                .grade(9)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.PENDING)
+                .build();
+        applicationRepository.save(pendingApplication);
+
+        acceptedApplication = nl.tudelft.sem.template.hiring.entities.Application.builder()
+                .netId("dsmith")
+                .courseId("CSE1200")
+                .grade(9)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.ACCEPTED)
+                .build();
+        applicationRepository.save(acceptedApplication);
+
+        rejectedApplication = nl.tudelft.sem.template.hiring.entities.Application.builder()
+                .netId("lbrown")
+                .courseId("CSE1200")
+                .grade(9)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.REJECTED)
+                .build();
+        applicationRepository.save(rejectedApplication);
     }
 
     @Test
@@ -90,10 +123,40 @@ public class ApplicationControllerTest {
     @Test
     public void getStatusByCourseTest() throws Exception {
         //Arrange
+        RetrieveStatusModel pendingModel = new RetrieveStatusModel(
+                "CSE1200", "kverhoef", "I like TAs",
+                9, ApplicationStatus.PENDING);
+        RetrieveStatusModel acceptedModel = new RetrieveStatusModel(
+                "CSE1200", "dsmith", "I like TAs",
+                9, ApplicationStatus.ACCEPTED);
+        RetrieveStatusModel rejectedModel = new RetrieveStatusModel(
+                "CSE1200", "lbrown", "I like TAs",
+                9, ApplicationStatus.REJECTED);
+
+        ApplicationKey pendingKey = new ApplicationKey(pendingModel.getCourseId(), exampleNetId);
+        ApplicationKey acceptedKey = new ApplicationKey(acceptedModel.getCourseId(), exampleNetId);
+        ApplicationKey rejectedKey = new ApplicationKey(rejectedModel.getCourseId(), exampleNetId);
 
         //Act
+        ResultActions validResults = mockMvc.perform(post("/apply")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(pendingModel))
+                .header("Authorization", "Bearer Joe"));
+
+        ResultActions pendingResult = mockMvc.perform(get("/CSE1200/status").header("Authorization", "Bearer"));
+        ResultActions acceptedResult = mockMvc.perform(get("/CSE1200/status").header("Authorization", "Bearer"));
+        ResultActions rejectedResult = mockMvc.perform(get("/CSE1200/status").header("Authorization", "Bearer"));
 
         //Assert
+        pendingResult.andExpect(status().isOk());
+        acceptedResult.andExpect(status().isOk());
+        rejectedResult.andExpect(status().isOk());
+
+        assertThat(applicationRepository.findById(pendingKey).get().getStatus().equals(ApplicationStatus.PENDING));
+        assertThat(applicationRepository.findById(acceptedKey).get().getStatus().equals(ApplicationStatus.ACCEPTED));
+        assertThat(applicationRepository.findById(rejectedKey).get().getStatus().equals(ApplicationStatus.REJECTED));
+
+
     }
 
 }

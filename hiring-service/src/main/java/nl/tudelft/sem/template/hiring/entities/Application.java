@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.hiring.entities;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.hiring.entities.compositeKeys.ApplicationKey;
@@ -12,6 +13,7 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "APPLICATION")
 @IdClass(ApplicationKey.class)
 public class Application {
