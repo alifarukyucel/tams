@@ -53,12 +53,12 @@ public class CourseServiceTests {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
-
-        // Act
         courseRepository.save(course);
 
-        // Assert
+        // Act
         Course expected = courseService.getCourseById(testCourseId);
+
+        // Assert
         assertThat(course.getId()).isNotNull();
         assertThat(course).isEqualTo(expected);
     }
