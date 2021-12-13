@@ -46,7 +46,7 @@ public class Contract {
      * @param rating new value
      * @throws IllegalArgumentException if rating is < 0 or > 10
      */
-    public void setRating(double rating) {
+    public void setRating(double rating) throws IllegalArgumentException {
         if (rating < 0 || rating > 10) {
             throw new IllegalArgumentException("Rating must be between 0 and 10.");
         }
