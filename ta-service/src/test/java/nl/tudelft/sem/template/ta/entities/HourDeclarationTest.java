@@ -1,10 +1,10 @@
 package nl.tudelft.sem.template.ta.entities;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class HourDeclarationTest {
 

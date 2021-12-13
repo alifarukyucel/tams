@@ -3,6 +3,8 @@ package nl.tudelft.sem.template.ta.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import javax.transaction.Transactional;
@@ -18,8 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 @ExtendWith(SpringExtension.class)
@@ -71,7 +72,7 @@ class HourServiceTest {
         setupHourDeclarations();
     }
 
-    void setupContracts(){
+    void setupContracts() {
 
         contracts.add(Contract.builder()
             .courseId("CSE2500")
@@ -94,7 +95,7 @@ class HourServiceTest {
         }
     }
 
-    void setupHourDeclarations(){
+    void setupHourDeclarations() {
         Contract c1 = contracts.get(1);
         Contract c2 = contracts.get(2);
 
@@ -103,8 +104,8 @@ class HourServiceTest {
                             .workedTime(2).contract(c1).approved(true).reviewed(true).build());
         hourDeclarations.add(HourDeclaration.builder()
                             .workedTime(7).contract(c1).approved(false).reviewed(false).build());
-        hourDeclarations.add(HourDeclaration.builder().
-                            workedTime(6).contract(c1).approved(true).reviewed(true).build());
+        hourDeclarations.add(HourDeclaration.builder()
+                            .workedTime(6).contract(c1).approved(true).reviewed(true).build());
 
         hourDeclarations.add(HourDeclaration.builder()
                             .workedTime(3).contract(c2).approved(false).reviewed(false).build());
@@ -288,9 +289,9 @@ class HourServiceTest {
 
         // Assert
         assertThat(result.size()).isEqualTo(2);
-        assertThat( result.contains(hourDeclarations.get(0)) ).isTrue();
-        assertThat( result.contains(hourDeclarations.get(5)) ).isFalse();
-        assertThat( result.contains(hourDeclarations.get(4)) ).isTrue();
+        assertThat(result.contains(hourDeclarations.get(0))).isTrue();
+        assertThat(result.contains(hourDeclarations.get(5))).isFalse();
+        assertThat(result.contains(hourDeclarations.get(4))).isTrue();
     }
 
     @Test
@@ -300,7 +301,7 @@ class HourServiceTest {
 
         // Assert
         assertThat(result.size()).isEqualTo(1);
-        assertThat( result.contains(hourDeclarations.get(2)) ).isTrue();
+        assertThat(result.contains(hourDeclarations.get(2))).isTrue();
     }
 
     @Test
@@ -310,14 +311,16 @@ class HourServiceTest {
 
         // Assert
         assertThat(result.size()).isEqualTo(1);
-        assertThat( result.contains(hourDeclarations.get(4)) ).isTrue();
+        assertThat(result.contains(hourDeclarations.get(4))).isTrue();
     }
 
     @Test
-    void getOpenHoursBy_noResult(){
+    void getOpenHoursBy_noResult() {
         // Act
-        List<HourDeclaration> result1 = hourService.getNonReviewedHoursBy("CSE2500", "WinstijnSmit");
-        List<HourDeclaration> result2 = hourService.getNonReviewedHoursBy("CSE3500", "");
+        List<HourDeclaration> result1 = hourService
+                                        .getNonReviewedHoursBy("CSE2500", "WinstijnSmit");
+        List<HourDeclaration> result2 = hourService
+                                        .getNonReviewedHoursBy("CSE3500", "");
 
         // Assert
         assertThat(result1.size()).isEqualTo(0);

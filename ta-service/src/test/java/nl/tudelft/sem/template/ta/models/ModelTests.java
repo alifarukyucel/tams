@@ -16,7 +16,7 @@ public class ModelTests {
     private Contract defaultContract;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         defaultContract = Contract.builder()
             .courseId("CSETEST")
             .maxHours(5)

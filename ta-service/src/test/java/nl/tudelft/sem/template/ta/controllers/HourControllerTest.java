@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -191,7 +190,8 @@ class HourControllerTest {
         // assert
         results.andExpect(status().isNotFound());
 
-        assertThat(hourDeclarationRepository.findAll().size()).isGreaterThan(1);  // account for setup()
+        assertThat(hourDeclarationRepository
+                .findAll().size()).isGreaterThan(1);  // account for setup()
     }
 
     @Test
@@ -213,7 +213,8 @@ class HourControllerTest {
         // assert
         results.andExpect(status().isNotFound());
 
-        assertThat(hourDeclarationRepository.findAll().size()).isGreaterThan(0);  // account for setup()
+        assertThat(hourDeclarationRepository
+                    .findAll().size()).isGreaterThan(0);  // account for setup()
     }
 
     @Test
@@ -428,8 +429,11 @@ class HourControllerTest {
      *         the hour response model of the hour declaration.
      */
     private org.assertj.core.api.AbstractBooleanAssert<?>
-    assertThatResponseContains(List<HourResponseModel> response, HourDeclaration hourDeclaration) {
-        return assertThat(response.contains(HourResponseModel.fromHourDeclaration(hourDeclaration)));
+        assertThatResponseContains(List<HourResponseModel> response,
+                                   HourDeclaration hourDeclaration) {
+        return assertThat(response.contains(
+                        HourResponseModel.fromHourDeclaration(hourDeclaration)
+                         ));
     }
 
     /**
