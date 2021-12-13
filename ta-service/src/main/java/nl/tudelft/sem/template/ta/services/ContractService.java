@@ -43,7 +43,7 @@ public class ContractService {
         // Check if parameters were given are valid.
         if (StringUtils.isEmpty(netId)
             || StringUtils.isEmpty(courseId)
-            || maxHours <= 0 ) {
+            || maxHours <= 0) {
             throw new IllegalArgumentException("netId, courseId, maxHours are required and need to be valid.");
         }
 
