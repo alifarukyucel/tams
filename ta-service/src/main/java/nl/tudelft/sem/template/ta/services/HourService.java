@@ -104,12 +104,7 @@ public class HourService {
             throw new IllegalArgumentException("Contract has not been signed by student.");
         }
 
-        List<HourDeclaration> hourDeclarations = findHoursOfContract(hourDeclaration.getContract());
-
-        int totalWorkedTime = hourDeclarations
-            .stream()
-            .mapToInt(HourDeclaration::getWorkedTime)
-            .sum();
+        int totalWorkedTime = totalHoursApproved(hourDeclaration.getContract());
 
         if (totalWorkedTime + hourDeclaration.getWorkedTime()
             > hourDeclaration.getContract().getMaxHours()) {
@@ -117,6 +112,22 @@ public class HourService {
         }
 
         return hoursRepository.save(hourDeclaration);
+    }
+
+    /**
+     * Returns the total hours approved on this contract.
+     *
+     * @param contract contract to find the hours declared of.
+     * @return Total hours approved on this contract.
+     */
+    public int totalHoursApproved(Contract contract) {
+        List<HourDeclaration> hourDeclarations = findHoursOfContract(contract);
+
+        return hourDeclarations
+            .stream()
+            .filter(o -> o.getReviewed() && o.getApproved())
+            .mapToInt(HourDeclaration::getWorkedTime)
+            .sum();
     }
 
     /**
