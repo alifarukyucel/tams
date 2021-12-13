@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import nl.tudelft.sem.template.course.entities.Course;
-import nl.tudelft.sem.template.course.models.CourseModel;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.security.TokenVerifier;
@@ -70,30 +69,5 @@ public class CourseTests {
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(responsibleLecturer);
     }
 
-    /**
-     * Create course with valid data works correctly.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void createCourse_withValidData_worksCorrectly() throws Exception {
-        // Arrange
-        CourseModel newCourse = new CourseModel(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents);
 
-        // Act
-        ResultActions resultActions = mockMvc.perform(post("/course/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(serialize(newCourse))
-                .header("Authorization", "Bearer Mulder"));
-
-        // Assert
-        resultActions.andExpect(status().isOk());
-
-        Course savedCourse = courseRepository.getById(testCourseId);
-
-        assertThat(savedCourse.getId()).isEqualTo(testCourseId);
-        assertThat(savedCourse.getName()).isEqualTo(testCourseName);
-        assertThat(savedCourse.getResponsibleLecturers()).containsExactly(responsibleLecturer);
-    }
 }

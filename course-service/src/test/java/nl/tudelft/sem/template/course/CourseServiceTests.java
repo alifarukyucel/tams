@@ -47,38 +47,5 @@ public class CourseServiceTests {
         courseRepository.deleteAll();
     }
 
-    @Test
-    public void createCourse_withValidData_worksCorrectly() {
-        // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-        Course newCourse = new Course(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents, responsibleLecturers);
 
-        // Act
-        courseService.createCourse(newCourse);
-
-        // Assert
-        Course savedCourse = courseRepository.getById("CSE2115");
-        assertThat(savedCourse.getId()).isEqualTo(testCourseId);
-        assertThat(savedCourse.getName()).isEqualTo(testCourseName);
-        assertThat(savedCourse.getDescription()).isEqualTo(testDescription);
-        assertThat(savedCourse.getNumberOfStudents()).isEqualTo(testNumberOfStudents);
-        assertThat(savedCourse.getResponsibleLecturers()).containsExactly(responsibleLecturer);
-    }
-
-    @Test
-    public void createCourse_withExistingCourse_throwsConflictException() throws Exception {
-        // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-        Course existingCourse = new Course(testCourseId,
-                testStartDate, testCourseName, testDescription, testNumberOfStudents, responsibleLecturers);
-        courseRepository.save(existingCourse);
-
-        // Act
-        ThrowableAssert.ThrowingCallable action = () -> courseService.createCourse(existingCourse);
-
-        // Assert
-        assertThatExceptionOfType(Exception.class)
-                .isThrownBy(action);
-    }
 }
