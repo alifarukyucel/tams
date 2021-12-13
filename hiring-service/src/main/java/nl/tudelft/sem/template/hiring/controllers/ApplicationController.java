@@ -9,6 +9,7 @@ import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,5 +46,10 @@ public class ApplicationController {
         } else {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @PutMapping("/withdraw")
+    public ResponseEntity<String> withdraw(@RequestBody ApplicationRequestModel request) {
+
     }
 }
