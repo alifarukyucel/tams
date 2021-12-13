@@ -97,7 +97,7 @@ public class ContractController {
      * @param request a RateContractRequestModel
      * @return 200 OK if rating was saved successfully.
      *         400 Bad Request if rating was invalid
-     *         404
+     *         404 Not Found if contract has not been found
      *         403 Forbidden if not a responsible lecturer for the course.
      */
     @PostMapping("/rate")
