@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.services.CourseService;
@@ -47,5 +48,46 @@ public class CourseServiceTests {
         courseRepository.deleteAll();
     }
 
+    @Test
+    void getExistingCourse() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
 
+        // Act
+        courseService.save(course);
+
+        // Assert
+        Course expected = courseService.getCourseById(testCourseId);
+        assertThat(course.getId()).isNotNull();
+        assertThat(course).isEqualTo(expected);
+    }
+
+    @Test
+    void getNonExistingCourse() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+
+        // act
+        ThrowableAssert.ThrowingCallable actionNull = () -> courseService.getCourseById(testCourseId);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNull);
+    }
+
+    @Test
+    void save() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+
+        // Act
+        courseService.save(course);
+
+        // Assert
+        Course expected = courseRepository.getById(course.getId());
+        assertThat(course.getId()).isNotNull();
+        assertThat(course).isEqualTo(expected);
+    }
 }

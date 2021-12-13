@@ -36,6 +36,18 @@ public class CourseService {
         return courseRepository.getById(id);
     }
 
-    // -------------------- Deletions ----------------
+    // --------------------- Setters -------------------------
+
+    /**
+     * Saves the given course to the repository.
+     *
+     * @param course the saved course
+     * @return the saved course
+     */
+    public Course save(Course course) {
+        return courseRepository.save(course);
+    }
+
+    // -------------------- Deletions ------------------------
 
 }
