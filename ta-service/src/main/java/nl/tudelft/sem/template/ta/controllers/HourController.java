@@ -8,7 +8,6 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptHoursRequestModel;
-import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import nl.tudelft.sem.template.ta.models.HourResponseModel;
 import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.security.AuthManager;
@@ -164,8 +163,8 @@ public class HourController {
 
         List<HourDeclaration> declarations = hourService
                                             .getNonReviewedHoursByCourseIdAndNetId(courseId, netId);
-        List<HourResponseModel> response = declarations.stream().map(contract ->
-            HourResponseModel.fromHourDeclaration(contract)
+        List<HourResponseModel> response = declarations.stream().map(declaration ->
+            HourResponseModel.fromHourDeclaration(declaration)
         ).collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
