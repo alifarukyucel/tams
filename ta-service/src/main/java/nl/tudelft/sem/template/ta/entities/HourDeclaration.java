@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
-@Table(name = "workedHours")
+@Table(name = "HourDeclarations")
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Data

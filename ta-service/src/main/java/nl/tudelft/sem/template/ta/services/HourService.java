@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.ta.services;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
@@ -118,5 +119,24 @@ public class HourService {
         return workedHours.get().getContract();
     }
 
+
+    /**
+     * Find and return the worked hours that are still not accepted or rejected.
+     *
+     * @param courseId the courseId of the WorkedHours (required)
+     * @param netId the netId of the WorkedHours (optional)
+     * @return a list of workedHours with requested courseId (and netId if given)
+     */
+    public List<HourDeclaration> getNonReviewedHoursByCourseIdAndNetId(
+        String courseId, String netId)  {
+
+        if (courseId == null) {
+            throw new IllegalArgumentException("The courseId should be specified");
+        }
+
+        return netId == null
+            ? hoursRepository.findNonReviewedHoursByCourseId(courseId)
+            : hoursRepository.findNonReviewedHoursByCourseIdAndNetId(courseId, netId);
+    }
 
 }
