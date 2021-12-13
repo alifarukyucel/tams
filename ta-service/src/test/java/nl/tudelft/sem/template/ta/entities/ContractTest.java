@@ -36,13 +36,14 @@ class ContractTest {
         contract.setMaxHours(5);
         contract.setSigned(false);
         contract.setNetId("PieterDelft");
+        contract.setRating(10);
         contract.setDuties("You need to work!");
 
         Assertions.assertEquals("build", contract.getCourseId());
         Assertions.assertEquals(5, contract.getMaxHours());
+        Assertions.assertEquals(10, contract.getRating());
         Assertions.assertFalse(contract.getSigned());
         Assertions.assertEquals("PieterDelft", contract.getNetId());
         Assertions.assertEquals("You need to work!", contract.getDuties());
     }
-
 }
