@@ -41,7 +41,6 @@ public class ContractService {
                                             throws IllegalArgumentException {
 
         // Check if parameters were given are valid.
-
         if (StringUtils.isEmpty(netId)
             || StringUtils.isEmpty(courseId)
             || maxHours <= 0 || duties == null) {
@@ -66,6 +65,7 @@ public class ContractService {
         contract = save(contract);
         return contract;
     }
+
 
     /**
      * Returns the requested contract based on the users netId and the specified CourseId.
@@ -163,6 +163,22 @@ public class ContractService {
     }
 
     /**
+     * Set a contracts rating to a new value.
+     *
+     * @param netId     The netId of the user whose contract we are changing.
+     * @param courseId  The course to which the contract belongs.
+     * @throws NoSuchElementException Thrown if contract could not be found.
+     * @throws IllegalArgumentException Thrown if rating was not between 0 and 10.
+     */
+    public void rate(String netId, String courseId, double rating)
+        throws NoSuchElementException, IllegalArgumentException {
+        Contract contract = getContract(netId, courseId);
+        contract.setRating(rating);
+        contractRepository.save(contract);
+    }
+
+
+    /**
      * Saves a given contract object back to the database.
      *
      * @param contract The contract to save.
@@ -183,7 +199,8 @@ public class ContractService {
      */
     private Example<Contract> createContractExample(String netId, String courseId) {
         ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
-                                                        .withIgnoreNullValues();
+                                                        .withIgnoreNullValues()
+                                                        .withIgnorePaths("rating");
         Example<Contract> example = Example.of(
                 Contract.builder()
                         .courseId(courseId)
