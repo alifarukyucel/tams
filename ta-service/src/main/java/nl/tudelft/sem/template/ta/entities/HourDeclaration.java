@@ -47,13 +47,4 @@ public class HourDeclaration {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Contract contract;
 
-    /**
-     * Create an instance of HourResponseModel based on this WorkedHours.
-     * @return ContractResponseModel of this contract.
-     */
-    // TODO: Move this to the HourResponseModel itself (as per Martin request).
-    public HourResponseModel toResponseModel(){
-        return new HourResponseModel(date, desc, workedTime, approved, contract.getNetId());
-    }
-
 }
