@@ -100,6 +100,7 @@ checkstyle {
 
 pmd {
 	incrementalAnalysis = true
+	sourceSets = [sourceSets.main]
 }
 
 apply plugin: 'info.solidsoft.pitest'

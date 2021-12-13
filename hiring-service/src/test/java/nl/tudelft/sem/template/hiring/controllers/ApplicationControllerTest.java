@@ -7,7 +7,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
+import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
@@ -15,6 +18,8 @@ import nl.tudelft.sem.template.hiring.security.TokenVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +32,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier"})
+@ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier", "mockCourseInformation"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class ApplicationControllerTest {
@@ -38,6 +43,9 @@ public class ApplicationControllerTest {
 
     @Autowired
     private transient MockMvc mockMvc;
+
+    @Autowired
+    private transient CourseInformation mockCourseInformation;
 
     @Autowired
     private transient AuthManager mockAuthenticationManager;
@@ -91,6 +99,132 @@ public class ApplicationControllerTest {
         //assert
         invalidResults.andExpect(status().isBadRequest());
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
+    }
+
+    @Test
+    public void rejectValidApplication() throws Exception {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        ApplicationKey lookup = ApplicationKey.builder()
+                .courseId(application.getCourseId())
+                .netId(application.getNetId())
+                .build();
+
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+                .thenReturn(true);
+
+        // Act
+        ResultActions result = mockMvc.perform(post("/reject")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(lookup))
+                .header("Authorization", "Bearer Joe"));
+
+        // Assert
+        result.andExpect(status().isOk());
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .get();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+    }
+
+    @Test
+    public void rejectValidApplicationWhileNotBeingResponsibleLecturer() throws Exception {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        ApplicationKey lookup = ApplicationKey.builder()
+                .courseId(application.getCourseId())
+                .netId(application.getNetId())
+                .build();
+
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+                .thenReturn(false);
+
+        // Act
+        ResultActions result = mockMvc.perform(post("/reject")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(lookup))
+                .header("Authorization", "Bearer Joe"));
+
+        // Assert
+        result.andExpect(status().isForbidden());
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .get();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+    }
+
+    @Test
+    public void rejectNonexistentApplication() throws Exception {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        ApplicationKey lookup = ApplicationKey.builder()
+                .courseId(application.getCourseId())
+                .netId("invalidNetid")
+                .build();
+
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+                .thenReturn(true);
+
+        // Act
+        ResultActions result = mockMvc.perform(post("/reject")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(lookup))
+                .header("Authorization", "Bearer Joe"));
+
+        // Assert
+        result.andExpect(status().isNotFound());
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .get();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+    }
+
+    /**
+     * Test for rejecting an application in a non-pending state.
+     *
+     * @param status the test status (non-pending)
+     */
+    @ParameterizedTest
+    @CsvSource({"ACCEPTED", "REJECTED"})
+    public void rejectNonPendingApplication(String status) throws Exception {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.valueOf(status));
+        applicationRepository.save(application);
+
+        ApplicationKey lookup = ApplicationKey.builder()
+                .courseId(application.getCourseId())
+                .netId(application.getNetId())
+                .build();
+
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+                .thenReturn(true);
+
+        // Act
+        ResultActions result = mockMvc.perform(post("/reject")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(lookup))
+                .header("Authorization", "Bearer Joe"));
+
+        // Assert
+        result.andExpect(status().isConflict());
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .get();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
     }
 
 }
