@@ -54,4 +54,27 @@ public class ApplicationServiceTest {
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
+
+    @Test
+    public void getApplicationsTest() {
+        //Arrange
+        String motivation = "I am motivated";
+        Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        Application thirdApplication = new Application("CSE1400", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+
+        applicationRepository.save(firstApplication);
+        applicationRepository.save(secondApplication);
+        applicationRepository.save(thirdApplication);
+
+        //Act
+
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+                .isEmpty();
+    }
 }

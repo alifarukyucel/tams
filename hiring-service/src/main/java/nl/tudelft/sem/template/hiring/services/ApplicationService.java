@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class ApplicationService {
@@ -30,6 +32,7 @@ public class ApplicationService {
             return false;
         }
     }
+
     public List<Application> getApplicationFromStudent(String netId) {
         List<Application> allApplications = applicationRepository.findAll();
         List<Application> result = new ArrayList<>();
