@@ -102,11 +102,7 @@ public class HourController {
         try {
             Contract contract = hourService.getAssociatedContract(request.getId());
 
-            if (!courseInformation.isResponsibleLecturer(authManager.getNetid(),
-                contract.getCourseId())) {
-
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-            }
+            checkAuthorized(contract.getCourseId());
             hourService.approveHours(request.getId(), request.getAccept());
 
         } catch (NoSuchElementException e) {
@@ -181,7 +177,7 @@ public class HourController {
             .isResponsibleLecturer(authManager.getNetid(), courseId);
 
         if (!authorized) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
     }
 }

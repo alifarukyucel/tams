@@ -276,7 +276,7 @@ class HourControllerTest {
             .header("Authorization", "Bearer Pieter"));
 
         // assert
-        results.andExpect(status().isUnauthorized());
+        results.andExpect(status().isForbidden());
         HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
         assertThat(hour.getApproved()).isFalse();
     }
@@ -339,7 +339,7 @@ class HourControllerTest {
     }
 
     @Test
-    void getOpenHours_unauthorized() throws Exception {
+    void getOpenHours_forbidden() throws Exception {
         mockAuthentication("Maurits", false);
 
         // Act
@@ -347,7 +347,7 @@ class HourControllerTest {
             .header("Authorization", "Bearer Lol"));
 
         // Assert
-        action.andExpect(status().isUnauthorized());
+        action.andExpect(status().isForbidden());
     }
 
 
@@ -408,7 +408,7 @@ class HourControllerTest {
     }
 
     @Test
-    void getAllOpenHours_unauthorized() throws Exception {
+    void getAllOpenHours_forbidden() throws Exception {
         mockAuthentication("WinstijnSmit", false);
 
         // Act
@@ -416,7 +416,7 @@ class HourControllerTest {
             .header("Authorization", "Bearer Lol"));
 
         // Assert
-        action.andExpect(status().isUnauthorized());
+        action.andExpect(status().isForbidden());
     }
 
 
