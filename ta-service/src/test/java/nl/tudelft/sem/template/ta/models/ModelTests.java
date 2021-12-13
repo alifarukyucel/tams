@@ -55,7 +55,7 @@ public class ModelTests {
         Assertions.assertEquals(declaration.getDesc(), model.getDescription());
         Assertions.assertEquals(declaration.getWorkedTime(), model.getWorkedTime());
         Assertions.assertEquals(declaration.getApproved(), model.isApproved());
-        Assertions.assertEquals(declaration.getContract().getNetId(), model.getTa());
+        Assertions.assertEquals(declaration.getContract().getNetId(), model.getNetId());
     }
 
 

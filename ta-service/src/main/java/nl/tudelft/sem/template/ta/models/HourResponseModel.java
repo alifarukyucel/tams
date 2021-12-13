@@ -17,11 +17,11 @@ import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 @Data
 public class HourResponseModel {
     private UUID id;
+    private String netId;
     private Date date;
     private String description;
     private int workedTime;
     private boolean approved;
-    private String ta;
 
     /**
      * Create an instance of HourResponseModel based on given HourDeclaration.
@@ -31,11 +31,11 @@ public class HourResponseModel {
     public static HourResponseModel fromHourDeclaration(HourDeclaration declaration) {
         return new HourResponseModel(
             declaration.getId(),
+            declaration.getContract().getNetId(),
             declaration.getDate(),
             declaration.getDesc(),
             declaration.getWorkedTime(),
-            declaration.getApproved(),
-            declaration.getContract().getNetId()
+            declaration.getApproved()
         );
     }
 }

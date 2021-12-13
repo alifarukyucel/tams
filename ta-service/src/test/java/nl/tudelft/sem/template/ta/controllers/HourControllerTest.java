@@ -448,11 +448,11 @@ class HourControllerTest {
         for (Map<String, Object> map : parsed) {
             list.add(new HourResponseModel(
                 UUID.fromString((String) map.get("id")),
+                (String) map.get("netId"),
                 (Date) map.get("date"),
                 (String) map.get("description"),
                 (int) map.get("workedTime"),
-                (boolean) map.get("approved"),
-                (String) map.get("ta")
+                (boolean) map.get("approved")
             ));
         }
         return list;
