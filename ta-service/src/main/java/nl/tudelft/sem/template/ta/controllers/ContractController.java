@@ -82,6 +82,7 @@ public class ContractController {
     @PutMapping("/sign")
     public ResponseEntity<String> sign(@RequestBody AcceptContractRequestModel request)
         throws ResponseStatusException {
+
         try {
             contractService.sign(authManager.getNetid(), request.getCourse());
             return ResponseEntity.ok().build();
@@ -113,8 +114,8 @@ public class ContractController {
      * @throws ResponseStatusException if user is not signed-in or no contracts can be found.
      */
     @GetMapping("/{course}/mine")
-    public ResponseEntity<List<ContractResponseModel>>
-        getSignedInUserContractByCourse(@PathVariable String course)
+    public ResponseEntity<List<ContractResponseModel>> getSignedInUserContractByCourse(
+        @PathVariable String course)
             throws ResponseStatusException {
         return findContractBy(authManager.getNetid(), course);
     }
@@ -131,8 +132,8 @@ public class ContractController {
      * @throws ResponseStatusException if netId is not given or when no contracts can not be found.
      */
     @GetMapping("/{course}/{netId}")
-    public ResponseEntity<List<ContractResponseModel>>
-        getUserContracts(@PathVariable String course, @PathVariable String netId)
+    public ResponseEntity<List<ContractResponseModel>> getUserContracts(
+        @PathVariable String course, @PathVariable String netId)
         throws ResponseStatusException {
 
         boolean authorized = courseInformation
@@ -154,8 +155,9 @@ public class ContractController {
      * @return a list of contracts
      * @throws ResponseStatusException if no contracts have been found.
      */
-    private ResponseEntity<List<ContractResponseModel>>
-        findContractBy(String netId, String courseId) throws ResponseStatusException  {
+    private ResponseEntity<List<ContractResponseModel>> findContractBy(
+        String netId, String courseId) throws ResponseStatusException  {
+
         try {
             List<Contract> contracts = contractService.getContractsBy(netId, courseId);
             List<ContractResponseModel> response = contracts.stream().map(contract ->
@@ -175,8 +177,8 @@ public class ContractController {
      * @return a list of contracts
      * @throws ResponseStatusException if no contracts have been found.
      */
-    private ResponseEntity<List<ContractResponseModel>>
-        findContractBy(String netId) throws ResponseStatusException {
+    private ResponseEntity<List<ContractResponseModel>> findContractBy(
+        String netId) throws ResponseStatusException {
         return findContractBy(netId, null);
     }
 
