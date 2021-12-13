@@ -32,7 +32,7 @@ public class MicroserviceCommunicationHelper {
      * @return The response
      * @throws Exception if the status code is not 200 OK
      */
-    public <T, J> ResponseEntity<T> send(String url, Class<T> responseType, J body,
+    private <T, J> ResponseEntity<T> send(String url, Class<T> responseType, J body,
                                          HttpMethod method, String... variables) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
