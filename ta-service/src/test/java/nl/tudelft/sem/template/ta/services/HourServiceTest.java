@@ -3,11 +3,13 @@ package nl.tudelft.sem.template.ta.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -39,9 +41,6 @@ class HourServiceTest {
 
     @BeforeEach
     void setUp() {
-        hoursRepository.deleteAll();
-        contractRepository.deleteAll();
-
         defaultContract = Contract.builder()
             .courseId("CSE2310")
             .netId("PvdBerg")
@@ -135,6 +134,38 @@ class HourServiceTest {
 
         // assert
         assertThat(hours).containsExactlyInAnyOrder(defaultHourDeclaration, hourDeclaration);
+    }
+
+    @Test
+    void createAndSave() {
+        // arrange
+        SubmitHoursRequestModel submitHoursRequestModel = SubmitHoursRequestModel.builder()
+            .desc("hello")
+            .workedTime(5)
+            .date(LocalDateTime.now())
+            .course(defaultContract.getCourseId())
+            .build();
+
+        HourDeclaration expected = HourDeclaration.builder()
+            .workedTime(submitHoursRequestModel.getWorkedTime())
+            .reviewed(false)
+            .approved(false)
+            .contract(defaultContract)
+            .date(submitHoursRequestModel.getDate())
+            .desc(submitHoursRequestModel.getDesc())
+            .build();
+
+        // act
+        HourDeclaration hourDeclaration = hourService.createAndSaveDeclaration(
+            defaultContract.getNetId(), submitHoursRequestModel);
+
+        // assert
+        HourDeclaration actual = hoursRepository.findById(hourDeclaration.getId()).orElseThrow();
+        assertThat(actual.getId()).isNotNull();
+
+        actual.setId(null);
+
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test

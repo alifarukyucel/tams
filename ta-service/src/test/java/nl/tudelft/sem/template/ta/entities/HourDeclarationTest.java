@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.ta.entities;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -10,7 +11,7 @@ class HourDeclarationTest {
 
     @Test
     void testBuilder() {
-        Date time = Calendar.getInstance().getTime();
+        LocalDateTime time = LocalDateTime.now();
         Contract c1 = new Contract();
         HourDeclaration hour1 = HourDeclaration.builder()
             .id(UUID.randomUUID())
@@ -34,7 +35,7 @@ class HourDeclarationTest {
 
     @Test
     void testSetters() {
-        Date time = Calendar.getInstance().getTime();
+        LocalDateTime time = LocalDateTime.now();
         Contract c1 = new Contract();
         HourDeclaration hour1 = new HourDeclaration();
         hour1.setId(UUID.randomUUID());
