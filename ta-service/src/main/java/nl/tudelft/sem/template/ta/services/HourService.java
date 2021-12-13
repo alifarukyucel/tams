@@ -99,12 +99,13 @@ public class HourService {
      * @return a list of workedHours with requested courseId (and netId if given)
      */
     public List<HourDeclaration> getNonReviewedHoursBy(String courseId, String netId)  {
-        if (courseId == null)
+        if (courseId == null) {
             throw new IllegalArgumentException("The courseId should be specified");
+        }
 
-        return netId == null ?
-                hoursRepository.findNonReviewedHoursBy(courseId) :
-                hoursRepository.findNonReviewedHoursBy(courseId, netId);
+        return netId == null
+            ? hoursRepository.findNonReviewedHoursBy(courseId)
+            : hoursRepository.findNonReviewedHoursBy(courseId, netId);
     }
 
 }

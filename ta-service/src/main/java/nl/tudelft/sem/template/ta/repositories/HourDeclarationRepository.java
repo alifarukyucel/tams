@@ -15,24 +15,24 @@ public interface HourDeclarationRepository extends JpaRepository<HourDeclaration
     /**
      * Queries for "open" hours in the database with a courseId.
      *
-     * @param courseId
-     * @return
+     * @param courseId courseId of the requested hour declarations
+     * @return list of hour declarations
      */
-    @Query("SELECT h FROM HourDeclaration h " +
-        "JOIN h.contract c " +
-        "WHERE h.reviewed = false AND c.courseId = :courseId")
+    @Query("SELECT h FROM HourDeclaration h "
+        + "JOIN h.contract c "
+        + "WHERE h.reviewed = false AND c.courseId = :courseId")
     List<HourDeclaration> findNonReviewedHoursBy(@Param("courseId") String courseId);
 
     /**
      * Queries for "open" hours in the database with a courseId and netId.
      *
-     * @param courseId
-     * @param netId
-     * @return
+     * @param courseId of requested hour declarations
+     * @param netId of contract of requested hour declaration
+     * @return list of hour declarations
      */
-    @Query("SELECT h FROM HourDeclaration h " +
-        "JOIN h.contract c " +
-        "WHERE h.reviewed = false AND c.courseId = :courseId AND c.netId = :netId")
+    @Query("SELECT h FROM HourDeclaration h "
+        + "JOIN h.contract c "
+        + "WHERE h.reviewed = false AND c.courseId = :courseId AND c.netId = :netId")
     List<HourDeclaration> findNonReviewedHoursBy(
         @Param("courseId") String courseId,
         @Param("netId") String netId

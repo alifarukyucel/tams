@@ -1,14 +1,13 @@
 package nl.tudelft.sem.template.ta.models;
 
+import java.util.Date;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 
 @Builder
