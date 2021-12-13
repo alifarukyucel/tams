@@ -57,7 +57,7 @@ public class ContractController {
     public ResponseEntity<ContractResponseModel> createContract(@RequestBody CreateContractRequestModel request)
         throws ResponseStatusException {
 
-        checkAuthorized(authManager.getNetid());
+        checkAuthorized(request.getCourseId());
 
         try {
             Contract contract = contractService.createUnsignedContract(
@@ -104,7 +104,7 @@ public class ContractController {
         rateContract(@RequestBody RateContractRequestModel request)
         throws ResponseStatusException {
 
-        checkAuthorized(authManager.getNetid());
+        checkAuthorized(request.getCourseId());
 
         try {
             contractService.rate(request.getNetId(), request.getCourseId(), request.getRating());
@@ -161,7 +161,7 @@ public class ContractController {
         // Check if we are authorized as
         // responsible lecturer for this course.
         if (!authManager.getNetid().equals(netId)) {
-            checkAuthorized(authManager.getNetid());
+            checkAuthorized(course);
         }
 
         return findContractBy(netId, course);
