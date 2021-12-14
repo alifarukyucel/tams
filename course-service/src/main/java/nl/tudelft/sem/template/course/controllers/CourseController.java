@@ -78,7 +78,7 @@ public class CourseController {
      * @param courseModel   the course to be created
      * @return the course returned from the database (with a manually-assigned id)
      */
-    @PostMapping(value = "create", consumes = "application/json") // course/create
+    @PostMapping(value = "/create", consumes = "application/json") // course/create
     ResponseEntity<String> createCourse(@RequestBody CourseCreationRequestModel courseModel)
             throws ResponseStatusException {
         Course course = new Course(courseModel.getId(),
