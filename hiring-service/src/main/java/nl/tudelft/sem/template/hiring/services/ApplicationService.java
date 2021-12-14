@@ -11,6 +11,8 @@ import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+//PMD.DataflowAnomalies are suppressed because they occur in a place where there is no problem at all.
+@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 @Service
 public class ApplicationService {
 
@@ -56,6 +58,13 @@ public class ApplicationService {
      * @return a list of extendApplicationRequestModels, created with the extended applications and the TA-ratings.
      */
     public List<ExtendedApplicationRequestModel> extendWithRating(List<Application> applications) {
+        List<ExtendedApplicationRequestModel> extendedApplications = new ArrayList<>();
+
+        //This check makes sure no data is fetched when there are no applications at all.
+        if (applications.isEmpty()) {
+            return extendedApplications;
+        }
+
         List<String> netIds = new ArrayList<>();
 
         for (Application application : applications) {
@@ -63,8 +72,6 @@ public class ApplicationService {
         }
 
         Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
-
-        List<ExtendedApplicationRequestModel> extendedApplications = new ArrayList<>();
 
         for (Application application : applications) {
             String netId = application.getNetId();
