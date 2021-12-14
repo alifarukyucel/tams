@@ -33,8 +33,6 @@ public class CourseResponseModel {
 
     private int numberOfStudents;
 
-    private ArrayList<String> responsibleLecturers;
-
     /**
      * Create an instance of CourseResponseModel based on given course.
      *
@@ -46,8 +44,7 @@ public class CourseResponseModel {
                 course.getStartDate(),
                 course.getName(),
                 course.getDescription(),
-                course.getNumberOfStudents(),
-                (ArrayList<String>) course.getResponsibleLecturers()
+                course.getNumberOfStudents()
         );
     }
 }

@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.course.models;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class CourseCreationRequestModel {
     private String id;
 
     @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize
     private LocalDateTime startDate;
 
     private String name;
@@ -32,6 +34,4 @@ public class CourseCreationRequestModel {
 
     @NotNull
     private int numberOfStudents;
-
-    private ArrayList<String> responsibleLecturers; // Always sent to the server as empty
 }

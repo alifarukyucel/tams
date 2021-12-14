@@ -139,7 +139,7 @@ public class CourseTests {
         mockAuthentication("Andy", true);
 
         CourseCreationRequestModel courseModel = new CourseCreationRequestModel(testCourseId, testStartDate,
-                testCourseName, testDescription, testNumberOfStudents, responsibleLecturers);
+                testCourseName, testDescription, testNumberOfStudents);
 
         // Act
         ResultActions action = mockMvc.perform(post("/create")
@@ -163,17 +163,17 @@ public class CourseTests {
     @Test
     void createCourse_ExistingCourseInDatabase_throwsConflictException() throws Exception {
         // Arrange
-        mockAuthentication("Andy", true);
+        mockAuthentication(responsibleLecturer, true);
 
         Course existingCourse = new Course(testCourseId, testStartDate, testCourseName, testDescription,
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(existingCourse);
 
-        CourseCreationRequestModel courseModel = new CourseCreationRequestModel(testCourseId, testStartDate, testCourseName,
-                testDescription, testNumberOfStudents, responsibleLecturers);
+        CourseCreationRequestModel courseModel = new CourseCreationRequestModel(testCourseId, testStartDate,
+                testCourseName, testDescription, testNumberOfStudents);
 
         // Act
-        ResultActions action = mockMvc.perform(post("create")
+        ResultActions action = mockMvc.perform(post("/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(courseModel))
                 .header("Authorization", "Bearer Andy"));
@@ -182,12 +182,5 @@ public class CourseTests {
         MvcResult result = action
                 .andExpect(status().isConflict())
                 .andReturn();
-
-        CourseResponseModel response =
-                JsonUtil.deserialize(result.getResponse().getContentAsString(), CourseResponseModel.class);
-
-        assertThat(response).isNotNull();
-        assertThat(CourseResponseModel.fromCourse(courseRepository.getById(testCourseId)))
-                .isEqualTo(response);
     }
 }
