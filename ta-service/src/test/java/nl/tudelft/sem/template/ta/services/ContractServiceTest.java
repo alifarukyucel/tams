@@ -342,6 +342,30 @@ class ContractServiceTest {
     }
 
     @Test
+    void createUnsignedContractInaccessibleCourseService() {
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(null);
+
+
+        // Act
+        ThrowingCallable c = () -> contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        assertThat(contractRepository.findAll().size()).isZero();
+    }
+
+    @Test
     void createUnsignedContract_illegalArguments() {
         // Arrange
         when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
