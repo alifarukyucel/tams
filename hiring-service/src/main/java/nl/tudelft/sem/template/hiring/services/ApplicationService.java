@@ -1,16 +1,19 @@
 package nl.tudelft.sem.template.hiring.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
+import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ExtendedApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 @Service
 public class ApplicationService {
 
@@ -18,9 +21,11 @@ public class ApplicationService {
     private transient ApplicationRepository applicationRepository;
 
     private final transient ContractInformation contractInformation;
+    private final transient CourseInformation courseInformation;
 
-    public ApplicationService(ContractInformation contractInformation) {
+    public ApplicationService(ContractInformation contractInformation, CourseInformation courseInformation) {
         this.contractInformation = contractInformation;
+        this.courseInformation = courseInformation;
     }
 
     /**
@@ -36,17 +41,20 @@ public class ApplicationService {
 
     /**
      * Checks whether an application meets the requirements and saves or discards it based on this.
+     * It also checks whether the course isn't starting in less than 3 months already.
      *
      * @param application the application to check.
      * @return boolean whether the application meets the requirements and thus saved.
      */
     public boolean checkAndSave(Application application) {
         if (application.meetsRequirements()) {
-            applicationRepository.save(application);
-            return true;
-        } else {
+            return false;
+        } else if (courseInformation.getStartDate(application.getCourseId()).minusMonths(3)
+                .isAfter(LocalDateTime.now())) {
             return false;
         }
+        applicationRepository.save(application);
+        return true;
     }
 
     /**
@@ -62,9 +70,6 @@ public class ApplicationService {
         }
 
         List<ExtendedApplicationRequestModel> extendedApplications = new ArrayList<>();
-        if (applications.isEmpty()) {
-            return extendedApplications;
-        }
         Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
 
         for (Application application : applications) {
