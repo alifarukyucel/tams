@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
+import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
@@ -23,13 +24,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@ActiveProfiles({"test", "mockCourseInformation"})
+@ActiveProfiles({"test", "mockCourseInformation", "mockContractInformation"})
 public class ApplicationServiceTest {
     @Autowired
     private transient ApplicationRepository applicationRepository;
 
     @Autowired
     private transient ApplicationService applicationService;
+
+    @Autowired
+    private transient ContractInformation contractInformation;
 
     @Test
     public void validCheckAndSaveTest() {
