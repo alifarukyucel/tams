@@ -1,8 +1,8 @@
-package nl.tudelft.sem.template.ta.services;
+package nl.tudelft.sem.template.ta.services.communication;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
-import nl.tudelft.sem.template.ta.services.models.CourseInformationResponseModel;
+import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

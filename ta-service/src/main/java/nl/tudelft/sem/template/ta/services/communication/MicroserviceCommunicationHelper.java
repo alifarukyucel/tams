@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.ta.services;
+package nl.tudelft.sem.template.ta.services.communication;
 
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
