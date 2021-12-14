@@ -23,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional  // prevents lazy loading issues and will keep the connection open.
-@ActiveProfiles({"test"})
+@ActiveProfiles({"test", "mockCourseInformation"})
 class ContractServiceTest {
 
     @Autowired
