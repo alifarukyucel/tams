@@ -17,6 +17,8 @@ import org.springframework.util.StringUtils;
 @Service
 public class ContractService {
 
+    private final double studentsPerOneTA = 20f;
+
     private final transient ContractRepository contractRepository;
 
     public ContractService(ContractRepository contractRepository) {
