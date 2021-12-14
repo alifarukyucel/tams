@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
+import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.time.LocalDate;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -22,6 +25,9 @@ public class ApplicationServiceTest {
 
     @Autowired
     private transient ApplicationService applicationService;
+
+    @Autowired
+    private transient CourseInformation courseInformation;
 
     @Test
     public void validCheckAndSaveTest() {
@@ -47,11 +53,31 @@ public class ApplicationServiceTest {
                 motivation, ApplicationStatus.PENDING);
         assertThat(invalidApplication.meetsRequirements()).isFalse();
 
+
         //Act
         applicationService.checkAndSave(invalidApplication);
 
         //Assert
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
+    }
+
+    @Test
+    public void checkAndWithdrawTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+        LocalDate deadline = courseInformation.startDate(application.getCourseId());
+
+        //Act
+        applicationService.checkAndWithdraw(application);
+
+        //Assert
+        Application toWithdraw = applicationRepository.findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .get();
+        assertThat(toWithdraw).isNull();
+
     }
 }

@@ -71,7 +71,7 @@ public class ApplicationController {
         boolean success = applicationService.checkAndWithdraw(application);
         if(success) return ResponseEntity.ok().build();
         else {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Withdrawing isn't possible at this moment");
         }
     }
 }
