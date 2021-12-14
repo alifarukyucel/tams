@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.services.CourseService;
@@ -48,37 +49,45 @@ public class CourseServiceTests {
     }
 
     @Test
-    public void createCourse_withValidData_worksCorrectly() {
+    void getExistingCourse() {
         // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-        Course newCourse = new Course(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents, responsibleLecturers);
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
 
         // Act
-        courseService.createCourse(newCourse);
+        Course expected = courseService.getCourseById(testCourseId);
 
         // Assert
-        Course savedCourse = courseRepository.getById("CSE2115");
-        assertThat(savedCourse.getId()).isEqualTo(testCourseId);
-        assertThat(savedCourse.getName()).isEqualTo(testCourseName);
-        assertThat(savedCourse.getDescription()).isEqualTo(testDescription);
-        assertThat(savedCourse.getNumberOfStudents()).isEqualTo(testNumberOfStudents);
-        assertThat(savedCourse.getResponsibleLecturers()).containsExactly(responsibleLecturer);
+        assertThat(course.getId()).isNotNull();
+        assertThat(course).isEqualTo(expected);
     }
 
     @Test
-    public void createCourse_withExistingCourse_throwsConflictException() throws Exception {
+    void getNonExistingCourse() {
         // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-        Course existingCourse = new Course(testCourseId,
-                testStartDate, testCourseName, testDescription, testNumberOfStudents, responsibleLecturers);
-        courseRepository.save(existingCourse);
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
 
-        // Act
-        ThrowableAssert.ThrowingCallable action = () -> courseService.createCourse(existingCourse);
+        // act
+        ThrowableAssert.ThrowingCallable actionNull = () -> courseService.getCourseById(testCourseId);
 
         // Assert
-        assertThatExceptionOfType(Exception.class)
-                .isThrownBy(action);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNull);
+    }
+
+    @Test
+    void save() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+
+        // Act
+        courseService.save(course);
+
+        // Assert
+        Course expected = courseRepository.getById(course.getId());
+        assertThat(course.getId()).isNotNull();
+        assertThat(course).isEqualTo(expected);
     }
 }

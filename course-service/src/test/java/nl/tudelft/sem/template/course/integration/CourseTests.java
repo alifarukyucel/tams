@@ -4,12 +4,13 @@ import static nl.tudelft.sem.template.course.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import nl.tudelft.sem.template.course.entities.Course;
-import nl.tudelft.sem.template.course.models.CourseModel;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.security.TokenVerifier;
@@ -57,6 +58,7 @@ public class CourseTests {
     final String testDescription = "swe methods";
     final int testNumberOfStudents = 300;
     final String responsibleLecturer = "fmulder";
+    ArrayList<String> responsibleLecturers = new ArrayList<>();
 
     /**
      * Sets up the environment before each test.
@@ -64,36 +66,52 @@ public class CourseTests {
     @BeforeEach
     void setUp() {
         courseRepository.deleteAll();
-        // Save a basic course in db.
+        ArrayList<String> responsibleLecturers = new ArrayList<String>();
         when(mockAuthenticationManager.getNetid()).thenReturn(responsibleLecturer);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(responsibleLecturer);
     }
 
-    /**
-     * Create course with valid data works correctly.
-     *
-     * @throws Exception the exception
-     */
     @Test
-    public void createCourse_withValidData_worksCorrectly() throws Exception {
+    public void getExistingCourse() throws Exception {
         // Arrange
-        CourseModel newCourse = new CourseModel(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents);
+        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(post("/course/create")
+        ResultActions result = mockMvc.perform(get("/CSE2115")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serialize(newCourse))
-                .header("Authorization", "Bearer Mulder"));
+                .header("Authorization", "Bearer SomeHackingProdigy"));
+
+        Course expected = courseRepository.getById(course.getId());
 
         // Assert
-        resultActions.andExpect(status().isOk());
-
-        Course savedCourse = courseRepository.getById(testCourseId);
-
-        assertThat(savedCourse.getId()).isEqualTo(testCourseId);
-        assertThat(savedCourse.getName()).isEqualTo(testCourseName);
-        assertThat(savedCourse.getResponsibleLecturers()).containsExactly(responsibleLecturer);
+        result.andExpect(status().isOk());
+        assertThat(expected.getId()).isNotNull();
+        assertThat(expected).isEqualTo(course);
     }
+
+    @Test
+    public void getNonExistingCourse() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(get("/CSE9999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Andy"));
+
+        Course expected = courseRepository.getById(course.getId());
+        
+        // Assert
+        resultActions.andExpect(status().isNotFound());
+        assertThat(expected.getId()).isNotNull();
+        assertThat(expected).isEqualTo(course);
+    }
+
 }

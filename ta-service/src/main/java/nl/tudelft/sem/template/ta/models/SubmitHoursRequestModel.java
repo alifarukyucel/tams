@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.ta.models;
 
-import java.util.Date;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class SubmitHoursRequestModel {
     private String course;
     private int workedTime;
-    private Date date;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private LocalDateTime date;
     private String desc;
 }
