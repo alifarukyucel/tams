@@ -51,11 +51,11 @@ public class ApplicationController {
     }
 
     /**
-     * API Endpoint for retreiving all applications that are still pending in JSON format
-     *
+     * API Endpoint for retreiving all applications that are still pending as a JSON
+     * These applications also contain their average rating as a TA, retreived from the TA-service
      *
      * @param courseId The courseId as String
-     * @return A JSON String
+     * @return The list of pending applications (extended with rating) for that course.
      */
     @GetMapping("/getPendingApplications/{courseId}")
     public ResponseEntity<List<ExtendedApplicationRequestModel>> getPendingApplications(@PathVariable String courseId) {
