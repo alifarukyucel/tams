@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
-import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
@@ -70,25 +69,6 @@ public class ApplicationController {
     }
 
     /**
-     * API Endpoint for retreiving all applications that are still pending as a JSON.
-     * These applications also contain their average rating as a TA, retreived from the TA-service.
-     *
-     * @param courseId The courseId as String.
-     * @return The list of pending applications (extended with rating) for that course.
-     */
-    @GetMapping("/getPendingApplications/{courseId}")
-    public ResponseEntity<List<ExtendedApplicationRequestModel>> getPendingApplications(@PathVariable String courseId) {
-        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
-        var extendedApplications = applicationService.extendWithRating(applications);
-
-        return ResponseEntity.ok(extendedApplications);
-    }
-
-    /**
      * API Endpoint for rejecting an application.
      *
      * @param model The course id and the application id
@@ -113,5 +93,24 @@ public class ApplicationController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * API Endpoint for retreiving all applications that are still pending as a JSON.
+     * These applications also contain their average rating as a TA, retreived from the TA-service.
+     *
+     * @param courseId The courseId as String.
+     * @return The list of pending applications (extended with rating) for that course.
+     */
+    @GetMapping("/getPendingApplications/{courseId}")
+    public ResponseEntity<List<ExtendedApplicationRequestModel>> getPendingApplications(@PathVariable String courseId) {
+        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        var extendedApplications = applicationService.extendWithRating(applications);
+
+        return ResponseEntity.ok(extendedApplications);
     }
 }

@@ -8,7 +8,6 @@ public class ConnectedCourseInformationService implements CourseInformation {
 
     @Override
     public boolean isResponsibleLecturer(String netId, String courseId) {
-
         return false;
     }
 

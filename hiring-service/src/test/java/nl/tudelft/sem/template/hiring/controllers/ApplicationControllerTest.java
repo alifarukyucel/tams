@@ -36,7 +36,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class ApplicationControllerTest {
-    private static String exampleNetId = "johndoe";
+    private static final String exampleNetId = "johndoe";
 
     @Autowired
     private transient ApplicationRepository applicationRepository;
@@ -66,7 +66,7 @@ public class ApplicationControllerTest {
     @Test
     public void validApplicationTest() throws Exception {
         //Arrange
-        ApplicationRequestModel validModel = new ApplicationRequestModel("cse1200", (float) 6.0,
+        ApplicationRequestModel validModel = new ApplicationRequestModel("cse1200", 6.0f,
                 "I want to");
 
         ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
@@ -85,7 +85,7 @@ public class ApplicationControllerTest {
     @Test
     public void invalidApplicationTest() throws Exception {
         //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", (float) 5.9,
+        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", 5.9f,
                 "I want to");
 
         ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
@@ -226,5 +226,4 @@ public class ApplicationControllerTest {
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
     }
-
 }
