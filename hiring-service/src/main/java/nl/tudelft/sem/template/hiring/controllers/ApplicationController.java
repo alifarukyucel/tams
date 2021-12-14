@@ -4,6 +4,7 @@ import static nl.tudelft.sem.template.hiring.entities.Application.createPendingA
 
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
+import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.ExtendedApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
@@ -19,12 +20,14 @@ import java.util.Map;
 @RestController
 public class ApplicationController {
     private final transient AuthManager authManager;
+    private final transient CourseInformation courseInformation;
 
     @Autowired
     private transient ApplicationService applicationService;
 
-    public ApplicationController(AuthManager authManager) {
+    public ApplicationController(AuthManager authManager, CourseInformation courseInformation) {
         this.authManager = authManager;
+        this.courseInformation = courseInformation;
     }
 
     /**
@@ -59,6 +62,10 @@ public class ApplicationController {
      */
     @GetMapping("/getPendingApplications/{courseId}")
     public ResponseEntity<List<ExtendedApplicationRequestModel>> getPendingApplications(@PathVariable String courseId) {
+        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
         var extendedApplications = applicationService.extendWithRating(applications);
 
