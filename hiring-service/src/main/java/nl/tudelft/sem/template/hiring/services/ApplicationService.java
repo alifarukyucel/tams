@@ -50,26 +50,6 @@ public class ApplicationService {
      * @return String containing the status in readable format.
      * @throws NoSuchElementException
      */
-//    public String retrieveStatus(ApplicationKey key) throws NoSuchElementException {
-//        Optional<Application> application = applicationRepository.findById(key);
-//        if(!application.isPresent()) throw new NoSuchElementException("Application does not exist");
-//        Application actualApplication = application.get();
-//        ApplicationStatus status = actualApplication.getStatus();
-//        if(status == null) {
-//            actualApplication.setStatus(ApplicationStatus.PENDING);
-//            return "The selection procedure is still pending";
-//        }
-//        if(status.equals(ApplicationStatus.ACCEPTED)) {
-//            return "Congratulations, you have been accepted";
-//        }
-//        if(status.equals(ApplicationStatus.REJECTED)){
-//            return "Unfortunately you have been rejected";
-//        }
-//        else{
-//            return "The selection procedure is still pending";
-//        }
-//    }
-
     public ApplicationStatus retrieveStatus(ApplicationKey key) throws NoSuchElementException {
         Optional<Application> application = applicationRepository.findById(key);
         if(!application.isPresent()) throw new NoSuchElementException("Application does not exist");

@@ -95,32 +95,65 @@ public class ApplicationServiceTest {
     @Test
     public void retrieveInvalidStatusTest() {
         //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.PENDING);
+
+        applicationRepository.save(expected);
+
         //Act
+        ThrowingCallable c = () -> applicationService.get(null, null);
+
         //Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
     }
 
     @Test
     public void retrievePendingStatusTest() {
         //Arrange
         Application expected = new Application("CSE1300", "jsmith", 7.0f,
-                "I got a 10", ApplicationStatus.ACCEPTED);
+                "I got a 10", ApplicationStatus.PENDING);
+
         applicationRepository.save(expected);
+
         //Act
+        var result = applicationService.get(expected.getCourseId(), expected.getNetId());
+
         //Assert
+        assertThat(result).isInstanceOf(Application.class);
+        assertThat(result.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+
     }
 
     @Test
     public void retrieveAcceptedStatusTest() {
         //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.ACCEPTED);
+
+        applicationRepository.save(expected);
+
         //Act
+        var result = applicationService.get(expected.getCourseId(), expected.getNetId());
+
         //Assert
+        assertThat(result).isInstanceOf(Application.class);
+        assertThat(result.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
     @Test
-    public void retrieveRejectedtatusTest() {
+    public void retrieveRejectedStatusTest() {
         //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.REJECTED);
+
+        applicationRepository.save(expected);
+
         //Act
+        var result = applicationService.get(expected.getCourseId(), expected.getNetId());
+
         //Assert
+        assertThat(result).isInstanceOf(Application.class);
+        assertThat(result.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
 
 
