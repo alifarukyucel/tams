@@ -248,4 +248,118 @@ class ContractServiceTest {
             new ContractId(contract.getNetId(), contract.getCourseId()));
         assertThat(contract).isEqualTo(expected);
     }
+
+    @Test
+    void createUnsignedContract() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build();
+
+
+        // Act
+        Contract saved = contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
+        assertThat(contractRepository.findAll().size()).isEqualTo(1);
+        assertThat(contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310")))
+            .isEqualTo(saved);
+    }
+
+    @Test
+    void createUnsignedContract_illegalArguments() {
+        // Act
+        ThrowingCallable actionNegativeMaxHours = () ->
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", -1, "Duties");
+        ThrowingCallable actionCourseNull = () ->
+            contractService.createUnsignedContract("WinstijnSmit", null, 10, "Duties");
+        ThrowingCallable actionCourseEmpty = () ->
+            contractService.createUnsignedContract("WinstijnSmit", "", 10, "Duties");
+        ThrowingCallable actionNetIdNull = () ->
+            contractService.createUnsignedContract(null, "", 10, "Duties");
+        ThrowingCallable actionNetIdEmpty = () ->
+            contractService.createUnsignedContract("", "CSE2525", 10, "Duties");
+
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNegativeMaxHours);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseNull);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseEmpty);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdNull);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdEmpty);
+        assertThat(contractRepository.findAll().size()).isEqualTo(0);
+    }
+
+
+    @Test
+    void createUnsignedContract_createSame() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2525")
+            .maxHours(10)
+            .duties("Duties")
+            .signed(false)
+            .build();
+        contractRepository.save(contract);
+
+        // Act
+        ThrowingCallable actionConflict = () ->
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 5, "Duties");
+
+        // There should be an error because there is a conflict.
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionConflict);
+        assertThat(contractRepository.findAll().size()).isEqualTo(1);
+    }
+
+    @Test
+    void contractExists_true() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // Act
+        boolean exists = contractService.contractExists("PVeldHuis", "CSE2310");
+
+        // Assert
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    void contractExists_false() {
+        // Arrange
+        Contract c1 = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CS2310")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contractRepository.save(c1);
+        Contract c2 = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2300")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contractRepository.save(c2);
+
+        // Act
+        boolean exists = contractService.contractExists("WinstijnSmit", "CSE2310");
+
+        // Assert
+        assertThat(exists).isFalse();
+    }
 }
