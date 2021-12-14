@@ -15,6 +15,7 @@ public class ContractResponseModel {
     private String course;
     private String netId;
     private String duties;
+    private double rating;
     private int maxHours;
     private boolean signed;
 
@@ -28,6 +29,7 @@ public class ContractResponseModel {
             contract.getCourseId(),
             contract.getNetId(),
             contract.getDuties(),
+            contract.getRating(),
             contract.getMaxHours(),
             contract.getSigned()
         );
