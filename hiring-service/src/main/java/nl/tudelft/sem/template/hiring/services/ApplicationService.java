@@ -5,16 +5,22 @@ import java.util.Optional;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
+import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ApplicationService {
 
-    @Autowired
-    private transient ApplicationRepository applicationRepository;
+    private final transient ApplicationRepository applicationRepository;
 
+    private final transient ContractInformation contractInformation;
+
+    public ApplicationService(ApplicationRepository applicationRepository, ContractInformation contractInformation) {
+        this.applicationRepository = applicationRepository;
+        this.contractInformation = contractInformation;
+    }
 
     /**
      * Checks whether an application meets the requirements and saves or discards it based on this.
@@ -68,6 +74,40 @@ public class ApplicationService {
         }
 
         application.setStatus(ApplicationStatus.REJECTED);
+
+        applicationRepository.save(application);
+    }
+
+    /**
+     * Sets the application status to ACCEPTED and creates a contract.
+     *
+     * @param courseId the course id of the application
+     * @param netId    the netid of the application
+     * @throws NoSuchElementException   if the application is not found
+     * @throws IllegalArgumentException if the application is not in pending state or contract creation fails
+     */
+    public void accept(String courseId, String netId, String duties, int maxHours)
+            throws NoSuchElementException, IllegalArgumentException {
+        Application application = this.get(courseId, netId);
+
+        if (application.getStatus() != ApplicationStatus.PENDING) {
+            // Application is already accepted or rejected
+            throw new IllegalArgumentException();
+        }
+
+        boolean result = contractInformation.createContract(CreateContractRequestModel.builder()
+                .courseId(courseId)
+                .netId(netId)
+                .duties(duties)
+                .maxHours(maxHours)
+                .build());
+
+        if (!result) {
+            // contract creation failed
+            throw new IllegalArgumentException();
+        }
+
+        application.setStatus(ApplicationStatus.ACCEPTED);
 
         applicationRepository.save(application);
     }
