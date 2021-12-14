@@ -101,8 +101,7 @@ public class ContractController {
      *         403 Forbidden if not a responsible lecturer for the course.
      */
     @PostMapping("/rate")
-    public ResponseEntity<String>
-        rateContract(@RequestBody RateContractRequestModel request)
+    public ResponseEntity<String> rateContract(@RequestBody RateContractRequestModel request)
         throws ResponseStatusException {
 
         checkAuthorized(request.getCourseId());

@@ -183,7 +183,6 @@ public class ContractService {
      *
      * @param contract The contract to save.
      * @return The newly saved contract.
-     * @throws IllegalArgumentException if declaration does not meet requirements.
      */
     public Contract save(Contract contract) {
         return contractRepository.save(contract);
