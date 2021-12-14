@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
+import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -21,8 +22,11 @@ public class ContractService {
 
     private final transient ContractRepository contractRepository;
 
-    public ContractService(ContractRepository contractRepository) {
+    private final transient CourseInformation courseInformation;
+
+    public ContractService(ContractRepository contractRepository, CourseInformation courseInformation) {
         this.contractRepository = contractRepository;
+        this.courseInformation = courseInformation;
     }
 
 
