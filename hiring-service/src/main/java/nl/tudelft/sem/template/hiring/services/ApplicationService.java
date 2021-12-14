@@ -9,7 +9,7 @@ import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
-import nl.tudelft.sem.template.hiring.models.ExtendedApplicationRequestModel;
+import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,8 +102,8 @@ public class ApplicationService {
      * @param applications A list of the desired applications to be extended with a rating.
      * @return a list of extendApplicationRequestModels, created with the extended applications and the TA-ratings.
      */
-    public List<ExtendedApplicationRequestModel> extendWithRating(List<Application> applications) {
-        List<ExtendedApplicationRequestModel> extendedApplications = new ArrayList<>();
+    public List<PendingApplicationResponseModel> extendWithRating(List<Application> applications) {
+        List<PendingApplicationResponseModel> extendedApplications = new ArrayList<>();
 
         //This check makes sure no data is fetched when there are no applications at all.
         if (applications.isEmpty()) {
@@ -121,7 +121,7 @@ public class ApplicationService {
         for (Application application : applications) {
             String netId = application.getNetId();
             Float rating = taRatings.get(netId);
-            extendedApplications.add(new ExtendedApplicationRequestModel(application, rating));
+            extendedApplications.add(new PendingApplicationResponseModel(application, rating));
         }
         return extendedApplications;
     }

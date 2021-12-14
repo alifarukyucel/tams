@@ -9,7 +9,7 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
-import nl.tudelft.sem.template.hiring.models.ExtendedApplicationRequestModel;
+import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.http.HttpStatus;
@@ -103,7 +103,7 @@ public class ApplicationController {
      * @return The list of pending applications (extended with rating) for that course.
      */
     @GetMapping("/getPendingApplications/{courseId}")
-    public ResponseEntity<List<ExtendedApplicationRequestModel>> getPendingApplications(@PathVariable String courseId) {
+    public ResponseEntity<List<PendingApplicationResponseModel>> getPendingApplications(@PathVariable String courseId) {
         if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
             return ResponseEntity.badRequest().build();
         }
