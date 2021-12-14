@@ -56,7 +56,7 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    public void getApplicationsTest() {
+    public void getApplicationsAndMaxApplicationsTest() {
         //Arrange
         String motivation = "I am motivated";
         Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
@@ -74,5 +74,8 @@ public class ApplicationServiceTest {
         //Assert
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
+        assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
+        assertThat(applicationService.maxApplication("johndoe")).isTrue();
     }
+
 }
