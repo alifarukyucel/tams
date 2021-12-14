@@ -3,6 +3,11 @@ package nl.tudelft.sem.template.hiring.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
@@ -172,5 +177,115 @@ public class ApplicationServiceTest {
                 .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
+    }
+
+    @Test
+    public void acceptValidApplication() {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        when(contractInformation.createContract(any())).thenReturn(true);
+
+        String expectedDuties = "Do TA stuff";
+        int expectedMaxHours = 42;
+
+        // Act
+        applicationService.accept(application.getCourseId(), application.getNetId(), expectedDuties, expectedMaxHours);
+
+        // Assert
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        verify(contractInformation).createContract(argThat(contract ->
+                contract.getCourseId().equals(application.getCourseId()) &&
+                        contract.getNetId().equals(application.getNetId()) &&
+                        contract.getDuties().equals(expectedDuties) &&
+                        contract.getMaxHours() == expectedMaxHours
+        ));
+    }
+
+    @Test
+    public void acceptNonexistentApplication() {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        // Act
+        ThrowingCallable c = () -> applicationService.accept("incorrect", application.getNetId(),
+                "be a good TA", 45);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(c);
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+        verify(contractInformation, times(0)).createContract(any());
+    }
+
+    /**
+     * Test for accepting an application in a non-pending state.
+     *
+     * @param status the test status (non-pending)
+     */
+    @ParameterizedTest
+    @CsvSource({"ACCEPTED", "REJECTED"})
+    public void acceptNonPendingApplication(String status) {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.valueOf(status));
+        applicationRepository.save(application);
+
+        // Act
+        ThrowingCallable c = () -> applicationService.accept(application.getCourseId(), application.getNetId(),
+                "be a good TA", 45);
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
+        verify(contractInformation, times(0)).createContract(any());
+    }
+
+    @Test
+    public void acceptValidApplicationButCreatingContractThrowsException() {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        when(contractInformation.createContract(any())).thenReturn(false);
+
+        String expectedDuties = "Do TA stuff";
+        int expectedMaxHours = 42;
+
+        // Act
+        ThrowingCallable c = () -> applicationService.accept(application.getCourseId(), application.getNetId(),
+                expectedDuties, expectedMaxHours);
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+        verify(contractInformation).createContract(argThat(contract ->
+                contract.getCourseId().equals(application.getCourseId()) &&
+                        contract.getNetId().equals(application.getNetId()) &&
+                        contract.getDuties().equals(expectedDuties) &&
+                        contract.getMaxHours() == expectedMaxHours
+        ));
     }
 }
