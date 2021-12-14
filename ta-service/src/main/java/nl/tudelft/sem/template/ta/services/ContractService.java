@@ -19,7 +19,7 @@ import org.springframework.util.StringUtils;
 @Service
 public class ContractService {
 
-    private final double studentsPerOneTa = 20f;
+    private final transient double studentsPerOneTa = 20f;
 
     private final transient ContractRepository contractRepository;
 
