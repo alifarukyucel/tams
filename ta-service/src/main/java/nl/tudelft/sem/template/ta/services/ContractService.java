@@ -6,6 +6,7 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
+import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,31 @@ public class ContractService {
         // save can also throw an IllegalArgumentException if failed.
         contract = save(contract);
         return contract;
+    }
+
+    /**
+     * Returns the requested contract based on the users netId and the specified CourseId.
+     *
+     * @param courseId The specified course to which the contract belongs.
+     * @return true if more TAs can be hired.
+     * @throws IllegalArgumentException if the course cannot be retrieved.
+     */
+    private boolean isTaLimitReached(String courseId) {
+        CourseInformationResponseModel model = courseInformation.getCourseById(courseId);
+        if (model == null) {
+            throw new IllegalArgumentException("Could not retrieve course");
+        }
+
+        int allowedTAs = (int) Math.ceil(model.getNumberOfStudents() / studentsPerOneTA);
+
+        long hiredTAs = contractRepository.count(
+                Example.of(
+                        Contract.builder()
+                                .courseId(courseId)
+                                .build()
+                ));
+
+        return hiredTAs >= allowedTAs;
     }
 
     /**
