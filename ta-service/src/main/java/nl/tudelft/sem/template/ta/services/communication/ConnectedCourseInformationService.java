@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ConnectedCourseInformationService implements CourseInformation {
+    // Microservice URL from application.properties
     @Value("${microservice.course.base_url}")
     private transient String baseUrl;
 

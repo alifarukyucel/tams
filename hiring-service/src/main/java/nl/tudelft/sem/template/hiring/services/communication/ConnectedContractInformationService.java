@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ConnectedContractInformationService implements ContractInformation {
+    // Microservice URL from application.properties
     @Value("${microservice.ta.base_url}")
     private transient String baseUrl;
 
