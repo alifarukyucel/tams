@@ -39,6 +39,22 @@ public class CourseService {
         return course;
     }
 
+    /**
+     * Checks if a user is the responsible lecturer for a given course.
+     *
+     * @param netId     the net id of the user to be checked
+     * @param courseId  the course id of the course to be checked
+     * @return true if netId is a responsible lecturer of the given course
+     * @throws NoSuchElementException   Thrown if no course is found with the given id
+     */
+    public boolean isResponsibleLecturer(String netId, String courseId) throws NoSuchElementException {
+        Course course = getCourseById(courseId);
+        if (!course.getResponsibleLecturers().contains(netId)) {
+            throw new NoSuchElementException("The user is not a lecturer for the given course.");
+        }
+        return true;
+    }
+
     // --------------------- Setters -------------------------
 
     /**
