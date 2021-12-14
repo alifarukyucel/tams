@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.course;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,10 +10,12 @@ import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.services.CourseService;
+import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -41,11 +44,12 @@ public class CourseServiceTests {
     final String testDescription = "swe methods";
     final int testNumberOfStudents = 300;
     final String responsibleLecturer = "fmulder";
-    final ArrayList<String> responsibleLecturers = new ArrayList<>();
+    ArrayList<String> responsibleLecturers = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         courseRepository.deleteAll();
+        responsibleLecturers = new ArrayList<>();
     }
 
     @Test
@@ -83,11 +87,39 @@ public class CourseServiceTests {
                 testDescription, testNumberOfStudents, responsibleLecturers);
 
         // Act
-        courseService.save(course);
+        ThrowableAssert.ThrowingCallable actionNull = () -> courseService.getCourseById(testCourseId);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNull);
+    }
+
+    @Test
+    void createCourse_NoExistingCourseInDatabase() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+
+        // Act
+        courseService.createCourse(course);
 
         // Assert
         Course expected = courseRepository.getById(course.getId());
         assertThat(course.getId()).isNotNull();
         assertThat(course).isEqualTo(expected);
     }
+
+    @Test
+    void createCourse_ExistingCourseInDatabase_throwsConflictException() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ThrowableAssert.ThrowingCallable actionConflict = () -> courseService.createCourse(course);
+
+        // Assert
+        assertThatExceptionOfType(ConflictException.class).isThrownBy(actionConflict);
+    }
+
 }
