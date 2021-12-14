@@ -38,7 +38,7 @@ public class ApplicationServiceTest {
     private transient ApplicationService applicationService;
 
     @Autowired
-    private transient ContractInformation contractInformation;
+    private transient ContractInformation mockContractInformation;
 
     @Test
     public void validCheckAndSaveTest() {
@@ -186,7 +186,7 @@ public class ApplicationServiceTest {
                 "I just want to be cool!", ApplicationStatus.PENDING);
         applicationRepository.save(application);
 
-        when(contractInformation.createContract(any())).thenReturn(true);
+        when(mockContractInformation.createContract(any())).thenReturn(true);
 
         String expectedDuties = "Do TA stuff";
         int expectedMaxHours = 42;
@@ -199,7 +199,7 @@ public class ApplicationServiceTest {
                 .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
-        verify(contractInformation).createContract(argThat(contract ->
+        verify(mockContractInformation).createContract(argThat(contract ->
                 contract.getCourseId().equals(application.getCourseId()) &&
                         contract.getNetId().equals(application.getNetId()) &&
                         contract.getDuties().equals(expectedDuties) &&
@@ -226,7 +226,7 @@ public class ApplicationServiceTest {
                 .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
-        verify(contractInformation, times(0)).createContract(any());
+        verify(mockContractInformation, times(0)).createContract(any());
     }
 
     /**
@@ -254,7 +254,7 @@ public class ApplicationServiceTest {
                 .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
-        verify(contractInformation, times(0)).createContract(any());
+        verify(mockContractInformation, times(0)).createContract(any());
     }
 
     @Test
@@ -264,7 +264,7 @@ public class ApplicationServiceTest {
                 "I just want to be cool!", ApplicationStatus.PENDING);
         applicationRepository.save(application);
 
-        when(contractInformation.createContract(any())).thenReturn(false);
+        when(mockContractInformation.createContract(any())).thenReturn(false);
 
         String expectedDuties = "Do TA stuff";
         int expectedMaxHours = 42;
@@ -281,7 +281,7 @@ public class ApplicationServiceTest {
                 .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
-        verify(contractInformation).createContract(argThat(contract ->
+        verify(mockContractInformation).createContract(argThat(contract ->
                 contract.getCourseId().equals(application.getCourseId()) &&
                         contract.getNetId().equals(application.getNetId()) &&
                         contract.getDuties().equals(expectedDuties) &&
