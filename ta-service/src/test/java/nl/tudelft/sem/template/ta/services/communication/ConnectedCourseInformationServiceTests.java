@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles({"test", "mockMicroserviceCommunicationHelper"})
-@TestPropertySource(properties = {"microservice.course.base_url="+ConnectedCourseInformationServiceTests.testUrl})
+@TestPropertySource(properties = {"microservice.course.base_url=" + ConnectedCourseInformationServiceTests.testUrl})
 public class ConnectedCourseInformationServiceTests {
     static final String testUrl = "testUrl";
 
@@ -28,10 +28,101 @@ public class ConnectedCourseInformationServiceTests {
     private transient MicroserviceCommunicationHelper mockMicroserviceCommunicationHelper;
 
     @BeforeEach
-    public void resetMock(){
+    public void resetMock() {
         reset(mockMicroserviceCommunicationHelper);
     }
 
+    @Test
+    public void isResponsibleLecturer_withTrueResponse_returnsTrue() throws Exception {
+        // Arrange
+        String netId = "martin";
+        String courseId = "CSE1110";
 
+        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+                Boolean.class, netId, courseId))
+                .thenReturn(ResponseEntity.ok(true));
+
+        // Act
+        boolean actual = connectedCourseInformationService.isResponsibleLecturer(netId, courseId);
+
+        // Assert
+        assertThat(actual).isTrue();
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + "/lecturer/{netId}/{courseId}",
+                Boolean.class, netId, courseId);
+    }
+
+    @Test
+    public void isResponsibleLecturer_withFalseResponse_returnsFalse() throws Exception {
+        // Arrange
+        String netId = "martin";
+        String courseId = "CSE1110";
+
+        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+                Boolean.class, netId, courseId))
+                .thenReturn(ResponseEntity.ok(false));
+
+        // Act
+        boolean actual = connectedCourseInformationService.isResponsibleLecturer(netId, courseId);
+
+        // Assert
+        assertThat(actual).isFalse();
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + "/lecturer/{netId}/{courseId}",
+                Boolean.class, netId, courseId);
+    }
+
+    @Test
+    public void isResponsibleLecturer_withException_returnsFalse() throws Exception {
+        // Arrange
+        String netId = "martin";
+        String courseId = "CSE1110";
+
+        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+                Boolean.class, netId, courseId))
+                .thenThrow(new Exception());
+
+        // Act
+        boolean actual = connectedCourseInformationService.isResponsibleLecturer(netId, courseId);
+
+        // Assert
+        assertThat(actual).isFalse();
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + "/lecturer/{netId}/{courseId}",
+                Boolean.class, netId, courseId);
+    }
+
+    @Test
+    public void isResponsibleLecturer_withNullNetid_returnsFalse() throws Exception {
+        // Arrange
+        String netId = null;
+        String courseId = "CSE1110";
+
+        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+                Boolean.class, netId, courseId))
+                .thenReturn(ResponseEntity.ok(true));
+
+        // Act
+        boolean actual = connectedCourseInformationService.isResponsibleLecturer(netId, courseId);
+
+        // Assert
+        assertThat(actual).isFalse();
+        verify(mockMicroserviceCommunicationHelper, times(0)).get(any(), any(), any());
+    }
+
+    @Test
+    public void isResponsibleLecturer_withNullCourseId_returnsFalse() throws Exception {
+        // Arrange
+        String netId = "martin";
+        String courseId = null;
+
+        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+                Boolean.class, netId, courseId))
+                .thenReturn(ResponseEntity.ok(true));
+
+        // Act
+        boolean actual = connectedCourseInformationService.isResponsibleLecturer(netId, courseId);
+
+        // Assert
+        assertThat(actual).isFalse();
+        verify(mockMicroserviceCommunicationHelper, times(0)).get(any(), any(), any());
+    }
 
 }
