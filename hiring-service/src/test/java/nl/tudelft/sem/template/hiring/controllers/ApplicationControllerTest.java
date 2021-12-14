@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
+import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
@@ -47,6 +48,9 @@ public class ApplicationControllerTest {
 
     @Autowired
     private transient CourseInformation mockCourseInformation;
+
+    @Autowired
+    private transient ContractInformation mockContractInformation;
 
     @Autowired
     private transient AuthManager mockAuthenticationManager;
