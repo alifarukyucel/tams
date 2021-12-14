@@ -344,7 +344,7 @@ class ContractServiceTest {
     @Test
     void createUnsignedContract_illegalArguments() {
         // Arrange
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
                 .id("CSE2525")
                 .description("Very cool course")
                 .numberOfStudents(10000)
@@ -384,7 +384,7 @@ class ContractServiceTest {
             .build();
         contractRepository.save(contract);
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
                 .id("CSE2525")
                 .description("Very cool course")
                 .numberOfStudents(10000)
