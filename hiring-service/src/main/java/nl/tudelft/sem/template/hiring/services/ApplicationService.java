@@ -50,7 +50,7 @@ public class ApplicationService {
         if (application.meetsRequirements()) {
             return false;
         } else if (courseInformation.getStartDate(application.getCourseId()).minusMonths(3)
-                .isAfter(LocalDateTime.now())) {
+                .isBefore(LocalDateTime.now())) {
             return false;
         }
         applicationRepository.save(application);
