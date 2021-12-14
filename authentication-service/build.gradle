@@ -28,8 +28,8 @@ plugins {
 
 group = 'nl.tudelft.cse.sem.template'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 14
-targetCompatibility = 14
+sourceCompatibility = 11
+targetCompatibility = 11
 
 repositories {
 	mavenCentral()
@@ -94,6 +94,9 @@ jacocoTestCoverageVerification() {
 checkstyle {
 	toolVersion "8.37"
 	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+	ignoreFailures = false
+	maxErrors = 0
+	maxWarnings = 0
 }
 
 pmd {
