@@ -8,7 +8,9 @@ import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
+import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
+import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,9 @@ class ContractServiceTest {
 
     @Autowired
     private transient ContractRepository contractRepository;
+
+    @Autowired
+    private transient CourseInformation mockCourseInformation;
 
     @Test
     void signExistingContract() {
