@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.course.services;
 
 import java.util.NoSuchElementException;
+import javax.transaction.Transactional;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
