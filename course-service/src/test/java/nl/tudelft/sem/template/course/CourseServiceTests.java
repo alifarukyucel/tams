@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.services.CourseService;
+import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,7 +73,7 @@ public class CourseServiceTests {
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
 
-        // act
+        // Act
         ThrowableAssert.ThrowingCallable actionNull = () -> courseService.getCourseById(testCourseId);
 
         // Assert
@@ -92,6 +93,20 @@ public class CourseServiceTests {
         Course expected = courseRepository.getById(course.getId());
         assertThat(course.getId()).isNotNull();
         assertThat(course).isEqualTo(expected);
+    }
+
+    @Test
+    void createCourse_ExistingCourseInDatabase_throwsConflictException() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ThrowableAssert.ThrowingCallable actionConflict = () -> courseService.createCourse(course);
+
+        // Assert
+        assertThatExceptionOfType(ConflictException.class).isThrownBy(actionConflict);
     }
 
 }

@@ -19,6 +19,7 @@ import nl.tudelft.sem.template.course.entities.Course;
 @AllArgsConstructor
 @Data
 public class CourseResponseModel {
+
     @NotNull
     private String id;
 
