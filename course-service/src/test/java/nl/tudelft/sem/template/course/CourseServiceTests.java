@@ -73,6 +73,19 @@ public class CourseServiceTests {
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
 
+        // act
+        ThrowableAssert.ThrowingCallable actionNull = () -> courseService.getCourseById(testCourseId);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNull);
+    }
+
+    @Test
+    void save() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+
         // Act
         ThrowableAssert.ThrowingCallable actionNull = () -> courseService.getCourseById(testCourseId);
 

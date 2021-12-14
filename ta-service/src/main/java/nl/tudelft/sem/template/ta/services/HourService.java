@@ -7,6 +7,8 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 /**
@@ -57,7 +59,7 @@ public class HourService {
      * @param id The ID of the hour declaration
      * @param status The status to set to the hours, false is ignored.
      * @throws NoSuchElementException Thrown if the hour declaration could not be found.
-     * @throws IllegalArgumentException Thrown is hours were already approved.
+     * @throws IllegalArgumentException Thrown is hours were already approved or if going over budget.
      */
     public void approveHours(UUID id, boolean status)
         throws NoSuchElementException, IllegalArgumentException {
@@ -78,6 +80,12 @@ public class HourService {
         }
 
         if (status) {
+            // don't allow hours to be approved if over contract.
+            if (hourDeclaration.getWorkedTime() + totalHoursApproved(hourDeclaration.getContract())
+                > hourDeclaration.getContract().getMaxHours()) {
+                throw new IllegalArgumentException("Contract does not have enough hours left");
+            }
+
             hourDeclaration.setApproved(true);
         }
         hourDeclaration.setReviewed(true);
@@ -86,18 +94,69 @@ public class HourService {
 
     /**
      * Saves an hourDeclaration if it is a valid declaration.
+     * An invalid declaration occurs when submitting more hours than allowed,
+     * or submitting to an unsigned contract.
      *
      * @param hourDeclaration The declaration to save.
      * @return Saved version of the declaration.
      * @throws IllegalArgumentException if declaration does not meet requirements.
      */
-    public HourDeclaration checkAndSave(HourDeclaration hourDeclaration) {
+    public HourDeclaration checkAndSave(HourDeclaration hourDeclaration)
+        throws IllegalArgumentException {
+        if (hourDeclaration.getWorkedTime() < 0) {
+            throw new IllegalArgumentException("Worked time cannot be negative.");
+        }
+        if (!hourDeclaration.getContract().getSigned()) {
+            throw new IllegalArgumentException("Contract has not been signed by student.");
+        }
+
+        int totalWorkedTime = totalHoursApproved(hourDeclaration.getContract());
+
+        if (totalWorkedTime + hourDeclaration.getWorkedTime()
+            > hourDeclaration.getContract().getMaxHours()) {
+            throw new IllegalArgumentException("Contract does not have enough hours remaining.");
+        }
 
         return hoursRepository.save(hourDeclaration);
     }
 
     /**
-     * returns the contract associated with this declaration UUID.
+     * Returns the total hours approved on this contract.
+     *
+     * @param contract contract to find the hours declared of.
+     * @return Total hours approved on this contract.
+     */
+    public int totalHoursApproved(Contract contract) {
+        List<HourDeclaration> hourDeclarations = findHoursOfContract(contract);
+
+        return hourDeclarations
+            .stream()
+            .filter(o -> o.getReviewed() && o.getApproved())
+            .mapToInt(HourDeclaration::getWorkedTime)
+            .sum();
+    }
+
+    /**
+     * Returns all hourDeclarations belonging to the passed contract.
+     *
+     * @param contract The contract whose declarations to fetch.
+     * @return A list of hour declarations.
+     */
+    public List<HourDeclaration> findHoursOfContract(Contract contract) {
+        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
+            .withIgnoreNullValues();
+
+        Example<HourDeclaration> example = Example.of(
+            HourDeclaration.builder()
+                .contract(contract)
+                .build(),
+            ignoreAllFields);
+
+        return hoursRepository.findAll(example);
+    }
+
+    /**
+     * returns the contract associated with this hour UUID.
      *
      * @param uuid the id of the hour declaration.
      * @return The contract.
