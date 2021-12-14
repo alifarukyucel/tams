@@ -18,6 +18,7 @@ public class ModelTests {
     void setup() {
         defaultContract = Contract.builder()
             .courseId("CSETEST")
+            .netId("WinstijnSmit")
             .maxHours(5)
             .duties("Your duties")
             .netId("WinstijnSmit")
@@ -39,6 +40,7 @@ public class ModelTests {
         ContractResponseModel model = ContractResponseModel.fromContract(contract);
         Assertions.assertNotNull(model);
         Assertions.assertEquals(contract.getCourseId(), model.getCourse());
+        Assertions.assertEquals(contract.getNetId(), model.getNetId());
         Assertions.assertEquals(contract.getMaxHours(), model.getMaxHours());
         Assertions.assertEquals(contract.getDuties(), model.getDuties());
         Assertions.assertEquals(contract.getSigned(), model.isSigned());
