@@ -115,10 +115,6 @@ public class ConnectedCourseInformationServiceTests {
         String netId = "martin";
         String courseId = null;
 
-        when(mockMicroserviceCommunicationHelper.get(testUrl + isResponsibleLecturerPath,
-                Boolean.class, netId, courseId))
-                .thenReturn(ResponseEntity.ok(true));
-
         // Act
         boolean actual = connectedCourseInformationService.isResponsibleLecturer(netId, courseId);
 
