@@ -10,6 +10,7 @@ import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
+import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,8 @@ public class ApplicationService {
      * @return boolean whether the application meets the requirements and thus saved.
      */
     public boolean checkAndSave(Application application) {
-        if (application.meetsRequirements()) {
+        System.out.println(courseInformation.getStartDate(application.getCourseId()));
+        if (!application.meetsRequirements()) {
             return false;
         } else if (courseInformation.getStartDate(application.getCourseId()).minusMonths(3)
                 .isBefore(LocalDateTime.now())) {

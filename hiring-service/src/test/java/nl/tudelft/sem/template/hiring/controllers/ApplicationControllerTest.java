@@ -36,6 +36,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +90,9 @@ public class ApplicationControllerTest {
                 "I want to");
 
         ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
+
+        when(mockCourseInformation.getStartDate("cse1200")).thenReturn(LocalDateTime.of(2022,
+                Month.SEPTEMBER, 1, 9, 0, 0));
 
         //Act
         ResultActions validResults = mockMvc.perform(post("/apply")
