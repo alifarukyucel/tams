@@ -3,7 +3,10 @@ package nl.tudelft.sem.template.course.services;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
+import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 
 /**
@@ -43,7 +46,6 @@ public class CourseService {
      * Saves the given course to the repository.
      *
      * @param course the saved course
-     * @return the saved course
      * @throws ConflictException the conflict exception
      */
     @Transactional
