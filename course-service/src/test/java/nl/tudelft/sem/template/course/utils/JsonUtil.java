@@ -2,11 +2,13 @@ package nl.tudelft.sem.template.course.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * The Json util for tests.
  */
 public class JsonUtil {
+
     /**
      * Serialize object into a string.
      *
@@ -16,6 +18,7 @@ public class JsonUtil {
      */
     public static String serialize(Object object) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         return objectMapper.writeValueAsString(object);
     }
 
@@ -29,6 +32,7 @@ public class JsonUtil {
      */
     public static <T> T deserialize(String json, Class<T> type) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         return objectMapper.readValue(json, type);
     }
 }
