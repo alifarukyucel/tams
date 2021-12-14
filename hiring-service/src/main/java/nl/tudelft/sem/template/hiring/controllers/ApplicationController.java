@@ -5,8 +5,8 @@ import static nl.tudelft.sem.template.hiring.entities.Application.createPendingA
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
-import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;

@@ -252,8 +252,11 @@ public class ApplicationControllerTest {
                 "I want to be cool too!", ApplicationStatus.PENDING);
         Application application2 = new Application("CSE1300", "wsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.PENDING);
+        Application application3 = new Application("CSE1300", "nsmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.ACCEPTED);
         applicationRepository.save(application);
         applicationRepository.save(application2);
+        applicationRepository.save(application3);
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, "CSE1300"))
                 .thenReturn(true);
 

@@ -16,6 +16,12 @@ public class PendingApplicationResponseModel {
     private String motivation;
     private Float taRating;
 
+    /**
+     * Constructor that constructs a PendingApplicationResponseModel from an application and a rating
+     *
+     * @param application the application to get the data from
+     * @param rating the historical TA-rating of this person
+     */
     public PendingApplicationResponseModel(Application application, Float rating) {
         this.courseId = application.getCourseId();
         this.netId = application.getNetId();
