@@ -21,6 +21,8 @@ import static org.mockito.Mockito.when;
 public class ConnectedCourseInformationServiceTests {
     static final String testUrl = "testUrl";
 
+    public static final String isResponsibleLecturerPath = "/lecturer/{netId}/{courseId}";
+
     @Autowired
     private transient ConnectedCourseInformationService connectedCourseInformationService;
 
@@ -38,7 +40,7 @@ public class ConnectedCourseInformationServiceTests {
         String netId = "martin";
         String courseId = "CSE1110";
 
-        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+        when(mockMicroserviceCommunicationHelper.get(testUrl + isResponsibleLecturerPath,
                 Boolean.class, netId, courseId))
                 .thenReturn(ResponseEntity.ok(true));
 
@@ -47,7 +49,7 @@ public class ConnectedCourseInformationServiceTests {
 
         // Assert
         assertThat(actual).isTrue();
-        verify(mockMicroserviceCommunicationHelper).get(testUrl + "/lecturer/{netId}/{courseId}",
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + isResponsibleLecturerPath,
                 Boolean.class, netId, courseId);
     }
 
@@ -57,7 +59,7 @@ public class ConnectedCourseInformationServiceTests {
         String netId = "martin";
         String courseId = "CSE1110";
 
-        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+        when(mockMicroserviceCommunicationHelper.get(testUrl + isResponsibleLecturerPath,
                 Boolean.class, netId, courseId))
                 .thenReturn(ResponseEntity.ok(false));
 
@@ -66,7 +68,7 @@ public class ConnectedCourseInformationServiceTests {
 
         // Assert
         assertThat(actual).isFalse();
-        verify(mockMicroserviceCommunicationHelper).get(testUrl + "/lecturer/{netId}/{courseId}",
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + isResponsibleLecturerPath,
                 Boolean.class, netId, courseId);
     }
 
@@ -76,7 +78,7 @@ public class ConnectedCourseInformationServiceTests {
         String netId = "martin";
         String courseId = "CSE1110";
 
-        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+        when(mockMicroserviceCommunicationHelper.get(testUrl + isResponsibleLecturerPath,
                 Boolean.class, netId, courseId))
                 .thenThrow(new Exception());
 
@@ -85,7 +87,7 @@ public class ConnectedCourseInformationServiceTests {
 
         // Assert
         assertThat(actual).isFalse();
-        verify(mockMicroserviceCommunicationHelper).get(testUrl + "/lecturer/{netId}/{courseId}",
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + isResponsibleLecturerPath,
                 Boolean.class, netId, courseId);
     }
 
@@ -95,7 +97,7 @@ public class ConnectedCourseInformationServiceTests {
         String netId = null;
         String courseId = "CSE1110";
 
-        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+        when(mockMicroserviceCommunicationHelper.get(testUrl + isResponsibleLecturerPath,
                 Boolean.class, netId, courseId))
                 .thenReturn(ResponseEntity.ok(true));
 
@@ -113,7 +115,7 @@ public class ConnectedCourseInformationServiceTests {
         String netId = "martin";
         String courseId = null;
 
-        when(mockMicroserviceCommunicationHelper.get(testUrl + "/lecturer/{netId}/{courseId}",
+        when(mockMicroserviceCommunicationHelper.get(testUrl + isResponsibleLecturerPath,
                 Boolean.class, netId, courseId))
                 .thenReturn(ResponseEntity.ok(true));
 
