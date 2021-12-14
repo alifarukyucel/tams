@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ContractInformationService implements ContractInformation {
-
     //TODO: Make "real" implementation"
     @Override
     public Map<String, Float> getTaRatings(List<String> netIds) {

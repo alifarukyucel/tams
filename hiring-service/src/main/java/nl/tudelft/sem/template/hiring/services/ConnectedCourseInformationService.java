@@ -1,15 +1,16 @@
 package nl.tudelft.sem.template.hiring.services;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.external.CourseResponseModel;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.Month;
 
 @Service
-public class CourseInformationService implements CourseInformation {
+public class ConnectedCourseInformationService implements CourseInformation {
+
     @Override
     public boolean isResponsibleLecturer(String netId, String courseId) {
         return false;
@@ -25,4 +26,3 @@ public class CourseInformationService implements CourseInformation {
         return model.getStartDate();
     }
 }
-

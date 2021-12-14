@@ -1,18 +1,21 @@
 package nl.tudelft.sem.template.hiring.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
-import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
-import nl.tudelft.sem.template.hiring.models.ExtendedApplicationRequestModel;
+import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+//PMD.DataflowAnomalies are suppressed because they occur in a place where there is no problem at all.
 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 @Service
 public class ApplicationService {
@@ -30,6 +33,7 @@ public class ApplicationService {
 
     /**
      * Finds all applications with a given courseId and status.
+     *
      * @param courseId The courseId of the course.
      * @param status The status of the application(s).
      * @return a list of applications.
@@ -58,24 +62,72 @@ public class ApplicationService {
     }
 
     /**
+     * Retrieves an application by its course id and netid.
+     *
+     * @param courseId the course id of the application
+     * @param netId    the netid of the application
+     * @return the application
+     * @throws NoSuchElementException if the application is not found
+     */
+    public Application get(String courseId, String netId) throws NoSuchElementException {
+        ApplicationKey key = new ApplicationKey(courseId, netId);
+        Optional<Application> applicationOptional = applicationRepository.findById(key);
+
+        if (applicationOptional.isEmpty()) {
+            // Application does not exist
+            throw new NoSuchElementException();
+        }
+
+        return applicationOptional.get();
+    }
+
+    /**
+     * Sets the application status to REJECTED.
+     *
+     * @param courseId the course id of the application
+     * @param netId    the netid of the application
+     * @throws NoSuchElementException   if the application is not found
+     * @throws IllegalArgumentException if the application is not in pending state
+     */
+    public void reject(String courseId, String netId) throws NoSuchElementException, IllegalArgumentException {
+        Application application = this.get(courseId, netId);
+
+        if (application.getStatus() != ApplicationStatus.PENDING) {
+            // Application is already accepted or rejected
+            throw new IllegalArgumentException();
+        }
+
+        application.setStatus(ApplicationStatus.REJECTED);
+
+        applicationRepository.save(application);
+    }
+
+    /**
      * Takes in a list of applications and extends them with a TA-rating, retreived from the TA-service.
      *
      * @param applications A list of the desired applications to be extended with a rating.
      * @return a list of extendApplicationRequestModels, created with the extended applications and the TA-ratings.
      */
-    public List<ExtendedApplicationRequestModel> extendWithRating(List<Application> applications) {
+    public List<PendingApplicationResponseModel> extendWithRating(List<Application> applications) {
+        List<PendingApplicationResponseModel> extendedApplications = new ArrayList<>();
+
+        //This check makes sure no data is fetched when there are no applications at all.
+        if (applications.isEmpty()) {
+            return extendedApplications;
+        }
+
         List<String> netIds = new ArrayList<>();
+
         for (Application application : applications) {
             netIds.add(application.getNetId());
         }
 
-        List<ExtendedApplicationRequestModel> extendedApplications = new ArrayList<>();
         Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
 
         for (Application application : applications) {
             String netId = application.getNetId();
             Float rating = taRatings.get(netId);
-            extendedApplications.add(new ExtendedApplicationRequestModel(application, rating));
+            extendedApplications.add(new PendingApplicationResponseModel(application, rating));
         }
         return extendedApplications;
     }
