@@ -268,10 +268,10 @@ public class ApplicationControllerTest {
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
         verify(mockContractInformation).createContract(argThat(contract ->
-                contract.getCourseId().equals(application.getCourseId()) &&
-                        contract.getNetId().equals(application.getNetId()) &&
-                        contract.getDuties().equals(model.getDuties()) &&
-                        contract.getMaxHours() == model.getMaxHours()
+                contract.getCourseId().equals(application.getCourseId())
+                        && contract.getNetId().equals(application.getNetId())
+                        && contract.getDuties().equals(model.getDuties())
+                        && contract.getMaxHours() == model.getMaxHours()
         ));
     }
 
@@ -308,10 +308,10 @@ public class ApplicationControllerTest {
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation).createContract(argThat(contract ->
-                contract.getCourseId().equals(application.getCourseId()) &&
-                        contract.getNetId().equals(application.getNetId()) &&
-                        contract.getDuties().equals(model.getDuties()) &&
-                        contract.getMaxHours() == model.getMaxHours()
+                contract.getCourseId().equals(application.getCourseId())
+                        && contract.getNetId().equals(application.getNetId())
+                        && contract.getDuties().equals(model.getDuties())
+                        && contract.getMaxHours() == model.getMaxHours()
         ));
     }
 

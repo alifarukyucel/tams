@@ -200,10 +200,10 @@ public class ApplicationServiceTest {
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
         verify(mockContractInformation).createContract(argThat(contract ->
-                contract.getCourseId().equals(application.getCourseId()) &&
-                        contract.getNetId().equals(application.getNetId()) &&
-                        contract.getDuties().equals(expectedDuties) &&
-                        contract.getMaxHours() == expectedMaxHours
+                contract.getCourseId().equals(application.getCourseId())
+                        && contract.getNetId().equals(application.getNetId())
+                        && contract.getDuties().equals(expectedDuties)
+                        && contract.getMaxHours() == expectedMaxHours
         ));
     }
 
@@ -282,10 +282,10 @@ public class ApplicationServiceTest {
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation).createContract(argThat(contract ->
-                contract.getCourseId().equals(application.getCourseId()) &&
-                        contract.getNetId().equals(application.getNetId()) &&
-                        contract.getDuties().equals(expectedDuties) &&
-                        contract.getMaxHours() == expectedMaxHours
+                contract.getCourseId().equals(application.getCourseId())
+                        && contract.getNetId().equals(application.getNetId())
+                        && contract.getDuties().equals(expectedDuties)
+                        && contract.getMaxHours() == expectedMaxHours
         ));
     }
 }
