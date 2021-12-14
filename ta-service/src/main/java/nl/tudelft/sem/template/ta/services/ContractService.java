@@ -94,12 +94,7 @@ public class ContractService {
 
         int allowedTas = (int) Math.ceil(model.getNumberOfStudents() / studentsPerOneTa);
 
-        long hiredTas = contractRepository.count(
-                Example.of(
-                        Contract.builder()
-                                .courseId(courseId)
-                                .build()
-                ));
+        long hiredTas = contractRepository.count(createContractExample(null, courseId));
 
         return hiredTas >= allowedTas;
     }
