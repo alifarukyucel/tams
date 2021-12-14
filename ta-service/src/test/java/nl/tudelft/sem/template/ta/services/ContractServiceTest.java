@@ -305,7 +305,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void createUnsignedContractExceedingTALimit() {
+    void createUnsignedContractExceedingTaLimit() {
         contractRepository.save(Contract.builder()
             .netId("Martin")
             .courseId("CSE2310")
