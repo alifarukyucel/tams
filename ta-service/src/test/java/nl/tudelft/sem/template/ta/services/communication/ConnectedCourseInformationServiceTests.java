@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.ta.services.communication;
 
+import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class ConnectedCourseInformationServiceTests {
     static final String testUrl = "testUrl";
 
     public static final String isResponsibleLecturerPath = "/lecturer/{netId}/{courseId}";
+    public static final String getCourseByIdPath = "/{id}";
 
     @Autowired
     private transient ConnectedCourseInformationService connectedCourseInformationService;
@@ -123,4 +125,55 @@ public class ConnectedCourseInformationServiceTests {
         verify(mockMicroserviceCommunicationHelper, times(0)).get(any(), any(), any());
     }
 
+    @Test
+    public void getCourseById_withValidCourse_returnsCorrectCourse() throws Exception {
+        // Arrange
+        String courseId = "CSE1110";
+
+        CourseInformationResponseModel expected = new CourseInformationResponseModel();
+        expected.setId(courseId);
+
+        when(mockMicroserviceCommunicationHelper.get(testUrl + getCourseByIdPath,
+                CourseInformationResponseModel.class, courseId))
+                .thenReturn(ResponseEntity.ok(expected));
+
+        // Act
+        CourseInformationResponseModel actual = connectedCourseInformationService.getCourseById(courseId);
+
+        // Assert
+        assertThat(actual).isSameAs(expected);
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + getCourseByIdPath,
+                CourseInformationResponseModel.class, courseId);
+    }
+
+    @Test
+    public void getCourseById_withException_returnsNull() throws Exception {
+        // Arrange
+        String courseId = "CSE1110";
+
+        when(mockMicroserviceCommunicationHelper.get(testUrl + getCourseByIdPath,
+                CourseInformationResponseModel.class, courseId))
+                .thenThrow(new Exception());
+
+        // Act
+        CourseInformationResponseModel actual = connectedCourseInformationService.getCourseById(courseId);
+
+        // Assert
+        assertThat(actual).isNull();
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + getCourseByIdPath,
+                CourseInformationResponseModel.class, courseId);
+    }
+
+    @Test
+    public void getCourseById_withNullId_returnsNull() throws Exception {
+        // Arrange
+        String courseId = null;
+
+        // Act
+        CourseInformationResponseModel actual = connectedCourseInformationService.getCourseById(courseId);
+
+        // Assert
+        assertThat(actual).isNull();
+        verify(mockMicroserviceCommunicationHelper, times(0)).get(any(), any(), any());
+    }
 }
