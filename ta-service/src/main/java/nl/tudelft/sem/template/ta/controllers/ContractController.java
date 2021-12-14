@@ -49,7 +49,8 @@ public class ContractController {
      *
      * @param request a CreateContractRequestModel
      * @return 200 OK with ContractResponseModel if saving was a success.
-     *         400 Bad Request if contract already exists or parameters are invalid.
+     *         400 Bad Request if contract already exists, parameters are invalid,
+     *         or no more TAs are allowed to be hired for the course.
      *         403 Forbidden if not a responsible lecturer for the course.
      */
     @PostMapping("/create")
