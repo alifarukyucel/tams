@@ -30,6 +30,7 @@ public class CourseResponseModel {
     private String description;
 
     private int numberOfStudents;
+
     /**
      * Create an instance of CourseResponseModel based on given course.
      *

@@ -1,7 +1,10 @@
 package nl.tudelft.sem.template.course.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.course.entities.Course;
+import nl.tudelft.sem.template.course.models.CourseCreationRequestModel;
 import nl.tudelft.sem.template.course.models.CourseResponseModel;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.services.CourseService;
@@ -11,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
