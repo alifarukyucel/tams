@@ -14,23 +14,6 @@ import org.springframework.data.jpa.repository.Query;
  * @created 30/11/2021, 17:16
  */
 public interface CourseRepository extends JpaRepository<Course, String> {
-    // Getters
-    Course getById(String id);   // table is small enough that overhead is insignificant.
-    // We can change it so that it'll return only the properties/columns we request the most.
-
-    // Setters
-    Course save(Course course);
-
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE Course c SET c.description = ?2 WHERE c.id = ?1")
-    void updateDescriptionById(int id, String description);
-
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE Course c SET c.name = ?2 WHERE c.id = ?1")
-    void updateNameById(int id, String name);
-
-    // Deletions
-    void deleteById(String id);
+    Course getById(String id);  // returns null when no value is present,
+    // instead of an Optional<Course> as findById does
 }

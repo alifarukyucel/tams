@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import nl.tudelft.sem.template.course.entities.Course;
 
 
 /**
@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class CourseResponseModel {
-
     @NotNull
     private String id;
 
@@ -31,4 +30,18 @@ public class CourseResponseModel {
     private String description;
 
     private int numberOfStudents;
+    /**
+     * Create an instance of CourseResponseModel based on given course.
+     *
+     * @return CourseResponseModel of given course.
+     */
+    public static CourseResponseModel fromCourse(Course course) {
+        return new CourseResponseModel(
+                course.getId(),
+                course.getStartDate(),
+                course.getName(),
+                course.getDescription(),
+                course.getNumberOfStudents()
+        );
+    }
 }

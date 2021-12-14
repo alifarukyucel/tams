@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import nl.tudelft.sem.template.course.entities.Course;
-import nl.tudelft.sem.template.course.models.CourseModel;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.security.TokenVerifier;
@@ -60,7 +59,7 @@ public class CourseTests {
     final String testDescription = "swe methods";
     final int testNumberOfStudents = 300;
     final String responsibleLecturer = "fmulder";
-    ArrayList<String> responsibleLecturers = new ArrayList<String>();
+    ArrayList<String> responsibleLecturers = new ArrayList<>();
 
     /**
      * Sets up the environment before each test.
@@ -68,41 +67,14 @@ public class CourseTests {
     @BeforeEach
     void setUp() {
         courseRepository.deleteAll();
-        responsibleLecturers = new ArrayList<>();
+        ArrayList<String> responsibleLecturers = new ArrayList<String>();
         when(mockAuthenticationManager.getNetid()).thenReturn(responsibleLecturer);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(responsibleLecturer);
     }
 
-    /**
-     * Create course with valid data works correctly.
-     *
-     * @throws Exception the exception
-     */
     @Test
-    public void createCourse_withValidData_worksCorrectly() throws Exception {
-        // Arrange
-        CourseModel newCourse = new CourseModel(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents);
-
-        // Act
-        ResultActions resultActions = mockMvc.perform(post("/course/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(serialize(newCourse))
-                .header("Authorization", "Bearer Mulder"));
-
-        // Assert
-        resultActions.andExpect(status().isOk());
-
-        Course savedCourse = courseRepository.getById(testCourseId);
-
-        assertThat(savedCourse.getId()).isEqualTo(testCourseId);
-        assertThat(savedCourse.getName()).isEqualTo(testCourseName);
-        assertThat(savedCourse.getResponsibleLecturers()).containsExactly(responsibleLecturer);
-    }
-
-    @Test
-    public void isResponsibleLecturer_withValidData_returnsTrue() throws Exception {
+    public void getExistingCourse() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -110,34 +82,20 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
+        ResultActions result = mockMvc.perform(get("/CSE2115")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer Mulder"));
+                .header("Authorization", "Bearer SomeHackingProdigy"));
+
+        Course expected = courseRepository.getById(course.getId());
 
         // Assert
-        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isTrue();
+        result.andExpect(status().isOk());
+        assertThat(expected.getId()).isNotNull();
+        assertThat(expected).isEqualTo(course);
     }
 
     @Test
-    public void isResponsibleLecturer_withValidDataMultipleLecturers_returnsTrue() throws Exception {
-        // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-        responsibleLecturers.add("anniballePanichella");
-        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents, responsibleLecturers);
-        courseRepository.save(course);
-
-        // Act
-        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer Mulder"));
-
-        // Assert
-        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isTrue();
-    }
-
-    @Test
-    public void isResponsibleLecturer_invalidLecturer_returnsFalse() throws Exception {
+    public void getNonExistingCourse() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -145,29 +103,16 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fForRespect")
+        ResultActions resultActions = mockMvc.perform(get("/CSE9999")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer Mulder"));
+                .header("Authorization", "Bearer Andy"));
 
-        // Assert
-        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isFalse();
-    }
-
-    @Test
-    public void isResponsibleLecturer_courseDoesNotExist_throws404() throws Exception {
-        // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents, responsibleLecturers);
-        courseRepository.save(course);
-
-        // Act
-        ResultActions resultActions = mockMvc.perform(get("/course/randomCourse/lecturer/fmulder")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer Mulder"));
-
+        Course expected = courseRepository.getById(course.getId());
+        
         // Assert
         resultActions.andExpect(status().isNotFound());
-
+        assertThat(expected.getId()).isNotNull();
+        assertThat(expected).isEqualTo(course);
     }
+
 }
