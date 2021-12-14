@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.ta.services;
+package nl.tudelft.sem.template.ta.services.communication;
 
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +33,8 @@ public class MicroserviceCommunicationHelper {
      * @throws Exception if the status code is not 200 OK
      */
     private <T, J> ResponseEntity<T> send(String url, Class<T> responseType, J body,
-                                         HttpMethod method, String... variables) {
+                                          HttpMethod method, String... variables)
+            throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -61,7 +62,8 @@ public class MicroserviceCommunicationHelper {
      * @return The response
      * @throws Exception if the status code is not 200 OK
      */
-    public <T> ResponseEntity<T> get(String url, Class<T> responseType, String... variables) {
+    public <T> ResponseEntity<T> get(String url, Class<T> responseType, String... variables)
+            throws Exception {
         return send(url, responseType, null, HttpMethod.GET, variables);
     }
 
@@ -78,7 +80,8 @@ public class MicroserviceCommunicationHelper {
      * @return The response
      * @throws Exception if the status code is not 200 OK
      */
-    public <T, J> ResponseEntity<T> post(String url, Class<T> responseType, J body, String... variables) {
+    public <T, J> ResponseEntity<T> post(String url, Class<T> responseType, J body, String... variables)
+            throws Exception {
         return send(url, responseType, body, HttpMethod.POST, variables);
     }
 
@@ -95,7 +98,8 @@ public class MicroserviceCommunicationHelper {
      * @return The response
      * @throws Exception if the status code is not 200 OK
      */
-    public <T, J> ResponseEntity<T> put(String url, Class<T> responseType, J body, String... variables) {
+    public <T, J> ResponseEntity<T> put(String url, Class<T> responseType, J body, String... variables)
+            throws Exception {
         return send(url, responseType, body, HttpMethod.PUT, variables);
     }
 }
