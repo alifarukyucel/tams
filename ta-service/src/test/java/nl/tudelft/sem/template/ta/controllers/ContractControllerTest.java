@@ -62,7 +62,7 @@ class ContractControllerTest {
     private ContractRepository contractRepository;
 
     @Autowired
-    private CourseInformation courseInformation;
+    private CourseInformation mockCourseInformation;
 
     private Contract defaultContract;
     private List<Contract> contracts;
@@ -110,7 +110,7 @@ class ContractControllerTest {
         when(mockAuthenticationManager.getNetid()).thenReturn(netId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(netId);
-        when(courseInformation.isResponsibleLecturer(anyString(), anyString()))
+        when(mockCourseInformation.isResponsibleLecturer(anyString(), anyString()))
             .thenReturn(isResponsibleLecturer);
     }
 
