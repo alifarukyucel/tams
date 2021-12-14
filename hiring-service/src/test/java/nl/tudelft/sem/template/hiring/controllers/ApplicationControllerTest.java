@@ -111,27 +111,28 @@ public class ApplicationControllerTest {
         // arrange
         ApplicationRequestModel onTime = new ApplicationRequestModel("cse1300", 7.0f,
                 "I want to");
+        ApplicationKey validKey = new ApplicationKey(onTime.getCourseId(), exampleNetId);
 
-        Application application = new Application("cse1200", "kverhoef", 7.0f,
-                "I have a 10", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+//        Application application = new Application("cse1200", "kverhoef", 7.0f,
+//                "I have a 10", ApplicationStatus.PENDING);
+//        applicationRepository.save(application);
+//
+//        ApplicationKey lookup = ApplicationKey.builder()
+//                .courseId(application.getCourseId())
+//                .netId(application.getNetId())
+//                .build();
 
-        ApplicationKey lookup = ApplicationKey.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
-                .build();
-
-        when(mockCourseInformation.startDate(application.getCourseId()))
+        when(mockCourseInformation.startDate(onTime.getCourseId()))
                 .thenReturn(LocalDate.MAX);
 
         // act
         ResultActions onTimeResult  = mockMvc.perform(put("/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serialize(lookup))
+                .content(serialize(onTime))
                 .header("Authorization", "Bearer Joe"));
 
         // assert
-        assertThat(application).isNull();
+        assertThat(applicationRepository.findById(validKey)).isNull();
         //onTimeResult.andExpect(status().isOk());
     }
 
