@@ -197,8 +197,8 @@ class HourServiceTest {
         int totalTime = hourService.totalHoursApproved(defaultContract);
 
         // assert
-        assertThat(totalTime).isEqualTo(
-            hourDeclaration.getWorkedTime() + hourDeclaration2.getWorkedTime());
+        assertThat(hourDeclaration.getWorkedTime() + hourDeclaration2.getWorkedTime()).isEqualTo(
+            totalTime);
     }
 
     @Test
