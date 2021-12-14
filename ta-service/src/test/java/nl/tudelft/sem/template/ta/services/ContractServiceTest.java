@@ -280,8 +280,6 @@ class ContractServiceTest {
         // Act
         ThrowingCallable actionNegativeMaxHours = () ->
             contractService.createUnsignedContract("WinstijnSmit", "CSE2525", -1, "Duties");
-        ThrowingCallable  actionDutiesNull  = () ->
-            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 10, null);
         ThrowingCallable actionCourseNull = () ->
             contractService.createUnsignedContract("WinstijnSmit", null, 10, "Duties");
         ThrowingCallable actionCourseEmpty = () ->
@@ -293,7 +291,6 @@ class ContractServiceTest {
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNegativeMaxHours);
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionDutiesNull);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseNull);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseEmpty);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdNull);
@@ -353,7 +350,7 @@ class ContractServiceTest {
             .duties("Work really hard")
             .signed(false)
             .build();
-        contractService.save(c1);
+        contractRepository.save(c1);
         Contract c2 = Contract.builder()
             .netId("WinstijnSmit")
             .courseId("CSE2300")
@@ -361,7 +358,7 @@ class ContractServiceTest {
             .duties("Work really hard")
             .signed(false)
             .build();
-        contractService.save(c2);
+        contractRepository.save(c2);
 
         // Act
         boolean exists = contractService.contractExists("WinstijnSmit", "CSE2310");
