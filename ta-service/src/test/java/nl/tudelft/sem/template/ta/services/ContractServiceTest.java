@@ -305,6 +305,43 @@ class ContractServiceTest {
     }
 
     @Test
+    void createUnsignedContractExceedingTALimit() {
+        contractRepository.save(Contract.builder()
+            .netId("Martin")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build()
+        );
+
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(20)
+                .build());
+
+
+        // Act
+        ThrowingCallable c = () -> contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        assertThat(contractRepository.findAll().size()).isEqualTo(1);
+    }
+
+    @Test
     void createUnsignedContract_illegalArguments() {
         // Arrange
         when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
