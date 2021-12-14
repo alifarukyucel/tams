@@ -7,7 +7,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import lombok.Builder;
+import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
@@ -96,27 +99,4 @@ public class ApplicationControllerTest {
         invalidResults.andExpect(status().isBadRequest());
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
     }
-
-    @Test
-    public void tooManyApplicationsTest() throws Exception {
-        //Arrange
-        ApplicationRequestModel tooManyAlready = new ApplicationRequestModel("cse1300", 7.0f,
-                "I want to");
-        ApplicationKey key = new ApplicationKey(tooManyAlready.getCourseId(), exampleNetId);
-        when(mockApplicationService.maxApplication(exampleNetId)).thenReturn(true);
-
-        //Act
-        ResultActions reachedLimit = mockMvc.perform(post("/apply")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(serialize(tooManyAlready))
-                .header("Authorization", "Bearer Joe"));
-
-
-        //Assert
-        reachedLimit.andExpect(status().isForbidden());
-        assertThat(applicationRepository.findById(key)).isEmpty();
-
-
-    }
-
 }
