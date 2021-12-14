@@ -80,18 +80,18 @@ public class CourseServiceTests {
     }
 
     @Test
-    void save() {
+    void createCourse_NoExistingCourseInDatabase() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
 
         // Act
-        courseService.save(course);
+        courseService.createCourse(course);
 
         // Assert
         Course expected = courseRepository.getById(course.getId());
         assertThat(course.getId()).isNotNull();
         assertThat(course).isEqualTo(expected);
     }
-    
+
 }
