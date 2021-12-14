@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.ta.services;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -34,8 +35,12 @@ public class ContractService {
             throw new NoSuchElementException("A contract must have a netId and courseId");
         }
 
-        List<Contract> contracts = getContractsBy(netId, courseId);
-        return contracts.get(0);
+        var contract = contractRepository.findById(new ContractId(netId, courseId));
+        if (contract.isEmpty()) {
+            throw new NoSuchElementException("The requested contract does not exist");
+        }
+
+        return contract.get();
     }
 
     /**

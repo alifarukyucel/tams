@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.course.entities.Course;
-import nl.tudelft.sem.template.course.models.CourseModel;
+import nl.tudelft.sem.template.course.models.CourseCreationRequestModel;
+import nl.tudelft.sem.template.course.models.CourseResponseModel;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,12 +31,10 @@ import org.springframework.web.server.ResponseStatusException;
  * @created 01/12/2021, 14:15
  */
 @RestController
-@RequestMapping("course")
 public class CourseController {
 
     private final transient AuthManager authManager;
 
-    @Autowired
     private final transient CourseService courseService;
     
     /**
@@ -58,42 +56,31 @@ public class CourseController {
      * @param id            id of course
      * @return the course found in the database with the given id
      */
-    @GetMapping("{id}") // course/id
-    public Course getCourseById(@PathVariable String id) {
-        return courseService.getCourseById(id);
-    }
-
-    /**
-     * Gets whether a user is a responsible lecturer for the given course.
-     *
-     * @param netId             id of user
-     * @param courseId          id of course
-     * @return the course found in the database with the given id
-     */
-    @GetMapping("{courseId}/lecturer/{netId}") // course/{courseId}/lecturer/{netId}
-    public ResponseEntity<String> isResponsibleLecturer(@PathVariable String netId,
-                                         @PathVariable String courseId) {
+    @GetMapping("/{id}") // course/id
+    public ResponseEntity<CourseResponseModel> getCourseById(@PathVariable String id)
+            throws NoSuchElementException {
         try {
-            courseService.isResponsibleLecturer(netId, courseId);
+            Course course = courseService.getCourseById(id);
+            CourseResponseModel response = CourseResponseModel.fromCourse(course);
+            return ResponseEntity.ok(response);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-        return ResponseEntity.ok().build();
     }
-
 
     // ------------------------------ Setters -----------------------------------
 
     /**
-     * POST endpoint that saves the given course to the database. The CourseModel object is sent
-     * through a POST request body in a JSON format.
+     * POST endpoint that saves the given course to the database. The CourseCreationRequestModel
+     * object is sent through a POST request body in a JSON format.
      * Throws 409 Conflict upon already existing id
      *
      * @param courseModel   the course to be created
      * @return the course returned from the database (with a manually-assigned id)
      */
     @PostMapping(value = "create", consumes = "application/json") // course/create
-    ResponseEntity<String> createCourse(@RequestBody CourseModel courseModel) {
+    ResponseEntity<String> createCourse(@RequestBody CourseCreationRequestModel courseModel)
+            throws ResponseStatusException {
         Course course = new Course(courseModel.getId(),
                 courseModel.getStartDate(), courseModel.getName(),
                 courseModel.getDescription(), courseModel.getNumberOfStudents(),
@@ -102,42 +89,6 @@ public class CourseController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * Updates the description of the Course object that is sent through
-     * the body of the PUT request.
-     * The Course is found in the database by the given course id.
-     *
-     * @param id the course id
-     */
-    @PutMapping("update-description/{id}") // course/update-description/id
-    void updateContentById(@PathVariable int id,
-                           @RequestBody String description) {
-        courseService.updateDescriptionById(id, description);
-    }
-
-    /**
-     * Updates the name of the Course object that is sent through the body of the PUT request.
-     * The Course is found in the database by the given course id.
-     *
-     * @param id       the course id
-     * @param name the course to be updated
-     */
-    @PutMapping("update-name/{id}") // course/update-name/id
-    void updateAuthorById(@PathVariable int id,
-                          @RequestBody String name) {
-        courseService.updateNameById(id, name);
-    }
-
-
     // ---------------------------------- Deletions -------------------------------
 
-    /**
-     * Deletes Course found in database by course id.
-     *
-     * @param id the course id
-     */
-    @DeleteMapping("delete/{id}") // course/delete/id
-    void deleteById(@PathVariable String id) {
-        courseService.deleteById(id);
-    }
 }

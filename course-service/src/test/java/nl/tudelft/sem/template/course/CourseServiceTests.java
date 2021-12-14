@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.services.CourseService;
+import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,104 +53,60 @@ public class CourseServiceTests {
     }
 
     @Test
-    public void createCourse_withValidData_worksCorrectly() {
+    void getExistingCourse() {
         // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-        Course newCourse = new Course(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents, responsibleLecturers);
-
-        // Act
-        courseService.createCourse(newCourse);
-
-        // Assert
-        Course savedCourse = courseRepository.getById("CSE2115");
-        assertThat(savedCourse.getId()).isEqualTo(testCourseId);
-        assertThat(savedCourse.getName()).isEqualTo(testCourseName);
-        assertThat(savedCourse.getDescription()).isEqualTo(testDescription);
-        assertThat(savedCourse.getNumberOfStudents()).isEqualTo(testNumberOfStudents);
-        assertThat(savedCourse.getResponsibleLecturers()).containsExactly(responsibleLecturer);
-    }
-
-    @Test
-    public void createCourse_withExistingCourse_throwsConflictException() throws Exception {
-        // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-        Course existingCourse = new Course(testCourseId,
-                testStartDate, testCourseName, testDescription, testNumberOfStudents, responsibleLecturers);
-        courseRepository.save(existingCourse);
-
-        // Act
-        ThrowableAssert.ThrowingCallable action = () -> courseService.createCourse(existingCourse);
-
-        // Assert
-        assertThatExceptionOfType(Exception.class)
-                .isThrownBy(action);
-    }
-
-    @Test
-    public void isLecturer_withValidData_worksCorrectly() {
-        // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents, responsibleLecturers);
-        courseRepository.save(course);
-
-        // Assert
-        assertThat(courseService.isResponsibleLecturer(responsibleLecturer, course.getId())).isTrue();
-    }
-
-    @Test
-    public void isLecturer_withDifferentLecturer_throwsException() {
-        // Arrange
-        responsibleLecturers.add("someOtherGuy");
-        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents, responsibleLecturers);
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
 
         // Act
-        ThrowableAssert.ThrowingCallable action = () -> courseService.createCourse(course);
+        Course expected = courseService.getCourseById(testCourseId);
 
         // Assert
-        assertThatExceptionOfType(Exception.class)
-                .isThrownBy(action);
+        assertThat(course.getId()).isNotNull();
+        assertThat(course).isEqualTo(expected);
     }
 
     @Test
-    public void isLecturer_withDifferentCourse_throwsException() {
+    void getNonExistingCourse() {
         // Arrange
-        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
 
-        ArrayList<String> falseResponsiblelecturers = new ArrayList<>();
-        falseResponsiblelecturers.add("someOtherGuy");
+        // Act
+        ThrowableAssert.ThrowingCallable actionNull = () -> courseService.getCourseById(testCourseId);
 
-        Course courseWithCorrectLecturer = new Course(testCourseId, testStartDate, testCourseName, testDescription,
-                testNumberOfStudents, responsibleLecturers);
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNull);
+    }
 
-        Course course = new Course("CourseWithWrongTeacher", testStartDate, testCourseName, testDescription,
-                testNumberOfStudents, falseResponsiblelecturers);
+    @Test
+    void createCourse_NoExistingCourseInDatabase() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
 
+        // Act
+        courseService.createCourse(course);
+
+        // Assert
+        Course expected = courseRepository.getById(course.getId());
+        assertThat(course.getId()).isNotNull();
+        assertThat(course).isEqualTo(expected);
+    }
+
+    @Test
+    void createCourse_ExistingCourseInDatabase_throwsConflictException() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
         courseRepository.save(course);
-        courseRepository.save(courseWithCorrectLecturer);
 
         // Act
-        ThrowableAssert.ThrowingCallable action = () -> courseService.createCourse(course);
+        ThrowableAssert.ThrowingCallable actionConflict = () -> courseService.createCourse(course);
 
         // Assert
-        assertThatExceptionOfType(Exception.class)
-                .isThrownBy(action);
+        assertThatExceptionOfType(ConflictException.class).isThrownBy(actionConflict);
     }
 
-    @Test
-    public void isLecturer_courseDoesNotExists_throwsNoSuchElementException() {
-        // Arrange
-        responsibleLecturers.add(responsibleLecturer);
-
-        // Act
-        ThrowableAssert.ThrowingCallable action = () ->
-                courseService.isResponsibleLecturer(responsibleLecturer, testCourseId);
-
-        // Assert
-        assertThatExceptionOfType(NoSuchElementException.class)
-                .isThrownBy(action);
-    }
 }
