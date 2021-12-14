@@ -27,8 +27,8 @@ public class MicroserviceCommunicationHelper {
      * @param body         The body of the request
      * @param method       The HTTP method
      * @param variables    The variables to be inserted into the URL
-     * @param <T>          The type of the request
-     * @param <J>          The type of the response
+     * @param <T>          The type of the response
+     * @param <J>          The type of the request
      * @return The response
      * @throws Exception if the status code is not 200 OK
      */
@@ -57,7 +57,7 @@ public class MicroserviceCommunicationHelper {
      * @param url          The URL to make a request to
      * @param responseType The (expected) type of the response
      * @param variables    The variables to be inserted into the URL
-     * @param <T>          The type of the request
+     * @param <T>          The type of the response
      * @return The response
      * @throws Exception if the status code is not 200 OK
      */
@@ -73,8 +73,8 @@ public class MicroserviceCommunicationHelper {
      * @param responseType The (expected) type of the response
      * @param body         The body of the request
      * @param variables    The variables to be inserted into the URL
-     * @param <T>          The type of the request
-     * @param <J>          The type of the response
+     * @param <T>          The type of the response
+     * @param <J>          The type of the request
      * @return The response
      * @throws Exception if the status code is not 200 OK
      */
@@ -90,8 +90,8 @@ public class MicroserviceCommunicationHelper {
      * @param responseType The (expected) type of the response
      * @param body         The body of the request
      * @param variables    The variables to be inserted into the URL
-     * @param <T>          The type of the request
-     * @param <J>          The type of the response
+     * @param <T>          The type of the response
+     * @param <J>          The type of the request
      * @return The response
      * @throws Exception if the status code is not 200 OK
      */
