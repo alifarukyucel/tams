@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface ContractInformation {
-    Map<String, Float> getTARatings(List<String> netIds);
+    Map<String, Float> getTaRatings(List<String> netIds);
 }

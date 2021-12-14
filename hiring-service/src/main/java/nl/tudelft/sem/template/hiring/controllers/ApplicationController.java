@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.hiring.controllers;
 
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
+import java.util.List;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
@@ -11,11 +12,11 @@ import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
-
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 public class ApplicationController {
@@ -54,10 +55,10 @@ public class ApplicationController {
     }
 
     /**
-     * API Endpoint for retreiving all applications that are still pending as a JSON
-     * These applications also contain their average rating as a TA, retreived from the TA-service
+     * API Endpoint for retreiving all applications that are still pending as a JSON.
+     * These applications also contain their average rating as a TA, retreived from the TA-service.
      *
-     * @param courseId The courseId as String
+     * @param courseId The courseId as String.
      * @return The list of pending applications (extended with rating) for that course.
      */
     @GetMapping("/getPendingApplications/{courseId}")

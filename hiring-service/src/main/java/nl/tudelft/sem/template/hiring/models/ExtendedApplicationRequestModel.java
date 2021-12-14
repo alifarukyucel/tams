@@ -13,7 +13,7 @@ import nl.tudelft.sem.template.hiring.entities.Application;
 public class ExtendedApplicationRequestModel extends ApplicationRequestModel {
     private Float taRating;
 
-    public ExtendedApplicationRequestModel (Application application, Float rating) {
+    public ExtendedApplicationRequestModel(Application application, Float rating) {
         super(application.getCourseId(), application.getGrade(), application.getMotivation());
         this.taRating = rating;
     }

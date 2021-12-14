@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.hiring.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
@@ -7,10 +10,6 @@ import nl.tudelft.sem.template.hiring.models.ExtendedApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class ApplicationService {
@@ -22,6 +21,16 @@ public class ApplicationService {
 
     public ApplicationService(ContractInformation contractInformation) {
         this.contractInformation = contractInformation;
+    }
+
+    /**
+     * Finds all applications with a given courseId and status.
+     * @param courseId The courseId of the course.
+     * @param status The status of the application(s).
+     * @return a list of applications.
+     */
+    public List<Application> findAllByCourseAndStatus(String courseId, ApplicationStatus status) {
+        return applicationRepository.findAllByCourseIdAndStatus(courseId, status);
     }
 
 
@@ -40,10 +49,12 @@ public class ApplicationService {
         }
     }
 
-    public List<Application> findAllByCourseAndStatus(String course, ApplicationStatus status) {
-        return applicationRepository.findAllByCourseIdAndStatus(course, status);
-    }
-
+    /**
+     * Takes in a list of applications and extends them with a TA-rating, retreived from the TA-service.
+     *
+     * @param applications A list of the desired applications to be extended with a rating.
+     * @return a list of extendApplicationRequestModels, created with the extended applications and the TA-ratings.
+     */
     public List<ExtendedApplicationRequestModel> extendWithRating(List<Application> applications) {
         List<String> netIds = new ArrayList<>();
 
@@ -51,7 +62,7 @@ public class ApplicationService {
             netIds.add(application.getNetId());
         }
 
-        Map<String, Float> taRatings = contractInformation.getTARatings(netIds);
+        Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
 
         List<ExtendedApplicationRequestModel> extendedApplications = new ArrayList<>();
 
