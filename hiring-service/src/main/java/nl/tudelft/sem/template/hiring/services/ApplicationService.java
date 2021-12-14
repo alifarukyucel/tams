@@ -57,14 +57,15 @@ public class ApplicationService {
      */
     public List<ExtendedApplicationRequestModel> extendWithRating(List<Application> applications) {
         List<String> netIds = new ArrayList<>();
-
         for (Application application : applications) {
             netIds.add(application.getNetId());
         }
 
-        Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
-
         List<ExtendedApplicationRequestModel> extendedApplications = new ArrayList<>();
+        if (applications.isEmpty()) {
+            return extendedApplications;
+        }
+        Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
 
         for (Application application : applications) {
             String netId = application.getNetId();

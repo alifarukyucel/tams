@@ -4,11 +4,18 @@ import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class CourseInformationService implements CourseInformation {
     @Override
     public boolean isResponsibleLecturer(String netId, String courseId) {
         return false;
+    }
+
+    @Override
+    public LocalDateTime getStartDate(String courseId) {
+        return null;
     }
 }
 
