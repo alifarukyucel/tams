@@ -19,7 +19,7 @@ import org.springframework.util.StringUtils;
 @Service
 public class ContractService {
 
-    private final double studentsPerOneTA = 20f;
+    private final double studentsPerOneTa = 20f;
 
     private final transient ContractRepository contractRepository;
 
@@ -91,16 +91,16 @@ public class ContractService {
             throw new IllegalArgumentException("Could not retrieve course");
         }
 
-        int allowedTAs = (int) Math.ceil(model.getNumberOfStudents() / studentsPerOneTA);
+        int allowedTas = (int) Math.ceil(model.getNumberOfStudents() / studentsPerOneTa);
 
-        long hiredTAs = contractRepository.count(
+        long hiredTas = contractRepository.count(
                 Example.of(
                         Contract.builder()
                                 .courseId(courseId)
                                 .build()
                 ));
 
-        return hiredTAs >= allowedTAs;
+        return hiredTas >= allowedTas;
     }
 
     /**
