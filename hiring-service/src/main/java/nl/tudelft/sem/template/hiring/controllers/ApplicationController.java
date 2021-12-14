@@ -3,14 +3,17 @@ package nl.tudelft.sem.template.hiring.controllers;
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
 import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
+import nl.tudelft.sem.template.hiring.models.ExtendedApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -45,5 +48,20 @@ public class ApplicationController {
         } else {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    /**
+     * API Endpoint for retreiving all applications that are still pending in JSON format
+     *
+     *
+     * @param courseId The courseId as String
+     * @return A JSON String
+     */
+    @GetMapping("/getPendingApplications/{courseId}")
+    public ResponseEntity<List<ExtendedApplicationRequestModel>> getPendingApplications(@PathVariable String courseId) {
+        List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        var extendedApplications = applicationService.extendWithRating(applications);
+
+        return ResponseEntity.ok(extendedApplications);
     }
 }
