@@ -1,18 +1,17 @@
-package nl.tudelft.sem.template.hiring.models.external;
+package nl.tudelft.sem.template.hiring.services.communication.models;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.sun.istack.NotNull;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CourseResponseModel {
+public class CourseInformationResponseModel {
 
     @NotNull
     private String id;

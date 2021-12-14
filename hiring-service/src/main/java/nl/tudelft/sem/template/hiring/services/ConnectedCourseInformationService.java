@@ -3,9 +3,7 @@ package nl.tudelft.sem.template.hiring.services;
 import java.time.LocalDateTime;
 import java.time.Month;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
-import nl.tudelft.sem.template.hiring.models.external.CourseResponseModel;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
+import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import org.springframework.stereotype.Service;
 
 
@@ -19,7 +17,7 @@ public class ConnectedCourseInformationService implements CourseInformation {
 
     @Override
     public LocalDateTime getStartDate(String courseId) {
-        CourseResponseModel model = new CourseResponseModel();
+        CourseInformationResponseModel model = new CourseInformationResponseModel();
 
         //Temporary example start date
         model.setStartDate(LocalDateTime.of(2022,
