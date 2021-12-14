@@ -44,8 +44,8 @@ public class CourseService {
     /**
      * Saves the given course to the repository.
      *
-     * @param course the saved course
-     * @throws ConflictException the conflict exception
+     * @param course                the course to be saved
+     * @throws ConflictException    thrown if a course already exists with the same id
      */
     @Transactional
     public void createCourse(Course course) throws ConflictException {
