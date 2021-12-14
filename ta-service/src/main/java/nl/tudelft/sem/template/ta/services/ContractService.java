@@ -40,8 +40,9 @@ public class ContractService {
      * @param maxHours max amount of hours g a TA can work
      * @param duties of the TA
      * @return a saved instance of Contract.
-     * @throws IllegalArgumentException if any of the parameters are null or invalid
-     *                                  or when contract already exists.
+     * @throws IllegalArgumentException if any of the parameters are null or invalid,
+     *                                  the contract already exists, or
+     *                                  no more TAs are allowed to be hired for the course.
      */
     public Contract createUnsignedContract(String netId, String courseId,
                                                         int maxHours, String duties)
@@ -57,6 +58,10 @@ public class ContractService {
         // Check if contract already exists - return an error if not.
         if (contractExists(netId, courseId)) {
             throw new IllegalArgumentException("This contract already exists!");
+        }
+
+        if (isTaLimitReached(courseId)) {
+            throw new IllegalArgumentException("No more TAs can be hired for this course.");
         }
 
         // Create the actual contract with the builder.
