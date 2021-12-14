@@ -32,7 +32,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier", "mockCourseInformation"})
+@ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier", "mockCourseInformation",
+        "mockContractInformation"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class ApplicationControllerTest {
