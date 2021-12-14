@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * The ContractService.
@@ -20,6 +21,49 @@ public class ContractService {
 
     public ContractService(ContractRepository contractRepository) {
         this.contractRepository = contractRepository;
+    }
+
+
+    /**
+     * Create a contract that is unsigned.
+     * Note that this method ensures that the contract does not exist.
+     *
+     * @param courseId courseId of contract
+     * @param netId netId of TA.
+     * @param maxHours max amount of hours g a TA can work
+     * @param duties of the TA
+     * @return a saved instance of Contract.
+     * @throws IllegalArgumentException if any of the parameters are null or invalid
+     *                                  or when contract already exists.
+     */
+    public Contract createUnsignedContract(String netId, String courseId,
+                                                        int maxHours, String duties)
+                                            throws IllegalArgumentException {
+
+        // Check if parameters were given are valid.
+        if (StringUtils.isEmpty(netId)
+            || StringUtils.isEmpty(courseId)
+            || maxHours <= 0) {
+            throw new IllegalArgumentException("netId, courseId, maxHours are required and need to be valid.");
+        }
+
+        // Check if contract already exists - return an error if not.
+        if (contractExists(netId, courseId)) {
+            throw new IllegalArgumentException("This contract already exists!");
+        }
+
+        // Create the actual contract with the builder.
+        Contract contract = Contract.builder()
+            .netId(netId)
+            .courseId(courseId)
+            .maxHours(maxHours)
+            .duties(duties)
+            .signed(false) // not signed yet!
+            .build();
+
+        // save can also throw an IllegalArgumentException if failed.
+        contract = save(contract);
+        return contract;
     }
 
     /**
@@ -69,6 +113,7 @@ public class ContractService {
         return contracts;
     }
 
+
     /**
      * Returns all the contracts that have a certain netId.
      *
@@ -78,6 +123,24 @@ public class ContractService {
      */
     public List<Contract> getContractsBy(String netId) throws NoSuchElementException {
         return getContractsBy(netId, null);
+    }
+
+
+    /**
+     * Returns whether a contract already exists.
+     *
+     * @param netId The contract's netId (required)
+     * @param courseId The contract's courseId (required)
+     * @returns boolean whether contract exists.
+     */
+    public boolean contractExists(String netId, String courseId) {
+        try {
+            // This method throws an exception when contract does not exist.
+            getContract(netId, courseId);
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     /**
@@ -103,6 +166,7 @@ public class ContractService {
      *
      * @param contract The contract to save.
      * @return The newly saved contract.
+     * @throws IllegalArgumentException if declaration does not meet requirements.
      */
     public Contract save(Contract contract) {
         return contractRepository.save(contract);
