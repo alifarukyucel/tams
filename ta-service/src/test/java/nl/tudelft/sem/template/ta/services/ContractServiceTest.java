@@ -98,6 +98,7 @@ class ContractServiceTest {
             .netId("PVeldHuis")
             .courseId("CSE2310")
             .maxHours(5)
+            .rating(8.2)
             .duties("Work really hard")
             .signed(false)
             .build();
@@ -150,6 +151,7 @@ class ContractServiceTest {
             .netId("PVeldHuis")
             .courseId("CSE2550")
             .maxHours(5)
+            .rating(9.53)
             .duties("Work really hard")
             .signed(false)
             .build());
@@ -158,6 +160,7 @@ class ContractServiceTest {
             .netId("GerryEik")
             .courseId("CSE2310")
             .maxHours(5)
+            .rating(7)
             .duties("Work really hard")
             .signed(false)
             .build());
@@ -166,6 +169,7 @@ class ContractServiceTest {
             .netId("PVeldHuis")
             .courseId("CSE2310")
             .maxHours(5)
+            .rating(6)
             .duties("Work really hard")
             .signed(false)
             .build();
@@ -362,4 +366,75 @@ class ContractServiceTest {
         // Assert
         assertThat(exists).isFalse();
     }
+
+    @Test
+    void rate() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .rating(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // Act
+        contractService.rate(contract.getNetId(), contract.getCourseId(), 9.67);
+
+        // Assert
+        Contract fetchedContract = contractRepository.getOne(
+            new ContractId(contract.getNetId(), contract.getCourseId()));
+        assertThat(fetchedContract.getRating()).isEqualTo(9.67);
+    }
+
+    @Test
+    void rate_contractNotExists() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .rating(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // Act
+        ThrowingCallable actionNotFound = () ->
+            contractService.rate("SteveJobs", "CSE2525", 8);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNotFound);
+    }
+
+    @Test
+    void rate_ratingInvalid() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .rating(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // Act
+        ThrowingCallable actionBelowZero = () ->
+            contractService.rate("WinstijnSmit", "CSE2310", -1);
+        ThrowingCallable actionAboveTen = () ->
+            contractService.rate("WinstijnSmit", "CSE2310", 10.1);
+
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionBelowZero);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionAboveTen);
+        Contract fetchedContract = contractRepository.getOne(
+            new ContractId(contract.getNetId(), contract.getCourseId()));
+        assertThat(fetchedContract.getRating()).isEqualTo(5);
+    }
+
 }

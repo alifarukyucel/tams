@@ -1,7 +1,10 @@
 package nl.tudelft.sem.template.course.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.course.entities.Course;
+import nl.tudelft.sem.template.course.models.CourseCreationRequestModel;
 import nl.tudelft.sem.template.course.models.CourseResponseModel;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.services.CourseService;
@@ -11,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -65,6 +70,25 @@ public class CourseController {
 
     // ------------------------------ Setters -----------------------------------
 
+    /**
+     * POST endpoint that saves the given course to the database. The CourseCreationRequestModel
+     * object is sent through a POST request body in a JSON format.
+     * Throws 409 Conflict upon already existing id
+     *
+     * @param courseModel   the course to be created
+     * @return the course returned from the database (with a manually-assigned id)
+     */
+    @PostMapping(value = "/create", consumes = "application/json") // course/create
+    ResponseEntity<CourseResponseModel> createCourse(@RequestBody CourseCreationRequestModel courseModel)
+            throws ResponseStatusException {
+        Course course = new Course(courseModel.getId(),
+                courseModel.getStartDate(), courseModel.getName(),
+                courseModel.getDescription(), courseModel.getNumberOfStudents(),
+                new ArrayList<>(List.of(authManager.getNetid())));
+        courseService.createCourse(course);
+        CourseResponseModel response = CourseResponseModel.fromCourse(course);
+        return ResponseEntity.ok(response);
+    }
 
     // ---------------------------------- Deletions -------------------------------
 

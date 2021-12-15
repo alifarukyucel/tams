@@ -2,18 +2,25 @@ package nl.tudelft.sem.template.course.integration;
 
 import static nl.tudelft.sem.template.course.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import nl.tudelft.sem.template.course.entities.Course;
+import nl.tudelft.sem.template.course.models.CourseCreationRequestModel;
+import nl.tudelft.sem.template.course.models.CourseResponseModel;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
 import nl.tudelft.sem.template.course.security.AuthManager;
 import nl.tudelft.sem.template.course.security.TokenVerifier;
+import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
+import nl.tudelft.sem.template.course.utils.JsonUtil;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +32,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 
@@ -72,6 +80,17 @@ public class CourseTests {
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(responsibleLecturer);
     }
 
+    // Mock authentication to show that we are signed in as a certain user.
+    void mockAuthentication(String netId, boolean isResponsibleLecturer) {
+        when(mockAuthenticationManager.getNetid()).thenReturn(netId);
+        when(mockTokenVerifier.validate(anyString())).thenReturn(true);
+        when(mockTokenVerifier.parseNetid(anyString())).thenReturn(netId);
+    }
+
+    void mockAuthentication(String netId) {
+        mockAuthentication(netId, false);
+    }
+
     @Test
     public void getExistingCourse() throws Exception {
         // Arrange
@@ -114,4 +133,54 @@ public class CourseTests {
         assertThat(expected).isEqualTo(course);
     }
 
+    @Test
+    void createCourse_NoExistingCourseInDatabase() throws Exception {
+        // Arrange
+        mockAuthentication("Andy", true);
+
+        CourseCreationRequestModel courseModel = new CourseCreationRequestModel(testCourseId, testStartDate,
+                testCourseName, testDescription, testNumberOfStudents);
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(courseModel))
+                .header("Authorization", "Bearer Andy"));
+
+        // Assert
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        CourseResponseModel response =
+                JsonUtil.deserialize(result.getResponse().getContentAsString(), CourseResponseModel.class);
+
+        assertThat(response).isNotNull();
+        assertThat(CourseResponseModel.fromCourse(courseRepository.getById(testCourseId)))
+                .isEqualTo(response);
+    }
+
+    @Test
+    void createCourse_ExistingCourseInDatabase_throwsConflictException() throws Exception {
+        // Arrange
+        mockAuthentication(responsibleLecturer, true);
+
+        Course existingCourse = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(existingCourse);
+
+        CourseCreationRequestModel courseModel = new CourseCreationRequestModel(testCourseId, testStartDate,
+                testCourseName, testDescription, testNumberOfStudents);
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(courseModel))
+                .header("Authorization", "Bearer Andy"));
+
+        // Assert
+        MvcResult result = action
+                .andExpect(status().isConflict())
+                .andReturn();
+    }
 }
