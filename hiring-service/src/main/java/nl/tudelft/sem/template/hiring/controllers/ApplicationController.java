@@ -24,6 +24,13 @@ public class ApplicationController {
     private final transient CourseInformation courseInformation;
     private transient ApplicationService applicationService;
 
+    /**
+     * Instantiates a new Application controller.
+     *
+     * @param authManager        the auth manager
+     * @param applicationService the application service
+     * @param courseInformation  the course information
+     */
     public ApplicationController(AuthManager authManager, CourseInformation courseInformation,
                                  ApplicationService applicationService) {
         this.authManager = authManager;
