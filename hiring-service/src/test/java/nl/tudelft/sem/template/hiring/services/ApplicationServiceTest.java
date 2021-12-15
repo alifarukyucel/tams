@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.hiring.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
@@ -12,12 +13,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@ActiveProfiles({"mockCourseInformation"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class ApplicationServiceTest {
     @Autowired
@@ -25,6 +29,9 @@ public class ApplicationServiceTest {
 
     @Autowired
     private transient ApplicationService applicationService;
+
+    @Autowired
+    private transient CourseInformation mockCourseInformation;
 
     @Autowired
     private transient CourseInformation courseInformation;
@@ -63,21 +70,35 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    public void checkAndWithdrawTest() {
+    public void checkAndWithdrawOnTimeTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
         Application application = new Application("CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
         applicationRepository.save(application);
-        LocalDate deadline = courseInformation.startDate(application.getCourseId());
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDate.MAX);
 
         //Act
-        applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
 
         //Assert
-        Application toWithdraw = applicationRepository.findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
-                .get();
-        assertThat(toWithdraw).isNull();
-
+        assertThat(result).isTrue();
     }
+
+    @Test
+    public void checkAndWithdrawTooLateTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDate.now());
+
+        //Act
+        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+
+        //Assert
+        assertThat(result).isFalse();
+    }
+
 }
