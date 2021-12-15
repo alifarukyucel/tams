@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
+import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
@@ -82,6 +83,34 @@ public class ApplicationController {
 
         try {
             this.applicationService.reject(model.getCourseId(), model.getNetId());
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * API Endpoint for accepting an application.
+     *
+     * @param model The course id and the application id
+     * @return 200 OK if the request is successful
+     * @throws ResponseStatusException 403 if the user is not the responsible lecturer of the course
+     * @throws ResponseStatusException 404 if the application does not exist
+     * @throws ResponseStatusException 409 if the application is not pending or contract creation fails
+     */
+    @PostMapping("/accept")
+    public ResponseEntity<String> accept(@RequestBody ApplicationAcceptRequestModel model) {
+
+        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), model.getCourseId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        try {
+            this.applicationService.accept(model.getCourseId(), model.getNetId(), model.getDuties(),
+                    model.getMaxHours());
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
