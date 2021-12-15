@@ -121,14 +121,14 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(get("/CSE9999")
+        ResultActions action = mockMvc.perform(get("/CSE9999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Andy"));
 
         Course expected = courseRepository.getById(course.getId());
         
         // Assert
-        resultActions.andExpect(status().isNotFound());
+        action.andExpect(status().isNotFound());
         assertThat(expected.getId()).isNotNull();
         assertThat(expected).isEqualTo(course);
     }
@@ -185,7 +185,7 @@ public class CourseTests {
     }
 
     @Test
-    public void isResponsibleLecturer_withValidData_returnsTrue() throws Exception {
+    public void isResponsibleLecturer_correctLecturer_200Ok() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -193,16 +193,16 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
+        ResultActions action = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isTrue();
+        action.andExpect(status().isOk());
     }
 
     @Test
-    public void isResponsibleLecturer_withValidDataMultipleLecturers_returnsTrue() throws Exception {
+    public void isResponsibleLecturer_withMultipleLecturers_200Ok() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         responsibleLecturers.add("anniballePanichella");
@@ -211,16 +211,16 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
+        ResultActions action = mockMvc.perform(get("/course/CSE2115/lecturer/anniballePanichella")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isTrue();
+        action.andExpect(status().isOk());
     }
 
     @Test
-    public void isResponsibleLecturer_invalidLecturer_returnsFalse() throws Exception {
+    public void isResponsibleLecturer_lecturerDoesNotExist_404NotFound() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -228,16 +228,16 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fForRespect")
+        ResultActions action = mockMvc.perform(get("/course/CSE2115/lecturer/fForRespect")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isFalse();
+        action.andExpect(status().isNotFound());
     }
 
     @Test
-    public void isResponsibleLecturer_courseDoesNotExist_throws404() throws Exception {
+    public void isResponsibleLecturer_courseDoesNotExist_404NotFound() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -245,12 +245,11 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions resultActions = mockMvc.perform(get("/course/randomCourse/lecturer/fmulder")
+        ResultActions action = mockMvc.perform(get("/course/randomCourse/lecturer/fmulder")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        resultActions.andExpect(status().isNotFound());
-
+        action.andExpect(status().isNotFound());
     }
 }
