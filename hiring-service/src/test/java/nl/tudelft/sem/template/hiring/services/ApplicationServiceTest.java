@@ -7,8 +7,11 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
@@ -204,9 +207,10 @@ public class ApplicationServiceTest {
 
         String[] netIds = new String[]{"jsmith", "wsmith"};
         Map<String, Float> expectedMap = new HashMap<>() {{
-            put("jsmith", 8.0f);
-            put("wsmith", 9.0f);
-        }};
+                put("jsmith", 8.0f);
+                put("wsmith", 9.0f);
+            }
+        };
         when(mockContractInformation.getTaRatings(List.of(netIds)))
                 .thenReturn(expectedMap);
 
@@ -216,7 +220,7 @@ public class ApplicationServiceTest {
                 "I want to be cool too!", 8.0f);
         var resultModel2 = new PendingApplicationResponseModel("CSE1300", "wsmith", 7.0f,
                 "I want to be cool too!", 9.0f);
-        List<PendingApplicationResponseModel> expectedList= List.of(resultModel, resultModel2);
+        List<PendingApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
 
         assertThat(resultList).isEqualTo(expectedList);
 

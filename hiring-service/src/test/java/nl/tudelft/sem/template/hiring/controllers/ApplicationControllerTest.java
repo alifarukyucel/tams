@@ -8,6 +8,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
@@ -35,11 +39,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -262,9 +261,10 @@ public class ApplicationControllerTest {
 
         String[] netIds = new String[]{"jsmith", "wsmith"};
         Map<String, Float> expectedMap = new HashMap<>() {{
-            put("jsmith", 8.0f);
-            put("wsmith", 9.0f);
-        }};
+                put("jsmith", 8.0f);
+                put("wsmith", 9.0f);
+            }
+        };
         when(mockContractInformation.getTaRatings(List.of(netIds)))
                 .thenReturn(expectedMap);
 
@@ -283,9 +283,10 @@ public class ApplicationControllerTest {
         PendingApplicationResponseModel model = new PendingApplicationResponseModel(application, 8.0f);
         PendingApplicationResponseModel model2 = new PendingApplicationResponseModel(application2, 9.0f);
         List<PendingApplicationResponseModel> expectedResult = new ArrayList<>() {{
-            add(model);
-            add(model2);
-        }};
+                add(model);
+                add(model2);
+            }
+        };
 
         assertThat(res).isEqualTo(expectedResult);
     }

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class PendingApplicationResponseModelTest {
     @Test
-    public void PendingApplicationResponseModelConstructorTest() {
+    public void pendingApplicationResponseModelConstructorTest() {
         //Arrange
         Application application = new Application("CSE1300", "jsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.PENDING);
