@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.hiring.controllers;
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
 import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
@@ -10,10 +11,7 @@ import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -22,7 +20,6 @@ public class ApplicationController {
     private final transient AuthManager authManager;
     private final transient CourseInformation courseInformation;
 
-    @Autowired
     private transient ApplicationService applicationService;
 
     public ApplicationController(AuthManager authManager, CourseInformation courseInformation, ApplicationService applicationService) {
@@ -57,18 +54,13 @@ public class ApplicationController {
     /**
      * API Endpoint for withdrawing an already existing application.
      *
-     * @param request request to apply to become a TA ( courseId, the grade, and motivation)
+     * @param model applicationKey for specific application
      * @return String informing if the application is withdrawn.
      */
-    @PutMapping("/withdraw")
-    public ResponseEntity<String> withdraw(@RequestBody ApplicationRequestModel request) {
-        Application application = createPendingApplication(
-                request.getCourseId(),
-                authManager.getNetid(),
-                request.getGrade(),
-                request.getMotivation());
+    @DeleteMapping ("/withdraw")
+    public ResponseEntity<String> withdraw(@RequestBody ApplicationKey model) {
 
-        boolean success = applicationService.checkAndWithdraw(application);
+        boolean success = applicationService.checkAndWithdraw(model.getCourseId(), model.getNetId());
         if(success) return ResponseEntity.ok().build();
         else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Withdrawing isn't possible at this moment");
