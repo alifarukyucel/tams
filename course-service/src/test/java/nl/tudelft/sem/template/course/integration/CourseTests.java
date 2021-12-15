@@ -183,4 +183,74 @@ public class CourseTests {
                 .andExpect(status().isConflict())
                 .andReturn();
     }
+
+    @Test
+    public void isResponsibleLecturer_withValidData_returnsTrue() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isTrue();
+    }
+
+    @Test
+    public void isResponsibleLecturer_withValidDataMultipleLecturers_returnsTrue() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+        responsibleLecturers.add("anniballePanichella");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isTrue();
+    }
+
+    @Test
+    public void isResponsibleLecturer_invalidLecturer_returnsFalse() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(get("/course/CSE2115/lecturer/fForRespect")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        assertThat(Boolean.valueOf(resultActions.andReturn().getResponse().getContentAsString())).isFalse();
+    }
+
+    @Test
+    public void isResponsibleLecturer_courseDoesNotExist_throws404() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(get("/course/randomCourse/lecturer/fmulder")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        resultActions.andExpect(status().isNotFound());
+
+    }
 }
