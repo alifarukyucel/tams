@@ -21,7 +21,6 @@ import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.security.TokenVerifier;
-import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
