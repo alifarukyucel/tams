@@ -48,10 +48,10 @@ public class ApplicationServiceTest {
     private transient ApplicationService applicationService;
 
     @Autowired
-    private transient ContractInformation mockContractInformation;
+    private transient CourseInformation mockCourseInformation;
 
     @Autowired
-    private transient CourseInformation mockCourseInformation;
+    private transient ContractInformation mockContractInformation;
 
     @Test
     public void validCheckAndSaveTest() {
@@ -100,6 +100,72 @@ public class ApplicationServiceTest {
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
+
+    @Test
+    public void checkAndWithdrawOnTimeTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.MAX);
+
+        //Act
+        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+
+        //Assert
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void checkAndWithdrawTooLateTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.now());
+
+        //Act
+        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+
+        //Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void checkAndWithdrawJustTooLateTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.now().plusWeeks(3));
+
+        //Act
+        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+
+        //Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void checkAndWithdrawJustOnTimeTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(
+                LocalDateTime.now().plusWeeks(3).plusDays(1));
+
+        //Act
+        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+
+        //Assert
+        assertThat(result).isTrue();
+    }
+
 
     @Test
     public void invalidDateCheckAndSaveTest() {
