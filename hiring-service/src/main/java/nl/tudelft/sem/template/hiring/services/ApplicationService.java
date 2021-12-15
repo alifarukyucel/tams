@@ -1,14 +1,19 @@
 package nl.tudelft.sem.template.hiring.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
+import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class ApplicationService {
@@ -35,6 +40,17 @@ public class ApplicationService {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Finds all applications with a given courseId and status.
+     *
+     * @param courseId The courseId of the course.
+     * @param status The status of the application(s).
+     * @return a list of applications.
+     */
+    public List<Application> findAllByCourseAndStatus(String courseId, ApplicationStatus status) {
+        return applicationRepository.findAllByCourseIdAndStatus(courseId, status);
     }
 
     /**
@@ -110,5 +126,37 @@ public class ApplicationService {
         application.setStatus(ApplicationStatus.ACCEPTED);
 
         applicationRepository.save(application);
+    }
+
+    /**
+     * Takes in a list of applications and extends them with a TA-rating, retreived from the TA-service.
+     *
+     * @param applications A list of the desired applications to be extended with a rating.
+     * @return a list of extendApplicationRequestModels, created with the extended applications and the TA-ratings.
+     */
+    //PMD.DataflowAnomalies are suppressed because they occur in a place where there is no problem at all.
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    public List<PendingApplicationResponseModel> extendWithRating(List<Application> applications) {
+        List<PendingApplicationResponseModel> extendedApplications = new ArrayList<>();
+
+        //This check makes sure no data is fetched when there are no applications at all.
+        if (applications.isEmpty()) {
+            return extendedApplications;
+        }
+
+        List<String> netIds = new ArrayList<>();
+
+        for (Application application : applications) {
+            netIds.add(application.getNetId());
+        }
+
+        Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
+
+        for (Application application : applications) {
+            String netId = application.getNetId();
+            Float rating = taRatings.get(netId);
+            extendedApplications.add(new PendingApplicationResponseModel(application, rating));
+        }
+        return extendedApplications;
     }
 }
