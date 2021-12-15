@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.hiring.services;
 
+import java.time.LocalDate;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
@@ -7,10 +10,6 @@ import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class ApplicationService {
@@ -61,14 +60,16 @@ public class ApplicationService {
 
 
     /**
-     * Deletes an application from the database, if more than 3 weeks before start of the course
-     * @param courseId
-     * @param netId
-     * @return
+     * Deletes an application from the database, if more than 3 weeks before start of the course.
+     *
+     * @param courseId courseId from course to withdraw from
+     * @param netId netId from user who wants to withdraw
+     * @return true if on time or false if too late
      */
     public boolean checkAndWithdraw(String courseId, String netId) {
         LocalDate deadline = courseInformation.startDate(courseId).minusWeeks(3);
-        if(LocalDate.now().compareTo(deadline) < 0) {
+        if (LocalDate.now().compareTo(deadline) < 0) {
+
             applicationRepository.delete(this.get(courseId, netId));
             return true;
         }

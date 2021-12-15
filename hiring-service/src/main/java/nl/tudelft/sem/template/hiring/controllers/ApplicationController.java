@@ -11,7 +11,10 @@ import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -19,10 +22,10 @@ import org.springframework.web.server.ResponseStatusException;
 public class ApplicationController {
     private final transient AuthManager authManager;
     private final transient CourseInformation courseInformation;
-
     private transient ApplicationService applicationService;
 
-    public ApplicationController(AuthManager authManager, CourseInformation courseInformation, ApplicationService applicationService) {
+    public ApplicationController(AuthManager authManager, CourseInformation courseInformation,
+                                 ApplicationService applicationService) {
         this.authManager = authManager;
         this.courseInformation = courseInformation;
         this.applicationService = applicationService;
@@ -61,8 +64,9 @@ public class ApplicationController {
     public ResponseEntity<String> withdraw(@RequestBody ApplicationKey model) {
 
         boolean success = applicationService.checkAndWithdraw(model.getCourseId(), model.getNetId());
-        if(success) return ResponseEntity.ok().build();
-        else {
+        if (success) {
+            return ResponseEntity.ok().build();
+        } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Withdrawing isn't possible at this moment");
         }
     }
