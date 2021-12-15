@@ -51,9 +51,6 @@ public class ApplicationServiceTest {
     private transient CourseInformation mockCourseInformation;
 
     @Autowired
-    private transient CourseInformation courseInformation;
-
-    @Autowired
     private transient ContractInformation mockContractInformation;
 
     @Test
