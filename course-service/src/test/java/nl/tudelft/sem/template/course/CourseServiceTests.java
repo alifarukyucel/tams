@@ -138,6 +138,22 @@ public class CourseServiceTests {
     }
 
     @Test
+    public void isResponsibleLecturer_multipleLecturers() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);
+        responsibleLecturers.add("annibalePanichella");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        boolean isResponsible = courseService.isResponsibleLecturer(expectedResponsibleLecturer, course.getId());
+
+        // Assert
+        assertThat(isResponsible).isTrue();
+    }
+
+    @Test
     public void isNotResponsibleLecturer_differentLecturer_throwsNoSuchElementException() {
         // Arrange
         String wrongLecturer = "someOtherGuy";
