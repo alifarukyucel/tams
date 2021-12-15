@@ -4,8 +4,7 @@ import static nl.tudelft.sem.template.hiring.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import nl.tudelft.sem.template.hiring.entities.Application;
@@ -106,34 +105,28 @@ public class ApplicationControllerTest {
 
     @Test
     void withdrawOnTime() throws Exception {
-        // What you want to be doing is writing smaller tests and focus on those.
-
         // arrange
-        ApplicationRequestModel onTime = new ApplicationRequestModel("cse1300", 7.0f,
-                "I want to");
-        ApplicationKey validKey = new ApplicationKey(onTime.getCourseId(), exampleNetId);
+        Application onTime = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(onTime);
 
-//        Application application = new Application("cse1200", "kverhoef", 7.0f,
-//                "I have a 10", ApplicationStatus.PENDING);
-//        applicationRepository.save(application);
-//
-//        ApplicationKey lookup = ApplicationKey.builder()
-//                .courseId(application.getCourseId())
-//                .netId(application.getNetId())
-//                .build();
+        ApplicationKey key = ApplicationKey.builder()
+                .courseId(onTime.getCourseId())
+                .netId(onTime.getNetId())
+                .build();
 
         when(mockCourseInformation.startDate(onTime.getCourseId()))
                 .thenReturn(LocalDate.MAX);
 
         // act
-        ResultActions onTimeResult  = mockMvc.perform(put("/withdraw")
+        ResultActions onTimeResult  = mockMvc.perform(delete("/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serialize(onTime))
+                .content(serialize(key))
                 .header("Authorization", "Bearer Joe"));
 
         // assert
-        assertThat(applicationRepository.findById(validKey)).isNull();
-        //onTimeResult.andExpect(status().isOk());
+        assertThat(applicationRepository.findById(key)).isEmpty();
+        onTimeResult.andExpect(status().isOk());
     }
 
     @Test
