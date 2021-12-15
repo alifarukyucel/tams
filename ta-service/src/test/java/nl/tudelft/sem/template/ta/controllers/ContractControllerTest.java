@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,9 +14,12 @@ import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
+import nl.tudelft.sem.template.ta.models.CreateContractRequestModel;
+import nl.tudelft.sem.template.ta.models.RateContractRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.security.TokenVerifier;
@@ -84,6 +88,7 @@ class ContractControllerTest {
                 .courseId("CSE2310")
                 .maxHours(10)
                 .duties("Work really hard")
+                .rating(8)
                 .signed(true)
                 .build();
         contractRepository.save(secondContract);
@@ -94,6 +99,7 @@ class ContractControllerTest {
                 .courseId("CSE1250")
                 .maxHours(2)
                 .duties("No need to work hard")
+                .rating(8.6)
                 .signed(false)
                 .build();
         contractRepository.save(thirdContract);
@@ -332,7 +338,7 @@ class ContractControllerTest {
     }
 
     @Test
-    void getContracts_unauthorized() throws Exception {
+    void getContracts_forbidden() throws Exception {
         // Arrange
         mockAuthentication("WinstijnSmit", false);
 
@@ -343,9 +349,229 @@ class ContractControllerTest {
         );
 
         // Assert
-        action.andExpect(status().isUnauthorized());
+        action.andExpect(status().isForbidden());
     }
 
+    @Test
+    void createContract() throws Exception {
+        // Arrange
+        mockAuthentication("Stefan", true);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("BillGates").maxHours(10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isOk())
+            .andReturn();
+
+        ContractResponseModel response =
+            JsonUtil.deserialize(result.getResponse().getContentAsString(), ContractResponseModel.class);
+
+        assertThat(response).isNotNull();
+        assertThat(ContractResponseModel.fromContract(
+                        contractRepository.getOne(new ContractId("BillGates", "CSE2310"))
+                    ))
+                    .isEqualTo(response); // verify that is saved is ours.
+        assertThat(contractRepository.findAll().size()).isEqualTo(size + 1);
+
+    }
+
+    @Test
+    void createContract_forbidden() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit", false);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("WinstijnSmit").maxHours(10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isForbidden());
+        assertThat(contractRepository.findAll().size()).isEqualTo(size);
+    }
+
+    @Test
+    void createContract_badRequest() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit", true);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("SteveJobs").maxHours(-10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isBadRequest());
+        assertThat(contractRepository.findAll().size()).isEqualTo(size);
+    }
+
+    @Test
+    void createContract_alreadyExists() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit", true);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("WinstijnSmit").maxHours(10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isBadRequest());
+        assertThat(contractRepository.findAll().size()).isEqualTo(size);
+    }
+
+    @Test
+    void rateContract() throws Exception {
+        // Arrange
+        mockAuthentication("Stefan", true);
+        RateContractRequestModel model = RateContractRequestModel.builder()
+            .courseId("CSE2310").netId("PVeldHuis").rating(9.66).build();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/rate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isOk())
+            .andReturn();
+
+        assertThat(ContractResponseModel.fromContract(
+            contractRepository.getOne(new ContractId("PVeldHuis", "CSE2310"))
+        ).getRating()).isEqualTo(9.66);
+
+    }
+
+    @Test
+    void rateContract_forbidden() throws Exception {
+        // Arrange
+        mockAuthentication("PVeldHuis", false);
+        RateContractRequestModel model = RateContractRequestModel.builder()
+            .courseId("CSE2310").netId("WinstijnSmit").rating(3).build();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/rate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isForbidden());
+        assertThat(ContractResponseModel.fromContract(
+            contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310"))
+        ).getRating()).isEqualTo(8); // ensure that it did not change.
+    }
+
+    @Test
+    void rateContract_forbidden_2() throws Exception {
+        // Arrange
+        mockAuthentication("WinstijnSmit", false);
+        RateContractRequestModel model = RateContractRequestModel.builder()
+            .courseId("CSE2310").netId("WinstijnSmit").rating(10).build();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/rate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isForbidden());
+        assertThat(ContractResponseModel.fromContract(
+            contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310"))
+        ).getRating()).isEqualTo(8); // ensure that it did not change.
+    }
+
+
+    @Test
+    void rateContract_invalidRating() throws Exception {
+        // Arrange
+        mockAuthentication("Stefan", true);
+        RateContractRequestModel model = RateContractRequestModel.builder()
+            .courseId("CSE2310").netId("WinstijnSmit").rating(-1).build();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/rate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isBadRequest());
+        assertThat(ContractResponseModel.fromContract(
+            contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310"))
+        ).getRating()).isEqualTo(8); // ensure that it did not change.
+    }
+
+    @Test
+    void rateContract_invalidRating_2() throws Exception {
+        // Arrange
+        mockAuthentication("Stefan", true);
+        RateContractRequestModel model = RateContractRequestModel.builder()
+            .courseId("CSE2310").netId("WinstijnSmit").rating(11).build();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/rate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isBadRequest());
+        assertThat(ContractResponseModel.fromContract(
+            contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310"))
+        ).getRating()).isEqualTo(8); // ensure that it did not change.
+
+    }
+
+    @Test
+    void rateContract_nonExistent() throws Exception {
+        // Arrange
+        mockAuthentication("Stefan", true);
+        RateContractRequestModel model = RateContractRequestModel.builder()
+            .courseId("ES2525").netId("WinstijnSmit").rating(5).build();
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/rate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        action.andExpect(status().isNotFound());
+    }
 
     /**
      * Helper method that asserts whether the response contains the contract.
@@ -368,11 +594,14 @@ class ContractControllerTest {
         var list = new ArrayList<ContractResponseModel>();
         List<Map<String, Object>> parsed = JsonUtil.deserialize(jsonString, list.getClass());
 
+
         // JsonUtil returns a map of items. Parse them and put them in our list.
         for (Map<String, Object> map : parsed) {
             list.add(new ContractResponseModel(
                         (String) map.get("course"),
+                        (String) map.get("netId"),
                         (String) map.get("duties"),
+                        (Double) map.get("rating"),
                         (int) map.get("maxHours"),
                         (boolean) map.get("signed")
             ));
