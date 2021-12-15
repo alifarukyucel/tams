@@ -193,7 +193,7 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions action = mockMvc.perform(get("/course/CSE2115/lecturer/fmulder")
+        ResultActions action = mockMvc.perform(get("/CSE2115/lecturer/fmulder")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Mulder"));
 
@@ -211,7 +211,7 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions action = mockMvc.perform(get("/course/CSE2115/lecturer/anniballePanichella")
+        ResultActions action = mockMvc.perform(get("/CSE2115/lecturer/anniballePanichella")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Mulder"));
 
@@ -228,7 +228,7 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions action = mockMvc.perform(get("/course/CSE2115/lecturer/fForRespect")
+        ResultActions action = mockMvc.perform(get("/CSE2115/lecturer/fForRespect")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Mulder"));
 
@@ -245,7 +245,7 @@ public class CourseTests {
         courseRepository.save(course);
 
         // Act
-        ResultActions action = mockMvc.perform(get("/course/randomCourse/lecturer/fmulder")
+        ResultActions action = mockMvc.perform(get("/randomCourse/lecturer/fmulder")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Mulder"));
 
