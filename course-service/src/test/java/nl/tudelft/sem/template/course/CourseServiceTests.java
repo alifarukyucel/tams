@@ -81,19 +81,6 @@ public class CourseServiceTests {
     }
 
     @Test
-    void save() {
-        // Arrange
-        Course course = new Course(testCourseId, testStartDate, testCourseName,
-                testDescription, testNumberOfStudents, responsibleLecturers);
-
-        // Act
-        ThrowableAssert.ThrowingCallable actionNull = () -> courseService.getCourseById(testCourseId);
-
-        // Assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNull);
-    }
-
-    @Test
     void createCourse_NoExistingCourseInDatabase() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
