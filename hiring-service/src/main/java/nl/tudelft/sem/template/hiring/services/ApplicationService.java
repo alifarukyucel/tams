@@ -1,15 +1,11 @@
 package nl.tudelft.sem.template.hiring.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import nl.tudelft.sem.template.hiring.entities.Application;
-import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class ApplicationService {
@@ -34,15 +30,16 @@ public class ApplicationService {
     }
 
     /**
-     * Gets all applications that belong to a specific user
-     * @param netId the netId of the user to get applications from
-     * @return a list of all applications from the user
+     * Gets all applications that belong to a specific user.
+     *
+     * @param netId the netId of the user to get applications from.
+     * @return a list of all applications from the user.
      */
     public List<Application> getApplicationFromStudent(String netId) {
         List<Application> allApplications = applicationRepository.findAll();
         List<Application> result = new ArrayList<>();
-        for(Application application : allApplications) {
-            if(application.getNetId().equals(netId)){
+        for (Application application : allApplications) {
+            if (application.getNetId().equals(netId)) {
                 result.add(application);
             }
         }
@@ -50,12 +47,15 @@ public class ApplicationService {
     }
 
     /**
-     * Checks whether a user has already applied for 3 courses
-     * @param netId the netid of the user for which we check the amount of applications
-     * @return false when the maximum number of applications hasn't been reached or true otherwise
+     * Checks whether a user has already applied for 3 courses.
+     *
+     * @param netId the netid of the user for which we check the amount of applications.
+     * @return false when the maximum number of applications hasn't been reached or true otherwise.
      */
     public boolean maxApplication(String netId) {
-        if(getApplicationFromStudent(netId).size() < 3) return false;
+        if (getApplicationFromStudent(netId).size() < 3) {
+            return false;
+        }
         return true;
     }
 }

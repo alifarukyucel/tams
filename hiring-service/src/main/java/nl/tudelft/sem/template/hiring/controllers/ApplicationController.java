@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-
-
 @RestController
 public class ApplicationController {
     private final transient AuthManager authManager;
@@ -36,7 +33,7 @@ public class ApplicationController {
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
-        if(applicationService.maxApplication(authManager.getNetid())) {
+        if (applicationService.maxApplication(authManager.getNetid())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         Application application = createPendingApplication(
