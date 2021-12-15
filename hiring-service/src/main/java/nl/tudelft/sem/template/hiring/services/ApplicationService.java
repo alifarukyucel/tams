@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.hiring.services;
 
 import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class ApplicationService {
@@ -37,13 +40,36 @@ public class ApplicationService {
     }
 
     /**
-     * Deletes an application from the database, if more than 3 weeks before start of the course
-     * @param application the application to withdraw
+     * Retrieves an application by its course id and netid.
+     *
+     * @param courseId the course id of the application
+     * @param netId    the netid of the application
+     * @return the application
+     * @throws NoSuchElementException if the application is not found
      */
-    public boolean checkAndWithdraw(Application application) {
-        LocalDate deadline = courseInformation.startDate(application.getCourseId()).minusWeeks(3);
+    public Application get(String courseId, String netId) throws NoSuchElementException {
+        ApplicationKey key = new ApplicationKey(courseId, netId);
+        Optional<Application> applicationOptional = applicationRepository.findById(key);
+
+        if (applicationOptional.isEmpty()) {
+            // Application does not exist
+            throw new NoSuchElementException();
+        }
+
+        return applicationOptional.get();
+    }
+
+
+    /**
+     * Deletes an application from the database, if more than 3 weeks before start of the course
+     * @param courseId
+     * @param netId
+     * @return
+     */
+    public boolean checkAndWithdraw(String courseId, String netId) {
+        LocalDate deadline = courseInformation.startDate(courseId).minusWeeks(3);
         if(LocalDate.now().compareTo(deadline) < 0) {
-            applicationRepository.delete(application);
+            applicationRepository.delete(this.get(courseId, netId));
             return true;
         }
         return false;

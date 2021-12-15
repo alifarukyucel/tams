@@ -72,7 +72,7 @@ public class ApplicationServiceTest {
         LocalDate deadline = courseInformation.startDate(application.getCourseId());
 
         //Act
-        applicationService.checkAndWithdraw(application);
+        applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
 
         //Assert
         Application toWithdraw = applicationRepository.findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
