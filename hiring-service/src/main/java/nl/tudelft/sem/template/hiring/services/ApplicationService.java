@@ -22,7 +22,13 @@ public class ApplicationService {
 
     private transient CourseInformation courseInformation;
 
-
+    /**
+     * Checks whether an application meets the requirements and saves or discards it based on this.
+     *
+     * @param applicationRepository repository with all applications.
+     * @param contractInformation information to be fetched from TA microservice.
+     * @param courseInformation information to be fetched from Course microservice.
+     */
     public ApplicationService(ApplicationRepository applicationRepository, ContractInformation contractInformation,
                               CourseInformation courseInformation) {
         this.applicationRepository = applicationRepository;
@@ -82,6 +88,7 @@ public class ApplicationService {
         }
         return false;
     }
+
     /**
      * Sets the application status to REJECTED.
      *
