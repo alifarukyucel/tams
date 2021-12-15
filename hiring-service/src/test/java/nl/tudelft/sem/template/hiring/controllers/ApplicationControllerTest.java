@@ -132,26 +132,27 @@ public class ApplicationControllerTest {
     @Test
     void withdrawTooLate() throws Exception {
         // arrange
-        Application application = new Application("cse1200", "kverhoef", 7.0f,
-                "I have a 10", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        Application tooLate = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(tooLate);
 
-        ApplicationKey lookup = ApplicationKey.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
+        ApplicationKey key = ApplicationKey.builder()
+                .courseId(tooLate.getCourseId())
+                .netId(tooLate.getNetId())
                 .build();
 
-        when(mockCourseInformation.startDate(application.getCourseId()))
+        when(mockCourseInformation.startDate(tooLate.getCourseId()))
                 .thenReturn(LocalDate.now());
 
         // act
-        ResultActions tooLateResult  = mockMvc.perform(put("/withdraw")
+        ResultActions onTimeResult  = mockMvc.perform(delete("/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serialize(lookup))
+                .content(serialize(key))
                 .header("Authorization", "Bearer Joe"));
 
         // assert
-        tooLateResult.andExpect(status().isForbidden());
+        assertThat(applicationRepository.findById(key)).isNotEmpty();
+        onTimeResult.andExpect(status().isForbidden());
 
     }
 
