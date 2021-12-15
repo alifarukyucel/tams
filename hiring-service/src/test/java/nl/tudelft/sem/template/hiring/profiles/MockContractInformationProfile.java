@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.hiring.profiles;
 
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
-import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +15,9 @@ import org.springframework.context.annotation.Profile;
 public class MockContractInformationProfile {
 
     /**
-     * Mocks the TokenGenerator.
+     * Mocks the ContractInformation.
      *
-     * @return A mocked TokenGenerator.
+     * @return A mocked ContractInformation.
      */
     @Bean
     @Primary

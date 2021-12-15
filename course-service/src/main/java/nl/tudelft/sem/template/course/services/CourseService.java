@@ -1,8 +1,10 @@
 package nl.tudelft.sem.template.course.services;
 
 import java.util.NoSuchElementException;
+import javax.transaction.Transactional;
 import nl.tudelft.sem.template.course.entities.Course;
 import nl.tudelft.sem.template.course.repositories.CourseRepository;
+import nl.tudelft.sem.template.course.services.exceptions.ConflictException;
 import org.springframework.stereotype.Service;
 
 
@@ -42,11 +44,16 @@ public class CourseService {
     /**
      * Saves the given course to the repository.
      *
-     * @param course the saved course
-     * @return the saved course
+     * @param course                the course to be saved
+     * @throws ConflictException    thrown if a course already exists with the same id
      */
-    public Course save(Course course) {
-        return courseRepository.save(course);
+    @Transactional
+    public void createCourse(Course course) throws ConflictException {
+        String courseId = course.getId();
+        if (courseRepository.getById(courseId) != null) {
+            throw new ConflictException("A course already exists with that id.");
+        }
+        courseRepository.save(course);
     }
 
     // -------------------- Deletions ------------------------

@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import nl.tudelft.sem.template.ta.models.CreateContractRequestModel;
+import nl.tudelft.sem.template.ta.models.RateContractRequestModel;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.services.ContractService;
 import org.springframework.http.HttpStatus;
@@ -56,12 +57,7 @@ public class ContractController {
     public ResponseEntity<ContractResponseModel> createContract(@RequestBody CreateContractRequestModel request)
         throws ResponseStatusException {
 
-        boolean authorized = courseInformation
-            .isResponsibleLecturer(authManager.getNetid(), request.getCourseId());
-        if (!authorized) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                "Only a responsible lecturer is allowed to make this request.");
-        }
+        checkAuthorized(request.getCourseId());
 
         try {
             Contract contract = contractService.createUnsignedContract(
@@ -72,6 +68,7 @@ public class ContractController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
 
     /**
      * Set a users contract signed status. This will allow them to begin working.
@@ -91,6 +88,31 @@ public class ContractController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
+    /**
+     * Endpoint for rating a TA's performance.
+     *
+     * @param request a RateContractRequestModel
+     * @return 200 OK if rating was saved successfully.
+     *         400 Bad Request if rating was invalid
+     *         404 Not Found if contract has not been found
+     *         403 Forbidden if not a responsible lecturer for the course.
+     */
+    @PostMapping("/rate")
+    public ResponseEntity<String> rateContract(@RequestBody RateContractRequestModel request)
+        throws ResponseStatusException {
+
+        checkAuthorized(request.getCourseId());
+
+        try {
+            contractService.rate(request.getNetId(), request.getCourseId(), request.getRating());
+            return ResponseEntity.ok("Successfully saved rating!");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -136,11 +158,10 @@ public class ContractController {
         @PathVariable String course, @PathVariable String netId)
         throws ResponseStatusException {
 
-        boolean authorized = courseInformation
-                            .isResponsibleLecturer(authManager.getNetid(), course);
-
-        if (!authManager.getNetid().equals(netId) && !authorized) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        // Check if we are authorized as
+        // responsible lecturer for this course.
+        if (!authManager.getNetid().equals(netId)) {
+            checkAuthorized(course);
         }
 
         return findContractBy(netId, course);
@@ -180,6 +201,23 @@ public class ContractController {
     private ResponseEntity<List<ContractResponseModel>> findContractBy(
         String netId) throws ResponseStatusException {
         return findContractBy(netId, null);
+    }
+
+
+    /**
+     * Helper method to check if the user is a responsible lecturer for a certain course.
+     *
+     * @param courseId the courseId the user needs to be a responsible lecturer for.
+     * @throws ResponseStatusException if not a responsible lecturer
+     */
+    private void checkAuthorized(String courseId) throws ResponseStatusException {
+        boolean authorized = courseInformation
+            .isResponsibleLecturer(authManager.getNetid(), courseId);
+
+        if (!authorized) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                "Only a responsible lecturer is allowed to make this request.");
+        }
     }
 
 }

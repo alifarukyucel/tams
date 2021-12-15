@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.hiring.services.communication.models;
+package nl.tudelft.sem.template.ta.services.communication.models;
 
 import java.time.LocalDateTime;
 import java.util.List;

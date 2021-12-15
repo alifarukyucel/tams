@@ -1,16 +1,22 @@
 package nl.tudelft.sem.template.hiring.services;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
@@ -32,8 +38,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-@ActiveProfiles({"test", "mockContractInformation", "mockCourseInformation"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@ActiveProfiles({"test", "mockCourseInformation", "mockContractInformation"})
 @AutoConfigureMockMvc
 public class ApplicationServiceTest {
     @Autowired
@@ -235,9 +241,10 @@ public class ApplicationServiceTest {
 
         String[] netIds = new String[]{"jsmith", "wsmith"};
         Map<String, Float> expectedMap = new HashMap<>() {{
-            put("jsmith", 8.0f);
-            put("wsmith", 9.0f);
-        }};
+                put("jsmith", 8.0f);
+                put("wsmith", 9.0f);
+            }
+        };
         when(mockContractInformation.getTaRatings(List.of(netIds)))
                 .thenReturn(expectedMap);
 
@@ -247,12 +254,122 @@ public class ApplicationServiceTest {
                 "I want to be cool too!", 8.0f);
         var resultModel2 = new PendingApplicationResponseModel("CSE1300", "wsmith", 7.0f,
                 "I want to be cool too!", 9.0f);
-        List<PendingApplicationResponseModel> expectedList= List.of(resultModel, resultModel2);
+        List<PendingApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
 
         assertThat(resultList).isEqualTo(expectedList);
 
 
 
 
+    }
+
+    @Test
+    public void acceptValidApplication() {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        when(mockContractInformation.createContract(any())).thenReturn(true);
+
+        String expectedDuties = "Do TA stuff";
+        int expectedMaxHours = 42;
+
+        // Act
+        applicationService.accept(application.getCourseId(), application.getNetId(), expectedDuties, expectedMaxHours);
+
+        // Assert
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        verify(mockContractInformation).createContract(argThat(contract ->
+                contract.getCourseId().equals(application.getCourseId())
+                        && contract.getNetId().equals(application.getNetId())
+                        && contract.getDuties().equals(expectedDuties)
+                        && contract.getMaxHours() == expectedMaxHours
+        ));
+    }
+
+    @Test
+    public void acceptNonexistentApplication() {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        // Act
+        ThrowingCallable c = () -> applicationService.accept("incorrect", application.getNetId(),
+                "be a good TA", 45);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(c);
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+        verify(mockContractInformation, times(0)).createContract(any());
+    }
+
+    /**
+     * Test for accepting an application in a non-pending state.
+     *
+     * @param status the test status (non-pending)
+     */
+    @ParameterizedTest
+    @CsvSource({"ACCEPTED", "REJECTED"})
+    public void acceptNonPendingApplication(String status) {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.valueOf(status));
+        applicationRepository.save(application);
+
+        // Act
+        ThrowingCallable c = () -> applicationService.accept(application.getCourseId(), application.getNetId(),
+                "be a good TA", 45);
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
+        verify(mockContractInformation, times(0)).createContract(any());
+    }
+
+    @Test
+    public void acceptValidApplicationButCreatingContractThrowsException() {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        when(mockContractInformation.createContract(any())).thenReturn(false);
+
+        String expectedDuties = "Do TA stuff";
+        int expectedMaxHours = 42;
+
+        // Act
+        ThrowingCallable c = () -> applicationService.accept(application.getCourseId(), application.getNetId(),
+                expectedDuties, expectedMaxHours);
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+        verify(mockContractInformation).createContract(argThat(contract ->
+                contract.getCourseId().equals(application.getCourseId())
+                        && contract.getNetId().equals(application.getNetId())
+                        && contract.getDuties().equals(expectedDuties)
+                        && contract.getMaxHours() == expectedMaxHours
+        ));
     }
 }
