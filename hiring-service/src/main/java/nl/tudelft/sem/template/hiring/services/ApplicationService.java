@@ -48,7 +48,6 @@ public class ApplicationService {
      * @return boolean whether the application meets the requirements and thus saved.
      */
     public boolean checkAndSave(Application application) {
-        System.out.println(courseInformation.getStartDate(application.getCourseId()));
         if (!application.meetsRequirements()) {
             return false;
         } else if (courseInformation.getStartDate(application.getCourseId()).minusWeeks(3)

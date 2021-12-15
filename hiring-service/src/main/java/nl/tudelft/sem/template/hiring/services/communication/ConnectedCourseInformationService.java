@@ -53,8 +53,7 @@ public class ConnectedCourseInformationService implements CourseInformation {
         CourseInformationResponseModel model = getCourseById(courseId);
         if (model == null) {
             return null;
-        } else {
-            return model.getStartDate();
         }
+        return model.getStartDate();
     }
 }
