@@ -47,13 +47,4 @@ public class ConnectedCourseInformationService implements CourseInformation {
             return null;
         }
     }
-
-    @Override
-    public LocalDateTime getStartDate(String courseId) {
-        CourseInformationResponseModel model = getCourseById(courseId);
-        if (model == null) {
-            return null;
-        }
-        return model.getStartDate();
-    }
 }

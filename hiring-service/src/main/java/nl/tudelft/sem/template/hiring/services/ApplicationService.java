@@ -13,6 +13,7 @@ import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
+import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.stereotype.Service;
 
@@ -48,9 +49,13 @@ public class ApplicationService {
      * @return boolean whether the application meets the requirements and thus saved.
      */
     public boolean checkAndSave(Application application) {
-        if (!application.meetsRequirements()) {
+        CourseInformationResponseModel course = courseInformation.getCourseById(application.getCourseId());
+        if (course == null) {
+            //Course does not exist
             return false;
-        } else if (courseInformation.getStartDate(application.getCourseId()).minusWeeks(3)
+        } else if (!application.meetsRequirements()) {
+            return false;
+        } else if (course.getStartDate().minusWeeks(3)
                 .isBefore(LocalDateTime.now())) {
             return false;
         }

@@ -23,6 +23,7 @@ import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
+import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,8 +61,13 @@ public class ApplicationServiceTest {
                 motivation, ApplicationStatus.PENDING);
         assertThat(validApplication.meetsRequirements()).isTrue();
 
-        when(mockCourseInformation.getStartDate("CSE1200")).thenReturn(LocalDateTime.of(2022,
-                Month.SEPTEMBER, 1, 9, 0, 0));
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
 
         //Act
         applicationService.checkAndSave(validApplication);
@@ -79,8 +85,13 @@ public class ApplicationServiceTest {
                 motivation, ApplicationStatus.PENDING);
         assertThat(invalidApplication.meetsRequirements()).isFalse();
 
-        when(mockCourseInformation.getStartDate("cse1200")).thenReturn(LocalDateTime.of(2022,
-                Month.SEPTEMBER, 1, 9, 0, 0));
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
 
         //Act
         applicationService.checkAndSave(invalidApplication);
@@ -98,8 +109,13 @@ public class ApplicationServiceTest {
                 motivation, ApplicationStatus.PENDING);
         assertThat(invalidApplication.meetsRequirements()).isFalse();
 
-        when(mockCourseInformation.getStartDate("cse1200")).thenReturn(LocalDateTime.of(2022,
-                Month.JANUARY, 1, 9, 0, 0));
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2022, Month.JANUARY, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
 
         //Act
         applicationService.checkAndSave(invalidApplication);
