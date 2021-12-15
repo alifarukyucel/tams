@@ -81,11 +81,14 @@ public class ApplicationController {
     @DeleteMapping ("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody ApplicationKey model) {
 
-        boolean success = applicationService.checkAndWithdraw(model.getCourseId(), model.getNetId());
-        if (success) {
-            return ResponseEntity.ok().build();
-        } else {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Withdrawing isn't possible at this moment");
+        try {
+            if (applicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
+                return ResponseEntity.ok().build();
+            }
+            throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
+
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
