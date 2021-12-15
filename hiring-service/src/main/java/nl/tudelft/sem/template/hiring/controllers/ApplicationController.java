@@ -132,10 +132,10 @@ public class ApplicationController {
      * @param courseId The courseId as String.
      * @return The list of pending applications (extended with rating) for that course.
      */
-    @GetMapping("/getPendingApplications/{courseId}")
+    @GetMapping("/applications/{courseId}/pending")
     public ResponseEntity<List<PendingApplicationResponseModel>> getPendingApplications(@PathVariable String courseId) {
         if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
