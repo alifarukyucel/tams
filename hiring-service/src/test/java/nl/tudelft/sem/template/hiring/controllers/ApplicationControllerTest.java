@@ -280,7 +280,7 @@ public class ApplicationControllerTest {
                 .thenReturn(expectedMap);
 
         //Act
-        ResultActions action = mockMvc.perform(get("/getPendingApplications/CSE1300")
+        ResultActions action = mockMvc.perform(get("/applications/CSE1300/pending")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Joe"));
         MvcResult result = action
@@ -309,10 +309,10 @@ public class ApplicationControllerTest {
                 .thenReturn(false);
 
         //Act
-        ResultActions result = mockMvc.perform(get("/getPendingApplications/CSE1300")
+        ResultActions result = mockMvc.perform(get("/applications/CSE1300/pending")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Joe"));
-        result.andExpect(status().isBadRequest());
+        result.andExpect(status().isForbidden());
     }
 
     private List<PendingApplicationResponseModel> parsePendingApplicationsResult(MvcResult result) throws Exception {

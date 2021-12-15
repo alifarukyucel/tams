@@ -16,8 +16,7 @@ import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.stereotype.Service;
 
-//PMD.DataflowAnomalies are suppressed because they occur in a place where there is no problem at all.
-@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+
 @Service
 public class ApplicationService {
 
@@ -152,6 +151,8 @@ public class ApplicationService {
      * @param applications A list of the desired applications to be extended with a rating.
      * @return a list of extendApplicationRequestModels, created with the extended applications and the TA-ratings.
      */
+    //PMD.DataflowAnomalies are suppressed because they occur in a place where there is no problem at all.
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public List<PendingApplicationResponseModel> extendWithRating(List<Application> applications) {
         List<PendingApplicationResponseModel> extendedApplications = new ArrayList<>();
 
