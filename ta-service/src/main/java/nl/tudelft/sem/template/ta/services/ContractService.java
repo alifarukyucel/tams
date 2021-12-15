@@ -3,10 +3,14 @@ package nl.tudelft.sem.template.ta.services;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
+import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
+import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * The ContractService.
@@ -15,10 +19,84 @@ import org.springframework.stereotype.Service;
 @Service
 public class ContractService {
 
+    private final transient double studentsPerOneTa = 20f;
+
     private final transient ContractRepository contractRepository;
 
-    public ContractService(ContractRepository contractRepository) {
+    private final transient CourseInformation courseInformation;
+
+    public ContractService(ContractRepository contractRepository, CourseInformation courseInformation) {
         this.contractRepository = contractRepository;
+        this.courseInformation = courseInformation;
+    }
+
+
+    /**
+     * Create a contract that is unsigned.
+     * Note that this method ensures that the contract does not exist.
+     *
+     * @param courseId courseId of contract
+     * @param netId netId of TA.
+     * @param maxHours max amount of hours g a TA can work
+     * @param duties of the TA
+     * @return a saved instance of Contract.
+     * @throws IllegalArgumentException if any of the parameters are null or invalid,
+     *                                  the contract already exists, or
+     *                                  no more TAs are allowed to be hired for the course.
+     */
+    public Contract createUnsignedContract(String netId, String courseId,
+                                                        int maxHours, String duties)
+                                            throws IllegalArgumentException {
+
+        // Check if parameters were given are valid.
+        if (StringUtils.isEmpty(netId)
+            || StringUtils.isEmpty(courseId)
+            || maxHours <= 0) {
+            throw new IllegalArgumentException("netId, courseId, maxHours are required and need to be valid.");
+        }
+
+        // Check if contract already exists - return an error if not.
+        if (contractExists(netId, courseId)) {
+            throw new IllegalArgumentException("This contract already exists!");
+        }
+
+        if (isTaLimitReached(courseId)) {
+            throw new IllegalArgumentException("No more TAs can be hired for this course.");
+        }
+
+        // Create the actual contract with the builder.
+        Contract contract = Contract.builder()
+            .netId(netId)
+            .courseId(courseId)
+            .maxHours(maxHours)
+            .duties(duties)
+            .signed(false) // not signed yet!
+            .build();
+
+        // save can also throw an IllegalArgumentException if failed.
+        contract = save(contract);
+        return contract;
+    }
+
+
+    /**
+     * Returns the requested contract based on the users netId and the specified CourseId.
+     *
+     * @param courseId The specified course to which the contract belongs.
+     * @return true if more TAs can be hired.
+     * @throws IllegalArgumentException if the course cannot be retrieved.
+     */
+    private boolean isTaLimitReached(String courseId) {
+        CourseInformationResponseModel model = courseInformation.getCourseById(courseId);
+        if (model == null) {
+            throw new IllegalArgumentException("Could not retrieve course");
+        }
+
+        int allowedTas = (int) Math.ceil(model.getNumberOfStudents() / studentsPerOneTa);
+
+        long hiredTas = contractRepository.count(createContractExample(null, courseId));
+
+        return hiredTas >= allowedTas;
     }
 
     /**
@@ -34,8 +112,12 @@ public class ContractService {
             throw new NoSuchElementException("A contract must have a netId and courseId");
         }
 
-        List<Contract> contracts = getContractsBy(netId, courseId);
-        return contracts.get(0);
+        var contract = contractRepository.findById(new ContractId(netId, courseId));
+        if (contract.isEmpty()) {
+            throw new NoSuchElementException("The requested contract does not exist");
+        }
+
+        return contract.get();
     }
 
     /**
@@ -64,6 +146,7 @@ public class ContractService {
         return contracts;
     }
 
+
     /**
      * Returns all the contracts that have a certain netId.
      *
@@ -73,6 +156,24 @@ public class ContractService {
      */
     public List<Contract> getContractsBy(String netId) throws NoSuchElementException {
         return getContractsBy(netId, null);
+    }
+
+
+    /**
+     * Returns whether a contract already exists.
+     *
+     * @param netId The contract's netId (required)
+     * @param courseId The contract's courseId (required)
+     * @returns boolean whether contract exists.
+     */
+    public boolean contractExists(String netId, String courseId) {
+        try {
+            // This method throws an exception when contract does not exist.
+            getContract(netId, courseId);
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     /**
@@ -94,6 +195,22 @@ public class ContractService {
     }
 
     /**
+     * Set a contracts rating to a new value.
+     *
+     * @param netId     The netId of the user whose contract we are changing.
+     * @param courseId  The course to which the contract belongs.
+     * @throws NoSuchElementException Thrown if contract could not be found.
+     * @throws IllegalArgumentException Thrown if rating was not between 0 and 10.
+     */
+    public void rate(String netId, String courseId, double rating)
+        throws NoSuchElementException, IllegalArgumentException {
+        Contract contract = getContract(netId, courseId);
+        contract.setRating(rating);
+        contractRepository.save(contract);
+    }
+
+
+    /**
      * Saves a given contract object back to the database.
      *
      * @param contract The contract to save.
@@ -113,7 +230,8 @@ public class ContractService {
      */
     private Example<Contract> createContractExample(String netId, String courseId) {
         ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
-                                                        .withIgnoreNullValues();
+                                                        .withIgnoreNullValues()
+                                                        .withIgnorePaths("rating");
         Example<Contract> example = Example.of(
                 Contract.builder()
                         .courseId(courseId)
