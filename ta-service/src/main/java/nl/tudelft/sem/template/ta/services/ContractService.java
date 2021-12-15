@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
+import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
+import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,15 @@ import org.springframework.util.StringUtils;
 @Service
 public class ContractService {
 
+    private final transient double studentsPerOneTa = 20f;
+
     private final transient ContractRepository contractRepository;
 
-    public ContractService(ContractRepository contractRepository) {
+    private final transient CourseInformation courseInformation;
+
+    public ContractService(ContractRepository contractRepository, CourseInformation courseInformation) {
         this.contractRepository = contractRepository;
+        this.courseInformation = courseInformation;
     }
 
 
@@ -33,8 +40,9 @@ public class ContractService {
      * @param maxHours max amount of hours g a TA can work
      * @param duties of the TA
      * @return a saved instance of Contract.
-     * @throws IllegalArgumentException if any of the parameters are null or invalid
-     *                                  or when contract already exists.
+     * @throws IllegalArgumentException if any of the parameters are null or invalid,
+     *                                  the contract already exists, or
+     *                                  no more TAs are allowed to be hired for the course.
      */
     public Contract createUnsignedContract(String netId, String courseId,
                                                         int maxHours, String duties)
@@ -52,6 +60,10 @@ public class ContractService {
             throw new IllegalArgumentException("This contract already exists!");
         }
 
+        if (isTaLimitReached(courseId)) {
+            throw new IllegalArgumentException("No more TAs can be hired for this course.");
+        }
+
         // Create the actual contract with the builder.
         Contract contract = Contract.builder()
             .netId(netId)
@@ -66,6 +78,26 @@ public class ContractService {
         return contract;
     }
 
+
+    /**
+     * Returns the requested contract based on the users netId and the specified CourseId.
+     *
+     * @param courseId The specified course to which the contract belongs.
+     * @return true if more TAs can be hired.
+     * @throws IllegalArgumentException if the course cannot be retrieved.
+     */
+    private boolean isTaLimitReached(String courseId) {
+        CourseInformationResponseModel model = courseInformation.getCourseById(courseId);
+        if (model == null) {
+            throw new IllegalArgumentException("Could not retrieve course");
+        }
+
+        int allowedTas = (int) Math.ceil(model.getNumberOfStudents() / studentsPerOneTa);
+
+        long hiredTas = contractRepository.count(createContractExample(null, courseId));
+
+        return hiredTas >= allowedTas;
+    }
 
     /**
      * Returns the requested contract based on the users netId and the specified CourseId.
