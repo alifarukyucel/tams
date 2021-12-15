@@ -6,5 +6,6 @@ import nl.tudelft.sem.template.hiring.services.communication.models.CreateContra
 
 public interface ContractInformation {
     boolean createContract(CreateContractRequestModel model);
+
     Map<String, Float> getTaRatings(List<String> netIds);
 }

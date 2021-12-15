@@ -44,6 +44,17 @@ public class ApplicationService {
     }
 
     /**
+     * Finds all applications with a given courseId and status.
+     *
+     * @param courseId The courseId of the course.
+     * @param status The status of the application(s).
+     * @return a list of applications.
+     */
+    public List<Application> findAllByCourseAndStatus(String courseId, ApplicationStatus status) {
+        return applicationRepository.findAllByCourseIdAndStatus(courseId, status);
+    }
+
+    /**
      * Retrieves an application by its course id and netid.
      *
      * @param courseId the course id of the application

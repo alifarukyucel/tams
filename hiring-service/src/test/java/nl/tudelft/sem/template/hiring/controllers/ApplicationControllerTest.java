@@ -325,6 +325,7 @@ public class ApplicationControllerTest {
         }
         return res;
     }
+
     @Test
     public void acceptValidApplication() throws Exception {
         // Arrange

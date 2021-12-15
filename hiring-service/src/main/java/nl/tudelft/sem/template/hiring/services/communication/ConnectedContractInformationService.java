@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.hiring.services.communication;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,5 +28,10 @@ public class ConnectedContractInformationService implements ContractInformation 
         } catch (Exception ex) {
             return false;
         }
+    }
+
+    @Override
+    public Map<String, Float> getTaRatings(List<String> netIds) {
+        return new HashMap<>();
     }
 }
