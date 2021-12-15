@@ -73,7 +73,8 @@ public class CourseController {
      *
      * @param netId             id of user
      * @param courseId          id of course
-     * @return the course found in the database with the given id
+     * @return 200 OK if user is responsible lecturer of the course
+     *         404 Not Found if not.
      */
     @GetMapping("{courseId}/lecturer/{netId}") // course/{courseId}/lecturer/{netId}
     public ResponseEntity<String> isResponsibleLecturer(@PathVariable String netId,
