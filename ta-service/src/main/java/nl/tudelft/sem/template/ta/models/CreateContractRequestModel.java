@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Data
-public class RetrieveHoursToBeApprovedRequestModel {
-    private String course;
+public class CreateContractRequestModel {
+    private String courseId;
+    private String netId;
+    private String duties; 
+    private int maxHours;
 }

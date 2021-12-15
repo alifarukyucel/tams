@@ -25,4 +25,3 @@ public class MockCourseInformationProfile {
         return Mockito.mock(CourseInformation.class);
     }
 }
-

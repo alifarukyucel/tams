@@ -7,12 +7,15 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
+import nl.tudelft.sem.template.ta.models.CreateContractRequestModel;
+import nl.tudelft.sem.template.ta.models.RateContractRequestModel;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.services.ContractService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +44,33 @@ public class ContractController {
     }
 
     /**
+     * Endpoint for creating a new unsigned contract for a course.
+     * Only a responsible lecturer from that course is allowed to make this request.
+     * This request will be called from the Hiring Microservice.
+     *
+     * @param request a CreateContractRequestModel
+     * @return 200 OK with ContractResponseModel if saving was a success.
+     *         400 Bad Request if contract already exists or parameters are invalid.
+     *         403 Forbidden if not a responsible lecturer for the course.
+     */
+    @PostMapping("/create")
+    public ResponseEntity<ContractResponseModel> createContract(@RequestBody CreateContractRequestModel request)
+        throws ResponseStatusException {
+
+        checkAuthorized(request.getCourseId());
+
+        try {
+            Contract contract = contractService.createUnsignedContract(
+                request.getNetId(), request.getCourseId(), request.getMaxHours(), request.getDuties());
+            return ResponseEntity.ok(ContractResponseModel.fromContract(contract));
+
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+
+    /**
      * Set a users contract signed status. This will allow them to begin working.
      *
      * @param request The request made to the service containing the approval of their contract.
@@ -49,6 +79,7 @@ public class ContractController {
     @PutMapping("/sign")
     public ResponseEntity<String> sign(@RequestBody AcceptContractRequestModel request)
         throws ResponseStatusException {
+
         try {
             contractService.sign(authManager.getNetid(), request.getCourse());
             return ResponseEntity.ok().build();
@@ -57,6 +88,31 @@ public class ContractController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
+    /**
+     * Endpoint for rating a TA's performance.
+     *
+     * @param request a RateContractRequestModel
+     * @return 200 OK if rating was saved successfully.
+     *         400 Bad Request if rating was invalid
+     *         404 Not Found if contract has not been found
+     *         403 Forbidden if not a responsible lecturer for the course.
+     */
+    @PostMapping("/rate")
+    public ResponseEntity<String> rateContract(@RequestBody RateContractRequestModel request)
+        throws ResponseStatusException {
+
+        checkAuthorized(request.getCourseId());
+
+        try {
+            contractService.rate(request.getNetId(), request.getCourseId(), request.getRating());
+            return ResponseEntity.ok("Successfully saved rating!");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -80,8 +136,8 @@ public class ContractController {
      * @throws ResponseStatusException if user is not signed-in or no contracts can be found.
      */
     @GetMapping("/{course}/mine")
-    public ResponseEntity<List<ContractResponseModel>>
-        getSignedInUserContractByCourse(@PathVariable String course)
+    public ResponseEntity<List<ContractResponseModel>> getSignedInUserContractByCourse(
+        @PathVariable String course)
             throws ResponseStatusException {
         return findContractBy(authManager.getNetid(), course);
     }
@@ -98,15 +154,14 @@ public class ContractController {
      * @throws ResponseStatusException if netId is not given or when no contracts can not be found.
      */
     @GetMapping("/{course}/{netId}")
-    public ResponseEntity<List<ContractResponseModel>>
-        getUserContracts(@PathVariable String course, @PathVariable String netId)
+    public ResponseEntity<List<ContractResponseModel>> getUserContracts(
+        @PathVariable String course, @PathVariable String netId)
         throws ResponseStatusException {
 
-        boolean authorized = courseInformation
-                            .isResponsibleLecturer(authManager.getNetid(), course);
-
-        if (!authManager.getNetid().equals(netId) && !authorized) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        // Check if we are authorized as
+        // responsible lecturer for this course.
+        if (!authManager.getNetid().equals(netId)) {
+            checkAuthorized(course);
         }
 
         return findContractBy(netId, course);
@@ -121,8 +176,9 @@ public class ContractController {
      * @return a list of contracts
      * @throws ResponseStatusException if no contracts have been found.
      */
-    private ResponseEntity<List<ContractResponseModel>>
-        findContractBy(String netId, String courseId) throws ResponseStatusException  {
+    private ResponseEntity<List<ContractResponseModel>> findContractBy(
+        String netId, String courseId) throws ResponseStatusException  {
+
         try {
             List<Contract> contracts = contractService.getContractsBy(netId, courseId);
             List<ContractResponseModel> response = contracts.stream().map(contract ->
@@ -142,9 +198,26 @@ public class ContractController {
      * @return a list of contracts
      * @throws ResponseStatusException if no contracts have been found.
      */
-    private ResponseEntity<List<ContractResponseModel>>
-        findContractBy(String netId) throws ResponseStatusException {
+    private ResponseEntity<List<ContractResponseModel>> findContractBy(
+        String netId) throws ResponseStatusException {
         return findContractBy(netId, null);
+    }
+
+
+    /**
+     * Helper method to check if the user is a responsible lecturer for a certain course.
+     *
+     * @param courseId the courseId the user needs to be a responsible lecturer for.
+     * @throws ResponseStatusException if not a responsible lecturer
+     */
+    private void checkAuthorized(String courseId) throws ResponseStatusException {
+        boolean authorized = courseInformation
+            .isResponsibleLecturer(authManager.getNetid(), courseId);
+
+        if (!authorized) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                "Only a responsible lecturer is allowed to make this request.");
+        }
     }
 
 }
