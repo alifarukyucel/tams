@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.hiring.services.communication;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
@@ -16,6 +17,11 @@ public class ConnectedCourseInformationService implements CourseInformation {
 
     public ConnectedCourseInformationService(MicroserviceCommunicationHelper comm) {
         this.comm = comm;
+    }
+
+    @Override
+    public LocalDate startDate(String courseId) {
+        return LocalDate.now().plusWeeks(4L);
     }
 
     @Override

@@ -7,6 +7,7 @@ import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
+import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,14 @@ public class ApplicationService {
 
     private final transient ContractInformation contractInformation;
 
-    public ApplicationService(ApplicationRepository applicationRepository, ContractInformation contractInformation) {
+    private transient CourseInformation courseInformation;
+
+
+    public ApplicationService(ApplicationRepository applicationRepository, ContractInformation contractInformation,
+                              CourseInformation courseInformation) {
         this.applicationRepository = applicationRepository;
         this.contractInformation = contractInformation;
+        this.courseInformation = courseInformation;
     }
 
     /**

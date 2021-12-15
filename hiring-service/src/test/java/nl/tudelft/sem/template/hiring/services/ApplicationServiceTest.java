@@ -31,7 +31,6 @@ import java.time.LocalDate;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-@ActiveProfiles({"mockCourseInformation"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles({"test", "mockCourseInformation", "mockContractInformation"})
 public class ApplicationServiceTest {
@@ -46,6 +45,10 @@ public class ApplicationServiceTest {
 
     @Autowired
     private transient CourseInformation courseInformation;
+
+    @Autowired
+    private transient ContractInformation mockContractInformation;
+
 
     @Test
     public void validCheckAndSaveTest() {

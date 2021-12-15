@@ -66,9 +66,6 @@ public class ApplicationControllerTest {
     @Autowired
     private transient TokenVerifier mockTokenVerifier;
 
-    @Autowired
-    private transient CourseInformation mockCourseInformation;
-
     /**
      * Setup mocking before tests run.
      */
