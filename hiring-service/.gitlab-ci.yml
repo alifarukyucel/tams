@@ -5,22 +5,30 @@ stages:
   - staticAnalysis
   - test
 
+variables:
+  # Disable the Gradle daemon to ensure isolated runs of the CI pipeline.
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
 build-hiring-service:
   stage: build
   script:
-    gradle build
+    gradle hiring-service:assemble hiring-service:testClasses
 
 checkStyle-hiring-service:
   stage: staticAnalysis
   script:
-    gradle checkstyleMain checkStyleTest
+    gradle hiring-service:checkstyleMain hiring-service:checkStyleTest
+  allow_failure: true
 
 PMD-hiring-service:
   stage: staticAnalysis
   script:
-      gradle pmdMain
+      gradle hiring-service:pmdMain
+  allow_failure: true
 
 test-hiring-service:
   stage: test
   script:
-    gradle test
+    - gradle hiring-service:test hiring-service:jacocoTestReport
+    - cat hiring-service/build/reports/jacoco/test/html/index.html | grep -Po "Total.*?([0-9]{1,3})%"
+  coverage: /([0-9]{1,3})%/

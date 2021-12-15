@@ -2,12 +2,17 @@ package nl.tudelft.sem.template.ta.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
+import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
+import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,12 +20,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional  // prevents lazy loading issues and will keep the connection open.
+@ActiveProfiles({"test", "mockCourseInformation"})
 class ContractServiceTest {
 
     @Autowired
@@ -29,10 +36,8 @@ class ContractServiceTest {
     @Autowired
     private transient ContractRepository contractRepository;
 
-    @BeforeEach
-    void setUp() {
-        contractRepository.deleteAll();
-    }
+    @Autowired
+    private transient CourseInformation mockCourseInformation;
 
     @Test
     void signExistingContract() {
@@ -50,7 +55,9 @@ class ContractServiceTest {
         contractService.sign(contract.getNetId(), contract.getCourseId());
 
         // assert
-        assertThat(contractRepository.getOne(contract.getId()).getSigned()).isTrue();
+        Contract fetchedContract = contractRepository.getOne(
+            new ContractId(contract.getNetId(), contract.getCourseId()));
+        assertThat(fetchedContract.getSigned()).isTrue();
     }
 
     @Test
@@ -100,6 +107,7 @@ class ContractServiceTest {
             .netId("PVeldHuis")
             .courseId("CSE2310")
             .maxHours(5)
+            .rating(8.2)
             .duties("Work really hard")
             .signed(false)
             .build();
@@ -152,6 +160,7 @@ class ContractServiceTest {
             .netId("PVeldHuis")
             .courseId("CSE2550")
             .maxHours(5)
+            .rating(9.53)
             .duties("Work really hard")
             .signed(false)
             .build());
@@ -160,6 +169,7 @@ class ContractServiceTest {
             .netId("GerryEik")
             .courseId("CSE2310")
             .maxHours(5)
+            .rating(7)
             .duties("Work really hard")
             .signed(false)
             .build());
@@ -168,6 +178,7 @@ class ContractServiceTest {
             .netId("PVeldHuis")
             .courseId("CSE2310")
             .maxHours(5)
+            .rating(6)
             .duties("Work really hard")
             .signed(false)
             .build();
@@ -235,14 +246,302 @@ class ContractServiceTest {
     @Test
     void save() {
         // arrange
-        Contract contract = Contract.builder().netId("Gert").courseId("CSE2310").build();
+        Contract contract = Contract.builder()
+            .netId("Gert")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .build();
 
         // act
         contract = contractService.save(contract);
 
         // assert
-        Contract expected = contractRepository.getOne(contract.getId());
-        assertThat(contract.getId()).isNotNull();
+        Contract expected = contractRepository.getOne(
+            new ContractId(contract.getNetId(), contract.getCourseId()));
         assertThat(contract).isEqualTo(expected);
     }
+
+    @Test
+    void createUnsignedContract() {
+        // Arrange
+        contractRepository.save(Contract.builder()
+            .netId("Martin")
+            .courseId("CSE1105")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build()
+        );
+
+        contractRepository.save(Contract.builder()
+            .netId("Martin")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build()
+        );
+
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(21)
+                .build());
+
+
+        // Act
+        Contract saved = contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
+        assertThat(contractRepository.findAll().size()).isEqualTo(3);
+        assertThat(contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310")))
+            .isEqualTo(saved);
+    }
+
+    @Test
+    void createUnsignedContractExceedingTaLimit() {
+        contractRepository.save(Contract.builder()
+            .netId("Martin")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build()
+        );
+
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(20)
+                .build());
+
+
+        // Act
+        ThrowingCallable c = () -> contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        assertThat(contractRepository.findAll().size()).isEqualTo(1);
+    }
+
+    @Test
+    void createUnsignedContractInaccessibleCourseService() {
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(null);
+
+
+        // Act
+        ThrowingCallable c = () -> contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        assertThat(contractRepository.findAll().size()).isZero();
+    }
+
+    @Test
+    void createUnsignedContract_illegalArguments() {
+        // Arrange
+        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2525")
+                .description("Very cool course")
+                .numberOfStudents(10000)
+                .build());
+
+        // Act
+        ThrowingCallable actionNegativeMaxHours = () ->
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", -1, "Duties");
+        ThrowingCallable actionCourseNull = () ->
+            contractService.createUnsignedContract("WinstijnSmit", null, 10, "Duties");
+        ThrowingCallable actionCourseEmpty = () ->
+            contractService.createUnsignedContract("WinstijnSmit", "", 10, "Duties");
+        ThrowingCallable actionNetIdNull = () ->
+            contractService.createUnsignedContract(null, "", 10, "Duties");
+        ThrowingCallable actionNetIdEmpty = () ->
+            contractService.createUnsignedContract("", "CSE2525", 10, "Duties");
+
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNegativeMaxHours);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseNull);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseEmpty);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdNull);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdEmpty);
+        assertThat(contractRepository.findAll().size()).isEqualTo(0);
+    }
+
+
+    @Test
+    void createUnsignedContract_createSame() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2525")
+            .maxHours(10)
+            .duties("Duties")
+            .signed(false)
+            .build();
+        contractRepository.save(contract);
+
+        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2525")
+                .description("Very cool course")
+                .numberOfStudents(10000)
+                .build());
+
+        // Act
+        ThrowingCallable actionConflict = () ->
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 5, "Duties");
+
+        // There should be an error because there is a conflict.
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionConflict);
+        assertThat(contractRepository.findAll().size()).isEqualTo(1);
+    }
+
+    @Test
+    void contractExists_true() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // Act
+        boolean exists = contractService.contractExists("PVeldHuis", "CSE2310");
+
+        // Assert
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    void contractExists_false() {
+        // Arrange
+        Contract c1 = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CS2310")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contractRepository.save(c1);
+        Contract c2 = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2300")
+            .maxHours(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contractRepository.save(c2);
+
+        // Act
+        boolean exists = contractService.contractExists("WinstijnSmit", "CSE2310");
+
+        // Assert
+        assertThat(exists).isFalse();
+    }
+
+    @Test
+    void rate() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("PVeldHuis")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .rating(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // Act
+        contractService.rate(contract.getNetId(), contract.getCourseId(), 9.67);
+
+        // Assert
+        Contract fetchedContract = contractRepository.getOne(
+            new ContractId(contract.getNetId(), contract.getCourseId()));
+        assertThat(fetchedContract.getRating()).isEqualTo(9.67);
+    }
+
+    @Test
+    void rate_contractNotExists() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .rating(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // Act
+        ThrowingCallable actionNotFound = () ->
+            contractService.rate("SteveJobs", "CSE2525", 8);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNotFound);
+    }
+
+    @Test
+    void rate_ratingInvalid() {
+        // Arrange
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .maxHours(5)
+            .rating(5)
+            .duties("Work really hard")
+            .signed(false)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // Act
+        ThrowingCallable actionBelowZero = () ->
+            contractService.rate("WinstijnSmit", "CSE2310", -1);
+        ThrowingCallable actionAboveTen = () ->
+            contractService.rate("WinstijnSmit", "CSE2310", 10.1);
+
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionBelowZero);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionAboveTen);
+        Contract fetchedContract = contractRepository.getOne(
+            new ContractId(contract.getNetId(), contract.getCourseId()));
+        assertThat(fetchedContract.getRating()).isEqualTo(5);
+    }
+
 }

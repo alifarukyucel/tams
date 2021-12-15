@@ -1,7 +1,8 @@
 package nl.tudelft.sem.template.ta.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,25 +17,30 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
-@Table(name = "workedHours")
+@Table(name = "HourDeclarations")
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Data
-public class WorkedHours {
+public class HourDeclaration {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    int workedTime;
+    @Column(nullable = false)
+    private Integer workedTime;
 
-    boolean approved;
+    @Column(nullable = false)
+    private Boolean approved;
 
-    Date date;
+    @Column(nullable = false)
+    private Boolean reviewed;
 
-    String desc;
+    private LocalDateTime date;
+
+    private String desc;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    Contract contract;
+    private Contract contract;
 
 }
