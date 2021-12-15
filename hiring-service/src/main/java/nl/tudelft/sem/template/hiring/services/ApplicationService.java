@@ -26,6 +26,8 @@ public class ApplicationService {
     private final transient ContractInformation contractInformation;
     private final transient CourseInformation courseInformation;
 
+    private static final transient int maxCandidacies = 3;
+
     /**
      * Constructor for the application service, with the corresponding repositories / information classes.
      * Spring automatically chooses the best implementation for those interfaces.
@@ -223,7 +225,7 @@ public class ApplicationService {
      * @return false when the maximum number of applications hasn't been reached or true otherwise.
      */
     public boolean maxApplication(String netId) {
-        if (getApplicationFromStudent(netId).size() < 3) {
+        if (getApplicationFromStudent(netId).size() < maxCandidacies) {
             return false;
         }
         return true;
