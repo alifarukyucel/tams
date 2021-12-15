@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.hiring.services.communication;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;

@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.hiring.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +10,10 @@ import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
+import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
+import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.stereotype.Service;
 
@@ -21,25 +24,43 @@ public class ApplicationService {
     private final transient ApplicationRepository applicationRepository;
 
     private final transient ContractInformation contractInformation;
+    private final transient CourseInformation courseInformation;
 
-    public ApplicationService(ApplicationRepository applicationRepository, ContractInformation contractInformation) {
+    /**
+     * Constructor for the application service, with the corresponding repositories / information classes.
+     * Spring automatically chooses the best implementation for those interfaces.
+     *
+     * @param applicationRepository     An applicationRepository
+     * @param contractInformation       The contract information
+     * @param courseInformation         The course information
+     */
+    public ApplicationService(ApplicationRepository applicationRepository, ContractInformation contractInformation,
+                              CourseInformation courseInformation) {
         this.applicationRepository = applicationRepository;
         this.contractInformation = contractInformation;
+        this.courseInformation = courseInformation;
     }
 
     /**
      * Checks whether an application meets the requirements and saves or discards it based on this.
+     * It also checks whether the course isn't starting in less than 3 months already.
      *
      * @param application the application to check.
      * @return boolean whether the application meets the requirements and thus saved.
      */
     public boolean checkAndSave(Application application) {
-        if (application.meetsRequirements()) {
-            applicationRepository.save(application);
-            return true;
-        } else {
+        CourseInformationResponseModel course = courseInformation.getCourseById(application.getCourseId());
+        if (course == null) {
+            //Course does not exist
+            return false;
+        } else if (!application.meetsRequirements()) {
+            return false;
+        } else if (course.getStartDate().minusWeeks(3)
+                .isBefore(LocalDateTime.now())) {
             return false;
         }
+        applicationRepository.save(application);
+        return true;
     }
 
     /**

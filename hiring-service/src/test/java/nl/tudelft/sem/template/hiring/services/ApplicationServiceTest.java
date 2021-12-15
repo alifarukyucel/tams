@@ -9,6 +9,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +20,10 @@ import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
+import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
+import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +50,9 @@ public class ApplicationServiceTest {
     @Autowired
     private transient ContractInformation mockContractInformation;
 
+    @Autowired
+    private transient CourseInformation mockCourseInformation;
+
     @Test
     public void validCheckAndSaveTest() {
         //Arrange
@@ -53,6 +60,14 @@ public class ApplicationServiceTest {
         Application validApplication = new Application("CSE1200", "johndoe", (float) 6.0,
                 motivation, ApplicationStatus.PENDING);
         assertThat(validApplication.meetsRequirements()).isTrue();
+
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
 
         //Act
         applicationService.checkAndSave(validApplication);
@@ -63,12 +78,44 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    public void invalidCheckAndSaveTest() {
+    public void invalidGradeCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
         Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
                 motivation, ApplicationStatus.PENDING);
         assertThat(invalidApplication.meetsRequirements()).isFalse();
+
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
+
+        //Act
+        applicationService.checkAndSave(invalidApplication);
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+                .isEmpty();
+    }
+
+    @Test
+    public void invalidDateCheckAndSaveTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
+                motivation, ApplicationStatus.PENDING);
+        assertThat(invalidApplication.meetsRequirements()).isFalse();
+
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2022, Month.JANUARY, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
 
         //Act
         applicationService.checkAndSave(invalidApplication);

@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,7 @@ import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.security.TokenVerifier;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
+import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.template.hiring.utils.JsonUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +47,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -88,10 +92,18 @@ public class ApplicationControllerTest {
     @Test
     public void validApplicationTest() throws Exception {
         //Arrange
-        ApplicationRequestModel validModel = new ApplicationRequestModel("cse1200", 6.0f,
+        ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
 
         ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
+
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
 
         //Act
         ResultActions validResults = mockMvc.perform(post("/apply")
