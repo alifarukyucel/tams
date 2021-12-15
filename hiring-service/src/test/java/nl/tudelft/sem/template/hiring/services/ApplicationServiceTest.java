@@ -9,11 +9,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
+import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
@@ -21,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -177,6 +183,51 @@ public class ApplicationServiceTest {
                 .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
+    }
+
+    @Test
+    public void extendEmptyListWithRatingTest() {
+        //Arrange
+        List<Application> emptyList = new ArrayList<>();
+        List<PendingApplicationResponseModel> expectedResList = new ArrayList<>();
+
+        //Act
+        List<PendingApplicationResponseModel> resList = applicationService.extendWithRating(emptyList);
+
+        //Assert
+        assertThat(resList).isEqualTo(expectedResList);
+    }
+
+    @Test
+    public void extendWithRatingTest() {
+        //Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        Application application2 = new Application("CSE1300", "wsmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+
+        String[] netIds = new String[]{"jsmith", "wsmith"};
+        Map<String, Float> expectedMap = new HashMap<>() {{
+                put("jsmith", 8.0f);
+                put("wsmith", 9.0f);
+            }
+        };
+        when(mockContractInformation.getTaRatings(List.of(netIds)))
+                .thenReturn(expectedMap);
+
+        var resultList = applicationService.extendWithRating(List.of(application, application2));
+
+        var resultModel = new PendingApplicationResponseModel("CSE1300", "jsmith", 7.0f,
+                "I want to be cool too!", 8.0f);
+        var resultModel2 = new PendingApplicationResponseModel("CSE1300", "wsmith", 7.0f,
+                "I want to be cool too!", 9.0f);
+        List<PendingApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
+
+        assertThat(resultList).isEqualTo(expectedList);
+
+
+
+
     }
 
     @Test
