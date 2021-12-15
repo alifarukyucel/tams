@@ -1,6 +1,6 @@
 package nl.tudelft.sem.template.hiring.interfaces;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 
 

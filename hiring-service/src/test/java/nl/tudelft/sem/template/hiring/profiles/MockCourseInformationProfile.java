@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 /**
- * A configuration profile to allow injection of a mock TokenGenerator.
+ * A configuration profile to allow injection of a mock CourseInformation.
  */
 @Profile("mockCourseInformation")
 @Configuration

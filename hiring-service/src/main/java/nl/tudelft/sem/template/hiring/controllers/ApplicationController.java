@@ -2,18 +2,23 @@ package nl.tudelft.sem.template.hiring.controllers;
 
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
+import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -137,5 +142,24 @@ public class ApplicationController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * API Endpoint for retreiving all applications that are still pending as a JSON.
+     * These applications also contain their average rating as a TA, retreived from the TA-service.
+     *
+     * @param courseId The courseId as String.
+     * @return The list of pending applications (extended with rating) for that course.
+     */
+    @GetMapping("/applications/{courseId}/pending")
+    public ResponseEntity<List<PendingApplicationResponseModel>> getPendingApplications(@PathVariable String courseId) {
+        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        var extendedApplications = applicationService.extendWithRating(applications);
+
+        return ResponseEntity.ok(extendedApplications);
     }
 }

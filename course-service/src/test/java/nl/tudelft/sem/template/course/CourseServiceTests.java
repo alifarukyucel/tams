@@ -43,7 +43,7 @@ public class CourseServiceTests {
     final String testCourseName = "SEM";
     final String testDescription = "swe methods";
     final int testNumberOfStudents = 300;
-    final String responsibleLecturer = "fmulder";
+    final String expectedResponsibleLecturer = "fmulder";
     ArrayList<String> responsibleLecturers = new ArrayList<>();
 
     @BeforeEach
@@ -81,19 +81,6 @@ public class CourseServiceTests {
     }
 
     @Test
-    void save() {
-        // Arrange
-        Course course = new Course(testCourseId, testStartDate, testCourseName,
-                testDescription, testNumberOfStudents, responsibleLecturers);
-
-        // Act
-        ThrowableAssert.ThrowingCallable actionNull = () -> courseService.getCourseById(testCourseId);
-
-        // Assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(actionNull);
-    }
-
-    @Test
     void createCourse_NoExistingCourseInDatabase() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
@@ -120,6 +107,96 @@ public class CourseServiceTests {
 
         // Assert
         assertThatExceptionOfType(ConflictException.class).isThrownBy(actionConflict);
+    }
+
+    @Test
+    public void isResponsibleLecturer() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        boolean isResponsible = courseService.isResponsibleLecturer(expectedResponsibleLecturer, course.getId());
+
+        // Assert
+        assertThat(isResponsible).isTrue();
+    }
+
+    @Test
+    public void isResponsibleLecturer_multipleLecturers() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);
+        responsibleLecturers.add("annibalePanichella");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        boolean isResponsible = courseService.isResponsibleLecturer(expectedResponsibleLecturer, course.getId());
+
+        // Assert
+        assertThat(isResponsible).isTrue();
+    }
+
+    @Test
+    public void isNotResponsibleLecturer_differentLecturer_throwsNoSuchElementException() {
+        // Arrange
+        String wrongLecturer = "someOtherGuy";
+        responsibleLecturers.add(wrongLecturer);
+
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ThrowableAssert.ThrowingCallable action = () ->
+                courseService.isResponsibleLecturer(expectedResponsibleLecturer, course.getId());
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(action);
+    }
+
+    @Test
+    public void isNotResponsibleLecturer_differentCourse_throwsNoSuchElementException() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);
+
+        ArrayList<String> falseResponsibleLecturers = new ArrayList<>();
+        falseResponsibleLecturers.add("someOtherGuy");
+
+        Course courseWithWrongTeacher = new Course("CourseWithWrongTeacher", testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, falseResponsibleLecturers);
+
+        Course courseWithCorrectLecturer = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+
+        courseRepository.save(courseWithWrongTeacher);
+        courseRepository.save(courseWithCorrectLecturer);
+
+        // Act
+        ThrowableAssert.ThrowingCallable action = () ->
+                courseService.isResponsibleLecturer(expectedResponsibleLecturer, courseWithWrongTeacher.getId());
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(action);
+    }
+
+    @Test
+    public void isResponsibleLecturer_courseDoesNotExist_throwsNoSuchElementException() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);
+
+        // Act
+        ThrowableAssert.ThrowingCallable action = () ->
+                courseService.isResponsibleLecturer(expectedResponsibleLecturer, testCourseId);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(action);
     }
 
 }
