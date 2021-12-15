@@ -101,7 +101,7 @@ public class ApplicationServiceTest {
         assertThat(invalidApplication.meetsRequirements()).isFalse();
 
         when(mockCourseInformation.getStartDate("cse1200")).thenReturn(LocalDateTime.of(2022,
-                Month.FEBRUARY, 1, 9, 0, 0));
+                Month.JANUARY, 1, 9, 0, 0));
 
         //Act
         applicationService.checkAndSave(invalidApplication);

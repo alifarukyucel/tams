@@ -52,7 +52,7 @@ public class ApplicationService {
         System.out.println(courseInformation.getStartDate(application.getCourseId()));
         if (!application.meetsRequirements()) {
             return false;
-        } else if (courseInformation.getStartDate(application.getCourseId()).minusMonths(3)
+        } else if (courseInformation.getStartDate(application.getCourseId()).minusWeeks(3)
                 .isBefore(LocalDateTime.now())) {
             return false;
         }
