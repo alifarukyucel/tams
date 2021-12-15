@@ -24,6 +24,7 @@ import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.security.AuthManager;
 import nl.tudelft.sem.template.ta.security.TokenVerifier;
 import nl.tudelft.sem.template.ta.services.ContractService;
+import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.template.ta.utils.JsonUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,7 @@ class ContractControllerTest {
     private ContractRepository contractRepository;
 
     @Autowired
-    private CourseInformation courseInformation;
+    private CourseInformation mockCourseInformation;
 
     private Contract defaultContract;
     private List<Contract> contracts;
@@ -113,7 +114,7 @@ class ContractControllerTest {
         when(mockAuthenticationManager.getNetid()).thenReturn(netId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(netId);
-        when(courseInformation.isResponsibleLecturer(anyString(), anyString()))
+        when(mockCourseInformation.isResponsibleLecturer(anyString(), anyString()))
             .thenReturn(isResponsibleLecturer);
     }
 
@@ -360,6 +361,12 @@ class ContractControllerTest {
             .courseId("CSE2310").netId("BillGates").maxHours(10).duties("My duties").build();
         int size = contractRepository.findAll().size();
 
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(41)
+                .build());
+
         // Act
         ResultActions action = mockMvc.perform(post("/contracts/create")
             .contentType(MediaType.APPLICATION_JSON)
@@ -381,6 +388,36 @@ class ContractControllerTest {
                     ))
                     .isEqualTo(response); // verify that is saved is ours.
         assertThat(contractRepository.findAll().size()).isEqualTo(size + 1);
+
+    }
+
+    @Test
+    void createContractExceedingTaLimit() throws Exception {
+        // Arrange
+        mockAuthentication("Stefan", true);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("BillGates").maxHours(10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(40)
+                .build());
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isBadRequest())
+            .andReturn();
+
+        assertThat(contractRepository.findAll().size()).isEqualTo(size);
 
     }
 
@@ -412,6 +449,12 @@ class ContractControllerTest {
             .courseId("CSE2310").netId("SteveJobs").maxHours(-10).duties("My duties").build();
         int size = contractRepository.findAll().size();
 
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(10000)
+                .build());
+
         // Act
         ResultActions action = mockMvc.perform(post("/contracts/create")
             .contentType(MediaType.APPLICATION_JSON)
@@ -431,6 +474,12 @@ class ContractControllerTest {
         CreateContractRequestModel model = CreateContractRequestModel.builder()
             .courseId("CSE2310").netId("WinstijnSmit").maxHours(10).duties("My duties").build();
         int size = contractRepository.findAll().size();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(10000)
+                .build());
 
         // Act
         ResultActions action = mockMvc.perform(post("/contracts/create")

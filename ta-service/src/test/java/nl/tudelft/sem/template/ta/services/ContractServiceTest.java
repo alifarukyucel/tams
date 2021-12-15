@@ -2,13 +2,17 @@ package nl.tudelft.sem.template.ta.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
+import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
+import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +20,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional  // prevents lazy loading issues and will keep the connection open.
+@ActiveProfiles({"test", "mockCourseInformation"})
 class ContractServiceTest {
 
     @Autowired
@@ -29,6 +35,9 @@ class ContractServiceTest {
 
     @Autowired
     private transient ContractRepository contractRepository;
+
+    @Autowired
+    private transient CourseInformation mockCourseInformation;
 
     @Test
     void signExistingContract() {
@@ -256,6 +265,24 @@ class ContractServiceTest {
     @Test
     void createUnsignedContract() {
         // Arrange
+        contractRepository.save(Contract.builder()
+            .netId("Martin")
+            .courseId("CSE1105")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build()
+        );
+
+        contractRepository.save(Contract.builder()
+            .netId("Martin")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build()
+        );
+
         Contract contract = Contract.builder()
             .netId("WinstijnSmit")
             .courseId("CSE2310")
@@ -264,19 +291,93 @@ class ContractServiceTest {
             .duties("Heel hard werken")
             .build();
 
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(21)
+                .build());
+
 
         // Act
         Contract saved = contractService.createUnsignedContract(
                 contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
 
         // Assert
-        assertThat(contractRepository.findAll().size()).isEqualTo(1);
+        assertThat(contractRepository.findAll().size()).isEqualTo(3);
         assertThat(contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310")))
             .isEqualTo(saved);
     }
 
     @Test
+    void createUnsignedContractExceedingTaLimit() {
+        contractRepository.save(Contract.builder()
+            .netId("Martin")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build()
+        );
+
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(20)
+                .build());
+
+
+        // Act
+        ThrowingCallable c = () -> contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        assertThat(contractRepository.findAll().size()).isEqualTo(1);
+    }
+
+    @Test
+    void createUnsignedContractInaccessibleCourseService() {
+        Contract contract = Contract.builder()
+            .netId("WinstijnSmit")
+            .courseId("CSE2310")
+            .signed(false)
+            .maxHours(20)
+            .duties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(null);
+
+
+        // Act
+        ThrowingCallable c = () -> contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(c);
+
+        assertThat(contractRepository.findAll().size()).isZero();
+    }
+
+    @Test
     void createUnsignedContract_illegalArguments() {
+        // Arrange
+        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2525")
+                .description("Very cool course")
+                .numberOfStudents(10000)
+                .build());
+
         // Act
         ThrowingCallable actionNegativeMaxHours = () ->
             contractService.createUnsignedContract("WinstijnSmit", "CSE2525", -1, "Duties");
@@ -310,6 +411,12 @@ class ContractServiceTest {
             .signed(false)
             .build();
         contractRepository.save(contract);
+
+        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2525")
+                .description("Very cool course")
+                .numberOfStudents(10000)
+                .build());
 
         // Act
         ThrowingCallable actionConflict = () ->
