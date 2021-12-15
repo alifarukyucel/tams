@@ -150,7 +150,7 @@ public class ApplicationControllerTest {
                 .build();
 
         when(mockCourseInformation.startDate(onTime.getCourseId()))
-                .thenReturn(LocalDate.MAX);
+                .thenReturn(LocalDateTime.MAX);
 
         // act
         ResultActions onTimeResult  = mockMvc.perform(delete("/withdraw")
@@ -176,7 +176,7 @@ public class ApplicationControllerTest {
                 .build();
 
         when(mockCourseInformation.startDate(tooLate.getCourseId()))
-                .thenReturn(LocalDate.now());
+                .thenReturn(LocalDateTime.now());
 
         // act
         ResultActions onTimeResult  = mockMvc.perform(delete("/withdraw")

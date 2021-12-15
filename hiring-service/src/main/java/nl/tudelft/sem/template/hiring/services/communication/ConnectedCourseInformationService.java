@@ -20,8 +20,8 @@ public class ConnectedCourseInformationService implements CourseInformation {
     }
 
     @Override
-    public LocalDate startDate(String courseId) {
-        return LocalDate.now().plusWeeks(4L);
+    public LocalDateTime startDate(String courseId) {
+        return LocalDateTime.now().plusWeeks(4L);
     }
 
     @Override

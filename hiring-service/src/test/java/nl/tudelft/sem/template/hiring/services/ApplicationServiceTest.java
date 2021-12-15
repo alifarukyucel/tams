@@ -56,9 +56,6 @@ public class ApplicationServiceTest {
     @Autowired
     private transient ContractInformation mockContractInformation;
 
-    @Autowired
-    private transient CourseInformation mockCourseInformation;
-
     @Test
     public void validCheckAndSaveTest() {
         //Arrange
@@ -114,7 +111,7 @@ public class ApplicationServiceTest {
         Application application = new Application("CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
         applicationRepository.save(application);
-        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDate.MAX);
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.MAX);
 
         //Act
         boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
@@ -130,7 +127,7 @@ public class ApplicationServiceTest {
         Application application = new Application("CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
         applicationRepository.save(application);
-        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDate.now());
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.now());
 
         //Act
         boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());

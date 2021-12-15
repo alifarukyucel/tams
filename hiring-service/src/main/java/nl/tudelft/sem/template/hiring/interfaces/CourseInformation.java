@@ -9,5 +9,5 @@ public interface CourseInformation {
 
     CourseInformationResponseModel getCourseById(String id);
 
-    LocalDate startDate(String courseId);
+    LocalDateTime startDate(String courseId);
 }

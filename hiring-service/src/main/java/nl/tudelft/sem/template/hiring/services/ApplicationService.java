@@ -103,8 +103,8 @@ public class ApplicationService {
      * @return true if on time or false if too late
      */
     public boolean checkAndWithdraw(String courseId, String netId) {
-        LocalDate deadline = courseInformation.startDate(courseId).minusWeeks(3);
-        if (LocalDate.now().compareTo(deadline) < 0) {
+        LocalDateTime deadline = courseInformation.startDate(courseId).minusWeeks(3);
+        if (LocalDateTime.now().compareTo(deadline) < 0) {
 
             applicationRepository.delete(this.get(courseId, netId));
             return true;
