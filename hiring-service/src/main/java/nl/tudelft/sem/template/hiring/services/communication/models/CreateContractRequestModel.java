@@ -22,10 +22,10 @@ public class CreateContractRequestModel {
      * Builder for the CreateContractRequestModel.
      */
     public static class CreateContractRequestModelBuilder {
-        private String courseId;
-        private String netId;
-        private String duties;
-        private int maxHours;
+        private transient String courseId;
+        private transient String netId;
+        private transient String duties;
+        private transient int maxHours;
 
         CreateContractRequestModelBuilder() {
         }
