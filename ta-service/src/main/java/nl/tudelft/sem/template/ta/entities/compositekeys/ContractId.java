@@ -23,8 +23,8 @@ public class ContractId implements Serializable {
      * Builder for ContractId.
      */
     public static class ContractIdBuilder {
-        private String netId;
-        private String courseId;
+        private transient String netId;
+        private transient String courseId;
 
         ContractIdBuilder() {
         }
