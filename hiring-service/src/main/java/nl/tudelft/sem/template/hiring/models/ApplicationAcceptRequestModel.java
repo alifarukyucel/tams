@@ -21,10 +21,10 @@ public class ApplicationAcceptRequestModel {
      * Builder for the ApplicationAcceptRequestModel.
      */
     public static class ApplicationAcceptRequestModelBuilder {
-        private String courseId;
-        private String netId;
-        private String duties;
-        private int maxHours;
+        private transient String courseId;
+        private transient String netId;
+        private transient String duties;
+        private transient int maxHours;
 
         ApplicationAcceptRequestModelBuilder() {
         }
