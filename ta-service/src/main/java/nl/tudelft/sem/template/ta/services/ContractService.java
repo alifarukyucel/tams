@@ -66,11 +66,11 @@ public class ContractService {
 
         // Create the actual contract with the builder.
         Contract contract = Contract.builder()
-            .netId(netId)
-            .courseId(courseId)
-            .maxHours(maxHours)
-            .duties(duties)
-            .signed(false) // not signed yet!
+            .withNetId(netId)
+            .withCourseId(courseId)
+            .withMaxHours(maxHours)
+            .withDuties(duties)
+            .withSigned(false) // not signed yet!
             .build();
 
         // save can also throw an IllegalArgumentException if failed.
@@ -234,8 +234,8 @@ public class ContractService {
                                                         .withIgnorePaths("rating");
         Example<Contract> example = Example.of(
                 Contract.builder()
-                        .courseId(courseId)
-                        .netId(netId)
+                        .withCourseId(courseId)
+                        .withNetId(netId)
                         .build(), ignoreAllFields);
         return example;
     }

@@ -70,32 +70,32 @@ public class Contract {
         ContractBuilder() {
         }
 
-        public ContractBuilder netId(String netId) {
+        public ContractBuilder withNetId(String netId) {
             this.netId = netId;
             return this;
         }
 
-        public ContractBuilder courseId(String courseId) {
+        public ContractBuilder withCourseId(String courseId) {
             this.courseId = courseId;
             return this;
         }
 
-        public ContractBuilder maxHours(Integer maxHours) {
+        public ContractBuilder withMaxHours(Integer maxHours) {
             this.maxHours = maxHours;
             return this;
         }
 
-        public ContractBuilder duties(String duties) {
+        public ContractBuilder withDuties(String duties) {
             this.duties = duties;
             return this;
         }
 
-        public ContractBuilder signed(Boolean signed) {
+        public ContractBuilder withSigned(Boolean signed) {
             this.signed = signed;
             return this;
         }
 
-        public ContractBuilder rating(double rating) {
+        public ContractBuilder withRating(double rating) {
             this.rating = rating;
             return this;
         }

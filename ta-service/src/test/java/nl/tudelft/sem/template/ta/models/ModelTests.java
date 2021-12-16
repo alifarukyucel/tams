@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.ta.models;
 
-import java.util.Date;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
@@ -17,12 +16,12 @@ public class ModelTests {
     @BeforeEach
     void setup() {
         defaultContract = Contract.builder()
-            .courseId("CSETEST")
-            .netId("WinstijnSmit")
-            .maxHours(5)
-            .duties("Your duties")
-            .netId("WinstijnSmit")
-            .signed(true)
+            .withCourseId("CSETEST")
+            .withNetId("WinstijnSmit")
+            .withMaxHours(5)
+            .withDuties("Your duties")
+            .withNetId("WinstijnSmit")
+            .withSigned(true)
             .build();
 
         defaultHourDeclaration =  HourDeclaration.builder()

@@ -3,7 +3,6 @@ package nl.tudelft.sem.template.ta.controllers;
 import static nl.tudelft.sem.template.ta.utils.JsonUtil.deserialize;
 import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -21,7 +20,6 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptHoursRequestModel;
-import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import nl.tudelft.sem.template.ta.models.HourResponseModel;
 import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
@@ -82,21 +80,21 @@ class HourControllerTest {
         contracts = new ArrayList<>();
 
         defaultContract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(20)
-            .duties("Work really hard")
-            .signed(true)
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(20)
+            .withDuties("Work really hard")
+            .withSigned(true)
             .build();
         defaultContract = contractRepository.save(defaultContract);
         contracts.add(defaultContract);
 
         Contract secondContract = contractRepository.save(Contract.builder()
-            .netId("WinstijnSmit")
-            .courseId("CSE2310")
-            .maxHours(40)
-            .duties("Work really hard")
-            .signed(true)
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withMaxHours(40)
+            .withDuties("Work really hard")
+            .withSigned(true)
             .build()
         );
         contracts.add(contractRepository.save(secondContract));

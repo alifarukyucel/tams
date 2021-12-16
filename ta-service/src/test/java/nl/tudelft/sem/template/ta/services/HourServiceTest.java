@@ -53,11 +53,11 @@ class HourServiceTest {
         hourDeclarations = new ArrayList<HourDeclaration>();
 
         defaultContract = Contract.builder()
-            .courseId("CSE2310")
-            .netId("PvdBerg")
-            .signed(true)
-            .maxHours(20)
-            .signed(true)
+            .withCourseId("CSE2310")
+            .withNetId("PvdBerg")
+            .withSigned(true)
+            .withMaxHours(20)
+            .withSigned(true)
             .build();
         defaultContract = contractRepository.save(defaultContract);
         contracts.add(defaultContract);
@@ -78,18 +78,18 @@ class HourServiceTest {
     void setupContracts() {
 
         contracts.add(Contract.builder()
-            .courseId("CSE2500")
-            .netId("Maurits")
-            .maxHours(40)
-            .signed(true)
+            .withCourseId("CSE2500")
+            .withNetId("Maurits")
+            .withMaxHours(40)
+            .withSigned(true)
             .build()
         );
 
         contracts.add(Contract.builder()
-            .courseId("CSE2310")
-            .netId("WinstijnSmit")
-            .maxHours(40)
-            .signed(true)
+            .withCourseId("CSE2310")
+            .withNetId("WinstijnSmit")
+            .withMaxHours(40)
+            .withSigned(true)
             .build()
         );
 
@@ -205,10 +205,10 @@ class HourServiceTest {
     void findAllHours() {
         // arrange
         Contract contract = Contract.builder()
-            .courseId("CSE2550")
-            .netId("PvdBerg")
-            .signed(true)
-            .maxHours(20)
+            .withCourseId("CSE2550")
+            .withNetId("PvdBerg")
+            .withSigned(true)
+            .withMaxHours(20)
             .build();
 
         contract = contractRepository.save(contract);
