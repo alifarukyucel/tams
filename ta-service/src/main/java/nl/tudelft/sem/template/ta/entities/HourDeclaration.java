@@ -36,7 +36,7 @@ public class HourDeclaration {
 
     private LocalDateTime date;
 
-    private String desc;
+    private String description;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Contract contract;
