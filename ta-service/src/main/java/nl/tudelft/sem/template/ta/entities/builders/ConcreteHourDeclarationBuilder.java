@@ -7,13 +7,13 @@ import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.entities.builders.interfaces.HourDeclarationBuilder;
 
 public class ConcreteHourDeclarationBuilder implements HourDeclarationBuilder {
-    private UUID id;
-    private Integer workedTime;
-    private Boolean approved;
-    private Boolean reviewed;
-    private LocalDateTime date;
-    private String desc;
-    private Contract contract;
+    private transient UUID id;
+    private transient Integer workedTime;
+    private transient Boolean approved;
+    private transient Boolean reviewed;
+    private transient LocalDateTime date;
+    private transient String desc;
+    private transient Contract contract;
 
     public ConcreteHourDeclarationBuilder withId(UUID id) {
         this.id = id;
