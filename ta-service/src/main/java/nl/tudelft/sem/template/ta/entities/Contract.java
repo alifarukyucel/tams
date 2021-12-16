@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
+import nl.tudelft.sem.template.ta.entities.builders.interfaces.ContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 
 @Entity
@@ -38,7 +40,7 @@ public class Contract {
     private double rating;
 
     public static ContractBuilder builder() {
-        return new ContractBuilder();
+        return new ConcreteContractBuilder();
     }
 
     /**
@@ -54,54 +56,5 @@ public class Contract {
         }
 
         this.rating = rating;
-    }
-
-    /*
-     * Builder for the Contract entity.
-     */
-    public static class ContractBuilder {
-        private transient String netId;
-        private transient String courseId;
-        private transient Integer maxHours;
-        private transient String duties;
-        private transient Boolean signed;
-        private transient double rating;
-
-        ContractBuilder() {
-        }
-
-        public ContractBuilder withNetId(String netId) {
-            this.netId = netId;
-            return this;
-        }
-
-        public ContractBuilder withCourseId(String courseId) {
-            this.courseId = courseId;
-            return this;
-        }
-
-        public ContractBuilder withMaxHours(Integer maxHours) {
-            this.maxHours = maxHours;
-            return this;
-        }
-
-        public ContractBuilder withDuties(String duties) {
-            this.duties = duties;
-            return this;
-        }
-
-        public ContractBuilder withSigned(Boolean signed) {
-            this.signed = signed;
-            return this;
-        }
-
-        public ContractBuilder withRating(double rating) {
-            this.rating = rating;
-            return this;
-        }
-
-        public Contract build() {
-            return new Contract(netId, courseId, maxHours, duties, signed, rating);
-        }
     }
 }
