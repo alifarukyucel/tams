@@ -29,12 +29,12 @@ public class ContractId implements Serializable {
         ContractIdBuilder() {
         }
 
-        public ContractIdBuilder netId(String netId) {
+        public ContractIdBuilder withNetId(String netId) {
             this.netId = netId;
             return this;
         }
 
-        public ContractIdBuilder courseId(String courseId) {
+        public ContractIdBuilder withCourseId(String courseId) {
             this.courseId = courseId;
             return this;
         }
