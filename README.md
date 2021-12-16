@@ -1,4 +1,4 @@
-Authorization: ![Authorization coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-authorization-service)
+Authentication: ![Authentication coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-authentication-service)
 Course: ![Course coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-course-service)
 Hiring: ![Hiring coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-hiring-service)
 TA: ![TA coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-ta-service)
