@@ -11,12 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteHourDeclarationBuilder;
 
 @Entity
-@Builder
 @Table(name = "HourDeclarations")
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -43,4 +42,7 @@ public class HourDeclaration {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Contract contract;
 
+    public static ConcreteHourDeclarationBuilder builder() {
+        return new ConcreteHourDeclarationBuilder();
+    }
 }
