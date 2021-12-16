@@ -20,6 +20,11 @@ public class ConnectedCourseInformationService implements CourseInformation {
     }
 
     @Override
+    public LocalDateTime startDate(String courseId) {
+        return LocalDateTime.now().plusWeeks(4L);
+    }
+
+    @Override
     public boolean isResponsibleLecturer(String netId, String courseId) {
         if (netId == null || courseId == null) {
             return false;

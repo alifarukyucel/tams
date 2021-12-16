@@ -11,6 +11,8 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteHourDeclarationBuilder;
 import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
@@ -52,21 +54,21 @@ class HourServiceTest {
         contracts = new ArrayList<Contract>();
         hourDeclarations = new ArrayList<HourDeclaration>();
 
-        defaultContract = Contract.builder()
-            .courseId("CSE2310")
-            .netId("PvdBerg")
-            .signed(true)
-            .maxHours(20)
-            .signed(true)
+        defaultContract = new ConcreteContractBuilder()
+            .withCourseId("CSE2310")
+            .withNetId("PvdBerg")
+            .withSigned(true)
+            .withMaxHours(20)
+            .withSigned(true)
             .build();
         defaultContract = contractRepository.save(defaultContract);
         contracts.add(defaultContract);
 
-        defaultHourDeclaration = HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(5)
-            .approved(false)
-            .reviewed(false)
+        defaultHourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(5)
+            .withApproved(false)
+            .withReviewed(false)
             .build();
         defaultHourDeclaration = hoursRepository.save(defaultHourDeclaration);
         hourDeclarations.add(defaultHourDeclaration);
@@ -77,19 +79,19 @@ class HourServiceTest {
 
     void setupContracts() {
 
-        contracts.add(Contract.builder()
-            .courseId("CSE2500")
-            .netId("Maurits")
-            .maxHours(40)
-            .signed(true)
+        contracts.add(new ConcreteContractBuilder()
+            .withCourseId("CSE2500")
+            .withNetId("Maurits")
+            .withMaxHours(40)
+            .withSigned(true)
             .build()
         );
 
-        contracts.add(Contract.builder()
-            .courseId("CSE2310")
-            .netId("WinstijnSmit")
-            .maxHours(40)
-            .signed(true)
+        contracts.add(new ConcreteContractBuilder()
+            .withCourseId("CSE2310")
+            .withNetId("WinstijnSmit")
+            .withMaxHours(40)
+            .withSigned(true)
             .build()
         );
 
@@ -103,17 +105,17 @@ class HourServiceTest {
         Contract c2 = contracts.get(2);
 
         // Add more workedHours to the list used for testing.
-        hourDeclarations.add(HourDeclaration.builder()
-                            .workedTime(2).contract(c1).approved(true).reviewed(true).build());
-        hourDeclarations.add(HourDeclaration.builder()
-                            .workedTime(7).contract(c1).approved(false).reviewed(false).build());
-        hourDeclarations.add(HourDeclaration.builder()
-                            .workedTime(6).contract(c1).approved(true).reviewed(true).build());
+        hourDeclarations.add(new ConcreteHourDeclarationBuilder()
+                            .withWorkedTime(2).withContractId(c1).withApproved(true).withReviewed(true).build());
+        hourDeclarations.add(new ConcreteHourDeclarationBuilder()
+                            .withWorkedTime(7).withContractId(c1).withApproved(false).withReviewed(false).build());
+        hourDeclarations.add(new ConcreteHourDeclarationBuilder()
+                            .withWorkedTime(6).withContractId(c1).withApproved(true).withReviewed(true).build());
 
-        hourDeclarations.add(HourDeclaration.builder()
-                            .workedTime(3).contract(c2).approved(false).reviewed(false).build());
-        hourDeclarations.add(HourDeclaration.builder()
-                            .workedTime(1).contract(c2).approved(true).reviewed(true).build());
+        hourDeclarations.add(new ConcreteHourDeclarationBuilder()
+                            .withWorkedTime(3).withContractId(c2).withApproved(false).withReviewed(false).build());
+        hourDeclarations.add(new ConcreteHourDeclarationBuilder()
+                            .withWorkedTime(1).withContractId(c2).withApproved(true).withReviewed(true).build());
 
         for (int i = 1; i < hourDeclarations.size(); i++) {
             hourDeclarations.set(i, hoursRepository.save(hourDeclarations.get(i)));
@@ -124,11 +126,11 @@ class HourServiceTest {
     void blockSubmittingNegativeHours() {
         //arrange
         hoursRepository.deleteAll();
-        HourDeclaration hourDeclaration = HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(-5)
-            .approved(false)
-            .reviewed(false)
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(-5)
+            .withApproved(false)
+            .withReviewed(false)
             .build();
 
         //act
@@ -146,11 +148,11 @@ class HourServiceTest {
         contractRepository.save(defaultContract);
 
         hoursRepository.deleteAll();
-        HourDeclaration hourDeclaration = HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(5)
-            .approved(false)
-            .reviewed(false)
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(5)
+            .withApproved(false)
+            .withReviewed(false)
             .build();
 
         //act
@@ -165,32 +167,32 @@ class HourServiceTest {
     void totalHoursApprovedTest() {
         // arrange
         // populate default contract.
-        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(5)
-            .approved(true)
-            .reviewed(true)
+        HourDeclaration hourDeclaration = hoursRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(5)
+            .withApproved(true)
+            .withReviewed(true)
             .build());
 
-        HourDeclaration hourDeclaration2 = hoursRepository.save(HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(11)
-            .approved(true)
-            .reviewed(true)
+        HourDeclaration hourDeclaration2 = hoursRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(11)
+            .withApproved(true)
+            .withReviewed(true)
             .build());
 
-        hoursRepository.save(HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(3)
-            .approved(false)
-            .reviewed(true)
+        hoursRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(3)
+            .withApproved(false)
+            .withReviewed(true)
             .build());
 
-        hoursRepository.save(HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(1)
-            .approved(true)
-            .reviewed(false)
+        hoursRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(1)
+            .withApproved(true)
+            .withReviewed(false)
             .build());
 
         // act
@@ -204,27 +206,27 @@ class HourServiceTest {
     @Test
     void findAllHours() {
         // arrange
-        Contract contract = Contract.builder()
-            .courseId("CSE2550")
-            .netId("PvdBerg")
-            .signed(true)
-            .maxHours(20)
+        Contract contract = new ConcreteContractBuilder()
+            .withCourseId("CSE2550")
+            .withNetId("PvdBerg")
+            .withSigned(true)
+            .withMaxHours(20)
             .build();
 
         contract = contractRepository.save(contract);
 
-        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(5)
-            .approved(false)
-            .reviewed(false)
+        HourDeclaration hourDeclaration = hoursRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(5)
+            .withApproved(false)
+            .withReviewed(false)
             .build());
 
-        hoursRepository.save(HourDeclaration.builder()
-            .contract(contract)
-            .workedTime(5)
-            .approved(false)
-            .reviewed(false)
+        hoursRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(contract)
+            .withWorkedTime(5)
+            .withApproved(false)
+            .withReviewed(false)
             .build());
 
         // act
@@ -244,13 +246,13 @@ class HourServiceTest {
             .course(defaultContract.getCourseId())
             .build();
 
-        HourDeclaration expected = HourDeclaration.builder()
-            .workedTime(submitHoursRequestModel.getWorkedTime())
-            .reviewed(false)
-            .approved(false)
-            .contract(defaultContract)
-            .date(submitHoursRequestModel.getDate())
-            .desc(submitHoursRequestModel.getDesc())
+        HourDeclaration expected = new ConcreteHourDeclarationBuilder()
+            .withWorkedTime(submitHoursRequestModel.getWorkedTime())
+            .withReviewed(false)
+            .withApproved(false)
+            .withContractId(defaultContract)
+            .withDate(submitHoursRequestModel.getDate())
+            .withDescription(submitHoursRequestModel.getDesc())
             .build();
 
         // act
@@ -269,12 +271,12 @@ class HourServiceTest {
     @Test
     void checkAndSave() {
         // arrange
-        HourDeclaration hourDeclaration = HourDeclaration.builder()
-            .contract(defaultContract)
-            .approved(true)
-            .reviewed(true)
-            .workedTime(5)
-            .desc("This is a test.")
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withApproved(true)
+            .withReviewed(true)
+            .withWorkedTime(5)
+            .withDescription("This is a test.")
             .build();
 
         // act
@@ -290,11 +292,11 @@ class HourServiceTest {
     @Test
     void submitMaxRemainingHoursPopulatedDatabase() {
         // arrange
-        HourDeclaration hourDeclaration = HourDeclaration.builder()
-            .contract(contracts.get(1))
-            .workedTime(32)  // hardcoded from default contract c1. via setupContracts()
-            .approved(false) // contract has 32 hours remaining
-            .reviewed(false)
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(contracts.get(1))
+            .withWorkedTime(32)  // hardcoded from default contract c1. via setupContracts()
+            .withApproved(false) // contract has 32 hours remaining
+            .withReviewed(false)
             .build();
 
         // act
@@ -310,11 +312,11 @@ class HourServiceTest {
     @Test
     void submitMoreThanMaxRemainingHoursPopulatedDatabase() {
         // arrange
-        HourDeclaration hourDeclaration = HourDeclaration.builder()
-            .contract(contracts.get(1))
-            .workedTime(33)  // hardcoded from default contract c1. via setupContracts()
-            .approved(false) // contract has 32 hours remaining
-            .reviewed(false)
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(contracts.get(1))
+            .withWorkedTime(33)  // hardcoded from default contract c1. via setupContracts()
+            .withApproved(false) // contract has 32 hours remaining
+            .withReviewed(false)
             .build();
 
         // act
@@ -329,11 +331,11 @@ class HourServiceTest {
     void submitHoursCloseToMax() {
         //arrange
         hoursRepository.deleteAll();
-        HourDeclaration hourDeclaration = HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(defaultContract.getMaxHours() - 1)
-            .approved(false)
-            .reviewed(false)
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(defaultContract.getMaxHours() - 1)
+            .withApproved(false)
+            .withReviewed(false)
             .build();
 
         // act
@@ -350,11 +352,11 @@ class HourServiceTest {
     void submitHoursEqualToMax() {
         //arrange
         hoursRepository.deleteAll();
-        HourDeclaration hourDeclaration = HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(defaultContract.getMaxHours())
-            .approved(false)
-            .reviewed(false)
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(defaultContract.getMaxHours())
+            .withApproved(false)
+            .withReviewed(false)
             .build();
 
         // act
@@ -371,11 +373,11 @@ class HourServiceTest {
     void submitHoursOverMax() {
         //arrange
         hoursRepository.deleteAll();
-        HourDeclaration hourDeclaration = HourDeclaration.builder()
-            .contract(defaultContract)
-            .workedTime(defaultContract.getMaxHours() + 1)
-            .approved(false)
-            .reviewed(false)
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(defaultContract.getMaxHours() + 1)
+            .withApproved(false)
+            .withReviewed(false)
             .build();
 
         ThrowingCallable action = () -> hourService.checkAndSave(hourDeclaration);
@@ -389,11 +391,11 @@ class HourServiceTest {
     void approveHoursOverContract() {
         // arrange
 
-        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
-            .contract(contracts.get(1))
-            .workedTime(33)  // hardcoded from default contract c1. via setupContracts()
-            .approved(false) // contract has 32 hours remaining
-            .reviewed(false)
+        HourDeclaration hourDeclaration = hoursRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(contracts.get(1))
+            .withWorkedTime(33)  // hardcoded from default contract c1. via setupContracts()
+            .withApproved(false) // contract has 32 hours remaining
+            .withReviewed(false)
             .build());
 
         // act
@@ -409,11 +411,11 @@ class HourServiceTest {
     void rejectHoursOverContract() {
         // arrange
 
-        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
-            .contract(contracts.get(1))
-            .workedTime(33)  // hardcoded from default contract c1. via setupContracts()
-            .approved(false) // contract has 32 hours remaining
-            .reviewed(false)
+        HourDeclaration hourDeclaration = hoursRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(contracts.get(1))
+            .withWorkedTime(33)  // hardcoded from default contract c1. via setupContracts()
+            .withApproved(false) // contract has 32 hours remaining
+            .withReviewed(false)
             .build());
 
         // act
@@ -427,11 +429,11 @@ class HourServiceTest {
     @Test
     void approveHoursExactMaxContract() {
         // arrange
-        HourDeclaration hourDeclaration = hoursRepository.save(HourDeclaration.builder()
-            .contract(contracts.get(1))
-            .workedTime(32)  // hardcoded from default contract c1. via setupContracts()
-            .approved(false) // contract has 32 hours remaining
-            .reviewed(false)
+        HourDeclaration hourDeclaration = hoursRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(contracts.get(1))
+            .withWorkedTime(32)  // hardcoded from default contract c1. via setupContracts()
+            .withApproved(false) // contract has 32 hours remaining
+            .withReviewed(false)
             .build());
 
         // act

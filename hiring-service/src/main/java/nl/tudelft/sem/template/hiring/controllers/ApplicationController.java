@@ -13,8 +13,10 @@ import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,6 +69,26 @@ public class ApplicationController {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * API Endpoint for withdrawing an already existing application.
+     *
+     * @param model applicationKey for specific application
+     * @return String informing if the application is withdrawn.
+     */
+    @DeleteMapping ("/withdraw")
+    public ResponseEntity<String> withdraw(@RequestBody ApplicationKey model) {
+
+        try {
+            if (applicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
+                return ResponseEntity.ok().build();
+            }
+            throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
+
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 

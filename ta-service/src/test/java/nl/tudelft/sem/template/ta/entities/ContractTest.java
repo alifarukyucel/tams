@@ -1,6 +1,6 @@
 package nl.tudelft.sem.template.ta.entities;
 
-import java.util.UUID;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,13 +11,13 @@ class ContractTest {
 
     @BeforeEach
     void setUp() {
-        contract = Contract.builder()
-                .courseId("build")
-                .maxHours(5)
-                .rating(5)
-                .signed(false)
-                .netId("PieterDelft")
-                .duties("You need to work!")
+        contract = new ConcreteContractBuilder()
+                .withCourseId("build")
+                .withMaxHours(5)
+                .withRating(5)
+                .withSigned(false)
+                .withNetId("PieterDelft")
+                .withDuties("You need to work!")
                 .build();
     }
 

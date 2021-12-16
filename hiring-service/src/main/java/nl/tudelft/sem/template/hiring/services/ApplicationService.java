@@ -94,6 +94,24 @@ public class ApplicationService {
         return applicationOptional.get();
     }
 
+
+    /**
+     * Deletes an application from the database, if more than 3 weeks before start of the course.
+     *
+     * @param courseId courseId from course to withdraw from
+     * @param netId netId from user who wants to withdraw
+     * @return true if on time or false if too late
+     */
+    public boolean checkAndWithdraw(String courseId, String netId) {
+        LocalDateTime deadline = courseInformation.startDate(courseId).minusWeeks(3);
+        if (LocalDateTime.now().compareTo(deadline) < 0) {
+
+            applicationRepository.delete(this.get(courseId, netId));
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Sets the application status to REJECTED.
      *
@@ -133,10 +151,10 @@ public class ApplicationService {
         }
 
         boolean result = contractInformation.createContract(CreateContractRequestModel.builder()
-                .courseId(courseId)
-                .netId(netId)
-                .duties(duties)
-                .maxHours(maxHours)
+                .withCourseId(courseId)
+                .withNetId(netId)
+                .withDuties(duties)
+                .withMaxHours(maxHours)
                 .build());
 
         if (!result) {
