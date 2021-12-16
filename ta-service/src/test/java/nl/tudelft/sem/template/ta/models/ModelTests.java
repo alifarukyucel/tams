@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.ta.models;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ public class ModelTests {
 
     @BeforeEach
     void setup() {
-        defaultContract = Contract.builder()
+        defaultContract = new ConcreteContractBuilder()
             .withCourseId("CSETEST")
             .withNetId("WinstijnSmit")
             .withMaxHours(5)

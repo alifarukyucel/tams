@@ -18,6 +18,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptHoursRequestModel;
 import nl.tudelft.sem.template.ta.models.HourResponseModel;
@@ -79,7 +80,7 @@ class HourControllerTest {
         hourDeclarations = new ArrayList<>();
         contracts = new ArrayList<>();
 
-        defaultContract = Contract.builder()
+        defaultContract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(20)
@@ -89,7 +90,7 @@ class HourControllerTest {
         defaultContract = contractRepository.save(defaultContract);
         contracts.add(defaultContract);
 
-        Contract secondContract = contractRepository.save(Contract.builder()
+        Contract secondContract = contractRepository.save(new ConcreteContractBuilder()
             .withNetId("WinstijnSmit")
             .withCourseId("CSE2310")
             .withMaxHours(40)

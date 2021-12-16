@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.ta.services;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
@@ -65,7 +66,7 @@ public class ContractService {
         }
 
         // Create the actual contract with the builder.
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId(netId)
             .withCourseId(courseId)
             .withMaxHours(maxHours)
@@ -233,7 +234,7 @@ public class ContractService {
                                                         .withIgnoreNullValues()
                                                         .withIgnorePaths("rating");
         Example<Contract> example = Example.of(
-                Contract.builder()
+                new ConcreteContractBuilder()
                         .withCourseId(courseId)
                         .withNetId(netId)
                         .build(), ignoreAllFields);

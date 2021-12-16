@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
@@ -74,7 +75,7 @@ class ContractControllerTest {
         contracts = new ArrayList<Contract>();
 
         // Save basic contract in db.
-        defaultContract = Contract.builder()
+        defaultContract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -84,7 +85,7 @@ class ContractControllerTest {
         defaultContract = contractRepository.save(defaultContract);
         contracts.add(defaultContract);
 
-        Contract secondContract = Contract.builder()
+        Contract secondContract = new ConcreteContractBuilder()
                 .withNetId("WinstijnSmit")
                 .withCourseId("CSE2310")
                 .withMaxHours(10)
@@ -95,7 +96,7 @@ class ContractControllerTest {
         contractRepository.save(secondContract);
         contracts.add(secondContract);
 
-        Contract thirdContract = Contract.builder()
+        Contract thirdContract = new ConcreteContractBuilder()
                 .withNetId("WinstijnSmit")
                 .withCourseId("CSE1250")
                 .withMaxHours(2)

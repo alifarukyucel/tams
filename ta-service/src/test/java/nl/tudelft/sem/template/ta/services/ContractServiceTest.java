@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
@@ -41,7 +42,7 @@ class ContractServiceTest {
     @Test
     void signExistingContract() {
         // arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -62,7 +63,7 @@ class ContractServiceTest {
     @Test
     void signNonExistingContract() {
         // arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -82,7 +83,7 @@ class ContractServiceTest {
     @Test
     void signAlreadySignedContract() {
         // arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -102,7 +103,7 @@ class ContractServiceTest {
     @Test
     void getContractSupplementingNullValues() {
         // arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -127,7 +128,7 @@ class ContractServiceTest {
     @Test
     void getNonExistingContract() {
         // arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -155,7 +156,7 @@ class ContractServiceTest {
     @Test
     void getContract() {
         // arrange
-        contractRepository.save(Contract.builder()
+        contractRepository.save(new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2550")
             .withMaxHours(5)
@@ -164,7 +165,7 @@ class ContractServiceTest {
             .withSigned(false)
             .build());
 
-        contractRepository.save(Contract.builder()
+        contractRepository.save(new ConcreteContractBuilder()
             .withNetId("GerryEik")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -173,7 +174,7 @@ class ContractServiceTest {
             .withSigned(false)
             .build());
 
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -194,7 +195,7 @@ class ContractServiceTest {
     @Test
     void getAllContracts() {
         // Arrange
-        Contract contract1 = Contract.builder()
+        Contract contract1 = new ConcreteContractBuilder()
                 .withNetId("PVeldHuis")
                 .withCourseId("CSE2550")
                 .withMaxHours(5)
@@ -203,7 +204,7 @@ class ContractServiceTest {
                 .build();
         contractRepository.save(contract1);
 
-        contractRepository.save(Contract.builder()
+        contractRepository.save(new ConcreteContractBuilder()
                 .withNetId("GerryEik")
                 .withCourseId("CSE2310")
                 .withMaxHours(5)
@@ -211,7 +212,7 @@ class ContractServiceTest {
                 .withSigned(false)
                 .build());
 
-        Contract contract2 = Contract.builder()
+        Contract contract2 = new ConcreteContractBuilder()
                 .withNetId("PVeldHuis")
                 .withCourseId("CSE2310")
                 .withMaxHours(5)
@@ -245,7 +246,7 @@ class ContractServiceTest {
     @Test
     void save() {
         // arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("Gert")
             .withCourseId("CSE2310")
             .withSigned(false)
@@ -264,7 +265,7 @@ class ContractServiceTest {
     @Test
     void createUnsignedContract() {
         // Arrange
-        contractRepository.save(Contract.builder()
+        contractRepository.save(new ConcreteContractBuilder()
             .withNetId("Martin")
             .withCourseId("CSE1105")
             .withSigned(false)
@@ -273,7 +274,7 @@ class ContractServiceTest {
             .build()
         );
 
-        contractRepository.save(Contract.builder()
+        contractRepository.save(new ConcreteContractBuilder()
             .withNetId("Martin")
             .withCourseId("CSE2310")
             .withSigned(false)
@@ -282,7 +283,7 @@ class ContractServiceTest {
             .build()
         );
 
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("WinstijnSmit")
             .withCourseId("CSE2310")
             .withSigned(false)
@@ -309,7 +310,7 @@ class ContractServiceTest {
 
     @Test
     void createUnsignedContractExceedingTaLimit() {
-        contractRepository.save(Contract.builder()
+        contractRepository.save(new ConcreteContractBuilder()
             .withNetId("Martin")
             .withCourseId("CSE2310")
             .withSigned(false)
@@ -318,7 +319,7 @@ class ContractServiceTest {
             .build()
         );
 
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("WinstijnSmit")
             .withCourseId("CSE2310")
             .withSigned(false)
@@ -346,7 +347,7 @@ class ContractServiceTest {
 
     @Test
     void createUnsignedContractInaccessibleCourseService() {
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("WinstijnSmit")
             .withCourseId("CSE2310")
             .withSigned(false)
@@ -402,7 +403,7 @@ class ContractServiceTest {
     @Test
     void createUnsignedContract_createSame() {
         // Arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("WinstijnSmit")
             .withCourseId("CSE2525")
             .withMaxHours(10)
@@ -430,7 +431,7 @@ class ContractServiceTest {
     @Test
     void contractExists_true() {
         // Arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -449,7 +450,7 @@ class ContractServiceTest {
     @Test
     void contractExists_false() {
         // Arrange
-        Contract c1 = Contract.builder()
+        Contract c1 = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CS2310")
             .withMaxHours(5)
@@ -457,7 +458,7 @@ class ContractServiceTest {
             .withSigned(false)
             .build();
         contractRepository.save(c1);
-        Contract c2 = Contract.builder()
+        Contract c2 = new ConcreteContractBuilder()
             .withNetId("WinstijnSmit")
             .withCourseId("CSE2300")
             .withMaxHours(5)
@@ -476,7 +477,7 @@ class ContractServiceTest {
     @Test
     void rate() {
         // Arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("PVeldHuis")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -498,7 +499,7 @@ class ContractServiceTest {
     @Test
     void rate_contractNotExists() {
         // Arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("WinstijnSmit")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -519,7 +520,7 @@ class ContractServiceTest {
     @Test
     void rate_ratingInvalid() {
         // Arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withNetId("WinstijnSmit")
             .withCourseId("CSE2310")
             .withMaxHours(5)

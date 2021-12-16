@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.ta.entities;
 
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ class ContractTest {
 
     @BeforeEach
     void setUp() {
-        contract = Contract.builder()
+        contract = new ConcreteContractBuilder()
                 .withCourseId("build")
                 .withMaxHours(5)
                 .withRating(5)

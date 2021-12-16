@@ -11,6 +11,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
@@ -52,7 +53,7 @@ class HourServiceTest {
         contracts = new ArrayList<Contract>();
         hourDeclarations = new ArrayList<HourDeclaration>();
 
-        defaultContract = Contract.builder()
+        defaultContract = new ConcreteContractBuilder()
             .withCourseId("CSE2310")
             .withNetId("PvdBerg")
             .withSigned(true)
@@ -77,7 +78,7 @@ class HourServiceTest {
 
     void setupContracts() {
 
-        contracts.add(Contract.builder()
+        contracts.add(new ConcreteContractBuilder()
             .withCourseId("CSE2500")
             .withNetId("Maurits")
             .withMaxHours(40)
@@ -85,7 +86,7 @@ class HourServiceTest {
             .build()
         );
 
-        contracts.add(Contract.builder()
+        contracts.add(new ConcreteContractBuilder()
             .withCourseId("CSE2310")
             .withNetId("WinstijnSmit")
             .withMaxHours(40)
@@ -204,7 +205,7 @@ class HourServiceTest {
     @Test
     void findAllHours() {
         // arrange
-        Contract contract = Contract.builder()
+        Contract contract = new ConcreteContractBuilder()
             .withCourseId("CSE2550")
             .withNetId("PvdBerg")
             .withSigned(true)

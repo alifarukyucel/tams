@@ -39,9 +39,6 @@ public class Contract {
     @Column(columnDefinition = "double precision default 0")
     private double rating;
 
-    public static ContractBuilder builder() {
-        return new ConcreteContractBuilder();
-    }
 
     /**
      * Set the rating of this contract.
