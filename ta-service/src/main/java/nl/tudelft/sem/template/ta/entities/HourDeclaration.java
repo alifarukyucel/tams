@@ -13,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.tudelft.sem.template.ta.entities.builders.ConcreteHourDeclarationBuilder;
 
 @Entity
 @Table(name = "HourDeclarations")
