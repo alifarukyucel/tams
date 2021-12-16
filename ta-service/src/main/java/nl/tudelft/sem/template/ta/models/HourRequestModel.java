@@ -26,12 +26,12 @@ public class HourRequestModel {
         HourRequestModelBuilder() {
         }
 
-        public HourRequestModelBuilder course(String course) {
-            this.course = course;
+        public HourRequestModelBuilder withCourseId(String courseId) {
+            this.course = courseId;
             return this;
         }
 
-        public HourRequestModelBuilder netId(String netId) {
+        public HourRequestModelBuilder withNetId(String netId) {
             this.netId = netId;
             return this;
         }
