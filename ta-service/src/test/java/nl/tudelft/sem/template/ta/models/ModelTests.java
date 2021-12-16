@@ -4,6 +4,7 @@ import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteHourDeclarationBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,12 +26,12 @@ public class ModelTests {
             .withSigned(true)
             .build();
 
-        defaultHourDeclaration =  HourDeclaration.builder()
-            .workedTime(3)
-            .id(UUID.randomUUID())
-            .contract(defaultContract)
-            .approved(false)
-            .reviewed(false)
+        defaultHourDeclaration =  new ConcreteHourDeclarationBuilder()
+            .withWorkedTime(3)
+            .withId(UUID.randomUUID())
+            .withContractId(defaultContract)
+            .withApproved(false)
+            .withReviewed(false)
             .build();
     }
 

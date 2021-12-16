@@ -1,9 +1,8 @@
 package nl.tudelft.sem.template.ta.entities;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteHourDeclarationBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,14 +12,14 @@ class HourDeclarationTest {
     void testBuilder() {
         LocalDateTime time = LocalDateTime.now();
         Contract c1 = new Contract();
-        HourDeclaration hour1 = HourDeclaration.builder()
-            .id(UUID.randomUUID())
-            .workedTime(15)
-            .approved(true)
-            .reviewed(true)
-            .date(time)
-            .desc("test")
-            .contract(c1)
+        HourDeclaration hour1 = new ConcreteHourDeclarationBuilder()
+            .withId(UUID.randomUUID())
+            .withWorkedTime(15)
+            .withApproved(true)
+            .withReviewed(true)
+            .withDate(time)
+            .withDescription("test")
+            .withContractId(c1)
             .build();
 
         Assertions.assertNotNull(hour1.getId());
