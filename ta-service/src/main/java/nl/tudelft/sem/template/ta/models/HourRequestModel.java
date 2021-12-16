@@ -20,8 +20,8 @@ public class HourRequestModel {
      * Builder for the HourRequestModel.
      */
     public static class HourRequestModelBuilder {
-        private String course;
-        private String netId;
+        private transient String course;
+        private transient String netId;
 
         HourRequestModelBuilder() {
         }
