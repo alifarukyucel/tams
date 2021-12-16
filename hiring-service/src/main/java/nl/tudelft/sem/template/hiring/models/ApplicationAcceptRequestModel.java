@@ -29,22 +29,22 @@ public class ApplicationAcceptRequestModel {
         ApplicationAcceptRequestModelBuilder() {
         }
 
-        public ApplicationAcceptRequestModelBuilder courseId(String courseId) {
+        public ApplicationAcceptRequestModelBuilder withCourseId(String courseId) {
             this.courseId = courseId;
             return this;
         }
 
-        public ApplicationAcceptRequestModelBuilder netId(String netId) {
+        public ApplicationAcceptRequestModelBuilder withNetId(String netId) {
             this.netId = netId;
             return this;
         }
 
-        public ApplicationAcceptRequestModelBuilder duties(String duties) {
+        public ApplicationAcceptRequestModelBuilder withDuties(String duties) {
             this.duties = duties;
             return this;
         }
 
-        public ApplicationAcceptRequestModelBuilder maxHours(int maxHours) {
+        public ApplicationAcceptRequestModelBuilder withMaxHours(int maxHours) {
             this.maxHours = maxHours;
             return this;
         }

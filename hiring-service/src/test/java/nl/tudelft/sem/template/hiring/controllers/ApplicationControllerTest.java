@@ -401,10 +401,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId(application.getNetId())
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -441,10 +441,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId(application.getNetId())
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -481,10 +481,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId(application.getNetId())
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -516,10 +516,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId("invalidNetid")
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId("invalidNetid")
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -557,10 +557,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId(application.getNetId())
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
