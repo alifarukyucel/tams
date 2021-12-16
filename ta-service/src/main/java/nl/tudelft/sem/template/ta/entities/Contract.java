@@ -60,12 +60,12 @@ public class Contract {
      * Builder for the Contract entity.
      */
     public static class ContractBuilder {
-        private String netId;
-        private String courseId;
-        private Integer maxHours;
-        private String duties;
-        private Boolean signed;
-        private double rating;
+        private transient String netId;
+        private transient String courseId;
+        private transient Integer maxHours;
+        private transient String duties;
+        private transient Boolean signed;
+        private transient double rating;
 
         ContractBuilder() {
         }
