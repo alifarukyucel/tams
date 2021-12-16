@@ -30,22 +30,22 @@ public class CreateContractRequestModel {
         CreateContractRequestModelBuilder() {
         }
 
-        public CreateContractRequestModelBuilder courseId(String courseId) {
+        public CreateContractRequestModelBuilder withCourseId(String courseId) {
             this.courseId = courseId;
             return this;
         }
 
-        public CreateContractRequestModelBuilder netId(String netId) {
+        public CreateContractRequestModelBuilder withNetId(String netId) {
             this.netId = netId;
             return this;
         }
 
-        public CreateContractRequestModelBuilder duties(String duties) {
+        public CreateContractRequestModelBuilder withDuties(String duties) {
             this.duties = duties;
             return this;
         }
 
-        public CreateContractRequestModelBuilder maxHours(int maxHours) {
+        public CreateContractRequestModelBuilder withMaxHours(int maxHours) {
             this.maxHours = maxHours;
             return this;
         }
