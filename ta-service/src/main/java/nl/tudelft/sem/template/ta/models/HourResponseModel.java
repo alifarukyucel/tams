@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.ta.models;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,7 +33,7 @@ public class HourResponseModel {
             declaration.getId(),
             declaration.getContract().getNetId(),
             declaration.getDate(),
-            declaration.getDesc(),
+            declaration.getDescription(),
             declaration.getWorkedTime(),
             declaration.getApproved()
         );

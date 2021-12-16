@@ -11,12 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Builder
 @Table(name = "HourDeclarations")
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -38,9 +36,8 @@ public class HourDeclaration {
 
     private LocalDateTime date;
 
-    private String desc;
+    private String description;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Contract contract;
-
 }

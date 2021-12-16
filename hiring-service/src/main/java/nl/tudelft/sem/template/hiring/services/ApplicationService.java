@@ -151,10 +151,10 @@ public class ApplicationService {
         }
 
         boolean result = contractInformation.createContract(CreateContractRequestModel.builder()
-                .courseId(courseId)
-                .netId(netId)
-                .duties(duties)
-                .maxHours(maxHours)
+                .withCourseId(courseId)
+                .withNetId(netId)
+                .withDuties(duties)
+                .withMaxHours(maxHours)
                 .build());
 
         if (!result) {
