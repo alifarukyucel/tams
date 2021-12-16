@@ -41,8 +41,4 @@ public class HourDeclaration {
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Contract contract;
-
-    public static ConcreteHourDeclarationBuilder builder() {
-        return new ConcreteHourDeclarationBuilder();
-    }
 }
