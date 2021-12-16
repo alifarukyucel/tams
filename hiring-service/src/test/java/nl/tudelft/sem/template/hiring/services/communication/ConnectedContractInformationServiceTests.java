@@ -40,10 +40,10 @@ public class ConnectedContractInformationServiceTests {
         String courseId = "CSE1110";
 
         CreateContractRequestModel model = CreateContractRequestModel.builder()
-                .courseId(courseId)
-                .netId(netId)
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(courseId)
+                .withNetId(netId)
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockMicroserviceCommunicationHelper.post(testUrl + createContractPath,
@@ -66,10 +66,10 @@ public class ConnectedContractInformationServiceTests {
         String courseId = "CSE1110";
 
         CreateContractRequestModel model = CreateContractRequestModel.builder()
-                .courseId(courseId)
-                .netId(netId)
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(courseId)
+                .withNetId(netId)
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockMicroserviceCommunicationHelper.post(testUrl + createContractPath,

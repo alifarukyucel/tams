@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,7 +53,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier",
-        "mockCourseInformation", "mockContractInformation"})
+                    "mockCourseInformation", "mockContractInformation"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class ApplicationControllerTest {
@@ -133,6 +134,60 @@ public class ApplicationControllerTest {
         //assert
         invalidResults.andExpect(status().isBadRequest());
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
+    }
+
+
+    @Test
+    void withdrawOnTime() throws Exception {
+        // arrange
+        Application onTime = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(onTime);
+
+        ApplicationKey key = ApplicationKey.builder()
+                .courseId(onTime.getCourseId())
+                .netId(onTime.getNetId())
+                .build();
+
+        when(mockCourseInformation.startDate(onTime.getCourseId()))
+                .thenReturn(LocalDateTime.MAX);
+
+        // act
+        ResultActions onTimeResult  = mockMvc.perform(delete("/withdraw")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(key))
+                .header("Authorization", "Bearer Joe"));
+
+        // assert
+        assertThat(applicationRepository.findById(key)).isEmpty();
+        onTimeResult.andExpect(status().isOk());
+    }
+
+    @Test
+    void withdrawTooLate() throws Exception {
+        // arrange
+        Application tooLate = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        applicationRepository.save(tooLate);
+
+        ApplicationKey key = ApplicationKey.builder()
+                .courseId(tooLate.getCourseId())
+                .netId(tooLate.getNetId())
+                .build();
+
+        when(mockCourseInformation.startDate(tooLate.getCourseId()))
+                .thenReturn(LocalDateTime.now());
+
+        // act
+        ResultActions onTimeResult  = mockMvc.perform(delete("/withdraw")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(key))
+                .header("Authorization", "Bearer Joe"));
+
+        // assert
+        assertThat(applicationRepository.findById(key)).isNotEmpty();
+        onTimeResult.andExpect(status().isForbidden());
+
     }
 
     @Test
@@ -346,10 +401,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId(application.getNetId())
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -386,10 +441,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId(application.getNetId())
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -426,10 +481,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId(application.getNetId())
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -461,10 +516,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId("invalidNetid")
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId("invalidNetid")
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
@@ -502,10 +557,10 @@ public class ApplicationControllerTest {
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
-                .duties("Be a good TA")
-                .maxHours(42)
+                .withCourseId(application.getCourseId())
+                .withNetId(application.getNetId())
+                .withDuties("Be a good TA")
+                .withMaxHours(42)
                 .build();
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))

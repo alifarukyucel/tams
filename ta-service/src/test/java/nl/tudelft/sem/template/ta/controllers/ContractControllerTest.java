@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
@@ -74,34 +75,34 @@ class ContractControllerTest {
         contracts = new ArrayList<Contract>();
 
         // Save basic contract in db.
-        defaultContract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .duties("Work really hard")
-            .signed(false)
+        defaultContract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         defaultContract = contractRepository.save(defaultContract);
         contracts.add(defaultContract);
 
-        Contract secondContract = Contract.builder()
-                .netId("WinstijnSmit")
-                .courseId("CSE2310")
-                .maxHours(10)
-                .duties("Work really hard")
-                .rating(8)
-                .signed(true)
+        Contract secondContract = new ConcreteContractBuilder()
+                .withNetId("WinstijnSmit")
+                .withCourseId("CSE2310")
+                .withMaxHours(10)
+                .withDuties("Work really hard")
+                .withRating(8)
+                .withSigned(true)
                 .build();
         contractRepository.save(secondContract);
         contracts.add(secondContract);
 
-        Contract thirdContract = Contract.builder()
-                .netId("WinstijnSmit")
-                .courseId("CSE1250")
-                .maxHours(2)
-                .duties("No need to work hard")
-                .rating(8.6)
-                .signed(false)
+        Contract thirdContract = new ConcreteContractBuilder()
+                .withNetId("WinstijnSmit")
+                .withCourseId("CSE1250")
+                .withMaxHours(2)
+                .withDuties("No need to work hard")
+                .withRating(8.6)
+                .withSigned(false)
                 .build();
         contractRepository.save(thirdContract);
         contracts.add(thirdContract);

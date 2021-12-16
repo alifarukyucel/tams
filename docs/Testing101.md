@@ -32,7 +32,7 @@ class ContractServiceTest {
     @Test
     void save() {
         // arrange
-        Contract contract = Contract.builder().netId("Gert").courseId("CSE2310").build();
+        Contract contract = new ConcreteContractBuilder().netId("Gert").courseId("CSE2310").build();
 
         // act
         contract = contractService.save(contract);
