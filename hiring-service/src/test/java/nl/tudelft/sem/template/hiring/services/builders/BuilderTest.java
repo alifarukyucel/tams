@@ -78,5 +78,29 @@ public class BuilderTest {
         assertThat(model.getDuties()).isNull();
     }
 
+    @Test
+    public void testAllTogether() {
+        //arrange
+        String courseId = "CSE1300";
+        String netId = "kverhoef";
+        String duties = "DUTIES";
+        int maxHours = 8;
+
+        //act
+        model = ApplicationAcceptRequestModel.builder()
+                .withCourseId(courseId)
+                .withNetId(netId)
+                .withDuties(duties)
+                .withMaxHours(maxHours)
+                .build();
+
+        //assert
+        assertThat(model.getCourseId()).isEqualTo(courseId);
+        assertThat(model.getNetId()).isEqualTo(netId);
+        assertThat(model.getDuties()).isEqualTo(duties);
+        assertThat(model.getMaxHours()).isEqualTo(maxHours);
+    }
+
+
 
 }
