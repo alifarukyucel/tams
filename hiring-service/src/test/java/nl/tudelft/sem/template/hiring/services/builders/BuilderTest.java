@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class BuilderTest {
 
-    private CreateContractRequestModel.CreateContractRequestModelBuilder builder;
     private ApplicationAcceptRequestModel model;
 
     @Test
