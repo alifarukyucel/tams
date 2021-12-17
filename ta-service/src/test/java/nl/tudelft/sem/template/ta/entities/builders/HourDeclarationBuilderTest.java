@@ -5,7 +5,6 @@ import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,21 +36,129 @@ public class HourDeclarationBuilderTest {
     @Test
     public void testWithWorkedTime() {
         //arrange
-        UUID id = UUID.randomUUID();
+        Integer workedTime = 60;
 
         //act
         hourDeclaration = new ConcreteHourDeclarationBuilder()
-                .withId(id)
+                .withWorkedTime(workedTime)
                 .build();
 
         //assert
-        assertThat(hourDeclaration.getId()).isEqualTo(id);
+        assertThat(hourDeclaration.getWorkedTime()).isEqualTo(workedTime);
         assertThat(hourDeclaration.getApproved()).isNull();
+        assertThat(hourDeclaration.getContract()).isNull();
+        assertThat(hourDeclaration.getReviewed()).isNull();
+        assertThat(hourDeclaration.getDate()).isNull();
+        assertThat(hourDeclaration.getId()).isNull();
+        assertThat(hourDeclaration.getDescription()).isNull();
+    }
+
+    @Test
+    public void testWithApproved() {
+        //arrange
+        boolean approved = true;
+
+        //act
+        hourDeclaration = new ConcreteHourDeclarationBuilder()
+                .withApproved(approved)
+                .build();
+
+        //assert
+        assertThat(hourDeclaration.getApproved()).isEqualTo(approved);
+        assertThat(hourDeclaration.getId()).isNull();
         assertThat(hourDeclaration.getContract()).isNull();
         assertThat(hourDeclaration.getReviewed()).isNull();
         assertThat(hourDeclaration.getDate()).isNull();
         assertThat(hourDeclaration.getWorkedTime()).isNull();
         assertThat(hourDeclaration.getDescription()).isNull();
+    }
+
+    @Test
+    public void testWithReviewed() {
+        //arrange
+        boolean reviewed = false;
+
+        //act
+        hourDeclaration = new ConcreteHourDeclarationBuilder()
+                .withReviewed(reviewed)
+                .build();
+
+        //assert
+        assertThat(hourDeclaration.getReviewed()).isEqualTo(reviewed);
+        assertThat(hourDeclaration.getId()).isNull();
+        assertThat(hourDeclaration.getContract()).isNull();
+        assertThat(hourDeclaration.getApproved()).isNull();
+        assertThat(hourDeclaration.getDate()).isNull();
+        assertThat(hourDeclaration.getWorkedTime()).isNull();
+        assertThat(hourDeclaration.getDescription()).isNull();
+    }
+
+    @Test
+    public void testWithDate() {
+        //arrange
+        LocalDateTime date = LocalDateTime.now();
+
+        //act
+        hourDeclaration = new ConcreteHourDeclarationBuilder()
+                .withDate(date)
+                .build();
+
+        //assert
+        assertThat(hourDeclaration.getDate()).isEqualTo(date);
+        assertThat(hourDeclaration.getId()).isNull();
+        assertThat(hourDeclaration.getContract()).isNull();
+        assertThat(hourDeclaration.getApproved()).isNull();
+        assertThat(hourDeclaration.getReviewed()).isNull();
+        assertThat(hourDeclaration.getWorkedTime()).isNull();
+        assertThat(hourDeclaration.getDescription()).isNull();
+    }
+
+    @Test
+    public void testWithDescription() {
+        //arrange
+        String desc = "description";
+
+        //act
+        hourDeclaration = new ConcreteHourDeclarationBuilder()
+                .withDescription(desc)
+                .build();
+
+        //assert
+        assertThat(hourDeclaration.getDescription()).isEqualTo(desc);
+        assertThat(hourDeclaration.getId()).isNull();
+        assertThat(hourDeclaration.getContract()).isNull();
+        assertThat(hourDeclaration.getApproved()).isNull();
+        assertThat(hourDeclaration.getReviewed()).isNull();
+        assertThat(hourDeclaration.getWorkedTime()).isNull();
+        assertThat(hourDeclaration.getDate()).isNull();
+    }
+
+    @Test
+    public void testWithContract() {
+        //arrange
+        Contract contract = new ConcreteContractBuilder()
+                .withNetId("kverhoef")
+                .withCourseId("CSE1300")
+                .withMaxHours(8)
+                .withDuties("DUTIES")
+                .withSigned(true)
+                .withRating(2.0)
+                .build();
+
+        //act
+        hourDeclaration = new ConcreteHourDeclarationBuilder()
+                .withContractId(contract)
+                .build();
+
+        //assert
+        assertThat(hourDeclaration.getContract()).isEqualTo(contract);
+        assertThat(hourDeclaration.getId()).isNull();
+        assertThat(hourDeclaration.getDescription()).isNull();
+        assertThat(hourDeclaration.getApproved()).isNull();
+        assertThat(hourDeclaration.getReviewed()).isNull();
+        assertThat(hourDeclaration.getWorkedTime()).isNull();
+        assertThat(hourDeclaration.getDate()).isNull();
+
     }
 
     @Test

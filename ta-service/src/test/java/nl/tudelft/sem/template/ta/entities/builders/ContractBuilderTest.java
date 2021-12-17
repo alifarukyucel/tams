@@ -49,7 +49,7 @@ public class ContractBuilderTest {
     }
 
     @Test
-    public void testMaxHours() {
+    public void testWithMaxHours() {
         //arrange
         int maxHours = 8;
 
@@ -68,7 +68,7 @@ public class ContractBuilderTest {
     }
 
     @Test
-    public void testDuties() {
+    public void testWithDuties() {
         //arrange
         String duties = "DUTIES";
 
@@ -87,7 +87,7 @@ public class ContractBuilderTest {
     }
 
     @Test
-    public void testSigned() {
+    public void testWithSigned() {
         //arrange
         boolean signed = true;
 
@@ -106,7 +106,7 @@ public class ContractBuilderTest {
     }
 
     @Test
-    public void testRating() {
+    public void testWithRating() {
         //arrange
         double rating = 2.0;
 
