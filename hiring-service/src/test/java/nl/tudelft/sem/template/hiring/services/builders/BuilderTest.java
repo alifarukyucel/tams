@@ -1,10 +1,9 @@
 package nl.tudelft.sem.template.hiring.services.builders;
 
-import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
-import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
-import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
+import org.junit.jupiter.api.Test;
 
 public class BuilderTest {
 
@@ -43,6 +42,7 @@ public class BuilderTest {
         assertThat(model.getDuties()).isNull();
         assertThat(model.getMaxHours()).isZero();
     }
+
     @Test
     public void testWithDuties() {
         //arrange

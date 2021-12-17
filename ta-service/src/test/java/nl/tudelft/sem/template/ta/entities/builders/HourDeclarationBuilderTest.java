@@ -1,13 +1,12 @@
 package nl.tudelft.sem.template.ta.entities.builders;
 
-import nl.tudelft.sem.template.ta.entities.Contract;
-import nl.tudelft.sem.template.ta.entities.HourDeclaration;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import org.junit.jupiter.api.Test;
 
 public class HourDeclarationBuilderTest {
 
