@@ -53,7 +53,8 @@ public class ApplicationController {
     }
 
     /**
-     * Endpoint for fetching the status of a specific course for a signed in user
+     * Endpoint for fetching the status of a specific course for a signed in user.
+     *
      * @param course
      * @return
      */

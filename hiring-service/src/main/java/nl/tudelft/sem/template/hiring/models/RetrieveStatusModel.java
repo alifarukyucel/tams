@@ -17,10 +17,12 @@ public class RetrieveStatusModel {
     private ApplicationStatus status;
 
     /**
-     * Create an instance of RetrieveStatusModel based on given application
+     * Constructor that constructs a RetrieveStatusModel from an application and courseId.
+     *
+     * @param application
      * @return RetrieveStatusModel of given application
      */
-    public static RetrieveStatusModel fromApplication(Application application) {
+    public static RetrieveStatusModel fromApplication(Application application) { //add String courseId as argument
         return new RetrieveStatusModel(
                 application.getCourseId(),
                 application.getNetId(),

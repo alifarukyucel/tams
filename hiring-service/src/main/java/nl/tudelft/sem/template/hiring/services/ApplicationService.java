@@ -46,19 +46,22 @@ public class ApplicationService {
 
     /**
      * Retrieving the status of the application to see whether someone is accepted or rejected.
-     * @param key the key to find the application in the database.
+     * @param courseId
+     * @param netId
      * @return String containing the status in readable format.
      * @throws NoSuchElementException
      */
-    public ApplicationStatus retrieveStatus(ApplicationKey key) throws NoSuchElementException {
-        Optional<Application> application = applicationRepository.findById(key);
-        if(!application.isPresent()) throw new NoSuchElementException("Application does not exist");
-        Application actualApplication = application.get();
-        ApplicationStatus status = actualApplication.getStatus();
-        if(status == null) {
-            actualApplication.setStatus(ApplicationStatus.PENDING);
+    public ApplicationStatus retrieveStatus(String courseId, String netId) {
+        ApplicationKey key = new ApplicationKey(courseId, netId);
+        Optional<Application> applicationOptional = applicationRepository.findById(key);
+
+        try {
+            Application application = applicationOptional.get();
+            return application.getStatus();
+
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException();
         }
-        return status;
     }
 
 

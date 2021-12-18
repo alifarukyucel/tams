@@ -19,6 +19,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.security.Key;
@@ -62,33 +63,6 @@ public class ApplicationControllerTest {
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(exampleNetId);
         applicationRepository.deleteAll();
-        // Save applications in db (Not sure whether this is necessary)
-        pendingApplication = Application.builder()
-                .netId("kverhoef")
-                .courseId("CSE1200")
-                .grade(9)
-                .motivation("I like TAs")
-                .status(ApplicationStatus.PENDING)
-                .build();
-        applicationRepository.save(pendingApplication);
-
-        acceptedApplication = Application.builder()
-                .netId("dsmith")
-                .courseId("CSE1200")
-                .grade(9)
-                .motivation("I like TAs")
-                .status(ApplicationStatus.ACCEPTED)
-                .build();
-        applicationRepository.save(acceptedApplication);
-
-        rejectedApplication = Application.builder()
-                .netId("lbrown")
-                .courseId("CSE1200")
-                .grade(9)
-                .motivation("I like TAs")
-                .status(ApplicationStatus.REJECTED)
-                .build();
-        applicationRepository.save(rejectedApplication);
     }
 
     @Test
@@ -124,49 +98,106 @@ public class ApplicationControllerTest {
     }
 
     @Test
+    void invalidCourseGetStatusTest() throws Exception {
+        //arrange
+        Application application = Application.builder()
+                .netId("kverhoef")
+                .courseId("CSE1200")
+                .grade(9.0f)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.PENDING)
+                .build();
+        applicationRepository.save(application);
+        String invalidCourseId = "CSE1300";
+        ApplicationKey key = new ApplicationKey(invalidCourseId, application.getNetId());
+
+        //act
+        ResultActions wrongCourseId = mockMvc.perform(get("/status/" + invalidCourseId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer Joe"));
+
+        //assert
+        MvcResult result = wrongCourseId
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertThat(application.getCourseId()).isNotEqualTo(invalidCourseId);
+    }
+
+    @Test
     void pendingStatusTest() throws Exception {
-        // arrange
-        when(mockAuthenticationManager.getNetid()).thenReturn("kverhoef");
-        ApplicationKey key = new ApplicationKey(pendingApplication.getCourseId(), pendingApplication.getNetId());
+        //arrange
+        Application application = Application.builder()
+                .netId("kverhoef")
+                .courseId("CSE1200")
+                .grade(9.0f)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.PENDING)
+                .build();
+        applicationRepository.save(application);
+        ApplicationKey key = new ApplicationKey(application.getCourseId(), application.getNetId());
 
-        // act
-        ResultActions pendingResult  = mockMvc.perform(get("/status/CSE1200").header("Authorization", "Bearer Joe"));
+        //act
+        ResultActions pendingApplication = mockMvc.perform(get("/status/" + application.getCourseId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Joe"));
 
-        // assert
-        pendingResult.andExpect(status().isOk());
-        assertThat(pendingApplication.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+        //assert
+        MvcResult result = pendingApplication
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(application.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
 
     @Test
     void acceptedStatusTest() throws Exception {
-        // arrange
-        when(mockAuthenticationManager.getNetid()).thenReturn("kverhoef");
-        ApplicationKey key = new ApplicationKey(acceptedApplication.getCourseId(), acceptedApplication.getNetId());
+        //arrange
+        Application application = Application.builder()
+                .netId("kverhoef")
+                .courseId("CSE1200")
+                .grade(9.0f)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.ACCEPTED)
+                .build();
+        applicationRepository.save(application);
+        ApplicationKey key = new ApplicationKey(application.getCourseId(), application.getNetId());
 
-        // act
-        ResultActions pendingResult  = mockMvc.perform(get("/status/CSE1200").header("Authorization", "Bearer Joe"));
+        //act
+        ResultActions pendingApplication = mockMvc.perform(get("/status/" + application.getCourseId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Joe"));
 
-        // assert
-        pendingResult.andExpect(status().isOk());
-        assertThat(acceptedApplication.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        //assert
+        MvcResult result = pendingApplication
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(application.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
         assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
     @Test
     void rejectedStatusTest() throws Exception {
-        // arrange
-        when(mockAuthenticationManager.getNetid()).thenReturn("kverhoef");
-        ApplicationKey key = new ApplicationKey(rejectedApplication.getCourseId(), rejectedApplication.getNetId());
+        //arrange
+        Application application = Application.builder()
+                .netId("kverhoef")
+                .courseId("CSE1200")
+                .grade(9.0f)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.REJECTED)
+                .build();
+        applicationRepository.save(application);
+        ApplicationKey key = new ApplicationKey(application.getCourseId(), application.getNetId());
 
-        // act
-        ResultActions pendingResult  = mockMvc.perform(get("/status/CSE1200").header("Authorization", "Bearer Joe"));
+        //act
+        ResultActions pendingApplication = mockMvc.perform(get("/status/" + application.getCourseId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Joe"));
 
-        // assert
-        pendingResult.andExpect(status().isOk());
-        assertThat(rejectedApplication.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+        //assert
+        MvcResult result = pendingApplication
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(application.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
         assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
-
-
 }
