@@ -17,7 +17,7 @@ public class MockApplicationServiceProfile {
     /**
      * Mocks the ApplicationService.
      *
-     * @return A mocked TokenGenerator.
+     * @return A mocked ApplicationService.
      */
     @Bean
     @Primary
