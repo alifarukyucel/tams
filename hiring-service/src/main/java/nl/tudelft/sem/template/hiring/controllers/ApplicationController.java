@@ -58,7 +58,7 @@ public class ApplicationController {
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
         if (applicationService.maxApplication(authManager.getNetid())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT); //change back to FORBIDDEN
         }
         Application application = createPendingApplication(
                 request.getCourseId(),
