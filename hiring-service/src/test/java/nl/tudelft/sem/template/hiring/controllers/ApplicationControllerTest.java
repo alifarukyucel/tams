@@ -53,7 +53,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier",
-                    "mockCourseInformation", "mockContractInformation, mockApplicationService"})
+                    "mockCourseInformation", "mockContractInformation",  "mockApplicationService"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class ApplicationControllerTest {
@@ -141,16 +141,11 @@ public class ApplicationControllerTest {
 
     @Test
     public void tooManyApplicationsTest() throws Exception {
-
-    }
-
-    @Test
-    public void oneMoreApplicationPossibleTest() throws Exception {
         //Arrange
         ApplicationRequestModel thirdApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
         ApplicationKey validKey = new ApplicationKey(thirdApplicationModel.getCourseId(), exampleNetId);
-        //when(mockApplicationService.maxApplication(exampleNetId)).thenReturn(false);
+        when(mockApplicationService.maxApplication(exampleNetId)).thenReturn(true);
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
                 LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
@@ -165,8 +160,33 @@ public class ApplicationControllerTest {
                 .content(serialize(thirdApplicationModel))
                 .header("Authorization", "Bearer Joe"));
         //assert
-        validResults.andExpect(status().isOk());
-        assertThat(applicationRepository.findById(validKey)).isNotEmpty();
+        validResults.andExpect(status().isIAmATeapot());
+        assertThat(applicationRepository.findById(validKey)).isEmpty();
+    }
+
+    @Test
+    public void oneMoreApplicationPossibleTest() throws Exception {
+        //Arrange
+        ApplicationRequestModel thirdApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
+                "I want to");
+        ApplicationKey validKey = new ApplicationKey(thirdApplicationModel.getCourseId(), exampleNetId);
+        when(mockApplicationService.maxApplication(exampleNetId)).thenReturn(true);
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
+
+        //Act
+        ResultActions validResults = mockMvc.perform(post("/apply")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(thirdApplicationModel))
+                .header("Authorization", "Bearer Joe"));
+        //assert
+        validResults.andExpect(status().isIAmATeapot());
+        assertThat(applicationRepository.findById(validKey)).isEmpty();
     }
 
 
