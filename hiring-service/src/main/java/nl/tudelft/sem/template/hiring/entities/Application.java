@@ -1,9 +1,12 @@
 package nl.tudelft.sem.template.hiring.entities;
 
-import javax.persistence.*;
-
-import lombok.AllArgsConstructor;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
 import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.hiring.entities.compositeKeys.ApplicationKey;
