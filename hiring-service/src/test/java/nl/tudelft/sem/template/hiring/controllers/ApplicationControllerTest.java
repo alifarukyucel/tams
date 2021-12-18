@@ -99,4 +99,15 @@ public class ApplicationControllerTest {
         invalidResults.andExpect(status().isBadRequest());
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
     }
+
+    @Test
+    public void tooManyApplicationsTest() throws Exception {
+
+
+    }
+
+    @Test
+    public void oneMoreApplicationPossibleTest() throws Exception {
+
+    }
 }
