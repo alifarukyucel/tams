@@ -2,3 +2,4 @@ include:
   - authentication-service/.gitlab-ci.yml
   - course-service/.gitlab-ci.yml
   - hiring-service/.gitlab-ci.yml
+  - ta-service/.gitlab-ci.yml

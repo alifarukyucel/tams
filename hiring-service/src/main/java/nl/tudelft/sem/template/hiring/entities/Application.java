@@ -5,11 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
-import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.tudelft.sem.template.hiring.entities.compositeKeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 
 @Data
@@ -37,7 +36,17 @@ public class Application {
     @Column(name = "STATUS")
     private ApplicationStatus status;
 
-    public static Application createPendingApplication(String courseId, String netId, float grade, String motivation) {
+    /**
+     * Create an application with the status "Pending".
+     *
+     * @param courseId String courseId
+     * @param netId String netId
+     * @param grade float grade
+     * @param motivation String motivation
+     * @return a newly created instance of an Application with the status "Pending".
+     */
+    public static Application createPendingApplication(String courseId, String netId,
+                                                       float grade, String motivation) {
         Application application = new Application();
         application.setCourseId(courseId);
         application.setNetId(netId);
