@@ -7,13 +7,13 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
+import nl.tudelft.sem.template.ta.entities.builders.interfaces.ContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 
 @Entity
-@Builder
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Data
@@ -38,6 +38,7 @@ public class Contract {
 
     @Column(columnDefinition = "double precision default 0")
     private double rating;
+
 
     /**
      * Set the rating of this contract.

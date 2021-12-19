@@ -3,6 +3,8 @@ package nl.tudelft.sem.template.ta.services;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
+import nl.tudelft.sem.template.ta.entities.builders.directors.ContractDirector;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
@@ -64,13 +66,15 @@ public class ContractService {
             throw new IllegalArgumentException("No more TAs can be hired for this course.");
         }
 
+        var builder = new ConcreteContractBuilder();
+        new ContractDirector().createUnsignedContract(builder);
+
         // Create the actual contract with the builder.
-        Contract contract = Contract.builder()
-            .netId(netId)
-            .courseId(courseId)
-            .maxHours(maxHours)
-            .duties(duties)
-            .signed(false) // not signed yet!
+        Contract contract = builder
+            .withNetId(netId)
+            .withCourseId(courseId)
+            .withMaxHours(maxHours)
+            .withDuties(duties)
             .build();
 
         // save can also throw an IllegalArgumentException if failed.
@@ -233,9 +237,9 @@ public class ContractService {
                                                         .withIgnoreNullValues()
                                                         .withIgnorePaths("rating");
         Example<Contract> example = Example.of(
-                Contract.builder()
-                        .courseId(courseId)
-                        .netId(netId)
+                new ConcreteContractBuilder()
+                        .withCourseId(courseId)
+                        .withNetId(netId)
                         .build(), ignoreAllFields);
         return example;
     }

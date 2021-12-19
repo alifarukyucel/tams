@@ -5,6 +5,9 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteHourDeclarationBuilder;
+import nl.tudelft.sem.template.ta.entities.builders.directors.HourDeclarationDirector;
+import nl.tudelft.sem.template.ta.entities.builders.interfaces.HourDeclarationBuilder;
 import nl.tudelft.sem.template.ta.models.SubmitHoursRequestModel;
 import nl.tudelft.sem.template.ta.repositories.HourDeclarationRepository;
 import org.springframework.data.domain.Example;
@@ -40,14 +43,16 @@ public class HourService {
         Contract contract = contractService.getContract(
             netId, request.getCourse());
 
-        HourDeclaration hourDeclaration = HourDeclaration.builder()
-            .workedTime(request.getWorkedTime())
-            .reviewed(false)
-            .approved(false)
-            .contract(contract)
-            .date(request.getDate())
-            .desc(request.getDesc())
-            .build();
+        HourDeclarationBuilder builder = new ConcreteHourDeclarationBuilder();
+        new HourDeclarationDirector().createUnsignedContract(builder);
+
+        builder
+            .withWorkedTime(request.getWorkedTime())
+            .withContractId(contract)
+            .withDate(request.getDate())
+            .withDescription(request.getDesc());
+
+        HourDeclaration hourDeclaration = builder.build();
 
         return checkAndSave(hourDeclaration);
     }
@@ -147,8 +152,8 @@ public class HourService {
             .withIgnoreNullValues();
 
         Example<HourDeclaration> example = Example.of(
-            HourDeclaration.builder()
-                .contract(contract)
+            new ConcreteHourDeclarationBuilder()
+                .withContractId(contract)
                 .build(),
             ignoreAllFields);
 

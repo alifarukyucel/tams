@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.template.ta.entities.Contract;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +42,12 @@ class ContractServiceTest {
     @Test
     void signExistingContract() {
         // arrange
-        Contract contract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .duties("Work really hard")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contract = contractRepository.save(contract);
 
@@ -63,12 +63,12 @@ class ContractServiceTest {
     @Test
     void signNonExistingContract() {
         // arrange
-        Contract contract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .duties("Work really hard")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contract = contractRepository.save(contract);
         final Contract contract1 = contract;
@@ -83,12 +83,12 @@ class ContractServiceTest {
     @Test
     void signAlreadySignedContract() {
         // arrange
-        Contract contract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .duties("Work really hard")
-            .signed(true)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(true)
             .build();
         contract = contractRepository.save(contract);
         final Contract contract1 = contract;
@@ -103,13 +103,13 @@ class ContractServiceTest {
     @Test
     void getContractSupplementingNullValues() {
         // arrange
-        Contract contract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .rating(8.2)
-            .duties("Work really hard")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withRating(8.2)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contract = contractRepository.save(contract);
         final Contract contract1 = contract;
@@ -128,12 +128,12 @@ class ContractServiceTest {
     @Test
     void getNonExistingContract() {
         // arrange
-        Contract contract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .duties("Work really hard")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contract = contractRepository.save(contract);
         final Contract contract1 = contract;
@@ -156,31 +156,31 @@ class ContractServiceTest {
     @Test
     void getContract() {
         // arrange
-        contractRepository.save(Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2550")
-            .maxHours(5)
-            .rating(9.53)
-            .duties("Work really hard")
-            .signed(false)
+        contractRepository.save(new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2550")
+            .withMaxHours(5)
+            .withRating(9.53)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build());
 
-        contractRepository.save(Contract.builder()
-            .netId("GerryEik")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .rating(7)
-            .duties("Work really hard")
-            .signed(false)
+        contractRepository.save(new ConcreteContractBuilder()
+            .withNetId("GerryEik")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withRating(7)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build());
 
-        Contract contract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .rating(6)
-            .duties("Work really hard")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withRating(6)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contract = contractRepository.save(contract);
 
@@ -195,29 +195,29 @@ class ContractServiceTest {
     @Test
     void getAllContracts() {
         // Arrange
-        Contract contract1 = Contract.builder()
-                .netId("PVeldHuis")
-                .courseId("CSE2550")
-                .maxHours(5)
-                .duties("Work really hard")
-                .signed(false)
+        Contract contract1 = new ConcreteContractBuilder()
+                .withNetId("PVeldHuis")
+                .withCourseId("CSE2550")
+                .withMaxHours(5)
+                .withDuties("Work really hard")
+                .withSigned(false)
                 .build();
         contractRepository.save(contract1);
 
-        contractRepository.save(Contract.builder()
-                .netId("GerryEik")
-                .courseId("CSE2310")
-                .maxHours(5)
-                .duties("Work really hard")
-                .signed(false)
+        contractRepository.save(new ConcreteContractBuilder()
+                .withNetId("GerryEik")
+                .withCourseId("CSE2310")
+                .withMaxHours(5)
+                .withDuties("Work really hard")
+                .withSigned(false)
                 .build());
 
-        Contract contract2 = Contract.builder()
-                .netId("PVeldHuis")
-                .courseId("CSE2310")
-                .maxHours(5)
-                .duties("Work really hard")
-                .signed(false)
+        Contract contract2 = new ConcreteContractBuilder()
+                .withNetId("PVeldHuis")
+                .withCourseId("CSE2310")
+                .withMaxHours(5)
+                .withDuties("Work really hard")
+                .withSigned(false)
                 .build();
         contractRepository.save(contract2);
 
@@ -246,11 +246,11 @@ class ContractServiceTest {
     @Test
     void save() {
         // arrange
-        Contract contract = Contract.builder()
-            .netId("Gert")
-            .courseId("CSE2310")
-            .signed(false)
-            .maxHours(20)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("Gert")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
             .build();
 
         // act
@@ -265,30 +265,30 @@ class ContractServiceTest {
     @Test
     void createUnsignedContract() {
         // Arrange
-        contractRepository.save(Contract.builder()
-            .netId("Martin")
-            .courseId("CSE1105")
-            .signed(false)
-            .maxHours(20)
-            .duties("Heel hard werken")
+        contractRepository.save(new ConcreteContractBuilder()
+            .withNetId("Martin")
+            .withCourseId("CSE1105")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
             .build()
         );
 
-        contractRepository.save(Contract.builder()
-            .netId("Martin")
-            .courseId("CSE2310")
-            .signed(false)
-            .maxHours(20)
-            .duties("Heel hard werken")
+        contractRepository.save(new ConcreteContractBuilder()
+            .withNetId("Martin")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
             .build()
         );
 
-        Contract contract = Contract.builder()
-            .netId("WinstijnSmit")
-            .courseId("CSE2310")
-            .signed(false)
-            .maxHours(20)
-            .duties("Heel hard werken")
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
             .build();
 
         when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
@@ -310,21 +310,21 @@ class ContractServiceTest {
 
     @Test
     void createUnsignedContractExceedingTaLimit() {
-        contractRepository.save(Contract.builder()
-            .netId("Martin")
-            .courseId("CSE2310")
-            .signed(false)
-            .maxHours(20)
-            .duties("Heel hard werken")
+        contractRepository.save(new ConcreteContractBuilder()
+            .withNetId("Martin")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
             .build()
         );
 
-        Contract contract = Contract.builder()
-            .netId("WinstijnSmit")
-            .courseId("CSE2310")
-            .signed(false)
-            .maxHours(20)
-            .duties("Heel hard werken")
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
             .build();
 
         when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
@@ -347,12 +347,12 @@ class ContractServiceTest {
 
     @Test
     void createUnsignedContractInaccessibleCourseService() {
-        Contract contract = Contract.builder()
-            .netId("WinstijnSmit")
-            .courseId("CSE2310")
-            .signed(false)
-            .maxHours(20)
-            .duties("Heel hard werken")
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
             .build();
 
         when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(null);
@@ -403,12 +403,12 @@ class ContractServiceTest {
     @Test
     void createUnsignedContract_createSame() {
         // Arrange
-        Contract contract = Contract.builder()
-            .netId("WinstijnSmit")
-            .courseId("CSE2525")
-            .maxHours(10)
-            .duties("Duties")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2525")
+            .withMaxHours(10)
+            .withDuties("Duties")
+            .withSigned(false)
             .build();
         contractRepository.save(contract);
 
@@ -431,12 +431,12 @@ class ContractServiceTest {
     @Test
     void contractExists_true() {
         // Arrange
-        Contract contract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .duties("Work really hard")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contract = contractRepository.save(contract);
 
@@ -450,20 +450,20 @@ class ContractServiceTest {
     @Test
     void contractExists_false() {
         // Arrange
-        Contract c1 = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CS2310")
-            .maxHours(5)
-            .duties("Work really hard")
-            .signed(false)
+        Contract c1 = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CS2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contractRepository.save(c1);
-        Contract c2 = Contract.builder()
-            .netId("WinstijnSmit")
-            .courseId("CSE2300")
-            .maxHours(5)
-            .duties("Work really hard")
-            .signed(false)
+        Contract c2 = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2300")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contractRepository.save(c2);
 
@@ -477,13 +477,13 @@ class ContractServiceTest {
     @Test
     void rate() {
         // Arrange
-        Contract contract = Contract.builder()
-            .netId("PVeldHuis")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .rating(5)
-            .duties("Work really hard")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withRating(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contract = contractRepository.save(contract);
 
@@ -499,13 +499,13 @@ class ContractServiceTest {
     @Test
     void rate_contractNotExists() {
         // Arrange
-        Contract contract = Contract.builder()
-            .netId("WinstijnSmit")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .rating(5)
-            .duties("Work really hard")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withRating(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contract = contractRepository.save(contract);
 
@@ -520,13 +520,13 @@ class ContractServiceTest {
     @Test
     void rate_ratingInvalid() {
         // Arrange
-        Contract contract = Contract.builder()
-            .netId("WinstijnSmit")
-            .courseId("CSE2310")
-            .maxHours(5)
-            .rating(5)
-            .duties("Work really hard")
-            .signed(false)
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withRating(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
             .build();
         contract = contractRepository.save(contract);
 

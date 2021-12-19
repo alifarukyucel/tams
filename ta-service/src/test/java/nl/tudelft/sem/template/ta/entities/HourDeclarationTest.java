@@ -1,9 +1,8 @@
 package nl.tudelft.sem.template.ta.entities;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
+import nl.tudelft.sem.template.ta.entities.builders.ConcreteHourDeclarationBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,14 +12,14 @@ class HourDeclarationTest {
     void testBuilder() {
         LocalDateTime time = LocalDateTime.now();
         Contract c1 = new Contract();
-        HourDeclaration hour1 = HourDeclaration.builder()
-            .id(UUID.randomUUID())
-            .workedTime(15)
-            .approved(true)
-            .reviewed(true)
-            .date(time)
-            .desc("test")
-            .contract(c1)
+        HourDeclaration hour1 = new ConcreteHourDeclarationBuilder()
+            .withId(UUID.randomUUID())
+            .withWorkedTime(15)
+            .withApproved(true)
+            .withReviewed(true)
+            .withDate(time)
+            .withDescription("test")
+            .withContractId(c1)
             .build();
 
         Assertions.assertNotNull(hour1.getId());
@@ -28,7 +27,7 @@ class HourDeclarationTest {
         Assertions.assertTrue(hour1.getApproved());
         Assertions.assertTrue(hour1.getReviewed());
         Assertions.assertEquals(time, hour1.getDate());
-        Assertions.assertEquals("test", hour1.getDesc());
+        Assertions.assertEquals("test", hour1.getDescription());
         Assertions.assertEquals(c1, hour1.getContract());
     }
 
@@ -43,14 +42,14 @@ class HourDeclarationTest {
         hour1.setApproved(true);
         hour1.setReviewed(true);
         hour1.setDate(time);
-        hour1.setDesc("test");
+        hour1.setDescription("test");
         hour1.setContract(c1);
 
         Assertions.assertNotNull(hour1.getId());
         Assertions.assertEquals(15, hour1.getWorkedTime());
         Assertions.assertTrue(hour1.getApproved());
         Assertions.assertEquals(time, hour1.getDate());
-        Assertions.assertEquals("test", hour1.getDesc());
+        Assertions.assertEquals("test", hour1.getDescription());
         Assertions.assertEquals(c1, hour1.getContract());
     }
 
