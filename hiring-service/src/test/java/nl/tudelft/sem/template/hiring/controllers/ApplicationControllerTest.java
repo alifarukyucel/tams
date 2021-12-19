@@ -101,7 +101,7 @@ public class ApplicationControllerTest {
     void invalidCourseGetStatusTest() throws Exception {
         //arrange
         Application application = Application.builder()
-                .netId("kverhoef")
+                .netId(exampleNetId)
                 .courseId("CSE1200")
                 .grade(9.0f)
                 .motivation("I like TAs")
@@ -127,7 +127,7 @@ public class ApplicationControllerTest {
     void pendingStatusTest() throws Exception {
         //arrange
         Application application = Application.builder()
-                .netId("kverhoef")
+                .netId(exampleNetId)
                 .courseId("CSE1200")
                 .grade(9.0f)
                 .motivation("I like TAs")
@@ -153,7 +153,7 @@ public class ApplicationControllerTest {
     void acceptedStatusTest() throws Exception {
         //arrange
         Application application = Application.builder()
-                .netId("kverhoef")
+                .netId(exampleNetId)
                 .courseId("CSE1200")
                 .grade(9.0f)
                 .motivation("I like TAs")
@@ -179,7 +179,7 @@ public class ApplicationControllerTest {
     void rejectedStatusTest() throws Exception {
         //arrange
         Application application = Application.builder()
-                .netId("kverhoef")
+                .netId(exampleNetId)
                 .courseId("CSE1200")
                 .grade(9.0f)
                 .motivation("I like TAs")
