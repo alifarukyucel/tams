@@ -78,9 +78,6 @@ public class ApplicationControllerTest {
     private transient AuthManager mockAuthenticationManager;
 
     @Autowired
-    private transient ApplicationService mockApplicationService;
-
-    @Autowired
     private transient TokenVerifier mockTokenVerifier;
 
     /**
@@ -174,7 +171,7 @@ public class ApplicationControllerTest {
                 .header("Authorization", "Bearer Joe"));
 
         //assert
-        limitReached.andExpect(status().isIAmATeapot());
+        limitReached.andExpect(status().isForbidden());
         assertThat(applicationRepository.findById(validKey)).isEmpty();
     }
 
