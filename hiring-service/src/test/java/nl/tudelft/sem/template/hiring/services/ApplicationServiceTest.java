@@ -118,7 +118,7 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    public void getWithInvalidNetid() {
+    public void getStatusWithInvalidNetid() {
         // Arrange
         Application expected = new Application("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.ACCEPTED);
@@ -303,36 +303,6 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    public void getWithInvalidCourseId() {
-        // Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
-                "I just want to be a cool!", ApplicationStatus.ACCEPTED);
-        String invalidCourseId = "CSE1305";
-        applicationRepository.save(expected);
-
-        // Act
-        ThrowingCallable c = () -> applicationService.get(invalidCourseId, expected.getNetId());
-
-        // Assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
-    }
-
-    @Test
-    public void getWithInvalidNetid() {
-        // Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
-                "I just want to be a cool!", ApplicationStatus.ACCEPTED);
-        String invalidNetid = "sjmith";
-        applicationRepository.save(expected);
-
-        // Act
-        ThrowingCallable c = () -> applicationService.get(expected.getCourseId(), invalidNetid);
-
-        // Assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
-    }
-
-    @Test
     public void rejectValidApplication() {
         // Arrange
         Application application = new Application("CSE1300", "jsmith", 7.0f,
@@ -434,9 +404,6 @@ public class ApplicationServiceTest {
         List<PendingApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
 
         assertThat(resultList).isEqualTo(expectedList);
-
-
-
 
     }
 

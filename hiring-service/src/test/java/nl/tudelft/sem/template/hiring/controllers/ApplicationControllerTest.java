@@ -26,7 +26,6 @@ import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
-import nl.tudelft.sem.template.hiring.models.RetrieveStatusModel;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
@@ -175,6 +174,7 @@ public class ApplicationControllerTest {
                 .motivation("I like TAs")
                 .status(ApplicationStatus.PENDING)
                 .build();
+
         applicationRepository.save(application);
         String invalidCourseId = "CSE1300";
         ApplicationKey key = new ApplicationKey(invalidCourseId, application.getNetId());
@@ -268,6 +268,7 @@ public class ApplicationControllerTest {
         assertThat(application.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
         assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
+
     @Test
     void withdrawTooLate() throws Exception {
         // arrange

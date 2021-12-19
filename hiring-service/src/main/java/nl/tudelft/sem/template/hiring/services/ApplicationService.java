@@ -202,10 +202,11 @@ public class ApplicationService {
 
     /**
      * Retrieving the status of the application to see whether someone is accepted or rejected.
-     * @param courseId
-     * @param netId
+     *
+     * @param courseId the courseId of the course for which we want to retrieve the status.
+     * @param netId the netId of the user that wants to retrieve a status.
      * @return String containing the status in readable format.
-     * @throws NoSuchElementException
+     * @throws NoSuchElementException when there is no application for that key
      */
     public ApplicationStatus retrieveStatus(String courseId, String netId) {
         ApplicationKey key = new ApplicationKey(courseId, netId);

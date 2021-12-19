@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.hiring.controllers;
 
-import java.util.stream.Collectors;
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
 import java.util.List;
@@ -13,10 +12,8 @@ import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.models.RetrieveStatusModel;
-import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,10 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.NoSuchElementException;
-
-import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
 /**
  * The type Application controller.
@@ -81,14 +74,13 @@ public class ApplicationController {
     /**
      * Endpoint for fetching the status of a specific course for a signed in user.
      *
-     * @param course
-     * @return
+     * @param course the course to get the status from
+     * @return the status of that course
      */
 
     @GetMapping("/status/{course}")
     public ResponseEntity<RetrieveStatusModel> getStatusByCourse(@PathVariable String course) {
         try {
-            // below arguments were in the wrong order
             Application application = applicationService.get(course, authManager.getNetid());
             RetrieveStatusModel status = RetrieveStatusModel.fromApplication(application);
 

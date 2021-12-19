@@ -19,10 +19,10 @@ public class RetrieveStatusModel {
     /**
      * Constructor that constructs a RetrieveStatusModel from an application and courseId.
      *
-     * @param application
+     * @param application the application to retrieve a status from
      * @return RetrieveStatusModel of given application
      */
-    public static RetrieveStatusModel fromApplication(Application application) { //add String courseId as argument
+    public static RetrieveStatusModel fromApplication(Application application) {
         return new RetrieveStatusModel(
                 application.getCourseId(),
                 application.getNetId(),
