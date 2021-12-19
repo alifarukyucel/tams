@@ -61,7 +61,10 @@ public class Application {
      *
      * @return if the application meets the requirements
      */
-    public boolean meetsRequirements() {
-        return grade >= 6.0;
+    public boolean meetsRequirements() throws IllegalArgumentException {
+        if (grade >= 1.0f && grade <= 10.0f) {
+            return grade >= 6.0;
+        }
+        throw new IllegalArgumentException();
     }
 }
