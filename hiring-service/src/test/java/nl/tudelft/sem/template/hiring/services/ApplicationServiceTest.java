@@ -54,6 +54,32 @@ public class ApplicationServiceTest {
     private transient ContractInformation mockContractInformation;
 
     @Test
+    public void gradeBelowOneCheck() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidGradeApplication = new Application("CSE1300", "jsmith", 0.9f,
+                motivation, ApplicationStatus.PENDING);
+        // Act
+        ThrowingCallable c = () -> invalidGradeApplication.meetsRequirements();
+
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
+    }
+
+    @Test
+    public void gradeAboveTenCheck() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidGradeApplication = new Application("CSE1300", "jsmith", 10.1f,
+                motivation, ApplicationStatus.PENDING);
+        // Act
+        ThrowingCallable c = () -> invalidGradeApplication.meetsRequirements();
+
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
+    }
+
+    @Test
     public void validCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";

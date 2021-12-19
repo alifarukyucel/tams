@@ -91,6 +91,25 @@ public class ApplicationControllerTest {
     }
 
     @Test
+    public void gradeOutOfBoundsTest() throws Exception {
+        //Arrange
+        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", 11.0f,
+                "I want to");
+
+        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
+
+        //Act
+        ResultActions invalidResults = mockMvc.perform(post("/apply")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(invalidModel))
+                .header("Authorization", "Bearer Joe"));
+
+        //assert
+        invalidResults.andExpect(status().isBadRequest());
+        assertThat(applicationRepository.findById(invalidKey)).isEmpty();
+    }
+
+    @Test
     public void validApplicationTest() throws Exception {
         //Arrange
         ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 6.0f,
