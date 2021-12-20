@@ -190,6 +190,23 @@ public class ContractRepositoryTests {
         assertThat(query.get("WinstijnSmit")).isEqualTo(winstijnAverage);
     }
 
+    @Test
+    void getAverageRatingOfNetIds_nonExistingAlike() {
+        // Arrange
+        Collection<String> netIds = List.of("winstijnSmit", "WinstijnSmitt", "winstijnsmit", "winstijn", "smit",
+                                            "Maurit", "Mauritss", "maurits", "mAURITS");
+
+        // Act
+        var query = queryAndParse(netIds);
+
+        // Assert
+        assertThat(query.keySet().size()).isEqualTo(0);
+
+        // Confirm the reason we are not able to find anything
+        // is not because of the database is empty.
+        assertThat(contractRepository.findAll().size()).isGreaterThan(0);
+    }
+
     /**
      * Helper method to parse the object list returned.
      * Note: should only be used in the act stage of a test.
