@@ -634,15 +634,22 @@ class ContractControllerTest {
     }
 
     @Test
-    void getRatings_empty() throws Exception {
+    void getRatings_null() throws Exception {
         // Act
         ResultActions actionNull = mockMvc.perform(get("/contracts/ratings")
-            .header("Authorization", "Bearer Lol"));
-        ResultActions actionEmpty = mockMvc.perform(get("/contracts/ratings?netIds=")
             .header("Authorization", "Bearer Lol"));
 
         // Assert
         actionNull.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getRatings_empty() throws Exception {
+        // Act
+        ResultActions actionEmpty = mockMvc.perform(get("/contracts/ratings?netIds=")
+            .header("Authorization", "Bearer Lol"));
+
+        // Assert
         actionEmpty.andExpect(status().isBadRequest());
     }
 
