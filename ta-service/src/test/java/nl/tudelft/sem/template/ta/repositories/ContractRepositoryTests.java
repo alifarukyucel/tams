@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +96,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of an empty collection
     @Test
-    void getAverageRatingOfNetIds_empty(){
+    void queryAverageRatingOfNetIds_empty(){
         // Arrange
         Collection<String> netIds = List.of();
 
@@ -113,7 +112,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of non-existing netIds.
     @Test
-    void getAverageRatingOfNetIds_nonExisiting(){
+    void queryAverageRatingOfNetIds_nonExisting(){
         // Arrange
         Collection<String> netIds = List.of("Stefan", "Elon");
 
@@ -127,7 +126,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of only WinstijnSmit
     @Test
-    void getAverageRatingOfNetIds_oneNetId(){
+    void queryAverageRatingOfNetIds_oneNetId(){
         // Arrange
         Collection<String> netIds = List.of("WinstijnSmit");
 
@@ -141,7 +140,7 @@ public class ContractRepositoryTests {
 
     // Get average of only Maurits
     @Test
-    void getAverageRatingOfNetIds_oneNetId_2(){
+    void queryAverageRatingOfNetIds_oneNetId_2(){
         // Arrange
         Collection<String> netIds = List.of("Maurits");
 
@@ -155,7 +154,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of existing and non-existing netIds.
     @Test
-    void getAverageRatingOfNetIds_oneNetIdandNonExisting(){
+    void queryAverageRatingOfNetIds_oneNetIdandNonExisting(){
         // Arrange
         Collection<String> netIds = List.of("WinstijnSmit", "ElonMusk");
 
@@ -170,7 +169,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of both.
     @Test
-    void getAverageRatingOfNetIds_twoNetIds(){
+    void queryAverageRatingOfNetIds_twoNetIds(){
         // Arrange
         Collection<String> netIds = List.of("Maurits", "WinstijnSmit");
 
