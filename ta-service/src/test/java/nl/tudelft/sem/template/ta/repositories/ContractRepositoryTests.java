@@ -28,10 +28,10 @@ public class ContractRepositoryTests {
     private final double mauritsAverage = 7;
 
     @BeforeEach
-    void prepare(){
+    void prepare() {
         contracts = new ArrayList<Contract>();
 
-        contracts.add( new ConcreteContractBuilder()
+        contracts.add(new ConcreteContractBuilder()
             .withNetId("Maurits")
             .withCourseId("CSE2310")
             .withMaxHours(5)
@@ -41,7 +41,7 @@ public class ContractRepositoryTests {
             .build()
         );
 
-        contracts.add( new ConcreteContractBuilder()
+        contracts.add(new ConcreteContractBuilder()
             .withNetId("Maurits")
             .withCourseId("CSE1210")
             .withMaxHours(5)
@@ -51,7 +51,7 @@ public class ContractRepositoryTests {
             .build()
         );
 
-        contracts.add( new ConcreteContractBuilder()
+        contracts.add(new ConcreteContractBuilder()
             .withNetId("Maurits")
             .withCourseId("CSE1210")
             .withMaxHours(5)
@@ -96,7 +96,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of an empty collection
     @Test
-    void queryAverageRatingOfNetIds_empty(){
+    void queryAverageRatingOfNetIds_empty() {
         // Arrange
         Collection<String> netIds = List.of();
 
@@ -112,7 +112,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of non-existing netIds.
     @Test
-    void queryAverageRatingOfNetIds_nonExisting(){
+    void queryAverageRatingOfNetIds_nonExisting() {
         // Arrange
         Collection<String> netIds = List.of("Stefan", "Elon");
 
@@ -126,7 +126,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of only WinstijnSmit
     @Test
-    void queryAverageRatingOfNetIds_oneNetId(){
+    void queryAverageRatingOfNetIds_oneNetId() {
         // Arrange
         Collection<String> netIds = List.of("WinstijnSmit");
 
@@ -140,7 +140,7 @@ public class ContractRepositoryTests {
 
     // Get average of only Maurits
     @Test
-    void queryAverageRatingOfNetIds_oneNetId_2(){
+    void queryAverageRatingOfNetIds_oneNetId_2() {
         // Arrange
         Collection<String> netIds = List.of("Maurits");
 
@@ -154,7 +154,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of existing and non-existing netIds.
     @Test
-    void queryAverageRatingOfNetIds_oneNetIdandNonExisting(){
+    void queryAverageRatingOfNetIds_oneNetIdandNonExisting() {
         // Arrange
         Collection<String> netIds = List.of("WinstijnSmit", "ElonMusk");
 
@@ -169,7 +169,7 @@ public class ContractRepositoryTests {
 
     // TEST: Get average of both.
     @Test
-    void queryAverageRatingOfNetIds_twoNetIds(){
+    void queryAverageRatingOfNetIds_twoNetIds() {
         // Arrange
         Collection<String> netIds = List.of("Maurits", "WinstijnSmit");
 
@@ -183,10 +183,10 @@ public class ContractRepositoryTests {
     }
 
     // Helper method the parse the object list returned.
-    private Map<String, Double> queryAndParse(Collection<String> netIds){
+    private Map<String, Double> queryAndParse(Collection<String> netIds) {
         Map<String, Double> result = new HashMap<>();
         List<Object[]> queryResult = contractRepository.queryAverageRatingOfNetIds(netIds);
-        for ( Object[] data : queryResult) {
+        for (Object[] data : queryResult) {
             String netId = (String) data[0];
             Double rating = (Double) data[1];
             result.put(netId, rating);
