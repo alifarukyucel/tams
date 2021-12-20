@@ -1,6 +1,9 @@
 package nl.tudelft.sem.template.ta.services;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
@@ -211,6 +214,36 @@ public class ContractService {
         Contract contract = getContract(netId, courseId);
         contract.setRating(rating);
         contractRepository.save(contract);
+    }
+
+    /**
+     * Retrieve the average ratings of a list of netIds
+     * Calls the query method in the ContractRepository and parses the resulting query.
+     * If netId could have not been found the rating is set to -1 in the result map.
+     *
+     * @param netIds a collection of netIds.
+     * @return map with netId as key and the average rating as value.
+     * @throws IllegalArgumentException if netIds is null or empty.
+     */
+    public Map<String, Double> getAverageRatingOfNetIds(Collection<String> netIds)
+        throws IllegalArgumentException {
+
+        if (netIds == null || netIds.isEmpty()) {
+            throw new IllegalArgumentException("netIds should atleast contain one netId");
+        }
+
+        // Create and fill hash with empty ratings.
+        Map<String, Double> result = new HashMap<>();
+        for (String netId : netIds) {
+            result.put(netId, -1.0);
+        }
+
+        // Query the average ratings of netIds.
+        List<Object[]> queryResult = contractRepository.queryAverageRatingOfNetIds(netIds);
+        for (Object[] data : queryResult) {
+            result.put((String) data[0], (Double) data[1]);
+        }
+        return result;
     }
 
 
