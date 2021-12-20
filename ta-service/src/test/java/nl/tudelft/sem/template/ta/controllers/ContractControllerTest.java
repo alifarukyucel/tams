@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
@@ -81,32 +82,41 @@ class ContractControllerTest {
             .withMaxHours(5)
             .withDuties("Work really hard")
             .withSigned(false)
+            .withRating(5)
             .build();
-        defaultContract = contractRepository.save(defaultContract);
         contracts.add(defaultContract);
 
-        Contract secondContract = new ConcreteContractBuilder()
-                .withNetId("WinstijnSmit")
-                .withCourseId("CSE2310")
-                .withMaxHours(10)
-                .withDuties("Work really hard")
-                .withRating(8)
-                .withSigned(true)
-                .build();
-        contractRepository.save(secondContract);
-        contracts.add(secondContract);
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withMaxHours(10)
+            .withDuties("Work really hard")
+            .withRating(8)
+            .withSigned(true)
+            .build()
+        );
 
-        Contract thirdContract = new ConcreteContractBuilder()
-                .withNetId("WinstijnSmit")
-                .withCourseId("CSE1250")
-                .withMaxHours(2)
-                .withDuties("No need to work hard")
-                .withRating(8.6)
-                .withSigned(false)
-                .build();
-        contractRepository.save(thirdContract);
-        contracts.add(thirdContract);
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE1250")
+            .withMaxHours(2)
+            .withDuties("No need to work hard")
+            .withRating(8.6)
+            .withSigned(false)
+            .build()
+        );
 
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2300")
+            .withMaxHours(2)
+            .withDuties("Work really hard")
+            .withRating(9.4)
+            .withSigned(true)
+            .build()
+        );
+
+        contractRepository.saveAll(contracts);
         mockAuthentication(defaultContract.getNetId());
     }
 
@@ -623,6 +633,100 @@ class ContractControllerTest {
         action.andExpect(status().isNotFound());
     }
 
+    @Test
+    void getRatings_empty() throws Exception {
+        // Act
+        ResultActions actionNull = mockMvc.perform(get("/contracts/ratings")
+            .header("Authorization", "Bearer Lol"));
+        ResultActions actionEmpty = mockMvc.perform(get("/contracts/ratings?netIds=")
+            .header("Authorization", "Bearer Lol"));
+
+        // Assert
+        actionNull.andExpect(status().isBadRequest());
+        actionEmpty.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getRatings_one() throws Exception {
+        // Arrange
+        String netIds = String.join(",", "WinstijnSmit");
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/ratings?netIds=" + netIds)
+            .header("Authorization", "Bearer Lol"));
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isOk())
+            .andReturn();
+
+        var data = parseAverageRatingResult(result);
+        assertThat(data.keySet().size()).isEqualTo(1);
+        assertThat(data.get("WinstijnSmit")).isEqualTo(8);
+    }
+
+    @Test
+    void getRatings_notFound() throws Exception {
+        // Arrange
+        String netIds = String.join(",", "SteveJobs");
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/ratings?netIds=" + netIds)
+            .header("Authorization", "Bearer Lol"));
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isOk())
+            .andReturn();
+
+        var data = parseAverageRatingResult(result);
+        assertThat(data.keySet().size()).isEqualTo(1);
+        assertThat(data.get("SteveJobs")).isEqualTo(-1);
+    }
+
+    @Test
+    void getRatings_multiple() throws Exception {
+        // Arrange
+        String netIds = String.join(",", "WinstijnSmit", "PVeldHuis");
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/ratings?netIds=" + netIds)
+            .header("Authorization", "Bearer Lol"));
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isOk())
+            .andReturn();
+
+        var data = parseAverageRatingResult(result);
+        assertThat(data.keySet().size()).isEqualTo(2);
+        assertThat(data.get("WinstijnSmit")).isEqualTo(8);
+        assertThat(data.get("PVeldHuis")).isEqualTo(9.4);
+
+    }
+
+    @Test
+    void getRatings_multipleWithNotFound() throws Exception {
+        // Arrange
+        String netIds = String.join(",", "WinstijnSmit", "SteveJobs", "PVeldHuis", "ElonMusk");
+
+        // Act
+        ResultActions action = mockMvc.perform(get("/contracts/ratings?netIds=" + netIds)
+            .header("Authorization", "Bearer Lol"));
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isOk())
+            .andReturn();
+
+        var data = parseAverageRatingResult(result);
+        assertThat(data.keySet().size()).isEqualTo(4);
+        assertThat(data.get("WinstijnSmit")).isEqualTo(8);
+        assertThat(data.get("PVeldHuis")).isEqualTo(9.4);
+        assertThat(data.get("SteveJobs")).isEqualTo(-1);
+        assertThat(data.get("ElonMusk")).isEqualTo(-1);
+    }
+
     /**
      * Helper method that asserts whether the response contains the contract.
      *
@@ -657,6 +761,14 @@ class ContractControllerTest {
             ));
         }
         return list;
+    }
+
+    /**
+     * Helper method to convert MvcResult to HashMap with average ratings.
+     */
+    private HashMap<String, Double> parseAverageRatingResult(MvcResult result) throws Exception {
+        String jsonString = result.getResponse().getContentAsString();
+        return (HashMap<String, Double>) JsonUtil.deserialize(jsonString, HashMap.class);
     }
 
 
