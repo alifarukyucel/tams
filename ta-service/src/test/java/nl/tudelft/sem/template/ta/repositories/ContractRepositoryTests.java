@@ -24,6 +24,9 @@ public class ContractRepositoryTests {
     private ContractRepository contractRepository;
 
     private List<Contract> contracts;
+
+    // Manually computed averages of the two people in our test databases.
+    // Need to be changed if the test data suite is changed in "prepare".
     private final double winstijnAverage = 6.5;
     private final double mauritsAverage = 7;
 
@@ -107,6 +110,9 @@ public class ContractRepositoryTests {
         // Assert
         assertThat(nullQuery.keySet().isEmpty()).isTrue();
         assertThat(emptyQuery.keySet().isEmpty()).isTrue();
+
+        // Confirm the reason we are not able to find anything
+        // is not because of the database is empty.
         assertThat(contractRepository.findAll().size()).isGreaterThan(0);
     }
 
@@ -121,6 +127,9 @@ public class ContractRepositoryTests {
 
         // Assert
         assertThat(emptyQuery.keySet().isEmpty()).isTrue();
+
+        // Confirm the reason we are not able to find anything
+        // is not because of the database is empty.
         assertThat(contractRepository.findAll().size()).isGreaterThan(0);
     }
 
@@ -166,7 +175,6 @@ public class ContractRepositoryTests {
         assertThat(query.get("WinstijnSmit")).isEqualTo(winstijnAverage);
     }
 
-
     // TEST: Get average of both.
     @Test
     void queryAverageRatingOfNetIds_twoNetIds() {
@@ -182,7 +190,13 @@ public class ContractRepositoryTests {
         assertThat(query.get("WinstijnSmit")).isEqualTo(winstijnAverage);
     }
 
-    // Helper method the parse the object list returned.
+    /**
+     * Helper method to parse the object list returned.
+     * Note: should only be used in the act stage of a test.
+     *
+     * @param netIds list of netIds
+     * @return map of netIds with their respective average rating
+     */
     private Map<String, Double> queryAndParse(Collection<String> netIds) {
         Map<String, Double> result = new HashMap<>();
         List<Object[]> queryResult = contractRepository.queryAverageRatingOfNetIds(netIds);
