@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
@@ -542,6 +544,168 @@ class ContractServiceTest {
         Contract fetchedContract = contractRepository.getOne(
             new ContractId(contract.getNetId(), contract.getCourseId()));
         assertThat(fetchedContract.getRating()).isEqualTo(5);
+    }
+
+    @Test
+    void getAverageRatingOfNetIds_empty() {
+        // Arrange
+        prepareForAverageRatingTest();
+        Collection<String> netIds = List.of();
+
+        // Act
+        ThrowingCallable actionNull = () ->
+            contractService.getAverageRatingOfNetIds(null);
+        ThrowingCallable actionEmpty = () ->
+            contractService.getAverageRatingOfNetIds(netIds);
+
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNull);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionEmpty);
+    }
+
+    @Test
+    void getAverageRatingOfNetIds_nonExisting() {
+        // Arrange
+        prepareForAverageRatingTest();
+        Collection<String> netIds = List.of("Stefan", "Elon");
+
+        // Act
+        var query = contractService.getAverageRatingOfNetIds(netIds);
+
+        // Assert
+        assertThat(query.keySet().size()).isEqualTo(2);
+        assertThat(query.get("Stefan")).isEqualTo(-1);
+        assertThat(query.get("Elon")).isEqualTo(-1);
+    }
+
+    @Test
+    void getAverageRatingOfNetIds_oneNetId() {
+        // Arrange
+        prepareForAverageRatingTest();
+        Collection<String> netIds = List.of("WinstijnSmit");
+
+        // Act
+        var query = contractService.getAverageRatingOfNetIds(netIds);
+
+        // Assert
+        assertThat(query.keySet().size()).isEqualTo(1);
+        assertThat(query.get("WinstijnSmit")).isEqualTo(6.5);
+    }
+
+    @Test
+    void getAverageRatingOfNetIds_oneNetId_2() {
+        // Arrange
+        prepareForAverageRatingTest();
+        Collection<String> netIds = List.of("Maurits");
+
+        // Act
+        var query = contractService.getAverageRatingOfNetIds(netIds);
+
+        // Assert
+        assertThat(query.keySet().size()).isEqualTo(1);
+        assertThat(query.get("Maurits")).isEqualTo(7);
+    }
+
+    @Test
+    void getAverageRatingOfNetIds_NetIdsandNonExisting() {
+        // Arrange
+        prepareForAverageRatingTest();
+        Collection<String> netIds = List.of("WinstijnSmit", "ElonMusk", "Maurit", "Maurits");
+
+        // Act
+        var query = contractService.getAverageRatingOfNetIds(netIds);
+
+        // Assert
+        assertThat(query.keySet().size()).isEqualTo(4);
+        assertThat(query.get("WinstijnSmit")).isEqualTo(6.5);
+        assertThat(query.get("ElonMusk")).isEqualTo(-1);
+        assertThat(query.get("Maurit")).isEqualTo(-1);
+        assertThat(query.get("Maurits")).isEqualTo(7);
+    }
+
+    @Test
+    void getAverageRatingOfNetIds_twoNetIds() {
+        // Arrange
+        prepareForAverageRatingTest();
+        Collection<String> netIds = List.of("Maurits", "WinstijnSmit");
+
+        // Act
+        var query = contractService.getAverageRatingOfNetIds(netIds);
+
+        // Assert
+        assertThat(query.keySet().size()).isEqualTo(2);
+        assertThat(query.get("Maurits")).isEqualTo(7);
+        assertThat(query.get("WinstijnSmit")).isEqualTo(6.5);
+    }
+
+    private void prepareForAverageRatingTest() {
+        List<Contract> contracts = new ArrayList<>();
+
+        // Correct Averages.
+        // WinstijnSmit: 6.5
+        // Maurits: 7
+
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("Maurits")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(true)
+            .withRating(7)
+            .build()
+        );
+
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("Maurits")
+            .withCourseId("CSE1210")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(false) // not signed should not be included.
+            .withRating(10)
+            .build()
+        );
+
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("Maurits")
+            .withCourseId("CSE1210")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(true) // not signed should not be included.
+            // .withRating(10) Rating has not been set!
+            .build()
+        );
+
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withMaxHours(10)
+            .withDuties("Work really hard")
+            .withRating(8)
+            .withSigned(true)
+            .build()
+        );
+
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE1250")
+            .withMaxHours(2)
+            .withDuties("No need to work hard")
+            .withRating(9)
+            .withSigned(false)  // not signed should not be included.
+            .build());
+
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE3200")
+            .withMaxHours(2)
+            .withDuties("Do very difficult stuff")
+            .withRating(5)
+            .withSigned(true)
+            .build()
+        );
+
+        // Save them all to the database
+        contractRepository.saveAll(contracts);
     }
 
 }
