@@ -88,7 +88,6 @@ public class ApplicationControllerTest {
         when(mockAuthenticationManager.getNetid()).thenReturn(exampleNetId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(exampleNetId);
-        applicationRepository.deleteAll();
     }
 
     @Test
