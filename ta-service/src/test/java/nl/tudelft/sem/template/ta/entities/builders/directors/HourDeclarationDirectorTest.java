@@ -16,7 +16,7 @@ public class HourDeclarationDirectorTest {
     private HourDeclaration hourDeclaration;
 
     @Test
-    public void testDirector() {
+    public void testDirectorWithAll() {
         //arrange
         UUID id = UUID.randomUUID();
         Integer workedTime = 60;
@@ -47,5 +47,22 @@ public class HourDeclarationDirectorTest {
         //arrange
         assertThat(hourDeclaration.getApproved()).isFalse();
         assertThat(hourDeclaration.getReviewed()).isFalse();
+    }
+
+    @Test
+    public void testDirectorWithNone() {
+
+        //arrange
+        var builder = new ConcreteHourDeclarationBuilder();
+        new HourDeclarationDirector().createUnsignedContract(builder);
+
+        //act
+        hourDeclaration = builder
+                .build();
+
+        //arrange
+        assertThat(hourDeclaration.getApproved()).isFalse();
+        assertThat(hourDeclaration.getReviewed()).isFalse();
+        assertThat(hourDeclaration.getId()).isNull();
     }
 }

@@ -33,4 +33,21 @@ public class ContractDirectorTest {
         assertThat(contract.getSigned()).isFalse();
         assertThat(contract.getRating()).isZero();
     }
+
+    @Test
+    public void testDirectorWithNone() {
+
+        //arrange
+        var builder = new ConcreteContractBuilder();
+        new ContractDirector().createUnsignedContract(builder);
+
+        //act
+        contract = builder
+                .build();
+
+        //arrange
+        assertThat(contract.getSigned()).isFalse();
+        assertThat(contract.getRating()).isZero();
+        assertThat(contract.getCourseId()).isNull();
+    }
 }
