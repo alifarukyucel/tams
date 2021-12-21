@@ -26,8 +26,6 @@ import org.springframework.web.server.ResponseStatusException;
  * It connects requests made from the client (redirected through the API Gateway)
  * to the server services, specifically to CourseService.
  *
- * @author Ali Faruk Yücel
- * @version 1.0
  * @created 01/12/2021, 14:15
  */
 @RestController
@@ -56,7 +54,7 @@ public class CourseController {
      * @param id            id of course
      * @return the course found in the database with the given id
      */
-    @GetMapping("/{id}") // course/id
+    @GetMapping("/{id}")
     public ResponseEntity<CourseResponseModel> getCourseById(@PathVariable String id)
             throws NoSuchElementException {
         try {
@@ -76,7 +74,7 @@ public class CourseController {
      * @return 200 OK if user is responsible lecturer of the course
      *         404 Not Found if not.
      */
-    @GetMapping("{courseId}/lecturer/{netId}") // course/{courseId}/lecturer/{netId}
+    @GetMapping("{courseId}/lecturer/{netId}")
     public ResponseEntity<String> isResponsibleLecturer(@PathVariable String netId,
                                                         @PathVariable String courseId) {
         try {
@@ -97,7 +95,7 @@ public class CourseController {
      * @param courseModel   the course to be created
      * @return the course returned from the database (with a manually-assigned id)
      */
-    @PostMapping(value = "/create", consumes = "application/json") // course/create
+    @PostMapping(value = "/create", consumes = "application/json")
     ResponseEntity<CourseResponseModel> createCourse(@RequestBody CourseCreationRequestModel courseModel)
             throws ResponseStatusException {
         Course course = new Course(courseModel.getId(),
