@@ -212,7 +212,7 @@ public class ApplicationService {
         ApplicationKey key = new ApplicationKey(courseId, netId);
         Optional<Application> applicationOptional = applicationRepository.findById(key);
 
-        if(applicationOptional.isEmpty()) {
+        if (applicationOptional.isEmpty()) {
             throw new NoSuchElementException();
         }
 
