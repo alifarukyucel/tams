@@ -52,7 +52,7 @@ public class ApplicationService {
         CourseInformationResponseModel course = courseInformation.getCourseById(application.getCourseId());
         if (course == null) {
             //Course does not exist
-            return false;
+            throw new IllegalArgumentException();
         } else if (!application.meetsRequirements()) {
             return false;
         } else if (course.getStartDate().minusWeeks(3)

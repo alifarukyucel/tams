@@ -62,13 +62,20 @@ public class ApplicationController {
                 authManager.getNetid(),
                 request.getGrade(),
                 request.getMotivation());
-        boolean success = applicationService.checkAndSave(application);
 
+        try {
+            boolean success = applicationService.checkAndSave(application);
 
-        if (success) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
+            if (success) {
+                return ResponseEntity.ok().build();
+            } else {
+                //Thrown when the application doesn't meet the requirements
+                //I.E. the grade is too low or the application period has already closed
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "The application doesn't meet the requirements");
+            }
+        } catch (IllegalArgumentException e) {
+            //Thrown when the course is not found.
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no course with this ID");
         }
     }
 
