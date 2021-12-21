@@ -1,15 +1,14 @@
 package nl.tudelft.sem.template.ta.entities.builders.directors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.HourDeclaration;
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteHourDeclarationBuilder;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class HourDeclarationDirectorTest {
 

@@ -1,10 +1,10 @@
 package nl.tudelft.sem.template.ta.entities.builders.directors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContractDirectorTest {
 
