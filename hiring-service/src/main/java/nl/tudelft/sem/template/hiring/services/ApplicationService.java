@@ -26,6 +26,7 @@ public class ApplicationService {
     private final transient ContractInformation contractInformation;
     private final transient CourseInformation courseInformation;
 
+    // maximum number of applications per student
     private static final transient int maxCandidacies = 3;
 
     /**
@@ -224,7 +225,7 @@ public class ApplicationService {
      * @param netId the netid of the user for which we check the amount of applications.
      * @return false when the maximum number of applications hasn't been reached or true otherwise.
      */
-    public boolean maxApplication(String netId) {
+    public boolean hasReachedMaxApplication(String netId) {
         if (getApplicationFromStudent(netId).size() < maxCandidacies) {
             return false;
         }
