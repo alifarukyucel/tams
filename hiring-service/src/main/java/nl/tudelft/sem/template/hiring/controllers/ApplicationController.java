@@ -54,10 +54,11 @@ public class ApplicationController {
      *
      * @param request request to apply to become a TA ( courseId, the grade, and motivation)
      * @return String informing if the application is being considered.
+     * @throws ResponseStatusException 403 when user has reached the maximal amount of applications
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
-        if (applicationService.maxApplication(authManager.getNetid())) {
+        if (applicationService.hasReachedMaxApplication(authManager.getNetid())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         Application application = createPendingApplication(
