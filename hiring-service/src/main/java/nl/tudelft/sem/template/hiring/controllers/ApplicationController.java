@@ -54,6 +54,8 @@ public class ApplicationController {
      *
      * @param request request to apply to become a TA ( courseId, the grade, and motivation)
      * @return String informing if the application is being considered.
+     * @throws ResponseStatusException 403 when the application does not meet the requirements
+     * @throws ResponseStatusException 404 when the course cannot be found
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
