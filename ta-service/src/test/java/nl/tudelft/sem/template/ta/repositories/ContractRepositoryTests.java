@@ -194,17 +194,15 @@ public class ContractRepositoryTests {
     void getAverageRatingOfNetIds_nonExistingAlike() {
         // Arrange
         Collection<String> netIds = List.of("winstijnSmit", "WinstijnSmitt", "winstijnsmit", "winstijn", "smit",
-                                            "Maurit", "Mauritss", "maurits", "mAURITS");
+                                            "Maurit", "Mauritss", "maurits", "mAURITS", "WinstijnSmit", "Maurits");
 
         // Act
         var query = queryAndParse(netIds);
 
         // Assert
-        assertThat(query.keySet().size()).isEqualTo(0);
-
-        // Confirm the reason we are not able to find anything
-        // is not because of the database is empty.
-        assertThat(contractRepository.findAll().size()).isGreaterThan(0);
+        assertThat(query.keySet().size()).isEqualTo(2);
+        assertThat(query.get("Maurits")).isEqualTo(mauritsAverage);
+        assertThat(query.get("WinstijnSmit")).isEqualTo(winstijnAverage);
     }
 
     /**

@@ -610,17 +610,18 @@ class ContractServiceTest {
     void getAverageRatingOfNetIds_nonExistingAlike() {
         // Arrange
         prepareForAverageRatingTest();
-        Collection<String> netIds = List.of("Maurit", "maurits", "Mauritss", "mauritS");
+        Collection<String> netIds = List.of("Maurit", "maurits", "Mauritss", "mauritS", "Maurits");
 
         // Act
         var query = contractService.getAverageRatingOfNetIds(netIds);
 
         // Assert
-        assertThat(query.keySet().size()).isEqualTo(4);
+        assertThat(query.keySet().size()).isEqualTo(5);
         assertThat(query.get("Maurit")).isEqualTo(-1);
         assertThat(query.get("maurits")).isEqualTo(-1);
         assertThat(query.get("Mauritss")).isEqualTo(-1);
         assertThat(query.get("mauritS")).isEqualTo(-1);
+        assertThat(query.get("Maurits")).isEqualTo(7);
     }
 
     @Test
