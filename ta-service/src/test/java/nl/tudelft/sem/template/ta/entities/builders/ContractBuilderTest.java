@@ -11,30 +11,6 @@ public class ContractBuilderTest {
     private Contract contract;
 
     @Test
-    public void testDirector() {
-        //arrange
-        String netId = "kverhoef";
-        String courseId = "CSE1300";
-        int maxHours = 8;
-        String duties = "DUTIES";
-
-        var builder = new ConcreteContractBuilder();
-        new ContractDirector().createUnsignedContract(builder);
-
-        //act
-        contract = builder
-                .withNetId(netId)
-                .withCourseId(courseId)
-                .withMaxHours(maxHours)
-                .withDuties(duties)
-                .build();
-
-        //arrange
-        assertThat(contract.getSigned()).isFalse();
-        assertThat(contract.getRating()).isZero();
-    }
-
-    @Test
     public void testWithNetId() {
         //arrange
         String netId = "kverhoef";
