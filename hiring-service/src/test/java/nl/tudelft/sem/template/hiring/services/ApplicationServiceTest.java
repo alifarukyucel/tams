@@ -121,7 +121,7 @@ public class ApplicationServiceTest {
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
         assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
-        assertThat(applicationService.maxApplication("johndoe")).isTrue();
+        assertThat(applicationService.hasReachedMaxApplication("johndoe")).isTrue();
     }
 
     @Test
