@@ -91,9 +91,81 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void gradeOutOfBoundsTest() throws Exception {
+    public void gradeBelowMin() throws Exception {
         //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", 11.0f,
+        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", 10.1f,
+                "I want to");
+
+        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
+
+        //Act
+        ResultActions invalidResults = mockMvc.perform(post("/apply")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(invalidModel))
+                .header("Authorization", "Bearer Joe"));
+
+        //assert
+        invalidResults.andExpect(status().isBadRequest());
+        assertThat(applicationRepository.findById(invalidKey)).isEmpty();
+    }
+
+    @Test
+    public void gradeLowestTest() throws Exception {
+        //Arrange
+        ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 1.0f,
+                "I want to");
+
+        ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
+
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
+
+        //Act
+        ResultActions validResults = mockMvc.perform(post("/apply")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(validModel))
+                .header("Authorization", "Bearer Joe"));
+        //assert
+        validResults.andExpect(status().isBadRequest());
+        assertThat(applicationRepository.findById(validKey)).isEmpty();
+    }
+
+
+    @Test
+    public void gradeOnPoint() throws Exception {
+        //Arrange
+        ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 10.0f,
+                "I want to");
+
+        ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
+
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
+
+        //Act
+        ResultActions validResults = mockMvc.perform(post("/apply")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(validModel))
+                .header("Authorization", "Bearer Joe"));
+        //assert
+        validResults.andExpect(status().isOk());
+        assertThat(applicationRepository.findById(validKey)).isNotEmpty();
+    }
+
+    @Test
+    public void gradeAboveMaxTest() throws Exception {
+        //Arrange
+        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", 10.1f,
                 "I want to");
 
         ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
