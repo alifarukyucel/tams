@@ -71,18 +71,18 @@ public class CourseController {
      *
      * @param netId             id of user
      * @param courseId          id of course
-     * @return 200 OK if user is responsible lecturer of the course
-     *         404 Not Found if not.
+     * @return 200 OK with true if user is responsible lecturer of the course
+     *         200 OK with false if not.
      */
     @GetMapping("{courseId}/lecturer/{netId}")
-    public ResponseEntity<String> isResponsibleLecturer(@PathVariable String netId,
+    public ResponseEntity<Boolean> isResponsibleLecturer(@PathVariable String netId,
                                                         @PathVariable String courseId) {
         try {
             courseService.isResponsibleLecturer(netId, courseId);
         } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            return ResponseEntity.ok(false);
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(true);
     }
 
     // ------------------------------ Setters -----------------------------------
