@@ -60,10 +60,10 @@ public class ApplicationServiceTest {
         Application invalidGradeApplication = new Application("CSE1300", "jsmith", 0.9f,
                 motivation, ApplicationStatus.PENDING);
         // Act
-        ThrowingCallable c = () -> invalidGradeApplication.meetsRequirements();
+        boolean result = invalidGradeApplication.meetsRequirements();
 
         // Assert
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -96,10 +96,10 @@ public class ApplicationServiceTest {
         Application invalidGradeApplication = new Application("CSE1300", "jsmith", 10.1f,
                 motivation, ApplicationStatus.PENDING);
         // Act
-        ThrowingCallable c = () -> invalidGradeApplication.meetsRequirements();
+        boolean result = invalidGradeApplication.meetsRequirements();
 
         // Assert
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
+        assertThat(result).isFalse();
     }
 
     @Test

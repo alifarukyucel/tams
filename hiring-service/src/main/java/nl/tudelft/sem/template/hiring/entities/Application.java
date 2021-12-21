@@ -72,6 +72,6 @@ public class Application {
         if (grade >= minGrade && grade <= maxGrade) {
             return grade >= 6.0f;
         }
-        throw new IllegalArgumentException();
+        return false;
     }
 }
