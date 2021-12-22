@@ -55,12 +55,12 @@ public class ApplicationService {
         CourseInformationResponseModel course = courseInformation.getCourseById(application.getCourseId());
         if (course == null) {
             //Course does not exist
-            return false;
+            throw new NoSuchElementException("This course does not exist.");
         } else if (!application.meetsRequirements()) {
-            return false;
+            throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
         } else if (course.getStartDate().minusWeeks(3)
                 .isBefore(LocalDateTime.now())) {
-            return false;
+            throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
         applicationRepository.save(application);
         return true;
