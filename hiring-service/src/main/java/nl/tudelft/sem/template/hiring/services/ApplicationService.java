@@ -26,6 +26,7 @@ public class ApplicationService {
     private final transient ContractInformation contractInformation;
     private final transient CourseInformation courseInformation;
 
+
     /**
      * Constructor for the application service, with the corresponding repositories / information classes.
      * Spring automatically chooses the best implementation for those interfaces.
@@ -198,4 +199,25 @@ public class ApplicationService {
         }
         return extendedApplications;
     }
+
+    /**
+     * Retrieving the status of the application to see whether someone is accepted or rejected.
+     *
+     * @param courseId the courseId of the course for which we want to retrieve the status.
+     * @param netId the netId of the user that wants to retrieve a status.
+     * @return String containing the status in readable format.
+     * @throws NoSuchElementException when there is no application for that key
+     */
+    public ApplicationStatus retrieveStatus(String courseId, String netId) {
+        ApplicationKey key = new ApplicationKey(courseId, netId);
+        Optional<Application> applicationOptional = applicationRepository.findById(key);
+
+        if (applicationOptional.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        Application application = applicationOptional.get();
+        return application.getStatus();
+    }
+
 }
