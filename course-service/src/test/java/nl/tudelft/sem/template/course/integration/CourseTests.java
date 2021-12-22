@@ -198,7 +198,12 @@ public class CourseTests {
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        action.andExpect(status().isOk());
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Boolean actual = Boolean.valueOf(result.getResponse().getContentAsString());
+        assertThat(actual).isTrue();
     }
 
     @Test
@@ -216,7 +221,12 @@ public class CourseTests {
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        action.andExpect(status().isOk());
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Boolean actual = Boolean.valueOf(result.getResponse().getContentAsString());
+        assertThat(actual).isTrue();
     }
 
     @Test
