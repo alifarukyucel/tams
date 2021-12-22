@@ -54,6 +54,79 @@ public class ApplicationServiceTest {
     private transient ContractInformation mockContractInformation;
 
     @Test
+    public void gradeBelowOneCheck() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidGradeApplication = new Application("CSE1300", "jsmith", 0.9f,
+                motivation, ApplicationStatus.PENDING);
+        // Act
+        boolean result = invalidGradeApplication.meetsRequirements();
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void gradeOnOne() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application validGradeApplication = new Application("CSE1300", "jsmith", 1.0f,
+                motivation, ApplicationStatus.PENDING);
+
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+                "CSE1300",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
+
+        //Act
+        applicationService.checkAndSave(validGradeApplication);
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+                .isEmpty();
+    }
+
+    @Test
+    public void gradeAboveTenCheck() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidGradeApplication = new Application("CSE1300", "jsmith", 10.1f,
+                motivation, ApplicationStatus.PENDING);
+        // Act
+        boolean result = invalidGradeApplication.meetsRequirements();
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void gradeOnTen() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application validApplication = new Application("CSE1300", "jsmith", 10.0f,
+                motivation, ApplicationStatus.PENDING);
+        assertThat(validApplication.meetsRequirements()).isTrue();
+
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+                "CSE1300",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
+
+        //Act
+        applicationService.checkAndSave(validApplication);
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+                .isNotEmpty();
+    }
+
+    @Test
     public void validCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
