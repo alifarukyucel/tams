@@ -18,6 +18,13 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 @Table(name = "APPLICATION")
 @IdClass(ApplicationKey.class)
 public class Application {
+
+    // Lowest possible grade that can be achieved
+    private static final transient float minGrade = 1.0f;
+
+    // Highest possible grade that can be achieved
+    private static final transient float maxGrade = 10.0f;
+
     @Id
     @Column(name = "COURSE_ID")
     private String courseId;
@@ -61,7 +68,7 @@ public class Application {
      *
      * @return if the application meets the requirements
      */
-    public boolean meetsRequirements() {
-        return grade >= 6.0;
+    public boolean meetsRequirements() throws IllegalArgumentException {
+        return grade >= minGrade && grade <= maxGrade && grade >= 6.0f;
     }
 }
