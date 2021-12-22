@@ -66,18 +66,15 @@ public class ApplicationController {
                 request.getMotivation());
 
         try {
-            boolean success = applicationService.checkAndSave(application);
-
-            if (success) {
-                return ResponseEntity.ok().build();
-            } else {
-                //Thrown when the application doesn't meet the requirements
-                //I.E. the grade is too low or the application period has already closed
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "The application doesn't meet the requirements");
-            }
-        } catch (IllegalArgumentException e) {
+            applicationService.checkAndSave(application);
+            return ResponseEntity.ok("Applied successfully");
+            //Thrown when the application doesn't meet the requirements
+            //I.E. the grade is too low or the application period has already closed
+        } catch (NoSuchElementException e) {
             //Thrown when the course is not found.
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no course with this ID");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
 
