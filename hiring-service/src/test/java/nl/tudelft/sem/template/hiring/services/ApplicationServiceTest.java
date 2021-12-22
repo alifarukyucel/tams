@@ -133,6 +133,69 @@ public class ApplicationServiceTest {
     }
 
     @Test
+    public void retrieveStatusRejectedApplication() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.REJECTED);
+
+        applicationRepository.save(expected);
+
+        //Act
+        var result = applicationService.retrieveStatus(expected.getCourseId(), expected.getNetId());
+
+        //Assert
+        assertThat(result).isInstanceOf(ApplicationStatus.class);
+        assertThat(result).isEqualTo(ApplicationStatus.REJECTED);
+    }
+
+    @Test
+    public void retrieveStatusAcceptedApplication() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.ACCEPTED);
+
+        applicationRepository.save(expected);
+
+        //Act
+        var result = applicationService.retrieveStatus(expected.getCourseId(), expected.getNetId());
+
+        //Assert
+        assertThat(result).isInstanceOf(ApplicationStatus.class);
+        assertThat(result).isEqualTo(ApplicationStatus.ACCEPTED);
+    }
+
+    @Test
+    public void retrieveStatusPendingApplication() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.PENDING);
+
+        applicationRepository.save(expected);
+
+        //Act
+        var result = applicationService.retrieveStatus(expected.getCourseId(), expected.getNetId());
+
+        //Assert
+        assertThat(result).isInstanceOf(ApplicationStatus.class);
+        assertThat(result).isEqualTo(ApplicationStatus.PENDING);
+    }
+
+    @Test
+    public void retrieveStatusEmptyApplication() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I want to become a TA", ApplicationStatus.PENDING);
+        String notCourse = "Not a courseId";
+        applicationRepository.save(expected);
+
+        //Act
+        ThrowingCallable c = () -> applicationService.retrieveStatus(notCourse, expected.getNetId());
+
+        //Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
+    }
+
+    @Test
     public void retrieveInvalidStatusTest() {
         //Arrange
         Application expected = new Application("CSE1300", "jsmith", 7.0f,
