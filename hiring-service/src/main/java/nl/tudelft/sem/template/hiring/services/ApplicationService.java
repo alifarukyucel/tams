@@ -49,21 +49,25 @@ public class ApplicationService {
      * It also checks whether the course isn't starting in less than 3 months already.
      *
      * @param application the application to check.
-     * @return boolean whether the application meets the requirements and thus saved.
+     * @throws NoSuchElementException when the provided course does not exist
+     * @throws IllegalArgumentException when the provided grade is not valid
+     * @throws IllegalArgumentException when the application doesn't meet the requirements
+     * @throws IllegalArgumentException when the deadline for the course has already passed
      */
-    public boolean checkAndSave(Application application) {
+    public void checkAndSave(Application application) {
         CourseInformationResponseModel course = courseInformation.getCourseById(application.getCourseId());
         if (course == null) {
             //Course does not exist
-            return false;
+            throw new NoSuchElementException("This course does not exist.");
+        } else if (!application.hasValidGrade()) {
+            throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
         } else if (!application.meetsRequirements()) {
-            return false;
+            throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
         } else if (course.getStartDate().minusWeeks(3)
                 .isBefore(LocalDateTime.now())) {
-            return false;
+            throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
         applicationRepository.save(application);
-        return true;
     }
 
     /**

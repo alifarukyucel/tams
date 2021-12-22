@@ -27,6 +27,9 @@ public class Application {
     // Highest possible grade that can be achieved
     private static final transient float maxGrade = 10.0f;
 
+    // Minimum grade that is needed in order to be a TA
+    private static final transient float reqGrade = 6.0f;
+
     @Id
     @Column(name = "COURSE_ID")
     private String courseId;
@@ -70,8 +73,17 @@ public class Application {
      *
      * @return if the application meets the requirements
      */
-    public boolean meetsRequirements() throws IllegalArgumentException {
-        return grade >= minGrade && grade <= maxGrade && grade >= 6.0f;
+    public boolean meetsRequirements() {
+        return grade >= reqGrade;
     }
-    
+
+    /**
+     * Checks if the grade is a valid grade (Between 1.0 and 10.0 inclusive)
+     *
+     * @return if the grade is a valid grade
+     */
+    public boolean hasValidGrade() {
+        return grade >= minGrade && grade <= maxGrade;
+    }
+
 }

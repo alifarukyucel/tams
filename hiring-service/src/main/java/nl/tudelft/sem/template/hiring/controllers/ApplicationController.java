@@ -53,25 +53,29 @@ public class ApplicationController {
      *
      * @param request request to apply to become a TA ( courseId, the grade, and motivation)
      * @return String informing if the application is being considered.
+     * @throws ResponseStatusException 403 when the application does not meet the requirements
+     * @throws ResponseStatusException 404 when the course cannot be found
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
         if (applicationService.hasReachedMaxApplication(authManager.getNetid())) {
             // It is not allowed to have more than 3 applications
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum amount of application has been reached!");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum number of applications has been reached!");
         }
         Application application = createPendingApplication(
                 request.getCourseId(),
                 authManager.getNetid(),
                 request.getGrade(),
                 request.getMotivation());
-        boolean success = applicationService.checkAndSave(application);
 
-
-        if (success) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
+        try {
+            applicationService.checkAndSave(application);
+            return ResponseEntity.ok("Applied successfully");
+        } catch (NoSuchElementException e) {
+            //Thrown when the course is not found.
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
 
