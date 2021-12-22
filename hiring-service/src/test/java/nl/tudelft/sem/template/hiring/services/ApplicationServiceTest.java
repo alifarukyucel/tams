@@ -54,6 +54,79 @@ public class ApplicationServiceTest {
     private transient ContractInformation mockContractInformation;
 
     @Test
+    public void gradeBelowOneCheck() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidGradeApplication = new Application("CSE1300", "jsmith", 0.9f,
+                motivation, ApplicationStatus.PENDING);
+        // Act
+        boolean result = invalidGradeApplication.meetsRequirements();
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void gradeOnOne() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application validGradeApplication = new Application("CSE1300", "jsmith", 1.0f,
+                motivation, ApplicationStatus.PENDING);
+
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+                "CSE1300",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
+
+        //Act
+        applicationService.checkAndSave(validGradeApplication);
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+                .isEmpty();
+    }
+
+    @Test
+    public void gradeAboveTenCheck() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidGradeApplication = new Application("CSE1300", "jsmith", 10.1f,
+                motivation, ApplicationStatus.PENDING);
+        // Act
+        boolean result = invalidGradeApplication.meetsRequirements();
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void gradeOnTen() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application validApplication = new Application("CSE1300", "jsmith", 10.0f,
+                motivation, ApplicationStatus.PENDING);
+        assertThat(validApplication.meetsRequirements()).isTrue();
+
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+                "CSE1300",
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
+
+        //Act
+        applicationService.checkAndSave(validApplication);
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+                .isNotEmpty();
+    }
+
+    @Test
     public void validCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
@@ -100,6 +173,166 @@ public class ApplicationServiceTest {
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
+
+
+    @Test
+    public void getWithInvalidCourseId() {
+        // Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.ACCEPTED);
+        String invalidCourseId = "CSE1305";
+        applicationRepository.save(expected);
+
+        // Act
+        ThrowingCallable c = () -> applicationService.get(invalidCourseId, expected.getNetId());
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
+    }
+
+    @Test
+    public void getStatusWithInvalidNetid() {
+        // Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.ACCEPTED);
+        String invalidNetid = "sjmith";
+        applicationRepository.save(expected);
+
+        // Act
+        ThrowingCallable c = () -> applicationService.get(expected.getCourseId(), invalidNetid);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
+    }
+
+    @Test
+    public void retrieveStatusRejectedApplication() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.REJECTED);
+
+        applicationRepository.save(expected);
+
+        //Act
+        var result = applicationService.retrieveStatus(expected.getCourseId(), expected.getNetId());
+
+        //Assert
+        assertThat(result).isInstanceOf(ApplicationStatus.class);
+        assertThat(result).isEqualTo(ApplicationStatus.REJECTED);
+    }
+
+    @Test
+    public void retrieveStatusAcceptedApplication() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.ACCEPTED);
+
+        applicationRepository.save(expected);
+
+        //Act
+        var result = applicationService.retrieveStatus(expected.getCourseId(), expected.getNetId());
+
+        //Assert
+        assertThat(result).isInstanceOf(ApplicationStatus.class);
+        assertThat(result).isEqualTo(ApplicationStatus.ACCEPTED);
+    }
+
+    @Test
+    public void retrieveStatusPendingApplication() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.PENDING);
+
+        applicationRepository.save(expected);
+
+        //Act
+        var result = applicationService.retrieveStatus(expected.getCourseId(), expected.getNetId());
+
+        //Assert
+        assertThat(result).isInstanceOf(ApplicationStatus.class);
+        assertThat(result).isEqualTo(ApplicationStatus.PENDING);
+    }
+
+    @Test
+    public void retrieveStatusEmptyApplication() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I want to become a TA", ApplicationStatus.PENDING);
+        String notCourse = "Not a courseId";
+        applicationRepository.save(expected);
+
+        //Act
+        ThrowingCallable c = () -> applicationService.retrieveStatus(notCourse, expected.getNetId());
+
+        //Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
+    }
+
+    @Test
+    public void retrieveInvalidStatusTest() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.PENDING);
+        String noApplicationCourseId = "CSE1200";
+        applicationRepository.save(expected);
+
+        //Act
+        ThrowingCallable c = () -> applicationService.get(noApplicationCourseId, expected.getNetId());
+
+        //Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
+    }
+
+    @Test
+    public void retrievePendingStatusTest() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.PENDING);
+
+        applicationRepository.save(expected);
+
+        //Act
+        var result = applicationService.get(expected.getCourseId(), expected.getNetId());
+
+        //Assert
+        assertThat(result).isInstanceOf(Application.class);
+        assertThat(result.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+
+    }
+
+    @Test
+    public void retrieveAcceptedStatusTest() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.ACCEPTED);
+
+        applicationRepository.save(expected);
+
+        //Act
+        var result = applicationService.get(expected.getCourseId(), expected.getNetId());
+
+        //Assert
+        assertThat(result).isInstanceOf(Application.class);
+        assertThat(result.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+    }
+
+    @Test
+    public void retrieveRejectedStatusTest() {
+        //Arrange
+        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+                "I got a 10", ApplicationStatus.REJECTED);
+
+        applicationRepository.save(expected);
+
+        //Act
+        var result = applicationService.get(expected.getCourseId(), expected.getNetId());
+
+        //Assert
+        assertThat(result).isInstanceOf(Application.class);
+        assertThat(result.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+    }
+
+
 
     @Test
     public void checkAndWithdrawOnTimeTest() {
@@ -206,36 +439,6 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    public void getWithInvalidCourseId() {
-        // Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
-                "I just want to be a cool!", ApplicationStatus.ACCEPTED);
-        String invalidCourseId = "CSE1305";
-        applicationRepository.save(expected);
-
-        // Act
-        ThrowingCallable c = () -> applicationService.get(invalidCourseId, expected.getNetId());
-
-        // Assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
-    }
-
-    @Test
-    public void getWithInvalidNetid() {
-        // Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
-                "I just want to be a cool!", ApplicationStatus.ACCEPTED);
-        String invalidNetid = "sjmith";
-        applicationRepository.save(expected);
-
-        // Act
-        ThrowingCallable c = () -> applicationService.get(expected.getCourseId(), invalidNetid);
-
-        // Assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
-    }
-
-    @Test
     public void rejectValidApplication() {
         // Arrange
         Application application = new Application("CSE1300", "jsmith", 7.0f,
@@ -337,9 +540,6 @@ public class ApplicationServiceTest {
         List<PendingApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
 
         assertThat(resultList).isEqualTo(expectedList);
-
-
-
 
     }
 
