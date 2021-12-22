@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
@@ -15,6 +16,7 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "APPLICATION")
 @IdClass(ApplicationKey.class)
 public class Application {
@@ -71,4 +73,5 @@ public class Application {
     public boolean meetsRequirements() throws IllegalArgumentException {
         return grade >= minGrade && grade <= maxGrade && grade >= 6.0f;
     }
+
 }

@@ -55,12 +55,12 @@ public class ApplicationService {
         CourseInformationResponseModel course = courseInformation.getCourseById(application.getCourseId());
         if (course == null) {
             //Course does not exist
-            throw new NoSuchElementException("This course does not exist.");
+            return false;
         } else if (!application.meetsRequirements()) {
-            throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
+            return false;
         } else if (course.getStartDate().minusWeeks(3)
                 .isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("The deadline for applying for this course has already passed");
+            return false;
         }
         applicationRepository.save(application);
         return true;
@@ -201,6 +201,27 @@ public class ApplicationService {
         }
         return extendedApplications;
     }
+
+    /**
+     * Retrieving the status of the application to see whether someone is accepted or rejected.
+     *
+     * @param courseId the courseId of the course for which we want to retrieve the status.
+     * @param netId the netId of the user that wants to retrieve a status.
+     * @return String containing the status in readable format.
+     * @throws NoSuchElementException when there is no application for that key
+     */
+    public ApplicationStatus retrieveStatus(String courseId, String netId) {
+        ApplicationKey key = new ApplicationKey(courseId, netId);
+        Optional<Application> applicationOptional = applicationRepository.findById(key);
+
+        if (applicationOptional.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        Application application = applicationOptional.get();
+        return application.getStatus();
+    }
+
 
     /**
      * Gets all applications that belong to a specific user.

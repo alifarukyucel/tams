@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -189,7 +190,7 @@ public class ApplicationControllerTest {
         ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
-                LocalDateTime.MAX,
+                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -208,20 +209,12 @@ public class ApplicationControllerTest {
 
 
     @Test
-    public void insufficientGradeApplicationTest() throws Exception {
+    public void invalidApplicationTest() throws Exception {
         //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 5.9f,
+        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", 5.9f,
                 "I want to");
 
         ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
-
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
 
         //Act
         ResultActions invalidResults = mockMvc.perform(post("/apply")
@@ -230,28 +223,7 @@ public class ApplicationControllerTest {
                 .header("Authorization", "Bearer Joe"));
 
         //assert
-        invalidResults.andExpect(status().isForbidden());
-        assertThat(applicationRepository.findById(invalidKey)).isEmpty();
-    }
-
-    @Test
-    public void invalidCourseIdApplicationTest() throws Exception {
-        //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 6.0f,
-                "I want to");
-
-        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
-
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(null);
-
-        //Act
-        ResultActions invalidResults = mockMvc.perform(post("/apply")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(serialize(invalidModel))
-                .header("Authorization", "Bearer Joe"));
-
-        //assert
-        invalidResults.andExpect(status().isNotFound());
+        invalidResults.andExpect(status().isBadRequest());
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
     }
 
@@ -354,6 +326,111 @@ public class ApplicationControllerTest {
         // assert
         assertThat(applicationRepository.findById(key)).isEmpty();
         onTimeResult.andExpect(status().isOk());
+    }
+
+    @Test
+    void invalidCourseGetStatusTest() throws Exception {
+        //arrange
+        Application application = Application.builder()
+                .netId(exampleNetId)
+                .courseId("CSE1200")
+                .grade(9.0f)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.PENDING)
+                .build();
+
+        applicationRepository.save(application);
+        String invalidCourseId = "CSE1300";
+        ApplicationKey key = new ApplicationKey(invalidCourseId, application.getNetId());
+
+        //act
+        ResultActions wrongCourseId = mockMvc.perform(get("/status/" + invalidCourseId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer Joe"));
+
+        //assert
+        MvcResult result = wrongCourseId
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertThat(application.getCourseId()).isNotEqualTo(invalidCourseId);
+    }
+
+    @Test
+    void pendingStatusTest() throws Exception {
+        //arrange
+        Application application = Application.builder()
+                .netId(exampleNetId)
+                .courseId("CSE1200")
+                .grade(9.0f)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.PENDING)
+                .build();
+        applicationRepository.save(application);
+        ApplicationKey key = new ApplicationKey(application.getCourseId(), application.getNetId());
+
+        //act
+        ResultActions pendingApplication = mockMvc.perform(get("/status/" + application.getCourseId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Joe"));
+
+        //assert
+        MvcResult result = pendingApplication
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(application.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+        assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.PENDING);
+    }
+
+    @Test
+    void acceptedStatusTest() throws Exception {
+        //arrange
+        Application application = Application.builder()
+                .netId(exampleNetId)
+                .courseId("CSE1200")
+                .grade(9.0f)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.ACCEPTED)
+                .build();
+        applicationRepository.save(application);
+        ApplicationKey key = new ApplicationKey(application.getCourseId(), application.getNetId());
+
+        //act
+        ResultActions pendingApplication = mockMvc.perform(get("/status/" + application.getCourseId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Joe"));
+
+        //assert
+        MvcResult result = pendingApplication
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(application.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+    }
+
+    @Test
+    void rejectedStatusTest() throws Exception {
+        //arrange
+        Application application = Application.builder()
+                .netId(exampleNetId)
+                .courseId("CSE1200")
+                .grade(9.0f)
+                .motivation("I like TAs")
+                .status(ApplicationStatus.REJECTED)
+                .build();
+        applicationRepository.save(application);
+        ApplicationKey key = new ApplicationKey(application.getCourseId(), application.getNetId());
+
+        //act
+        ResultActions pendingApplication = mockMvc.perform(get("/status/" + application.getCourseId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Joe"));
+
+        //assert
+        MvcResult result = pendingApplication
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(application.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+        assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
 
     @Test
