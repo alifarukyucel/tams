@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.ta.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import nl.tudelft.sem.template.ta.entities.Contract;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -166,6 +168,27 @@ public class ContractController {
         }
 
         return findContractBy(netId, course);
+    }
+
+    /**
+     * Endpoint for fetching ratings of a list of netIds.
+     * Note that this request is open to everyone that is signed in.
+     *
+     * @params netIds a comma seperated string containing netIds
+     * @return a hashmap containing netId as key and average rating as value.
+     * @throws ResponseStatusException if netIds is empty.
+     */
+    @GetMapping("/ratings")
+    public ResponseEntity<Map<String, Double>> getRatings(@RequestParam List<String> netIds)
+        throws ResponseStatusException {
+
+        try {
+
+            // Get the list of netIds from the request parameter.
+            return ResponseEntity.ok(contractService.getAverageRatingOfNetIds(netIds));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     /**
