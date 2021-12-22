@@ -60,32 +60,43 @@ public class ApplicationServiceTest {
         String motivation = "I just want to be a cool!";
         Application invalidGradeApplication = new Application("CSE1300", "jsmith", 0.9f,
                 motivation, ApplicationStatus.PENDING);
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+                "CSE1300",
+                LocalDateTime.MAX,
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
         // Act
-        boolean result = invalidGradeApplication.meetsRequirements();
+
+        ThrowingCallable c = () ->  applicationService.checkAndSave(invalidGradeApplication);
 
         // Assert
-        assertThat(result).isFalse();
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+                .isEmpty();
     }
 
     @Test
     public void gradeOnOne() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application validGradeApplication = new Application("CSE1300", "jsmith", 1.0f,
+        Application validUnsufficientGradeApplication = new Application("CSE1300", "jsmith", 1.0f,
                 motivation, ApplicationStatus.PENDING);
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
-                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                LocalDateTime.MAX,
                 "CourseName",
                 "CourseDescription",
                 100,
                 new ArrayList<>()));
+        // Act
 
-        //Act
-        applicationService.checkAndSave(validGradeApplication);
+        ThrowingCallable c = () ->  applicationService.checkAndSave(validUnsufficientGradeApplication);
 
-        //Assert
+        // Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
@@ -96,11 +107,22 @@ public class ApplicationServiceTest {
         String motivation = "I just want to be a cool!";
         Application invalidGradeApplication = new Application("CSE1300", "jsmith", 10.1f,
                 motivation, ApplicationStatus.PENDING);
+
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+                "CSE1300",
+                LocalDateTime.MAX,
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
         // Act
-        boolean result = invalidGradeApplication.meetsRequirements();
+
+        ThrowingCallable c = () ->  applicationService.checkAndSave(invalidGradeApplication);
 
         // Assert
-        assertThat(result).isFalse();
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+                .isEmpty();
     }
 
     @Test
@@ -155,9 +177,8 @@ public class ApplicationServiceTest {
     public void nonExistingCourseCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
+        Application invalidApplication = new Application("CSE1300", "jsmith", 6.0f,
                 motivation, ApplicationStatus.PENDING);
-        assertThat(invalidApplication.meetsRequirements()).isFalse();
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(null);
 
@@ -174,7 +195,7 @@ public class ApplicationServiceTest {
     public void invalidGradeCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
+        Application invalidApplication = new Application("CSE1300", "jsmith", 5.9f,
                 motivation, ApplicationStatus.PENDING);
         assertThat(invalidApplication.meetsRequirements()).isFalse();
 

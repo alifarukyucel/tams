@@ -60,7 +60,7 @@ public class ApplicationController {
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
         if (applicationService.hasReachedMaxApplication(authManager.getNetid())) {
             // It is not allowed to have more than 3 applications
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum amount of application has been reached!");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum number of applications has been reached!");
         }
         Application application = createPendingApplication(
                 request.getCourseId(),
@@ -71,8 +71,6 @@ public class ApplicationController {
         try {
             applicationService.checkAndSave(application);
             return ResponseEntity.ok("Applied successfully");
-            //Thrown when the application doesn't meet the requirements
-            //I.E. the grade is too low or the application period has already closed
         } catch (NoSuchElementException e) {
             //Thrown when the course is not found.
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

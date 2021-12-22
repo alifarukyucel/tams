@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,10 +93,18 @@ public class ApplicationControllerTest {
     @Test
     public void gradeBelowMin() throws Exception {
         //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", 10.1f,
+        ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 0.9f,
                 "I want to");
 
         ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
+
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.MAX,
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
 
         //Act
         ResultActions invalidResults = mockMvc.perform(post("/apply")
@@ -104,7 +113,7 @@ public class ApplicationControllerTest {
                 .header("Authorization", "Bearer Joe"));
 
         //assert
-        invalidResults.andExpect(status().isBadRequest());
+        invalidResults.andExpect(status().isForbidden());
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
     }
 
@@ -118,7 +127,7 @@ public class ApplicationControllerTest {
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
-                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                LocalDateTime.MAX,
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -130,7 +139,7 @@ public class ApplicationControllerTest {
                 .content(serialize(validModel))
                 .header("Authorization", "Bearer Joe"));
         //assert
-        validResults.andExpect(status().isBadRequest());
+        validResults.andExpect(status().isForbidden());
         assertThat(applicationRepository.findById(validKey)).isEmpty();
     }
 
@@ -145,7 +154,7 @@ public class ApplicationControllerTest {
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
-                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                LocalDateTime.MAX,
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -164,10 +173,18 @@ public class ApplicationControllerTest {
     @Test
     public void gradeAboveMaxTest() throws Exception {
         //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("cse1300", 10.1f,
+        ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 10.1f,
                 "I want to");
 
         ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
+
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                LocalDateTime.MAX,
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
 
         //Act
         ResultActions invalidResults = mockMvc.perform(post("/apply")
@@ -176,7 +193,7 @@ public class ApplicationControllerTest {
                 .header("Authorization", "Bearer Joe"));
 
         //assert
-        invalidResults.andExpect(status().isBadRequest());
+        invalidResults.andExpect(status().isForbidden());
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
     }
 
