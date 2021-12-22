@@ -73,5 +73,5 @@ public class Application {
     public boolean meetsRequirements() throws IllegalArgumentException {
         return grade >= minGrade && grade <= maxGrade && grade >= 6.0f;
     }
-
+    
 }

@@ -56,6 +56,10 @@ public class ApplicationController {
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
+        if (applicationService.hasReachedMaxApplication(authManager.getNetid())) {
+            // It is not allowed to have more than 3 applications
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum amount of application has been reached!");
+        }
         Application application = createPendingApplication(
                 request.getCourseId(),
                 authManager.getNetid(),

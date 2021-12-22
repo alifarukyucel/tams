@@ -26,6 +26,8 @@ public class ApplicationService {
     private final transient ContractInformation contractInformation;
     private final transient CourseInformation courseInformation;
 
+    // maximum number of applications per student
+    private static final transient int maxCandidacies = 3;
 
     /**
      * Constructor for the application service, with the corresponding repositories / information classes.
@@ -220,4 +222,34 @@ public class ApplicationService {
         return application.getStatus();
     }
 
+
+    /**
+     * Gets all applications that belong to a specific user.
+     *
+     * @param netId the netId of the user to get applications from.
+     * @return a list of all applications from the user.
+     */
+    public List<Application> getApplicationFromStudent(String netId) {
+        List<Application> allApplications = applicationRepository.findAll();
+        List<Application> result = new ArrayList<>();
+        for (Application application : allApplications) {
+            if (application.getNetId().equals(netId)) {
+                result.add(application);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks whether a user has already applied for 3 courses.
+     *
+     * @param netId the netid of the user for which we check the amount of applications.
+     * @return false when the maximum number of applications hasn't been reached or true otherwise.
+     */
+    public boolean hasReachedMaxApplication(String netId) {
+        if (getApplicationFromStudent(netId).size() < maxCandidacies) {
+            return false;
+        }
+        return true;
+    }
 }
