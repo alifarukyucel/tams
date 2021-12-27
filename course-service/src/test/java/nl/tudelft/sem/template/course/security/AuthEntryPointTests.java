@@ -20,6 +20,9 @@ public class AuthEntryPointTests {
     private transient HttpServletResponse mockResponse;
     private transient AuthenticationException dummyAuthenticationException;
 
+    /**
+     * Set up mocks.
+     */
     @BeforeEach
     public void setup() {
         mockRequest = Mockito.mock(HttpServletRequest.class);

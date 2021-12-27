@@ -31,6 +31,9 @@ public class AuthFilterTests {
 
     private transient TokenVerifier mockTokenVerifier;
 
+    /**
+     * Set up mocks.
+     */
     @BeforeEach
     public void setup() {
         mockRequest = Mockito.mock(HttpServletRequest.class);
@@ -83,6 +86,11 @@ public class AuthFilterTests {
                 .isNull();
     }
 
+    /**
+     * Parameterized test for various token verification exceptions.
+     *
+     * @param throwable the exception to be tested
+     */
     @ParameterizedTest
     @MethodSource("tokenVerificationExceptionGenerator")
     public void tokenVerificationException(Class<? extends Throwable> throwable)
