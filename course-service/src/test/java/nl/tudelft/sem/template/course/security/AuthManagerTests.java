@@ -1,12 +1,12 @@
 package nl.tudelft.sem.template.course.security;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthManagerTests {
     private transient AuthManager authManager;
