@@ -49,9 +49,9 @@ public class SendGridEmailSenderTests {
         assertThat(request.getMethod()).isEqualTo(Method.POST);
         assertThat(request.getEndpoint()).isEqualTo("mail/send");
         assertThat(request.getBody()).isEqualTo(
-                "{\"from\":{\"email\":\"crewmate@tudelft.nl\"},\"subject\":\"amogus\"," +
-                        "\"personalizations\":[{\"to\":[{\"email\":\"impostor@tudelft.nl\"}]}]," +
-                        "\"content\":[{\"type\":\"text/plain\",\"value\":\"You are kinda sus!\"}]}");
+                "{\"from\":{\"email\":\"crewmate@tudelft.nl\"},\"subject\":\"amogus\","
+                        + "\"personalizations\":[{\"to\":[{\"email\":\"impostor@tudelft.nl\"}]}],"
+                        + "\"content\":[{\"type\":\"text/plain\",\"value\":\"You are kinda sus!\"}]}");
     }
 
     @Test
