@@ -36,7 +36,7 @@ public class SendGridEmailSender implements EmailSender {
             request.setBody(mail.build());
 
             sendGrid.api(request);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             // ignore
         }
     }
