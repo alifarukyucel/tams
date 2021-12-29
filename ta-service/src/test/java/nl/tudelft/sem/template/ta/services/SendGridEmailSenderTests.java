@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.*;
 
 public class SendGridEmailSenderTests {
     private transient SendGrid mockSendGrid;
@@ -47,6 +48,18 @@ public class SendGridEmailSenderTests {
                 "{\"from\":{\"email\":\"crewmate@tudelft.nl\"},\"subject\":\"amogus\"," +
                         "\"personalizations\":[{\"to\":[{\"email\":\"impostor@tudelft.nl\"}]}]," +
                         "\"content\":[{\"type\":\"text/plain\",\"value\":\"You are kinda sus!\"}]}");
+    }
+
+    @Test
+    public void sendEmailException() throws IOException {
+        // Arrange
+        when(mockSendGrid.api(any())).thenThrow(IOException.class);
+
+        // Act
+        Executable executable = () -> sendGridEmailSender.sendEmail(to, subject, body);
+
+        // Assert
+        assertDoesNotThrow(executable);
     }
 
     private void injectFromEmail(String from) throws NoSuchFieldException, IllegalAccessException {
