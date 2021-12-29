@@ -18,21 +18,20 @@ public class SendGridEmailSenderTests {
 
     private transient SendGridEmailSender sendGridEmailSender;
 
+    private final String from = "crewmate@tudelft.nl";
+    private final String to = "impostor@tudelft.nl";
+    private final String subject = "amogus";
+    private final String body = "You are kinda sus!";
+
     @BeforeEach
-    public void setup() {
+    public void setup() throws NoSuchFieldException, IllegalAccessException {
         mockSendGrid = mock(SendGrid.class);
         sendGridEmailSender = new SendGridEmailSender(mockSendGrid);
+        injectFromEmail(from);
     }
 
     @Test
-    public void sendEmailSuccessful() throws NoSuchFieldException, IllegalAccessException, IOException {
-        // Arrange
-        String from = "crewmate@tudelft.nl";
-        String to = "impostor@tudelft.nl";
-        String subject = "amogus";
-        String body = "You are kinda sus!";
-        injectFromEmail(from);
-
+    public void sendEmailSuccessful() throws IOException {
         // Act
         sendGridEmailSender.sendEmail(to, subject, body);
 
