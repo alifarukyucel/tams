@@ -10,6 +10,9 @@ import nl.tudelft.sem.template.ta.interfaces.EmailSender;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/**
+ * An EmailSender implementation leveraging the SendGrid API.
+ */
 @Service
 public class SendGridEmailSender implements EmailSender {
 
@@ -22,6 +25,13 @@ public class SendGridEmailSender implements EmailSender {
         this.sendGrid = sendGrid;
     }
 
+    /**
+     * Send an email message from the default application email address.
+     *
+     * @param recipient the email address of the recipient
+     * @param subjectText the subject of the email
+     * @param bodyText the plain-text body of the email
+     */
     @Override
     public void sendEmail(String recipient, String subjectText, String bodyText) {
         try {

@@ -28,6 +28,9 @@ public class SendGridEmailSenderTests {
     private final String subject = "amogus";
     private final String body = "You are kinda sus!";
 
+    /**
+     * Set up mocks.
+     */
     @BeforeEach
     public void setup() throws NoSuchFieldException, IllegalAccessException {
         mockSendGrid = mock(SendGrid.class);
