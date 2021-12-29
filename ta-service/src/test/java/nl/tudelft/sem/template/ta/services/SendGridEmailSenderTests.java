@@ -38,6 +38,7 @@ public class SendGridEmailSenderTests {
         // Assert
         ArgumentCaptor<Request> captor = ArgumentCaptor.forClass(Request.class);
         verify(mockSendGrid).api(captor.capture());
+        verifyNoMoreInteractions(mockSendGrid);
 
         Request request = captor.getValue();
         assertThat(request.getMethod()).isEqualTo(Method.POST);
