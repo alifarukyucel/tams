@@ -484,6 +484,9 @@ public class ApplicationServiceTest {
         assertThat(result).isFalse();
     }
 
+    /**
+     * Boundary test withdrawing off point.
+     */
     @Test
     public void checkAndWithdrawJustTooLateTest() {
         //Arrange
@@ -500,6 +503,9 @@ public class ApplicationServiceTest {
         assertThat(result).isFalse();
     }
 
+    /**
+     * Boundary test withdrawing on point.
+     */
     @Test
     public void checkAndWithdrawJustOnTimeTest() {
         //Arrange
