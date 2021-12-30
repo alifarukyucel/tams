@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.hiring.controllers;
 
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;

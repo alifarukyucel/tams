@@ -647,9 +647,9 @@ public class ApplicationControllerTest {
                 .thenReturn(true);
 
         String[] netIds = new String[]{"jsmith", "wsmith"};
-        Map<String, Float> expectedMap = new HashMap<>() {{
-                put("jsmith", 8.0f);
-                put("wsmith", 9.0f);
+        Map<String, Double> expectedMap = new HashMap<>() {{
+                put("jsmith", 8.0d);
+                put("wsmith", 9.0d);
             }
         };
         when(mockContractInformation.getTaRatings(List.of(netIds)))
@@ -667,8 +667,8 @@ public class ApplicationControllerTest {
         //Parse json
         List<PendingApplicationResponseModel> res = parsePendingApplicationsResult(result);
 
-        PendingApplicationResponseModel model = new PendingApplicationResponseModel(application, 8.0f);
-        PendingApplicationResponseModel model2 = new PendingApplicationResponseModel(application2, 9.0f);
+        PendingApplicationResponseModel model = new PendingApplicationResponseModel(application, 8.0d);
+        PendingApplicationResponseModel model2 = new PendingApplicationResponseModel(application2, 9.0d);
         List<PendingApplicationResponseModel> expectedResult = new ArrayList<>() {{
                 add(model);
                 add(model2);
@@ -702,7 +702,7 @@ public class ApplicationControllerTest {
                     (String) map.get("netId"),
                     ((Double) map.get("grade")).floatValue(),
                     (String) map.get("motivation"),
-                    ((Double) map.get("taRating")).floatValue())
+                    ((Double) map.get("taRating")))
             );
         }
         return res;

@@ -14,10 +14,10 @@ public class PendingApplicationResponseModelTest {
                 "I want to be cool too!", ApplicationStatus.PENDING);
 
         //Act
-        var model = new PendingApplicationResponseModel(application, 8.0f);
+        var model = new PendingApplicationResponseModel(application, 8.0d);
 
         var expected = new PendingApplicationResponseModel("CSE1300", "jsmith", 7.0f,
-                "I want to be cool too!", 8.0f);
+                "I want to be cool too!", 8.0d);
 
         //Assert
         assertThat(model).isEqualTo(expected);
