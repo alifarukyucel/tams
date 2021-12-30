@@ -304,6 +304,10 @@ public class ApplicationServiceTest {
         assertThat(result).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
+    /**
+     * Boundary test.
+     * Reached Max Applications on point
+     */
     @Test
     public void getApplicationsAndMaxApplicationsTest() {
         //Arrange
@@ -325,6 +329,30 @@ public class ApplicationServiceTest {
                 .isEmpty();
         assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
         assertThat(applicationService.hasReachedMaxApplication("johndoe")).isTrue();
+    }
+
+    /**
+     * Boundary test.
+     * Reached Max Applications off point
+     */
+    @Test
+    public void maxApplicationsTestOffPoint() {
+        //Arrange
+        String motivation = "I am motivated";
+        Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
+            motivation, ApplicationStatus.PENDING);
+        Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
+            motivation, ApplicationStatus.PENDING);
+
+        //Act
+        applicationRepository.save(firstApplication);
+        applicationRepository.save(secondApplication);
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+            .isEmpty();
+        assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(2);
+        assertThat(applicationService.hasReachedMaxApplication("johndoe")).isFalse();
     }
 
     @Test
