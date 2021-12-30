@@ -122,13 +122,16 @@ class HourServiceTest {
         }
     }
 
+    /**
+     * Boundary test, making sure non-positive hours cannot be submitted.
+     */
     @Test
-    void blockSubmittingNegativeHours() {
+    void blockSubmittingNonPositiveHours() {
         //arrange
         hoursRepository.deleteAll();
         HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
             .withContractId(defaultContract)
-            .withWorkedTime(-5)
+            .withWorkedTime(0)
             .withApproved(false)
             .withReviewed(false)
             .build();
@@ -139,6 +142,27 @@ class HourServiceTest {
         // assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
         assertThat(hoursRepository.findAll().size()).isEqualTo(0);
+    }
+
+    /**
+     * Boundary test, making sure positive hours can be submitted.
+     */
+    @Test
+    void allowSubmittingPositiveHours() {
+        //arrange
+        hoursRepository.deleteAll();
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(1)
+            .withApproved(false)
+            .withReviewed(false)
+            .build();
+
+        //act
+        hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        assertThat(hoursRepository.findAll().size()).isEqualTo(1);
     }
 
     @Test

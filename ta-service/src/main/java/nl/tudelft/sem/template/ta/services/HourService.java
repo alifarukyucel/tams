@@ -108,7 +108,7 @@ public class HourService {
      */
     public HourDeclaration checkAndSave(HourDeclaration hourDeclaration)
         throws IllegalArgumentException {
-        if (hourDeclaration.getWorkedTime() < 0) {
+        if (hourDeclaration.getWorkedTime() <= 0) {
             throw new IllegalArgumentException("Worked time cannot be negative.");
         }
         if (!hourDeclaration.getContract().getSigned()) {
