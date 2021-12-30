@@ -31,7 +31,7 @@ public class ConnectedContractInformationService implements ContractInformation 
     }
 
     @Override
-    public Map<String, Float> getTaRatings(List<String> netIds) {
+    public Map<String, Double> getTaRatings(List<String> netIds) {
         return new HashMap<>();
     }
 }

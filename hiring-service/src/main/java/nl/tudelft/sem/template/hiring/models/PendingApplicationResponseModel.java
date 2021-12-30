@@ -2,16 +2,13 @@ package nl.tudelft.sem.template.hiring.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.hiring.entities.Application;
-
-import java.util.Objects;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PendingApplicationResponseModel implements Comparable{
+public class PendingApplicationResponseModel implements Comparable<PendingApplicationResponseModel> {
     private static double sufficientTaRating = 5.75d;
 
     private String courseId;
@@ -35,20 +32,15 @@ public class PendingApplicationResponseModel implements Comparable{
     }
 
     @Override
-    public int compareTo(Object o) {
-        if (!(o instanceof PendingApplicationResponseModel)) {
-            throw new IllegalArgumentException();
-        }
-        PendingApplicationResponseModel other = (PendingApplicationResponseModel) o;
-
+    public int compareTo(PendingApplicationResponseModel other) {
         //The following multiplies "sufficient" ratings with -1, so that they become a negative value
         //When the applications will be sorted, this means they will be in the following order:
         //First candidates with a sufficient rating
         //Then candidates that don't have a rating yet (They are set to have rating "-1")
         //Lastly the candidates with an insufficient rating
-        double rating1 = this.getTaRating() > sufficientTaRating? this.getTaRating() * -1
+        double rating1 = this.getTaRating() > sufficientTaRating ? this.getTaRating() * -1
                 : sufficientTaRating - this.getTaRating();
-        double rating2 = other.getTaRating() > sufficientTaRating? this.getTaRating() * -1
+        double rating2 = other.getTaRating() > sufficientTaRating ? this.getTaRating() * -1
                 : sufficientTaRating - this.getTaRating();
 
         return (Double.compare(rating1, rating2));
