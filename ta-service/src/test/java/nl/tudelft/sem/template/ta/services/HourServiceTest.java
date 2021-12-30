@@ -313,6 +313,10 @@ class HourServiceTest {
         assertThat(hourDeclaration).isEqualTo(optionalFound.get());
     }
 
+    /**
+     * Boundary test for submitting hours.
+     * on point.
+     */
     @Test
     void submitMaxRemainingHoursPopulatedDatabase() {
         // arrange
@@ -333,6 +337,10 @@ class HourServiceTest {
         assertThat(hourDeclaration).isEqualTo(optionalFound.get());
     }
 
+    /**
+     * Boundary test for submitting hours.
+     * off point.
+     */
     @Test
     void submitMoreThanMaxRemainingHoursPopulatedDatabase() {
         // arrange
