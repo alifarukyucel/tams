@@ -407,6 +407,10 @@ class ContractServiceTest {
         assertThat(contractRepository.findAll().size()).isZero();
     }
 
+    /**
+     * Boundary test.
+     * Also tests the off point for max hours.
+     */
     @Test
     void createUnsignedContract_illegalArguments() {
         // Arrange
@@ -417,8 +421,8 @@ class ContractServiceTest {
                 .build());
 
         // Act
-        ThrowingCallable actionNegativeMaxHours = () ->
-            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", -1, "Duties");
+        ThrowingCallable actionNonPositiveHours = () ->
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 0, "Duties");
         ThrowingCallable actionCourseNull = () ->
             contractService.createUnsignedContract("WinstijnSmit", null, 10, "Duties");
         ThrowingCallable actionCourseEmpty = () ->
@@ -429,7 +433,7 @@ class ContractServiceTest {
             contractService.createUnsignedContract("", "CSE2525", 10, "Duties");
 
         // Assert
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNegativeMaxHours);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNonPositiveHours);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseNull);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseEmpty);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdNull);
