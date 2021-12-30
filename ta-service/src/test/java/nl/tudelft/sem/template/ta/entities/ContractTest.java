@@ -1,9 +1,13 @@
 package nl.tudelft.sem.template.ta.entities;
 
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class ContractTest {
 
@@ -28,6 +32,56 @@ class ContractTest {
         Assertions.assertFalse(contract.getSigned());
         Assertions.assertEquals("PieterDelft", contract.getNetId());
         Assertions.assertEquals("You need to work!", contract.getDuties());
+    }
+
+    /**
+     * Boundary test.
+     */
+    @Test
+    void lowerBoundRatingOffPoint() {
+        // act
+        ThrowableAssert.ThrowingCallable action = () -> contract.setRating(Math.nextDown(1.0d));
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+        assertThat(contract.getRating()).isEqualTo(5);
+    }
+
+    /**
+     * Boundary test.
+     */
+    @Test
+    void upperBoundRatingOffPoint() {
+        // act
+        ThrowableAssert.ThrowingCallable action = () -> contract.setRating(Math.nextUp(10.0d));
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+        assertThat(contract.getRating()).isEqualTo(5);
+    }
+
+    /**
+     * Boundary test.
+     */
+    @Test
+    void lowerBoundRatingOnPoint() {
+        // act
+        contract.setRating(1.0d);
+
+        // assert
+        assertThat(contract.getRating()).isEqualTo(1.0d);
+    }
+
+    /**
+     * Boundary test.
+     */
+    @Test
+    void upperBoundRatingOnPoint() {
+        // act
+        contract.setRating(10.0d);
+
+        // assert
+        assertThat(contract.getRating()).isEqualTo(10.0d);
     }
 
     @Test
