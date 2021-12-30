@@ -310,6 +310,10 @@ class ContractServiceTest {
             .isEqualTo(saved);
     }
 
+    /**
+     * Boundary test for allowing contracts related to a 20:1 student-ta ratio.
+     * Off point.
+     */
     @Test
     void createUnsignedContractExceedingTaLimit() {
         contractRepository.save(new ConcreteContractBuilder()
@@ -344,6 +348,38 @@ class ContractServiceTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
+        assertThat(contractRepository.findAll().size()).isEqualTo(1);
+    }
+
+    /**
+     * Boundary test for allowing contracts related to a 20:1 student-ta ratio.
+     * On point.
+     */
+    @Test
+    void onPointTaLimitReached() {
+        // precondition
+        assertThat(contractRepository.findAll().size()).isEqualTo(0);
+
+        // arrange
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+            .id("CSE2310")
+            .description("Very cool course")
+            .numberOfStudents(20)
+            .build());
+
+        // Act
+        contractService.createUnsignedContract(
+            contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
         assertThat(contractRepository.findAll().size()).isEqualTo(1);
     }
 
