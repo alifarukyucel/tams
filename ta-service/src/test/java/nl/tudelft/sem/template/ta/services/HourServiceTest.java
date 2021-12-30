@@ -359,6 +359,9 @@ class HourServiceTest {
         assertThat(hoursRepository.findAll().size()).isEqualTo(hourDeclarations.size());
     }
 
+    /**
+     * Boundary test.
+     */
     @Test
     void submitHoursCloseToMax() {
         //arrange
@@ -380,6 +383,9 @@ class HourServiceTest {
         assertThat(hourDeclaration).isEqualTo(optionalFound.get());
     }
 
+    /**
+     * Boundary test.
+     */
     @Test
     void submitHoursEqualToMax() {
         //arrange
@@ -401,6 +407,9 @@ class HourServiceTest {
         assertThat(hourDeclaration).isEqualTo(optionalFound.get());
     }
 
+    /**
+     * Boundary test.
+     */
     @Test
     void submitHoursOverMax() {
         //arrange
@@ -419,6 +428,10 @@ class HourServiceTest {
         assertThat(hoursRepository.findAll().size()).isEqualTo(0);
     }
 
+    /**
+     * Boundary test for approving hours.
+     * off point.
+     */
     @Test
     void approveHoursOverContract() {
         // arrange
@@ -458,6 +471,10 @@ class HourServiceTest {
         assertThat(hoursRepository.getOne(hourDeclaration.getId()).getReviewed()).isTrue();
     }
 
+    /**
+     * Boundary test for approving hours.
+     * on point.
+     */
     @Test
     void approveHoursExactMaxContract() {
         // arrange
