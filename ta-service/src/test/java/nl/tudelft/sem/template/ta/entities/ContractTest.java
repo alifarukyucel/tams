@@ -1,13 +1,13 @@
 package nl.tudelft.sem.template.ta.entities;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class ContractTest {
 
@@ -40,7 +40,7 @@ class ContractTest {
     @Test
     void lowerBoundRatingOffPoint() {
         // act
-        ThrowableAssert.ThrowingCallable action = () -> contract.setRating(Math.nextDown(1.0d));
+        ThrowableAssert.ThrowingCallable action = () -> contract.setRating(Math.nextDown(0.0d));
 
         // assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
@@ -66,10 +66,10 @@ class ContractTest {
     @Test
     void lowerBoundRatingOnPoint() {
         // act
-        contract.setRating(1.0d);
+        contract.setRating(0.0d);
 
         // assert
-        assertThat(contract.getRating()).isEqualTo(1.0d);
+        assertThat(contract.getRating()).isEqualTo(0.0d);
     }
 
     /**
