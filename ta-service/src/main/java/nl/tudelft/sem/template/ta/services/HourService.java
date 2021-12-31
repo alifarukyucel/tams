@@ -109,7 +109,7 @@ public class HourService {
     public HourDeclaration checkAndSave(HourDeclaration hourDeclaration)
         throws IllegalArgumentException {
         if (hourDeclaration.getWorkedTime() <= 0) {
-            throw new IllegalArgumentException("Worked time cannot be negative.");
+            throw new IllegalArgumentException("Worked time must be positive.");
         }
         if (!hourDeclaration.getContract().getSigned()) {
             throw new IllegalArgumentException("Contract has not been signed by student.");
