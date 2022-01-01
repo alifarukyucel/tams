@@ -31,8 +31,8 @@ public class ConnectedCourseInformationService implements CourseInformation {
         }
 
         try {
-            var response = comm.get(baseUrl + "/lecturer/{netId}/{courseId}",
-                    Boolean.class, netId, courseId);
+            var response = comm.get(baseUrl + "/{courseId}/lecturer/{netId}",
+                    Boolean.class, courseId, netId);
             return Optional.ofNullable(response.getBody()).orElse(false);
         } catch (Exception ex) {
             return false;
