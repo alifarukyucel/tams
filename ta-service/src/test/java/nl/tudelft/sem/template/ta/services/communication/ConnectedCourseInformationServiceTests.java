@@ -22,7 +22,7 @@ import org.springframework.test.context.TestPropertySource;
 public class ConnectedCourseInformationServiceTests {
     static final String testUrl = "testUrl";
 
-    public static final String isResponsibleLecturerPath = "/lecturer/{netId}/{courseId}";
+    public static final String isResponsibleLecturerPath = "/{courseId}/lecturer/{netId}";
     public static final String getCourseByIdPath = "/{id}";
 
     @Autowired
@@ -43,7 +43,7 @@ public class ConnectedCourseInformationServiceTests {
         String courseId = "CSE1110";
 
         when(mockMicroserviceCommunicationHelper.get(testUrl + isResponsibleLecturerPath,
-                Boolean.class, netId, courseId))
+                Boolean.class, courseId, netId))
                 .thenReturn(ResponseEntity.ok(true));
 
         // Act
@@ -52,7 +52,7 @@ public class ConnectedCourseInformationServiceTests {
         // Assert
         assertThat(actual).isTrue();
         verify(mockMicroserviceCommunicationHelper).get(testUrl + isResponsibleLecturerPath,
-                Boolean.class, netId, courseId);
+                Boolean.class, courseId, netId);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ConnectedCourseInformationServiceTests {
         // Assert
         assertThat(actual).isFalse();
         verify(mockMicroserviceCommunicationHelper).get(testUrl + isResponsibleLecturerPath,
-                Boolean.class, netId, courseId);
+                Boolean.class, courseId, netId);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ConnectedCourseInformationServiceTests {
         // Assert
         assertThat(actual).isFalse();
         verify(mockMicroserviceCommunicationHelper).get(testUrl + isResponsibleLecturerPath,
-                Boolean.class, netId, courseId);
+                Boolean.class, courseId, netId);
     }
 
     @Test
