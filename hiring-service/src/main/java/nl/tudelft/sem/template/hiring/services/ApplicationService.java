@@ -253,8 +253,8 @@ public class ApplicationService {
     public boolean hasReachedMaxApplication(String netId) {
         int size = 0;
         List<Application> existingApplications = getApplicationFromStudent(netId);
-        for(Application application : existingApplications) {
-            if(application.getStatus().equals(ApplicationStatus.PENDING)) {
+        for (Application application : existingApplications) {
+            if (application.getStatus().equals(ApplicationStatus.PENDING)) {
                 size++;
             }
         }
