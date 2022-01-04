@@ -2,6 +2,25 @@
 
 # TAMS documentation
 
+## The hiring process
+
+### Signing your contract as a TA
+Once a lecturer has decided on who they want to be their TA's their contracts are created.
+These contracts contain how many hours the TA is allowed to work and what their expected duties are.
+To finalize the contract a TA will need to agree to these terms and they can do this by submitting 
+the course id to /contracts/sign.
+
+```json
+// PUT: /contracts/sign
+
+{
+  "course": "CSE2310"
+}
+```
+
+A 200 OK is returned if the request succeeds.  
+If the contract isn't signed then the TA will not be able to declare hours.
+
 ## Dealing with worked hours
 
 ### Declaring worked hours
