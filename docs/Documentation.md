@@ -95,3 +95,20 @@ where {course} is the specified course to get the status from.
 ```
 If the application is existent, this will return a 200 OK. 
 
+
+## Withdrawing from application process
+Once a student applied for a TA spot, they can withdraw only when the application status has not yet been determined.
+Up to 3 weeks before the start of the course, you are allowed to withdraw. 
+This can be done by making a request to /withdraw providing the courseId and netId.
+
+```json
+// DELETE: /withdraw
+
+{
+  "courseId": "CSE2310",
+  "netId": "jsmith"
+}
+```
+
+Without any complications this request will return a 200 OK. 
+Withdrawing too late will result in a 403 FORBIDDEN.
