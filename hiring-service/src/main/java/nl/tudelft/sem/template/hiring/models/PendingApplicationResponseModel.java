@@ -38,11 +38,21 @@ public class PendingApplicationResponseModel implements Comparable<PendingApplic
         //First candidates with a sufficient rating
         //Then candidates that don't have a rating yet (They are set to have rating "-1")
         //Lastly the candidates with an insufficient rating
-        double rating1 = this.getTaRating() > sufficientTaRating ? this.getTaRating() * -1
-                : sufficientTaRating - this.getTaRating();
-        double rating2 = other.getTaRating() > sufficientTaRating ? this.getTaRating() * -1
-                : sufficientTaRating - this.getTaRating();
-
+        double rating1 = this.reformatRating();
+        double rating2 = other.reformatRating();
         return (Double.compare(rating1, rating2));
+    }
+
+    private double reformatRating() {
+        double rating = this.getTaRating();
+
+        //Using a switch here is impossible because we are working with doubles
+        if (rating > sufficientTaRating) {
+            return rating * -1;
+        } else if (rating == -1d) {
+            return rating;
+        } else {
+            return sufficientTaRating - rating;
+        }
     }
 }
