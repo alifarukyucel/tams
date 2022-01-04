@@ -21,6 +21,10 @@ import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 @Table(name = "contracts")
 public class Contract {
 
+    // The min and max rating of a TA.
+    private final transient int minRating = 0;
+    private final transient int maxRating = 10;
+
     @Id
     private String netId;
 
@@ -48,7 +52,7 @@ public class Contract {
      * @throws IllegalArgumentException if rating is < 0 or > 10
      */
     public void setRating(double rating) throws IllegalArgumentException {
-        if (rating < 0 || rating > 10) {
+        if (rating < minRating || rating > maxRating) {
             throw new IllegalArgumentException("Rating must be between 0 and 10.");
         }
 
