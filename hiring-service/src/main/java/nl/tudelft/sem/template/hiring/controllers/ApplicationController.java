@@ -13,7 +13,7 @@ import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.models.RetrieveStatusModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
-import nl.tudelft.sem.template.hiring.services.ApplicationService;
+import nl.tudelft.sem.template.hiring.services.TeachingAssistantApplicationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,20 +31,20 @@ import org.springframework.web.server.ResponseStatusException;
 public class ApplicationController {
     private final transient AuthManager authManager;
 
-    private final transient ApplicationService applicationService;
+    private final transient TeachingAssistantApplicationService taApplicationService;
     private final transient CourseInformation courseInformation;
 
     /**
      * Instantiates a new Application controller.
      *
      * @param authManager        the auth manager
-     * @param applicationService the application service
+     * @param taApplicationService the application service
      * @param courseInformation  the course information
      */
-    public ApplicationController(AuthManager authManager, ApplicationService applicationService,
+    public ApplicationController(AuthManager authManager, TeachingAssistantApplicationService taApplicationService,
                                  CourseInformation courseInformation) {
         this.authManager = authManager;
-        this.applicationService = applicationService;
+        this.taApplicationService = taApplicationService;
         this.courseInformation = courseInformation;
     }
 
@@ -58,7 +58,7 @@ public class ApplicationController {
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
-        if (applicationService.hasReachedMaxApplication(authManager.getNetid())) {
+        if (taApplicationService.hasReachedMaxApplication(authManager.getNetid())) {
             // It is not allowed to have more than 3 applications
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum number of applications has been reached!");
         }
@@ -69,7 +69,7 @@ public class ApplicationController {
                 request.getMotivation());
 
         try {
-            applicationService.checkAndSave(teachingAssistantApplication);
+            taApplicationService.checkAndSave(teachingAssistantApplication);
             return ResponseEntity.ok("Applied successfully");
         } catch (NoSuchElementException e) {
             //Thrown when the course is not found.
@@ -89,7 +89,7 @@ public class ApplicationController {
     @GetMapping("/status/{course}")
     public ResponseEntity<RetrieveStatusModel> getStatusByCourse(@PathVariable String course) {
         try {
-            TeachingAssistantApplication teachingAssistantApplication = applicationService
+            TeachingAssistantApplication teachingAssistantApplication = taApplicationService
                     .get(course, authManager.getNetid());
             RetrieveStatusModel status = RetrieveStatusModel.fromApplication(teachingAssistantApplication);
 
@@ -110,7 +110,7 @@ public class ApplicationController {
     public ResponseEntity<String> withdraw(@RequestBody TeachingAssistantApplicationKey model) {
 
         try {
-            if (applicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
+            if (taApplicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
                 return ResponseEntity.ok().build();
             }
             throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
@@ -137,7 +137,7 @@ public class ApplicationController {
         }
 
         try {
-            this.applicationService.reject(model.getCourseId(), model.getNetId());
+            this.taApplicationService.reject(model.getCourseId(), model.getNetId());
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
@@ -164,7 +164,7 @@ public class ApplicationController {
         }
 
         try {
-            this.applicationService.accept(model.getCourseId(), model.getNetId(), model.getDuties(),
+            this.taApplicationService.accept(model.getCourseId(), model.getNetId(), model.getDuties(),
                     model.getMaxHours());
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -188,9 +188,9 @@ public class ApplicationController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<TeachingAssistantApplication> teachingAssistantApplications = applicationService
+        List<TeachingAssistantApplication> teachingAssistantApplications = taApplicationService
                 .findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
-        var extendedApplications = applicationService
+        var extendedApplications = taApplicationService
                 .extendWithRating(teachingAssistantApplications);
 
         return ResponseEntity.ok(extendedApplications);
