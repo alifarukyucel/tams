@@ -60,3 +60,24 @@ If hours were wrongfully approved you should contact your administrators so that
 If you accidentally rejected certain hours feel free to contact the respective TA so that they can declare their hours again.
 
 The system will always block you from approving hours if this were to go over the amount of hours specified in the contract.
+
+## Application process
+
+### Applying for TA spot as a student
+When a student wants to become a TA they can apply for a spot.
+In order to be considered the student needs to have a sufficient grade for the specific course they want to apply for. 
+Furthermore, they cannot have more than 3 open applications at one time.
+Applying is possible by making a request to /apply with the information that is required. An example can be seen below
+
+```json
+// POST: /apply
+
+{
+  "courseId": "CSE2310",
+  "grade": 7.0,
+  "motivation": "I want to help other students"
+}
+```
+
+A 200 OK is returned if the application is successful.
+If a student has reached a maximum of 3 open application, they will receive an 403 Forbidden.
