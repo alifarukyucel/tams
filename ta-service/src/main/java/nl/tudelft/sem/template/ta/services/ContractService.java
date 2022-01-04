@@ -24,6 +24,9 @@ import org.springframework.util.StringUtils;
 @Service
 public class ContractService {
 
+
+    // This value represents how many students there need to be to justify the need of a TA.
+    // It is used to calculate how many TAs are needed for a course.
     private final transient double studentsPerOneTa = 20f;
 
     private final transient ContractRepository contractRepository;
