@@ -258,6 +258,9 @@ public class ApplicationService {
                 size++;
             }
         }
-        return size >= 3;
+        if (size < 3) {
+            return true;
+        }
+        return false;
     }
 }
