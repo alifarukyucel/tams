@@ -27,7 +27,7 @@ import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
-import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
+import nl.tudelft.sem.template.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.security.TokenVerifier;
 import nl.tudelft.sem.template.hiring.services.TeachingAssistantApplicationService;
@@ -60,7 +60,7 @@ public class TeachingAssistantApplicationControllerTest {
     private static final String exampleNetId = "johndoe";
 
     @Autowired
-    private transient ApplicationRepository applicationRepository;
+    private transient TeachingAssistantApplicationRepository taApplicationRepository;
 
     @Autowired
     private transient TeachingAssistantApplicationService taApplicationService;
@@ -115,7 +115,7 @@ public class TeachingAssistantApplicationControllerTest {
 
         //assert
         invalidResults.andExpect(status().isForbidden());
-        assertThat(applicationRepository.findById(invalidKey)).isEmpty();
+        assertThat(taApplicationRepository.findById(invalidKey)).isEmpty();
     }
 
     @Test
@@ -142,7 +142,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .header("Authorization", "Bearer Joe"));
         //assert
         validResults.andExpect(status().isForbidden());
-        assertThat(applicationRepository.findById(validKey)).isEmpty();
+        assertThat(taApplicationRepository.findById(validKey)).isEmpty();
     }
 
 
@@ -170,7 +170,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .header("Authorization", "Bearer Joe"));
         //assert
         validResults.andExpect(status().isOk());
-        assertThat(applicationRepository.findById(validKey)).isNotEmpty();
+        assertThat(taApplicationRepository.findById(validKey)).isNotEmpty();
     }
 
     @Test
@@ -198,7 +198,7 @@ public class TeachingAssistantApplicationControllerTest {
 
         //assert
         invalidResults.andExpect(status().isForbidden());
-        assertThat(applicationRepository.findById(invalidKey)).isEmpty();
+        assertThat(taApplicationRepository.findById(invalidKey)).isEmpty();
     }
 
     @Test
@@ -224,7 +224,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .header("Authorization", "Bearer Joe"));
         //assert
         validResults.andExpect(status().isOk());
-        assertThat(applicationRepository.findById(validKey)).isNotEmpty();
+        assertThat(taApplicationRepository.findById(validKey)).isNotEmpty();
 
     }
 
@@ -254,7 +254,7 @@ public class TeachingAssistantApplicationControllerTest {
 
         //assert
         invalidResults.andExpect(status().isForbidden());
-        assertThat(applicationRepository.findById(invalidKey)).isEmpty();
+        assertThat(taApplicationRepository.findById(invalidKey)).isEmpty();
     }
 
     @Test
@@ -276,7 +276,7 @@ public class TeachingAssistantApplicationControllerTest {
 
         //assert
         invalidResults.andExpect(status().isNotFound());
-        assertThat(applicationRepository.findById(invalidKey)).isEmpty();
+        assertThat(taApplicationRepository.findById(invalidKey)).isEmpty();
     }
 
     @Test
@@ -284,15 +284,15 @@ public class TeachingAssistantApplicationControllerTest {
         //Arrange
         TeachingAssistantApplication taApplication1 = new TeachingAssistantApplication("CSE1300", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication1);
+        taApplicationRepository.save(taApplication1);
 
         TeachingAssistantApplication taApplication2 = new TeachingAssistantApplication("CSE1400", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication2);
+        taApplicationRepository.save(taApplication2);
 
         TeachingAssistantApplication taApplication3 = new TeachingAssistantApplication("CSE1100", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication3);
+        taApplicationRepository.save(taApplication3);
 
         ApplicationRequestModel fourthApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
@@ -316,7 +316,7 @@ public class TeachingAssistantApplicationControllerTest {
 
         //assert
         limitReached.andExpect(status().isForbidden());
-        assertThat(applicationRepository.findById(validKey)).isEmpty();
+        assertThat(taApplicationRepository.findById(validKey)).isEmpty();
     }
 
     @Test
@@ -324,11 +324,11 @@ public class TeachingAssistantApplicationControllerTest {
         //Arrange
         TeachingAssistantApplication taApplication1 = new TeachingAssistantApplication("CSE1300", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication1);
+        taApplicationRepository.save(taApplication1);
 
         TeachingAssistantApplication taApplication2 = new TeachingAssistantApplication("CSE1400", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication2);
+        taApplicationRepository.save(taApplication2);
 
         ApplicationRequestModel thirdApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
@@ -352,7 +352,7 @@ public class TeachingAssistantApplicationControllerTest {
 
         //assert
         oneMorePossible.andExpect(status().isOk());
-        assertThat(applicationRepository.findById(validKey)).isNotEmpty();
+        assertThat(taApplicationRepository.findById(validKey)).isNotEmpty();
     }
 
 
@@ -361,7 +361,7 @@ public class TeachingAssistantApplicationControllerTest {
         // arrange
         TeachingAssistantApplication onTime = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(onTime);
+        taApplicationRepository.save(onTime);
 
         TeachingAssistantApplicationKey key = TeachingAssistantApplicationKey.builder()
                 .courseId(onTime.getCourseId())
@@ -378,7 +378,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .header("Authorization", "Bearer Joe"));
 
         // assert
-        assertThat(applicationRepository.findById(key)).isEmpty();
+        assertThat(taApplicationRepository.findById(key)).isEmpty();
         onTimeResult.andExpect(status().isOk());
     }
 
@@ -393,7 +393,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .status(ApplicationStatus.PENDING)
                 .build();
 
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
         String invalidCourseId = "CSE1300";
         TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
                 invalidCourseId, taApplication.getNetId());
@@ -420,7 +420,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .motivation("I like TAs")
                 .status(ApplicationStatus.PENDING)
                 .build();
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
         TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
                 taApplication.getCourseId(), taApplication.getNetId());
 
@@ -434,7 +434,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         assertThat(taApplication.getStatus()).isEqualTo(ApplicationStatus.PENDING);
-        assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.PENDING);
+        assertThat(taApplicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
 
     @Test
@@ -447,7 +447,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .motivation("I like TAs")
                 .status(ApplicationStatus.ACCEPTED)
                 .build();
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
         TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
                 taApplication.getCourseId(), taApplication.getNetId());
 
@@ -461,7 +461,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         assertThat(taApplication.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
-        assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        assertThat(taApplicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
     @Test
@@ -474,7 +474,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .motivation("I like TAs")
                 .status(ApplicationStatus.REJECTED)
                 .build();
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
         TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
                 taApplication.getCourseId(), taApplication.getNetId());
 
@@ -488,7 +488,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         assertThat(taApplication.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
-        assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+        assertThat(taApplicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
 
     @Test
@@ -496,7 +496,7 @@ public class TeachingAssistantApplicationControllerTest {
         // arrange
         TeachingAssistantApplication tooLate = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(tooLate);
+        taApplicationRepository.save(tooLate);
 
         TeachingAssistantApplicationKey key = TeachingAssistantApplicationKey.builder()
                 .courseId(tooLate.getCourseId())
@@ -513,7 +513,7 @@ public class TeachingAssistantApplicationControllerTest {
                 .header("Authorization", "Bearer Joe"));
 
         // assert
-        assertThat(applicationRepository.findById(key)).isNotEmpty();
+        assertThat(taApplicationRepository.findById(key)).isNotEmpty();
         onTimeResult.andExpect(status().isForbidden());
 
     }
@@ -523,7 +523,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Arrange
         TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
 
         TeachingAssistantApplicationKey lookup = TeachingAssistantApplicationKey.builder()
                 .courseId(taApplication.getCourseId())
@@ -542,7 +542,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Assert
         result.andExpect(status().isOk());
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
@@ -553,7 +553,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Arrange
         TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
 
         TeachingAssistantApplicationKey lookup = TeachingAssistantApplicationKey.builder()
                 .courseId(taApplication.getCourseId())
@@ -572,7 +572,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Assert
         result.andExpect(status().isForbidden());
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
@@ -583,7 +583,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Arrange
         TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
 
         TeachingAssistantApplicationKey lookup = TeachingAssistantApplicationKey.builder()
                 .courseId(taApplication.getCourseId())
@@ -602,7 +602,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Assert
         result.andExpect(status().isNotFound());
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
@@ -619,7 +619,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Arrange
         TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
 
         TeachingAssistantApplicationKey lookup = TeachingAssistantApplicationKey.builder()
                 .courseId(taApplication.getCourseId())
@@ -638,7 +638,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Assert
         result.andExpect(status().isConflict());
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
@@ -653,9 +653,9 @@ public class TeachingAssistantApplicationControllerTest {
                 "I want to be cool too!", ApplicationStatus.PENDING);
         TeachingAssistantApplication taApplication3 = new TeachingAssistantApplication("CSE1300", "nsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.ACCEPTED);
-        applicationRepository.save(taApplication);
-        applicationRepository.save(taApplication2);
-        applicationRepository.save(taApplication3);
+        taApplicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication2);
+        taApplicationRepository.save(taApplication3);
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, "CSE1300"))
                 .thenReturn(true);
 
@@ -726,7 +726,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Arrange
         TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
@@ -749,7 +749,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Assert
         result.andExpect(status().isOk());
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
@@ -766,7 +766,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Arrange
         TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
@@ -789,7 +789,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Assert
         result.andExpect(status().isConflict());
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
@@ -806,7 +806,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Arrange
         TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
@@ -829,7 +829,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Assert
         result.andExpect(status().isForbidden());
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
@@ -841,7 +841,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Arrange
         TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
@@ -864,7 +864,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Assert
         result.andExpect(status().isNotFound());
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
@@ -882,7 +882,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Arrange
         TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
-        applicationRepository.save(taApplication);
+        taApplicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
@@ -905,7 +905,7 @@ public class TeachingAssistantApplicationControllerTest {
         // Assert
         result.andExpect(status().isConflict());
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));

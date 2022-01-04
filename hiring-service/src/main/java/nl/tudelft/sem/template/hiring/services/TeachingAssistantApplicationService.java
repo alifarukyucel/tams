@@ -12,7 +12,7 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
-import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
+import nl.tudelft.sem.template.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TeachingAssistantApplicationService {
 
-    private final transient ApplicationRepository applicationRepository;
+    private final transient TeachingAssistantApplicationRepository taApplicationRepository;
 
     private final transient ContractInformation contractInformation;
     private final transient CourseInformation courseInformation;
@@ -33,14 +33,14 @@ public class TeachingAssistantApplicationService {
      * Constructor for the application service, with the corresponding repositories / information classes.
      * Spring automatically chooses the best implementation for those interfaces.
      *
-     * @param applicationRepository     An applicationRepository
+     * @param taApplicationRepository     An applicationRepository
      * @param contractInformation       The contract information
      * @param courseInformation         The course information
      */
-    public TeachingAssistantApplicationService(ApplicationRepository applicationRepository,
+    public TeachingAssistantApplicationService(TeachingAssistantApplicationRepository taApplicationRepository,
                                                ContractInformation contractInformation,
                                                CourseInformation courseInformation) {
-        this.applicationRepository = applicationRepository;
+        this.taApplicationRepository = taApplicationRepository;
         this.contractInformation = contractInformation;
         this.courseInformation = courseInformation;
     }
@@ -68,7 +68,7 @@ public class TeachingAssistantApplicationService {
                 .isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
     }
 
     /**
@@ -79,7 +79,7 @@ public class TeachingAssistantApplicationService {
      * @return a list of applications.
      */
     public List<TeachingAssistantApplication> findAllByCourseAndStatus(String courseId, ApplicationStatus status) {
-        return applicationRepository.findAllByCourseIdAndStatus(courseId, status);
+        return taApplicationRepository.findAllByCourseIdAndStatus(courseId, status);
     }
 
     /**
@@ -92,7 +92,7 @@ public class TeachingAssistantApplicationService {
      */
     public TeachingAssistantApplication get(String courseId, String netId) throws NoSuchElementException {
         TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(courseId, netId);
-        Optional<TeachingAssistantApplication> applicationOptional = applicationRepository.findById(key);
+        Optional<TeachingAssistantApplication> applicationOptional = taApplicationRepository.findById(key);
 
         if (applicationOptional.isEmpty()) {
             // Application does not exist
@@ -114,7 +114,7 @@ public class TeachingAssistantApplicationService {
         LocalDateTime deadline = courseInformation.startDate(courseId).minusWeeks(3);
         if (LocalDateTime.now().compareTo(deadline) < 0) {
 
-            applicationRepository.delete(this.get(courseId, netId));
+            taApplicationRepository.delete(this.get(courseId, netId));
             return true;
         }
         return false;
@@ -138,7 +138,7 @@ public class TeachingAssistantApplicationService {
 
         teachingAssistantApplication.setStatus(ApplicationStatus.REJECTED);
 
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
     }
 
     /**
@@ -172,7 +172,7 @@ public class TeachingAssistantApplicationService {
 
         teachingAssistantApplication.setStatus(ApplicationStatus.ACCEPTED);
 
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
     }
 
     /**
@@ -218,7 +218,7 @@ public class TeachingAssistantApplicationService {
      */
     public ApplicationStatus retrieveStatus(String courseId, String netId) {
         TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(courseId, netId);
-        Optional<TeachingAssistantApplication> applicationOptional = applicationRepository.findById(key);
+        Optional<TeachingAssistantApplication> applicationOptional = taApplicationRepository.findById(key);
 
         if (applicationOptional.isEmpty()) {
             throw new NoSuchElementException();
@@ -236,7 +236,7 @@ public class TeachingAssistantApplicationService {
      * @return a list of all applications from the user.
      */
     public List<TeachingAssistantApplication> getApplicationFromStudent(String netId) {
-        List<TeachingAssistantApplication> allTeachingAssistantApplications = applicationRepository.findAll();
+        List<TeachingAssistantApplication> allTeachingAssistantApplications = taApplicationRepository.findAll();
         List<TeachingAssistantApplication> result = new ArrayList<>();
         for (TeachingAssistantApplication teachingAssistantApplication : allTeachingAssistantApplications) {
             if (teachingAssistantApplication.getNetId().equals(netId)) {

@@ -22,7 +22,7 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
-import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
+import nl.tudelft.sem.template.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles({"test", "mockCourseInformation", "mockContractInformation"})
 public class TeachingAssistantTeachingAssistantApplicationServiceTest {
     @Autowired
-    private transient ApplicationRepository applicationRepository;
+    private transient TeachingAssistantApplicationRepository taApplicationRepository;
 
     @Autowired
     private transient TeachingAssistantApplicationService taApplicationService;
@@ -72,7 +72,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -97,7 +97,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -122,7 +122,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -147,7 +147,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         taApplicationService.checkAndSave(validTeachingAssistantApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isNotEmpty();
     }
 
@@ -172,7 +172,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         taApplicationService.checkAndSave(validTeachingAssistantApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1200", "johndoe")))
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1200", "johndoe")))
                 .isNotEmpty();
     }
 
@@ -191,7 +191,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
 
         //Assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -217,7 +217,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
 
         //Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -243,7 +243,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
 
         //Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -255,7 +255,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.ACCEPTED);
         String invalidCourseId = "CSE1305";
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         // Act
         ThrowingCallable c = () -> taApplicationService.get(invalidCourseId, expected.getNetId());
@@ -271,7 +271,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.ACCEPTED);
         String invalidNetid = "sjmith";
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         // Act
         ThrowingCallable c = () -> taApplicationService.get(expected.getCourseId(), invalidNetid);
@@ -287,7 +287,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.REJECTED);
 
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         //Act
         var result = taApplicationService.retrieveStatus(expected.getCourseId(), expected.getNetId());
@@ -304,7 +304,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.ACCEPTED);
 
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         //Act
         var result = taApplicationService.retrieveStatus(expected.getCourseId(), expected.getNetId());
@@ -329,12 +329,12 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 motivation, ApplicationStatus.PENDING);
 
         //Act
-        applicationRepository.save(firstTeachingAssistantApplication);
-        applicationRepository.save(secondTeachingAssistantApplication);
-        applicationRepository.save(thirdTeachingAssistantApplication);
+        taApplicationRepository.save(firstTeachingAssistantApplication);
+        taApplicationRepository.save(secondTeachingAssistantApplication);
+        taApplicationRepository.save(thirdTeachingAssistantApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
         assertThat(taApplicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
         assertThat(taApplicationService.hasReachedMaxApplication("johndoe")).isTrue();
@@ -347,7 +347,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.PENDING);
 
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         //Act
         var result = taApplicationService.retrieveStatus(expected.getCourseId(), expected.getNetId());
@@ -364,7 +364,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I want to become a TA", ApplicationStatus.PENDING);
         String notCourse = "Not a courseId";
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         //Act
         ThrowingCallable c = () -> taApplicationService.retrieveStatus(notCourse, expected.getNetId());
@@ -380,7 +380,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.PENDING);
         String noApplicationCourseId = "CSE1200";
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         //Act
         ThrowingCallable c = () -> taApplicationService.get(noApplicationCourseId, expected.getNetId());
@@ -396,7 +396,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.PENDING);
 
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         //Act
         var result = taApplicationService.get(expected.getCourseId(), expected.getNetId());
@@ -414,7 +414,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.ACCEPTED);
 
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         //Act
         var result = taApplicationService.get(expected.getCourseId(), expected.getNetId());
@@ -431,7 +431,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.REJECTED);
 
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         //Act
         var result = taApplicationService.get(expected.getCourseId(), expected.getNetId());
@@ -450,7 +450,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
         when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(LocalDateTime.MAX);
 
         //Act
@@ -468,7 +468,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
         when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(LocalDateTime.now());
 
         //Act
@@ -486,7 +486,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
         when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId()))
                 .thenReturn(LocalDateTime.now().plusWeeks(3));
 
@@ -505,7 +505,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
         when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(
                 LocalDateTime.now().plusWeeks(3).plusDays(1));
 
@@ -523,7 +523,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication expected = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.ACCEPTED);
-        applicationRepository.save(expected);
+        taApplicationRepository.save(expected);
 
         // Act
         TeachingAssistantApplication actual = taApplicationService.get(expected.getCourseId(), expected.getNetId());
@@ -538,13 +538,13 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
 
         // Act
         taApplicationService.reject(teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId());
 
         // Assert
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .get();
@@ -557,7 +557,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
 
         // Act
         ThrowingCallable c = () -> taApplicationService.reject("incorrect", teachingAssistantApplication.getNetId());
@@ -566,7 +566,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(c);
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .get();
@@ -585,7 +585,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
 
         // Act
         ThrowingCallable c = () -> taApplicationService.reject(teachingAssistantApplication.getCourseId(),
@@ -595,7 +595,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .get();
@@ -653,7 +653,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
 
         when(mockContractInformation.createContract(any())).thenReturn(true);
 
@@ -665,7 +665,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 expectedDuties, expectedMaxHours);
 
         // Assert
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .orElseThrow();
@@ -684,7 +684,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
 
         // Act
         ThrowingCallable c = () -> taApplicationService.accept("incorrect", teachingAssistantApplication.getNetId(),
@@ -694,7 +694,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(c);
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .orElseThrow();
@@ -714,7 +714,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
 
         // Act
         ThrowingCallable c = () -> taApplicationService.accept(teachingAssistantApplication.getCourseId(),
@@ -725,7 +725,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .orElseThrow();
@@ -739,7 +739,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
                 "I just want to be cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(teachingAssistantApplication);
+        taApplicationRepository.save(teachingAssistantApplication);
 
         when(mockContractInformation.createContract(any())).thenReturn(false);
 
@@ -755,7 +755,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
-        TeachingAssistantApplication actual = applicationRepository
+        TeachingAssistantApplication actual = taApplicationRepository
                 .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .orElseThrow();
