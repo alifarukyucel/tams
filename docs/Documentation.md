@@ -80,4 +80,18 @@ Applying is possible by making a request to /apply with the information that is 
 ```
 
 A 200 OK is returned if the application is successful.
-If a student has reached a maximum of 3 open application, they will receive an 403 Forbidden.
+If a student has reached a maximum of 3 open application, they will receive an 403 FORBIDDEN.
+
+## Retrieving the status of a specific application
+As a student it is helpful to be able to check the status of an application. To retrieve this, they can simply make a request to /status/{course}
+where {course} is the specified course to get the status from.
+
+```json
+// GET: /status/{course}
+
+{
+  "course": "CSE2310"
+}
+```
+If the application is existent, this will return a 200 OK. 
+
