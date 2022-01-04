@@ -251,13 +251,13 @@ public class ApplicationService {
      * @return false when the maximum number of applications hasn't been reached or true otherwise.
      */
     public boolean hasReachedMaxApplication(String netId) {
-        int size = 0;
         List<Application> existingApplications = getApplicationFromStudent(netId);
+        List<Application> pendingApplications = new ArrayList<>();
         for (Application application : existingApplications) {
             if (application.getStatus().equals(ApplicationStatus.PENDING)) {
-                size++;
+                pendingApplications.add(application);
             }
         }
-        return size >= maxCandidacies;
+        return pendingApplications.size() >= maxCandidacies;
     }
 }
