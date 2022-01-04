@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
-import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
@@ -72,7 +72,7 @@ public class TeachingAssistantApplicationServiceTest {
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -97,7 +97,7 @@ public class TeachingAssistantApplicationServiceTest {
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -122,7 +122,7 @@ public class TeachingAssistantApplicationServiceTest {
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -147,7 +147,7 @@ public class TeachingAssistantApplicationServiceTest {
         applicationService.checkAndSave(validTeachingAssistantApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isNotEmpty();
     }
 
@@ -172,7 +172,7 @@ public class TeachingAssistantApplicationServiceTest {
         applicationService.checkAndSave(validTeachingAssistantApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1200", "johndoe")))
+        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1200", "johndoe")))
                 .isNotEmpty();
     }
 
@@ -191,7 +191,7 @@ public class TeachingAssistantApplicationServiceTest {
 
         //Assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -217,7 +217,7 @@ public class TeachingAssistantApplicationServiceTest {
 
         //Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -243,7 +243,7 @@ public class TeachingAssistantApplicationServiceTest {
 
         //Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
     }
 
@@ -334,7 +334,7 @@ public class TeachingAssistantApplicationServiceTest {
         applicationRepository.save(thirdTeachingAssistantApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+        assertThat(applicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
         assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
         assertThat(applicationService.hasReachedMaxApplication("johndoe")).isTrue();
@@ -545,7 +545,7 @@ public class TeachingAssistantApplicationServiceTest {
 
         // Assert
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
@@ -567,7 +567,7 @@ public class TeachingAssistantApplicationServiceTest {
                 .isThrownBy(c);
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
@@ -596,7 +596,7 @@ public class TeachingAssistantApplicationServiceTest {
                 .isThrownBy(c);
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
@@ -666,7 +666,7 @@ public class TeachingAssistantApplicationServiceTest {
 
         // Assert
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
@@ -695,7 +695,7 @@ public class TeachingAssistantApplicationServiceTest {
                 .isThrownBy(c);
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
@@ -726,7 +726,7 @@ public class TeachingAssistantApplicationServiceTest {
                 .isThrownBy(c);
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
@@ -756,7 +756,7 @@ public class TeachingAssistantApplicationServiceTest {
                 .isThrownBy(c);
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                .findById(new TeachingAssistantApplicationKey(teachingAssistantApplication.getCourseId(),
                         teachingAssistantApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
-import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
@@ -96,7 +96,8 @@ public class TeachingAssistantApplicationControllerTest {
         ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 0.9f,
                 "I want to");
 
-        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
+        TeachingAssistantApplicationKey invalidKey = new TeachingAssistantApplicationKey(
+                invalidModel.getCourseId(), exampleNetId);
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
@@ -123,7 +124,8 @@ public class TeachingAssistantApplicationControllerTest {
         ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 1.0f,
                 "I want to");
 
-        ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
+        TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
+                validModel.getCourseId(), exampleNetId);
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
@@ -150,7 +152,8 @@ public class TeachingAssistantApplicationControllerTest {
         ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 10.0f,
                 "I want to");
 
-        ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
+        TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
+                validModel.getCourseId(), exampleNetId);
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
@@ -176,7 +179,8 @@ public class TeachingAssistantApplicationControllerTest {
         ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 10.1f,
                 "I want to");
 
-        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
+        TeachingAssistantApplicationKey invalidKey = new TeachingAssistantApplicationKey(
+                invalidModel.getCourseId(), exampleNetId);
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
@@ -203,7 +207,8 @@ public class TeachingAssistantApplicationControllerTest {
         ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
 
-        ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
+        TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
+                validModel.getCourseId(), exampleNetId);
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
                 LocalDateTime.MAX,
@@ -230,7 +235,8 @@ public class TeachingAssistantApplicationControllerTest {
         ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 5.9f,
                 "I want to");
 
-        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
+        TeachingAssistantApplicationKey invalidKey = new TeachingAssistantApplicationKey(
+                invalidModel.getCourseId(), exampleNetId);
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
@@ -257,7 +263,8 @@ public class TeachingAssistantApplicationControllerTest {
         ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
 
-        ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
+        TeachingAssistantApplicationKey invalidKey = new TeachingAssistantApplicationKey(
+                invalidModel.getCourseId(), exampleNetId);
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(null);
 
@@ -290,7 +297,8 @@ public class TeachingAssistantApplicationControllerTest {
         ApplicationRequestModel fourthApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
 
-        ApplicationKey validKey = new ApplicationKey(fourthApplicationModel.getCourseId(), exampleNetId);
+        TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
+                fourthApplicationModel.getCourseId(), exampleNetId);
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
@@ -325,7 +333,8 @@ public class TeachingAssistantApplicationControllerTest {
         ApplicationRequestModel thirdApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
 
-        ApplicationKey validKey = new ApplicationKey(thirdApplicationModel.getCourseId(), exampleNetId);
+        TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
+                thirdApplicationModel.getCourseId(), exampleNetId);
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
@@ -354,7 +363,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(onTime);
 
-        ApplicationKey key = ApplicationKey.builder()
+        TeachingAssistantApplicationKey key = TeachingAssistantApplicationKey.builder()
                 .courseId(onTime.getCourseId())
                 .netId(onTime.getNetId())
                 .build();
@@ -386,7 +395,8 @@ public class TeachingAssistantApplicationControllerTest {
 
         applicationRepository.save(taApplication);
         String invalidCourseId = "CSE1300";
-        ApplicationKey key = new ApplicationKey(invalidCourseId, taApplication.getNetId());
+        TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
+                invalidCourseId, taApplication.getNetId());
 
         //act
         ResultActions wrongCourseId = mockMvc.perform(get("/status/" + invalidCourseId)
@@ -411,7 +421,8 @@ public class TeachingAssistantApplicationControllerTest {
                 .status(ApplicationStatus.PENDING)
                 .build();
         applicationRepository.save(taApplication);
-        ApplicationKey key = new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId());
+        TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
+                taApplication.getCourseId(), taApplication.getNetId());
 
         //act
         ResultActions pendingApplication = mockMvc.perform(get("/status/" + taApplication.getCourseId())
@@ -437,7 +448,8 @@ public class TeachingAssistantApplicationControllerTest {
                 .status(ApplicationStatus.ACCEPTED)
                 .build();
         applicationRepository.save(taApplication);
-        ApplicationKey key = new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId());
+        TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
+                taApplication.getCourseId(), taApplication.getNetId());
 
         //act
         ResultActions pendingApplication = mockMvc.perform(get("/status/" + taApplication.getCourseId())
@@ -463,7 +475,8 @@ public class TeachingAssistantApplicationControllerTest {
                 .status(ApplicationStatus.REJECTED)
                 .build();
         applicationRepository.save(taApplication);
-        ApplicationKey key = new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId());
+        TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
+                taApplication.getCourseId(), taApplication.getNetId());
 
         //act
         ResultActions pendingApplication = mockMvc.perform(get("/status/" + taApplication.getCourseId())
@@ -485,7 +498,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(tooLate);
 
-        ApplicationKey key = ApplicationKey.builder()
+        TeachingAssistantApplicationKey key = TeachingAssistantApplicationKey.builder()
                 .courseId(tooLate.getCourseId())
                 .netId(tooLate.getNetId())
                 .build();
@@ -512,7 +525,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(taApplication);
 
-        ApplicationKey lookup = ApplicationKey.builder()
+        TeachingAssistantApplicationKey lookup = TeachingAssistantApplicationKey.builder()
                 .courseId(taApplication.getCourseId())
                 .netId(taApplication.getNetId())
                 .build();
@@ -530,7 +543,7 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isOk());
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
+                .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
@@ -542,7 +555,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(taApplication);
 
-        ApplicationKey lookup = ApplicationKey.builder()
+        TeachingAssistantApplicationKey lookup = TeachingAssistantApplicationKey.builder()
                 .courseId(taApplication.getCourseId())
                 .netId(taApplication.getNetId())
                 .build();
@@ -560,7 +573,7 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isForbidden());
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
+                .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
@@ -572,7 +585,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(taApplication);
 
-        ApplicationKey lookup = ApplicationKey.builder()
+        TeachingAssistantApplicationKey lookup = TeachingAssistantApplicationKey.builder()
                 .courseId(taApplication.getCourseId())
                 .netId("invalidNetid")
                 .build();
@@ -590,7 +603,7 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isNotFound());
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
+                .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
@@ -608,7 +621,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
         applicationRepository.save(taApplication);
 
-        ApplicationKey lookup = ApplicationKey.builder()
+        TeachingAssistantApplicationKey lookup = TeachingAssistantApplicationKey.builder()
                 .courseId(taApplication.getCourseId())
                 .netId(taApplication.getNetId())
                 .build();
@@ -626,7 +639,7 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isConflict());
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
+                .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
     }
@@ -737,7 +750,7 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isOk());
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
+                .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
         verify(mockContractInformation).createContract(argThat(contract ->
@@ -777,7 +790,7 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isConflict());
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
+                .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation).createContract(argThat(contract ->
@@ -817,7 +830,7 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isForbidden());
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
+                .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation, times(0)).createContract(any());
@@ -852,7 +865,7 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isNotFound());
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
+                .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation, times(0)).createContract(any());
@@ -893,7 +906,7 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isConflict());
 
         TeachingAssistantApplication actual = applicationRepository
-                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
+                .findById(new TeachingAssistantApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
         verify(mockContractInformation, times(0)).createContract(any());

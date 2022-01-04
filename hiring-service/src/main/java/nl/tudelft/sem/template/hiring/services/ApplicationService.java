@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
-import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
@@ -90,7 +90,7 @@ public class ApplicationService {
      * @throws NoSuchElementException if the application is not found
      */
     public TeachingAssistantApplication get(String courseId, String netId) throws NoSuchElementException {
-        ApplicationKey key = new ApplicationKey(courseId, netId);
+        TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(courseId, netId);
         Optional<TeachingAssistantApplication> applicationOptional = applicationRepository.findById(key);
 
         if (applicationOptional.isEmpty()) {
@@ -216,7 +216,7 @@ public class ApplicationService {
      * @throws NoSuchElementException when there is no application for that key
      */
     public ApplicationStatus retrieveStatus(String courseId, String netId) {
-        ApplicationKey key = new ApplicationKey(courseId, netId);
+        TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(courseId, netId);
         Optional<TeachingAssistantApplication> applicationOptional = applicationRepository.findById(key);
 
         if (applicationOptional.isEmpty()) {

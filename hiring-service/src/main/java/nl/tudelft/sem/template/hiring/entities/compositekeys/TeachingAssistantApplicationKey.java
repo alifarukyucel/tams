@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationKey implements Serializable {
+public class TeachingAssistantApplicationKey implements Serializable {
     private String courseId;
     private String netId;
 

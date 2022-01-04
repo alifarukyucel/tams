@@ -5,7 +5,7 @@ import static nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplicati
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
-import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
@@ -107,7 +107,7 @@ public class ApplicationController {
      * @return String informing if the application is withdrawn.
      */
     @DeleteMapping ("/withdraw")
-    public ResponseEntity<String> withdraw(@RequestBody ApplicationKey model) {
+    public ResponseEntity<String> withdraw(@RequestBody TeachingAssistantApplicationKey model) {
 
         try {
             if (applicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
@@ -130,7 +130,7 @@ public class ApplicationController {
      * @throws ResponseStatusException 409 if the application is not pending
      */
     @PostMapping("/reject")
-    public ResponseEntity<String> reject(@RequestBody ApplicationKey model) {
+    public ResponseEntity<String> reject(@RequestBody TeachingAssistantApplicationKey model) {
 
         if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), model.getCourseId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);

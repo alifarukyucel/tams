@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
+import nl.tudelft.sem.template.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 
 @Data
@@ -18,7 +18,7 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 @Entity
 @Builder
 @Table(name = "TA_APPLICATION")
-@IdClass(ApplicationKey.class)
+@IdClass(TeachingAssistantApplicationKey.class)
 public class TeachingAssistantApplication {
 
     // Lowest possible grade that can be achieved
