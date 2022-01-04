@@ -258,9 +258,6 @@ public class ApplicationService {
                 size++;
             }
         }
-        if (size < 3) {
-            return true;
-        }
-        return false;
+        return size >= maxCandidacies;
     }
 }
