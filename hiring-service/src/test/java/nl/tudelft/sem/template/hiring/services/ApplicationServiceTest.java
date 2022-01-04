@@ -305,6 +305,28 @@ public class ApplicationServiceTest {
     }
 
     @Test
+    public void getApplicationsBelowMaxApplicationsTest() {
+        //Arrange
+        String motivation = "I am motivated";
+        Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
+                motivation, ApplicationStatus.ACCEPTED);
+        Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
+                motivation, ApplicationStatus.REJECTED);
+        Application thirdApplication = new Application("CSE1400", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+
+        //Act
+        applicationRepository.save(firstApplication);
+        applicationRepository.save(secondApplication);
+        applicationRepository.save(thirdApplication);
+
+        //Assert
+        assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
+        assertThat(applicationService.hasReachedMaxApplication("johndoe")).isFalse();
+
+    }
+
+    @Test
     public void getApplicationsAndMaxApplicationsTest() {
         //Arrange
         String motivation = "I am motivated";

@@ -321,7 +321,7 @@ public class ApplicationControllerTest {
         Application rejectedApplication= new Application("CSE1100", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.REJECTED);
         applicationRepository.save(rejectedApplication);
-        
+
         Application application1 = new Application("CSE1300", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(application1);
