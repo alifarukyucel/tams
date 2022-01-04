@@ -22,11 +22,11 @@ public class ConnectedCourseInformationService implements CourseInformation {
 
     @Override
     public LocalDateTime startDate(String courseId) {
-        var date = getCourseById(courseId).getStartDate();
+        var date = getCourseById(courseId);
         if (date == null) {
             throw new NoSuchElementException("Course does not exist");
         }
-        return date;
+        return date.getStartDate();
     }
 
     @Override
