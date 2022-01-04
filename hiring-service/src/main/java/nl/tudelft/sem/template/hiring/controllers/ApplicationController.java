@@ -8,10 +8,10 @@ import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
-import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
-import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
-import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
-import nl.tudelft.sem.template.hiring.models.RetrieveStatusModel;
+import nl.tudelft.sem.template.hiring.models.PendingTeachingAssistantApplicationResponseModel;
+import nl.tudelft.sem.template.hiring.models.RetrieveTeachingAssistantApplicationStatusModel;
+import nl.tudelft.sem.template.hiring.models.TeachingAssistantApplicationAcceptRequestModel;
+import nl.tudelft.sem.template.hiring.models.TeachingAssistantApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.TeachingAssistantApplicationService;
 import org.springframework.http.HttpStatus;
@@ -57,7 +57,7 @@ public class ApplicationController {
      * @throws ResponseStatusException 404 when the course cannot be found
      */
     @PostMapping("/apply")
-    public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
+    public ResponseEntity<String> apply(@RequestBody TeachingAssistantApplicationRequestModel request) {
         if (taApplicationService.hasReachedMaxApplication(authManager.getNetid())) {
             // It is not allowed to have more than 3 applications
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum number of applications has been reached!");
@@ -87,11 +87,12 @@ public class ApplicationController {
      */
 
     @GetMapping("/status/{course}")
-    public ResponseEntity<RetrieveStatusModel> getStatusByCourse(@PathVariable String course) {
+    public ResponseEntity<RetrieveTeachingAssistantApplicationStatusModel> getStatusByCourse(@PathVariable String course) {
         try {
             TeachingAssistantApplication teachingAssistantApplication = taApplicationService
                     .get(course, authManager.getNetid());
-            RetrieveStatusModel status = RetrieveStatusModel.fromApplication(teachingAssistantApplication);
+            RetrieveTeachingAssistantApplicationStatusModel status = RetrieveTeachingAssistantApplicationStatusModel
+                    .fromApplication(teachingAssistantApplication);
 
             return ResponseEntity.ok(status);
         } catch (NoSuchElementException e) {
@@ -157,7 +158,7 @@ public class ApplicationController {
      * @throws ResponseStatusException 409 if the application is not pending or contract creation fails
      */
     @PostMapping("/accept")
-    public ResponseEntity<String> accept(@RequestBody ApplicationAcceptRequestModel model) {
+    public ResponseEntity<String> accept(@RequestBody TeachingAssistantApplicationAcceptRequestModel model) {
 
         if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), model.getCourseId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -183,7 +184,8 @@ public class ApplicationController {
      * @return The list of pending applications (extended with rating) for that course.
      */
     @GetMapping("/applications/{courseId}/pending")
-    public ResponseEntity<List<PendingApplicationResponseModel>> getPendingApplications(@PathVariable String courseId) {
+    public ResponseEntity<List<PendingTeachingAssistantApplicationResponseModel>> getPendingApplications(
+            @PathVariable String courseId) {
         if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

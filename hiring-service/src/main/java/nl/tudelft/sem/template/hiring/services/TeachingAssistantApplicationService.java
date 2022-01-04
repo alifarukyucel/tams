@@ -11,7 +11,7 @@ import nl.tudelft.sem.template.hiring.entities.compositekeys.TeachingAssistantAp
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
-import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
+import nl.tudelft.sem.template.hiring.models.PendingTeachingAssistantApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
@@ -183,9 +183,9 @@ public class TeachingAssistantApplicationService {
      */
     //PMD.DataflowAnomalies are suppressed because they occur in a place where there is no problem at all.
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    public List<PendingApplicationResponseModel> extendWithRating(
+    public List<PendingTeachingAssistantApplicationResponseModel> extendWithRating(
             List<TeachingAssistantApplication> teachingAssistantApplications) {
-        List<PendingApplicationResponseModel> extendedApplications = new ArrayList<>();
+        List<PendingTeachingAssistantApplicationResponseModel> extendedApplications = new ArrayList<>();
 
         //This check makes sure no data is fetched when there are no applications at all.
         if (teachingAssistantApplications.isEmpty()) {
@@ -203,7 +203,8 @@ public class TeachingAssistantApplicationService {
         for (TeachingAssistantApplication teachingAssistantApplication : teachingAssistantApplications) {
             String netId = teachingAssistantApplication.getNetId();
             Float rating = taRatings.get(netId);
-            extendedApplications.add(new PendingApplicationResponseModel(teachingAssistantApplication, rating));
+            extendedApplications.add(new PendingTeachingAssistantApplicationResponseModel(
+                    teachingAssistantApplication, rating));
         }
         return extendedApplications;
     }

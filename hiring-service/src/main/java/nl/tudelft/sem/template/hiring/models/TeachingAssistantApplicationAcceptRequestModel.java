@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationAcceptRequestModel {
+public class TeachingAssistantApplicationAcceptRequestModel {
     private String courseId;
     private String netId;
     private String duties;
@@ -49,8 +49,8 @@ public class ApplicationAcceptRequestModel {
             return this;
         }
 
-        public ApplicationAcceptRequestModel build() {
-            return new ApplicationAcceptRequestModel(courseId, netId, duties, maxHours);
+        public TeachingAssistantApplicationAcceptRequestModel build() {
+            return new TeachingAssistantApplicationAcceptRequestModel(courseId, netId, duties, maxHours);
         }
     }
 }

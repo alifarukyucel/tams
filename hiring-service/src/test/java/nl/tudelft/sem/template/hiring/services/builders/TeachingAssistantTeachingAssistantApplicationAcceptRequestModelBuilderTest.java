@@ -2,12 +2,12 @@ package nl.tudelft.sem.template.hiring.services.builders;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
+import nl.tudelft.sem.template.hiring.models.TeachingAssistantApplicationAcceptRequestModel;
 import org.junit.jupiter.api.Test;
 
-public class TeachingAssistantApplicationAcceptRequestModelBuilderTest {
+public class TeachingAssistantTeachingAssistantApplicationAcceptRequestModelBuilderTest {
 
-    private ApplicationAcceptRequestModel model;
+    private TeachingAssistantApplicationAcceptRequestModel model;
 
     @Test
     public void testWithCourseId() {
@@ -15,7 +15,7 @@ public class TeachingAssistantApplicationAcceptRequestModelBuilderTest {
         String courseId = "CSE1300";
 
         //act
-        model = ApplicationAcceptRequestModel.builder()
+        model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withCourseId(courseId)
                 .build();
 
@@ -32,7 +32,7 @@ public class TeachingAssistantApplicationAcceptRequestModelBuilderTest {
         String netId = "kverhoef";
 
         //act
-        model = ApplicationAcceptRequestModel.builder()
+        model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withNetId(netId)
                 .build();
 
@@ -49,7 +49,7 @@ public class TeachingAssistantApplicationAcceptRequestModelBuilderTest {
         String duties = "DUTIES";
 
         //act
-        model = ApplicationAcceptRequestModel.builder()
+        model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withDuties(duties)
                 .build();
 
@@ -66,7 +66,7 @@ public class TeachingAssistantApplicationAcceptRequestModelBuilderTest {
         int maxHours = 8;
 
         //act
-        model = ApplicationAcceptRequestModel.builder()
+        model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withMaxHours(maxHours)
                 .build();
 
@@ -86,7 +86,7 @@ public class TeachingAssistantApplicationAcceptRequestModelBuilderTest {
         int maxHours = 8;
 
         //act
-        model = ApplicationAcceptRequestModel.builder()
+        model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withCourseId(courseId)
                 .withNetId(netId)
                 .withDuties(duties)

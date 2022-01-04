@@ -21,7 +21,7 @@ import nl.tudelft.sem.template.hiring.entities.compositekeys.TeachingAssistantAp
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
-import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
+import nl.tudelft.sem.template.hiring.models.PendingTeachingAssistantApplicationResponseModel;
 import nl.tudelft.sem.template.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -606,10 +606,10 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
     public void extendEmptyListWithRatingTest() {
         //Arrange
         List<TeachingAssistantApplication> emptyList = new ArrayList<>();
-        List<PendingApplicationResponseModel> expectedResList = new ArrayList<>();
+        List<PendingTeachingAssistantApplicationResponseModel> expectedResList = new ArrayList<>();
 
         //Act
-        List<PendingApplicationResponseModel> resList = taApplicationService.extendWithRating(emptyList);
+        List<PendingTeachingAssistantApplicationResponseModel> resList = taApplicationService.extendWithRating(emptyList);
 
         //Assert
         assertThat(resList).isEqualTo(expectedResList);
@@ -637,11 +637,11 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         var resultList = taApplicationService.extendWithRating(
                 List.of(teachingAssistantApplication, teachingAssistantApplication2));
 
-        var resultModel = new PendingApplicationResponseModel("CSE1300", "jsmith", 7.0f,
+        var resultModel = new PendingTeachingAssistantApplicationResponseModel("CSE1300", "jsmith", 7.0f,
                 "I want to be cool too!", 8.0f);
-        var resultModel2 = new PendingApplicationResponseModel("CSE1300", "wsmith", 7.0f,
+        var resultModel2 = new PendingTeachingAssistantApplicationResponseModel("CSE1300", "wsmith", 7.0f,
                 "I want to be cool too!", 9.0f);
-        List<PendingApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
+        List<PendingTeachingAssistantApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
 
         assertThat(resultList).isEqualTo(expectedList);
 

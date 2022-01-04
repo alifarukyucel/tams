@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationRequestModel {
+public class TeachingAssistantApplicationRequestModel {
     private String courseId;
     private float grade;
     private String motivation;

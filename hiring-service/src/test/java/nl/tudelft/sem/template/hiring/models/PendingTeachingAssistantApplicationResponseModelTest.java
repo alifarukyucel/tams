@@ -15,9 +15,9 @@ public class PendingTeachingAssistantApplicationResponseModelTest {
                 "I want to be cool too!", ApplicationStatus.PENDING);
 
         //Act
-        var model = new PendingApplicationResponseModel(teachingAssistantApplication, 8.0f);
+        var model = new PendingTeachingAssistantApplicationResponseModel(teachingAssistantApplication, 8.0f);
 
-        var expected = new PendingApplicationResponseModel("CSE1300", "jsmith", 7.0f,
+        var expected = new PendingTeachingAssistantApplicationResponseModel("CSE1300", "jsmith", 7.0f,
                 "I want to be cool too!", 8.0f);
 
         //Assert

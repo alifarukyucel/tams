@@ -9,7 +9,7 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RetrieveStatusModel {
+public class RetrieveTeachingAssistantApplicationStatusModel {
     private String courseId;
     private String netid;
     private String motivation;
@@ -22,8 +22,9 @@ public class RetrieveStatusModel {
      * @param teachingAssistantApplication the application to retrieve a status from
      * @return RetrieveStatusModel of given application
      */
-    public static RetrieveStatusModel fromApplication(TeachingAssistantApplication teachingAssistantApplication) {
-        return new RetrieveStatusModel(
+    public static RetrieveTeachingAssistantApplicationStatusModel fromApplication(
+            TeachingAssistantApplication teachingAssistantApplication) {
+        return new RetrieveTeachingAssistantApplicationStatusModel(
                 teachingAssistantApplication.getCourseId(),
                 teachingAssistantApplication.getNetId(),
                 teachingAssistantApplication.getMotivation(),

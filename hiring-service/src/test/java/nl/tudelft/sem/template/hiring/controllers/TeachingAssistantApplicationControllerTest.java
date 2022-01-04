@@ -24,9 +24,9 @@ import nl.tudelft.sem.template.hiring.entities.compositekeys.TeachingAssistantAp
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
-import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
-import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
-import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
+import nl.tudelft.sem.template.hiring.models.PendingTeachingAssistantApplicationResponseModel;
+import nl.tudelft.sem.template.hiring.models.TeachingAssistantApplicationAcceptRequestModel;
+import nl.tudelft.sem.template.hiring.models.TeachingAssistantApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.security.TokenVerifier;
@@ -93,8 +93,8 @@ public class TeachingAssistantApplicationControllerTest {
     @Test
     public void gradeBelowMin() throws Exception {
         //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 0.9f,
-                "I want to");
+        TeachingAssistantApplicationRequestModel invalidModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 0.9f, "I want to");
 
         TeachingAssistantApplicationKey invalidKey = new TeachingAssistantApplicationKey(
                 invalidModel.getCourseId(), exampleNetId);
@@ -121,8 +121,8 @@ public class TeachingAssistantApplicationControllerTest {
     @Test
     public void gradeLowestTest() throws Exception {
         //Arrange
-        ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 1.0f,
-                "I want to");
+        TeachingAssistantApplicationRequestModel validModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 1.0f, "I want to");
 
         TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
                 validModel.getCourseId(), exampleNetId);
@@ -149,8 +149,8 @@ public class TeachingAssistantApplicationControllerTest {
     @Test
     public void gradeOnPoint() throws Exception {
         //Arrange
-        ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 10.0f,
-                "I want to");
+        TeachingAssistantApplicationRequestModel validModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 10.0f, "I want to");
 
         TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
                 validModel.getCourseId(), exampleNetId);
@@ -176,8 +176,8 @@ public class TeachingAssistantApplicationControllerTest {
     @Test
     public void gradeAboveMaxTest() throws Exception {
         //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 10.1f,
-                "I want to");
+        TeachingAssistantApplicationRequestModel invalidModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 10.1f, "I want to");
 
         TeachingAssistantApplicationKey invalidKey = new TeachingAssistantApplicationKey(
                 invalidModel.getCourseId(), exampleNetId);
@@ -204,8 +204,8 @@ public class TeachingAssistantApplicationControllerTest {
     @Test
     public void validApplicationTest() throws Exception {
         //Arrange
-        ApplicationRequestModel validModel = new ApplicationRequestModel("CSE1200", 6.0f,
-                "I want to");
+        TeachingAssistantApplicationRequestModel validModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 6.0f, "I want to");
 
         TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
                 validModel.getCourseId(), exampleNetId);
@@ -232,8 +232,8 @@ public class TeachingAssistantApplicationControllerTest {
     @Test
     public void insufficientGradeApplicationTest() throws Exception {
         //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 5.9f,
-                "I want to");
+        TeachingAssistantApplicationRequestModel invalidModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 5.9f, "I want to");
 
         TeachingAssistantApplicationKey invalidKey = new TeachingAssistantApplicationKey(
                 invalidModel.getCourseId(), exampleNetId);
@@ -260,8 +260,8 @@ public class TeachingAssistantApplicationControllerTest {
     @Test
     public void invalidCourseIdApplicationTest() throws Exception {
         //Arrange
-        ApplicationRequestModel invalidModel = new ApplicationRequestModel("CSE1200", 6.0f,
-                "I want to");
+        TeachingAssistantApplicationRequestModel invalidModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 6.0f, "I want to");
 
         TeachingAssistantApplicationKey invalidKey = new TeachingAssistantApplicationKey(
                 invalidModel.getCourseId(), exampleNetId);
@@ -294,8 +294,8 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         taApplicationRepository.save(taApplication3);
 
-        ApplicationRequestModel fourthApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
-                "I want to");
+        TeachingAssistantApplicationRequestModel fourthApplicationModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 6.0f, "I want to");
 
         TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
                 fourthApplicationModel.getCourseId(), exampleNetId);
@@ -330,8 +330,8 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         taApplicationRepository.save(taApplication2);
 
-        ApplicationRequestModel thirdApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
-                "I want to");
+        TeachingAssistantApplicationRequestModel thirdApplicationModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 6.0f, "I want to");
 
         TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
                 thirdApplicationModel.getCourseId(), exampleNetId);
@@ -678,11 +678,13 @@ public class TeachingAssistantApplicationControllerTest {
 
 
         //Parse json
-        List<PendingApplicationResponseModel> res = parsePendingApplicationsResult(result);
+        List<PendingTeachingAssistantApplicationResponseModel> res = parsePendingApplicationsResult(result);
 
-        PendingApplicationResponseModel model = new PendingApplicationResponseModel(taApplication, 8.0f);
-        PendingApplicationResponseModel model2 = new PendingApplicationResponseModel(taApplication2, 9.0f);
-        List<PendingApplicationResponseModel> expectedResult = new ArrayList<>() {{
+        PendingTeachingAssistantApplicationResponseModel model = new PendingTeachingAssistantApplicationResponseModel(
+                taApplication, 8.0f);
+        PendingTeachingAssistantApplicationResponseModel model2 = new PendingTeachingAssistantApplicationResponseModel(
+                taApplication2, 9.0f);
+        List<PendingTeachingAssistantApplicationResponseModel> expectedResult = new ArrayList<>() {{
                 add(model);
                 add(model2);
             }
@@ -704,13 +706,14 @@ public class TeachingAssistantApplicationControllerTest {
         result.andExpect(status().isForbidden());
     }
 
-    private List<PendingApplicationResponseModel> parsePendingApplicationsResult(MvcResult result) throws Exception {
+    private List<PendingTeachingAssistantApplicationResponseModel> parsePendingApplicationsResult(MvcResult result)
+            throws Exception {
         String jsonString = result.getResponse().getContentAsString();
-        var res = new ArrayList<PendingApplicationResponseModel>();
+        var res = new ArrayList<PendingTeachingAssistantApplicationResponseModel>();
         List<Map<String, Object>> parsed = JsonUtil.deserialize(jsonString, res.getClass());
 
         for (Map<String, Object> map : parsed) {
-            res.add(new PendingApplicationResponseModel(
+            res.add(new PendingTeachingAssistantApplicationResponseModel(
                     (String) map.get("courseId"),
                     (String) map.get("netId"),
                     ((Double) map.get("grade")).floatValue(),
@@ -728,7 +731,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         taApplicationRepository.save(taApplication);
 
-        ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
+        TeachingAssistantApplicationAcceptRequestModel model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
                 .withNetId(taApplication.getNetId())
                 .withDuties("Be a good TA")
@@ -768,7 +771,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         taApplicationRepository.save(taApplication);
 
-        ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
+        TeachingAssistantApplicationAcceptRequestModel model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
                 .withNetId(taApplication.getNetId())
                 .withDuties("Be a good TA")
@@ -808,7 +811,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         taApplicationRepository.save(taApplication);
 
-        ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
+        TeachingAssistantApplicationAcceptRequestModel model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
                 .withNetId(taApplication.getNetId())
                 .withDuties("Be a good TA")
@@ -843,7 +846,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         taApplicationRepository.save(taApplication);
 
-        ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
+        TeachingAssistantApplicationAcceptRequestModel model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
                 .withNetId("invalidNetid")
                 .withDuties("Be a good TA")
@@ -884,7 +887,7 @@ public class TeachingAssistantApplicationControllerTest {
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
         taApplicationRepository.save(taApplication);
 
-        ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
+        TeachingAssistantApplicationAcceptRequestModel model = TeachingAssistantApplicationAcceptRequestModel.builder()
                 .withCourseId(taApplication.getCourseId())
                 .withNetId(taApplication.getNetId())
                 .withDuties("Be a good TA")
