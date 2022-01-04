@@ -26,6 +26,9 @@ public class TokenGeneratorTests {
     private String netid = "andy";
     private UserDetails user;
 
+    /**
+     * Set up mocks.
+     */
     @BeforeEach
     public void setup() throws NoSuchFieldException, IllegalAccessException {
         timeProvider = mock(TimeProvider.class);
