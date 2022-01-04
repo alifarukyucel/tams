@@ -43,8 +43,8 @@ public class SendGridEmailSenderTests {
     @Test
     public void sendEmailSuccessful() throws IOException {
         // Arrange
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode expectedJson = mapper.readTree("{"
+        final ObjectMapper mapper = new ObjectMapper();
+        final JsonNode expectedJson = mapper.readTree("{"
                 + "  \"from\": {"
                 + "    \"email\": \"" + from + "\""
                 + "  },"
