@@ -28,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
  * The type Application controller.
  */
 @RestController
-public class ApplicationController {
+public class TeachingAssistantApplicationController {
     private final transient AuthManager authManager;
 
     private final transient TeachingAssistantApplicationService taApplicationService;
@@ -41,8 +41,9 @@ public class ApplicationController {
      * @param taApplicationService the application service
      * @param courseInformation  the course information
      */
-    public ApplicationController(AuthManager authManager, TeachingAssistantApplicationService taApplicationService,
-                                 CourseInformation courseInformation) {
+    public TeachingAssistantApplicationController(AuthManager authManager,
+                                                  TeachingAssistantApplicationService taApplicationService,
+                                                  CourseInformation courseInformation) {
         this.authManager = authManager;
         this.taApplicationService = taApplicationService;
         this.courseInformation = courseInformation;
