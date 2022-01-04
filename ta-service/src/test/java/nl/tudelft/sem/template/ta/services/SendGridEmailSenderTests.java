@@ -8,6 +8,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.SendGrid;
@@ -40,6 +42,31 @@ public class SendGridEmailSenderTests {
 
     @Test
     public void sendEmailSuccessful() throws IOException {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode expectedJson = mapper.readTree("{" +
+                "  \"from\": {" +
+                "    \"email\": \"" + from + "\"" +
+                "  }," +
+                "  \"subject\": \"" + subject + "\"," +
+                "  \"personalizations\": [" +
+                "    {" +
+                "      \"to\": [" +
+                "        {" +
+                "          \"email\": \"" + to + "\"" +
+                "        }" +
+                "      ]" +
+                "    }" +
+                "  ]," +
+                "  \"content\": [" +
+                "    {" +
+                "      \"type\": \"text/plain\"," +
+                "      \"value\": \"" + body + "\"" +
+                "    }" +
+                "  ]" +
+                "}"
+        );
+
         // Act
         sendGridEmailSender.sendEmail(to, subject, body);
 
@@ -51,10 +78,9 @@ public class SendGridEmailSenderTests {
         Request request = captor.getValue();
         assertThat(request.getMethod()).isEqualTo(Method.POST);
         assertThat(request.getEndpoint()).isEqualTo("mail/send");
-        assertThat(request.getBody()).isEqualTo(
-                "{\"from\":{\"email\":\"crewmate@tudelft.nl\"},\"subject\":\"amogus\","
-                        + "\"personalizations\":[{\"to\":[{\"email\":\"impostor@tudelft.nl\"}]}],"
-                        + "\"content\":[{\"type\":\"text/plain\",\"value\":\"You are kinda sus!\"}]}");
+
+        JsonNode actualJson = mapper.readTree(request.getBody());
+        assertThat(actualJson).isEqualTo(expectedJson);
     }
 
     @Test
