@@ -2,9 +2,8 @@ package nl.tudelft.sem.template.hiring.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
 
 @Data
 @NoArgsConstructor
@@ -19,14 +18,14 @@ public class PendingApplicationResponseModel {
     /**
      * Constructor that constructs a PendingApplicationResponseModel from an application and a rating.
      *
-     * @param application the application to get the data from
+     * @param teachingAssistantApplication the application to get the data from
      * @param rating the historical TA-rating of this person
      */
-    public PendingApplicationResponseModel(Application application, Float rating) {
-        this.courseId = application.getCourseId();
-        this.netId = application.getNetId();
-        this.grade = application.getGrade();
-        this.motivation = application.getMotivation();
+    public PendingApplicationResponseModel(TeachingAssistantApplication teachingAssistantApplication, Float rating) {
+        this.courseId = teachingAssistantApplication.getCourseId();
+        this.netId = teachingAssistantApplication.getNetId();
+        this.grade = teachingAssistantApplication.getGrade();
+        this.motivation = teachingAssistantApplication.getMotivation();
         this.taRating = rating;
     }
 

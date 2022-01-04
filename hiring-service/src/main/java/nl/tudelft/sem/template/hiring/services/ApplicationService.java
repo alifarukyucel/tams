@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
@@ -48,26 +48,26 @@ public class ApplicationService {
      * Checks whether an application meets the requirements and saves or discards it based on this.
      * It also checks whether the course isn't starting in less than 3 months already.
      *
-     * @param application the application to check.
+     * @param teachingAssistantApplication the application to check.
      * @throws NoSuchElementException when the provided course does not exist
      * @throws IllegalArgumentException when the provided grade is not valid
      * @throws IllegalArgumentException when the application doesn't meet the requirements
      * @throws IllegalArgumentException when the deadline for the course has already passed
      */
-    public void checkAndSave(Application application) {
-        CourseInformationResponseModel course = courseInformation.getCourseById(application.getCourseId());
+    public void checkAndSave(TeachingAssistantApplication teachingAssistantApplication) {
+        CourseInformationResponseModel course = courseInformation.getCourseById(teachingAssistantApplication.getCourseId());
         if (course == null) {
             //Course does not exist
             throw new NoSuchElementException("This course does not exist.");
-        } else if (!application.hasValidGrade()) {
+        } else if (!teachingAssistantApplication.hasValidGrade()) {
             throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
-        } else if (!application.meetsRequirements()) {
+        } else if (!teachingAssistantApplication.meetsRequirements()) {
             throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
         } else if (course.getStartDate().minusWeeks(3)
                 .isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
     }
 
     /**
@@ -77,7 +77,7 @@ public class ApplicationService {
      * @param status The status of the application(s).
      * @return a list of applications.
      */
-    public List<Application> findAllByCourseAndStatus(String courseId, ApplicationStatus status) {
+    public List<TeachingAssistantApplication> findAllByCourseAndStatus(String courseId, ApplicationStatus status) {
         return applicationRepository.findAllByCourseIdAndStatus(courseId, status);
     }
 
@@ -89,9 +89,9 @@ public class ApplicationService {
      * @return the application
      * @throws NoSuchElementException if the application is not found
      */
-    public Application get(String courseId, String netId) throws NoSuchElementException {
+    public TeachingAssistantApplication get(String courseId, String netId) throws NoSuchElementException {
         ApplicationKey key = new ApplicationKey(courseId, netId);
-        Optional<Application> applicationOptional = applicationRepository.findById(key);
+        Optional<TeachingAssistantApplication> applicationOptional = applicationRepository.findById(key);
 
         if (applicationOptional.isEmpty()) {
             // Application does not exist
@@ -128,16 +128,16 @@ public class ApplicationService {
      * @throws IllegalArgumentException if the application is not in pending state
      */
     public void reject(String courseId, String netId) throws NoSuchElementException, IllegalArgumentException {
-        Application application = this.get(courseId, netId);
+        TeachingAssistantApplication teachingAssistantApplication = this.get(courseId, netId);
 
-        if (application.getStatus() != ApplicationStatus.PENDING) {
+        if (teachingAssistantApplication.getStatus() != ApplicationStatus.PENDING) {
             // Application is already accepted or rejected
             throw new IllegalArgumentException();
         }
 
-        application.setStatus(ApplicationStatus.REJECTED);
+        teachingAssistantApplication.setStatus(ApplicationStatus.REJECTED);
 
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
     }
 
     /**
@@ -150,9 +150,9 @@ public class ApplicationService {
      */
     public void accept(String courseId, String netId, String duties, int maxHours)
             throws NoSuchElementException, IllegalArgumentException {
-        Application application = this.get(courseId, netId);
+        TeachingAssistantApplication teachingAssistantApplication = this.get(courseId, netId);
 
-        if (application.getStatus() != ApplicationStatus.PENDING) {
+        if (teachingAssistantApplication.getStatus() != ApplicationStatus.PENDING) {
             // Application is already accepted or rejected
             throw new IllegalArgumentException();
         }
@@ -169,39 +169,40 @@ public class ApplicationService {
             throw new IllegalArgumentException();
         }
 
-        application.setStatus(ApplicationStatus.ACCEPTED);
+        teachingAssistantApplication.setStatus(ApplicationStatus.ACCEPTED);
 
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
     }
 
     /**
      * Takes in a list of applications and extends them with a TA-rating, retreived from the TA-service.
      *
-     * @param applications A list of the desired applications to be extended with a rating.
+     * @param teachingAssistantApplications A list of the desired applications to be extended with a rating.
      * @return a list of extendApplicationRequestModels, created with the extended applications and the TA-ratings.
      */
     //PMD.DataflowAnomalies are suppressed because they occur in a place where there is no problem at all.
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    public List<PendingApplicationResponseModel> extendWithRating(List<Application> applications) {
+    public List<PendingApplicationResponseModel> extendWithRating(
+            List<TeachingAssistantApplication> teachingAssistantApplications) {
         List<PendingApplicationResponseModel> extendedApplications = new ArrayList<>();
 
         //This check makes sure no data is fetched when there are no applications at all.
-        if (applications.isEmpty()) {
+        if (teachingAssistantApplications.isEmpty()) {
             return extendedApplications;
         }
 
         List<String> netIds = new ArrayList<>();
 
-        for (Application application : applications) {
-            netIds.add(application.getNetId());
+        for (TeachingAssistantApplication teachingAssistantApplication : teachingAssistantApplications) {
+            netIds.add(teachingAssistantApplication.getNetId());
         }
 
         Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
 
-        for (Application application : applications) {
-            String netId = application.getNetId();
+        for (TeachingAssistantApplication teachingAssistantApplication : teachingAssistantApplications) {
+            String netId = teachingAssistantApplication.getNetId();
             Float rating = taRatings.get(netId);
-            extendedApplications.add(new PendingApplicationResponseModel(application, rating));
+            extendedApplications.add(new PendingApplicationResponseModel(teachingAssistantApplication, rating));
         }
         return extendedApplications;
     }
@@ -216,14 +217,14 @@ public class ApplicationService {
      */
     public ApplicationStatus retrieveStatus(String courseId, String netId) {
         ApplicationKey key = new ApplicationKey(courseId, netId);
-        Optional<Application> applicationOptional = applicationRepository.findById(key);
+        Optional<TeachingAssistantApplication> applicationOptional = applicationRepository.findById(key);
 
         if (applicationOptional.isEmpty()) {
             throw new NoSuchElementException();
         }
 
-        Application application = applicationOptional.get();
-        return application.getStatus();
+        TeachingAssistantApplication teachingAssistantApplication = applicationOptional.get();
+        return teachingAssistantApplication.getStatus();
     }
 
 
@@ -233,12 +234,12 @@ public class ApplicationService {
      * @param netId the netId of the user to get applications from.
      * @return a list of all applications from the user.
      */
-    public List<Application> getApplicationFromStudent(String netId) {
-        List<Application> allApplications = applicationRepository.findAll();
-        List<Application> result = new ArrayList<>();
-        for (Application application : allApplications) {
-            if (application.getNetId().equals(netId)) {
-                result.add(application);
+    public List<TeachingAssistantApplication> getApplicationFromStudent(String netId) {
+        List<TeachingAssistantApplication> allTeachingAssistantApplications = applicationRepository.findAll();
+        List<TeachingAssistantApplication> result = new ArrayList<>();
+        for (TeachingAssistantApplication teachingAssistantApplication : allTeachingAssistantApplications) {
+            if (teachingAssistantApplication.getNetId().equals(netId)) {
+                result.add(teachingAssistantApplication);
             }
         }
         return result;

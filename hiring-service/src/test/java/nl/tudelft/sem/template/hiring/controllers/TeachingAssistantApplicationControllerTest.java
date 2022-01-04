@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
@@ -56,7 +56,7 @@ import org.springframework.test.web.servlet.ResultActions;
                     "mockCourseInformation", "mockContractInformation"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
-public class ApplicationControllerTest {
+public class TeachingAssistantApplicationControllerTest {
     private static final String exampleNetId = "johndoe";
 
     @Autowired
@@ -275,17 +275,17 @@ public class ApplicationControllerTest {
     @Test
     public void tooManyApplicationsTest() throws Exception {
         //Arrange
-        Application application1 = new Application("CSE1300", exampleNetId, 7.0f,
+        TeachingAssistantApplication taApplication1 = new TeachingAssistantApplication("CSE1300", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application1);
+        applicationRepository.save(taApplication1);
 
-        Application application2 = new Application("CSE1400", exampleNetId, 7.0f,
+        TeachingAssistantApplication taApplication2 = new TeachingAssistantApplication("CSE1400", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application2);
+        applicationRepository.save(taApplication2);
 
-        Application application3 = new Application("CSE1100", exampleNetId, 7.0f,
+        TeachingAssistantApplication taApplication3 = new TeachingAssistantApplication("CSE1100", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application3);
+        applicationRepository.save(taApplication3);
 
         ApplicationRequestModel fourthApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
@@ -314,13 +314,13 @@ public class ApplicationControllerTest {
     @Test
     public void oneMoreApplicationPossibleTest() throws Exception {
         //Arrange
-        Application application1 = new Application("CSE1300", exampleNetId, 7.0f,
+        TeachingAssistantApplication taApplication1 = new TeachingAssistantApplication("CSE1300", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application1);
+        applicationRepository.save(taApplication1);
 
-        Application application2 = new Application("CSE1400", exampleNetId, 7.0f,
+        TeachingAssistantApplication taApplication2 = new TeachingAssistantApplication("CSE1400", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application2);
+        applicationRepository.save(taApplication2);
 
         ApplicationRequestModel thirdApplicationModel = new ApplicationRequestModel("CSE1200", 6.0f,
                 "I want to");
@@ -350,7 +350,7 @@ public class ApplicationControllerTest {
     @Test
     void withdrawOnTime() throws Exception {
         // arrange
-        Application onTime = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication onTime = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(onTime);
 
@@ -376,7 +376,7 @@ public class ApplicationControllerTest {
     @Test
     void invalidCourseGetStatusTest() throws Exception {
         //arrange
-        Application application = Application.builder()
+        TeachingAssistantApplication taApplication = TeachingAssistantApplication.builder()
                 .netId(exampleNetId)
                 .courseId("CSE1200")
                 .grade(9.0f)
@@ -384,9 +384,9 @@ public class ApplicationControllerTest {
                 .status(ApplicationStatus.PENDING)
                 .build();
 
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
         String invalidCourseId = "CSE1300";
-        ApplicationKey key = new ApplicationKey(invalidCourseId, application.getNetId());
+        ApplicationKey key = new ApplicationKey(invalidCourseId, taApplication.getNetId());
 
         //act
         ResultActions wrongCourseId = mockMvc.perform(get("/status/" + invalidCourseId)
@@ -397,24 +397,24 @@ public class ApplicationControllerTest {
         MvcResult result = wrongCourseId
                 .andExpect(status().isNotFound())
                 .andReturn();
-        assertThat(application.getCourseId()).isNotEqualTo(invalidCourseId);
+        assertThat(taApplication.getCourseId()).isNotEqualTo(invalidCourseId);
     }
 
     @Test
     void pendingStatusTest() throws Exception {
         //arrange
-        Application application = Application.builder()
+        TeachingAssistantApplication taApplication = TeachingAssistantApplication.builder()
                 .netId(exampleNetId)
                 .courseId("CSE1200")
                 .grade(9.0f)
                 .motivation("I like TAs")
                 .status(ApplicationStatus.PENDING)
                 .build();
-        applicationRepository.save(application);
-        ApplicationKey key = new ApplicationKey(application.getCourseId(), application.getNetId());
+        applicationRepository.save(taApplication);
+        ApplicationKey key = new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId());
 
         //act
-        ResultActions pendingApplication = mockMvc.perform(get("/status/" + application.getCourseId())
+        ResultActions pendingApplication = mockMvc.perform(get("/status/" + taApplication.getCourseId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Joe"));
 
@@ -422,25 +422,25 @@ public class ApplicationControllerTest {
         MvcResult result = pendingApplication
                 .andExpect(status().isOk())
                 .andReturn();
-        assertThat(application.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+        assertThat(taApplication.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
 
     @Test
     void acceptedStatusTest() throws Exception {
         //arrange
-        Application application = Application.builder()
+        TeachingAssistantApplication taApplication = TeachingAssistantApplication.builder()
                 .netId(exampleNetId)
                 .courseId("CSE1200")
                 .grade(9.0f)
                 .motivation("I like TAs")
                 .status(ApplicationStatus.ACCEPTED)
                 .build();
-        applicationRepository.save(application);
-        ApplicationKey key = new ApplicationKey(application.getCourseId(), application.getNetId());
+        applicationRepository.save(taApplication);
+        ApplicationKey key = new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId());
 
         //act
-        ResultActions pendingApplication = mockMvc.perform(get("/status/" + application.getCourseId())
+        ResultActions pendingApplication = mockMvc.perform(get("/status/" + taApplication.getCourseId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Joe"));
 
@@ -448,25 +448,25 @@ public class ApplicationControllerTest {
         MvcResult result = pendingApplication
                 .andExpect(status().isOk())
                 .andReturn();
-        assertThat(application.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        assertThat(taApplication.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
         assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
     @Test
     void rejectedStatusTest() throws Exception {
         //arrange
-        Application application = Application.builder()
+        TeachingAssistantApplication taApplication = TeachingAssistantApplication.builder()
                 .netId(exampleNetId)
                 .courseId("CSE1200")
                 .grade(9.0f)
                 .motivation("I like TAs")
                 .status(ApplicationStatus.REJECTED)
                 .build();
-        applicationRepository.save(application);
-        ApplicationKey key = new ApplicationKey(application.getCourseId(), application.getNetId());
+        applicationRepository.save(taApplication);
+        ApplicationKey key = new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId());
 
         //act
-        ResultActions pendingApplication = mockMvc.perform(get("/status/" + application.getCourseId())
+        ResultActions pendingApplication = mockMvc.perform(get("/status/" + taApplication.getCourseId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Joe"));
 
@@ -474,14 +474,14 @@ public class ApplicationControllerTest {
         MvcResult result = pendingApplication
                 .andExpect(status().isOk())
                 .andReturn();
-        assertThat(application.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+        assertThat(taApplication.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
         assertThat(applicationRepository.findById(key).get().getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
 
     @Test
     void withdrawTooLate() throws Exception {
         // arrange
-        Application tooLate = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication tooLate = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(tooLate);
 
@@ -508,16 +508,16 @@ public class ApplicationControllerTest {
     @Test
     public void rejectValidApplication() throws Exception {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
 
         ApplicationKey lookup = ApplicationKey.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
+                .courseId(taApplication.getCourseId())
+                .netId(taApplication.getNetId())
                 .build();
 
-        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, taApplication.getCourseId()))
                 .thenReturn(true);
 
         // Act
@@ -529,8 +529,8 @@ public class ApplicationControllerTest {
         // Assert
         result.andExpect(status().isOk());
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
@@ -538,16 +538,16 @@ public class ApplicationControllerTest {
     @Test
     public void rejectValidApplicationWhileNotBeingResponsibleLecturer() throws Exception {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
 
         ApplicationKey lookup = ApplicationKey.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
+                .courseId(taApplication.getCourseId())
+                .netId(taApplication.getNetId())
                 .build();
 
-        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, taApplication.getCourseId()))
                 .thenReturn(false);
 
         // Act
@@ -559,8 +559,8 @@ public class ApplicationControllerTest {
         // Assert
         result.andExpect(status().isForbidden());
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
@@ -568,16 +568,16 @@ public class ApplicationControllerTest {
     @Test
     public void rejectNonexistentApplication() throws Exception {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
 
         ApplicationKey lookup = ApplicationKey.builder()
-                .courseId(application.getCourseId())
+                .courseId(taApplication.getCourseId())
                 .netId("invalidNetid")
                 .build();
 
-        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, taApplication.getCourseId()))
                 .thenReturn(true);
 
         // Act
@@ -589,8 +589,8 @@ public class ApplicationControllerTest {
         // Assert
         result.andExpect(status().isNotFound());
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
@@ -604,16 +604,16 @@ public class ApplicationControllerTest {
     @CsvSource({"ACCEPTED", "REJECTED"})
     public void rejectNonPendingApplication(String status) throws Exception {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
 
         ApplicationKey lookup = ApplicationKey.builder()
-                .courseId(application.getCourseId())
-                .netId(application.getNetId())
+                .courseId(taApplication.getCourseId())
+                .netId(taApplication.getNetId())
                 .build();
 
-        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, taApplication.getCourseId()))
                 .thenReturn(true);
 
         // Act
@@ -625,8 +625,8 @@ public class ApplicationControllerTest {
         // Assert
         result.andExpect(status().isConflict());
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
     }
@@ -634,15 +634,15 @@ public class ApplicationControllerTest {
     @Test
     public void getPendingApplicationsTest() throws Exception {
         //Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.PENDING);
-        Application application2 = new Application("CSE1300", "wsmith", 7.0f,
+        TeachingAssistantApplication taApplication2 = new TeachingAssistantApplication("CSE1300", "wsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.PENDING);
-        Application application3 = new Application("CSE1300", "nsmith", 7.0f,
+        TeachingAssistantApplication taApplication3 = new TeachingAssistantApplication("CSE1300", "nsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.ACCEPTED);
-        applicationRepository.save(application);
-        applicationRepository.save(application2);
-        applicationRepository.save(application3);
+        applicationRepository.save(taApplication);
+        applicationRepository.save(taApplication2);
+        applicationRepository.save(taApplication3);
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, "CSE1300"))
                 .thenReturn(true);
 
@@ -667,8 +667,8 @@ public class ApplicationControllerTest {
         //Parse json
         List<PendingApplicationResponseModel> res = parsePendingApplicationsResult(result);
 
-        PendingApplicationResponseModel model = new PendingApplicationResponseModel(application, 8.0f);
-        PendingApplicationResponseModel model2 = new PendingApplicationResponseModel(application2, 9.0f);
+        PendingApplicationResponseModel model = new PendingApplicationResponseModel(taApplication, 8.0f);
+        PendingApplicationResponseModel model2 = new PendingApplicationResponseModel(taApplication2, 9.0f);
         List<PendingApplicationResponseModel> expectedResult = new ArrayList<>() {{
                 add(model);
                 add(model2);
@@ -711,18 +711,18 @@ public class ApplicationControllerTest {
     @Test
     public void acceptValidApplication() throws Exception {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .withCourseId(application.getCourseId())
-                .withNetId(application.getNetId())
+                .withCourseId(taApplication.getCourseId())
+                .withNetId(taApplication.getNetId())
                 .withDuties("Be a good TA")
                 .withMaxHours(42)
                 .build();
 
-        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, taApplication.getCourseId()))
                 .thenReturn(true);
 
         when(mockContractInformation.createContract(any())).thenReturn(true);
@@ -736,13 +736,13 @@ public class ApplicationControllerTest {
         // Assert
         result.andExpect(status().isOk());
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
         verify(mockContractInformation).createContract(argThat(contract ->
-                contract.getCourseId().equals(application.getCourseId())
-                        && contract.getNetId().equals(application.getNetId())
+                contract.getCourseId().equals(taApplication.getCourseId())
+                        && contract.getNetId().equals(taApplication.getNetId())
                         && contract.getDuties().equals(model.getDuties())
                         && contract.getMaxHours() == model.getMaxHours()
         ));
@@ -751,18 +751,18 @@ public class ApplicationControllerTest {
     @Test
     public void acceptValidApplicationButContractCreationFails() throws Exception {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .withCourseId(application.getCourseId())
-                .withNetId(application.getNetId())
+                .withCourseId(taApplication.getCourseId())
+                .withNetId(taApplication.getNetId())
                 .withDuties("Be a good TA")
                 .withMaxHours(42)
                 .build();
 
-        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, taApplication.getCourseId()))
                 .thenReturn(true);
 
         when(mockContractInformation.createContract(any())).thenReturn(false);
@@ -776,13 +776,13 @@ public class ApplicationControllerTest {
         // Assert
         result.andExpect(status().isConflict());
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation).createContract(argThat(contract ->
-                contract.getCourseId().equals(application.getCourseId())
-                        && contract.getNetId().equals(application.getNetId())
+                contract.getCourseId().equals(taApplication.getCourseId())
+                        && contract.getNetId().equals(taApplication.getNetId())
                         && contract.getDuties().equals(model.getDuties())
                         && contract.getMaxHours() == model.getMaxHours()
         ));
@@ -791,18 +791,18 @@ public class ApplicationControllerTest {
     @Test
     public void acceptValidApplicationWhileNotBeingResponsibleLecturer() throws Exception {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .withCourseId(application.getCourseId())
-                .withNetId(application.getNetId())
+                .withCourseId(taApplication.getCourseId())
+                .withNetId(taApplication.getNetId())
                 .withDuties("Be a good TA")
                 .withMaxHours(42)
                 .build();
 
-        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, taApplication.getCourseId()))
                 .thenReturn(false);
 
         when(mockContractInformation.createContract(any())).thenReturn(true);
@@ -816,8 +816,8 @@ public class ApplicationControllerTest {
         // Assert
         result.andExpect(status().isForbidden());
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation, times(0)).createContract(any());
@@ -826,18 +826,18 @@ public class ApplicationControllerTest {
     @Test
     public void acceptNonexistentApplication() throws Exception {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .withCourseId(application.getCourseId())
+                .withCourseId(taApplication.getCourseId())
                 .withNetId("invalidNetid")
                 .withDuties("Be a good TA")
                 .withMaxHours(42)
                 .build();
 
-        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, taApplication.getCourseId()))
                 .thenReturn(true);
 
         when(mockContractInformation.createContract(any())).thenReturn(true);
@@ -851,8 +851,8 @@ public class ApplicationControllerTest {
         // Assert
         result.andExpect(status().isNotFound());
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation, times(0)).createContract(any());
@@ -867,18 +867,18 @@ public class ApplicationControllerTest {
     @CsvSource({"ACCEPTED", "REJECTED"})
     public void acceptNonPendingApplication(String status) throws Exception {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication taApplication = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
-        applicationRepository.save(application);
+        applicationRepository.save(taApplication);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
-                .withCourseId(application.getCourseId())
-                .withNetId(application.getNetId())
+                .withCourseId(taApplication.getCourseId())
+                .withNetId(taApplication.getNetId())
                 .withDuties("Be a good TA")
                 .withMaxHours(42)
                 .build();
 
-        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, application.getCourseId()))
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, taApplication.getCourseId()))
                 .thenReturn(true);
 
         when(mockContractInformation.createContract(any())).thenReturn(true);
@@ -892,8 +892,8 @@ public class ApplicationControllerTest {
         // Assert
         result.andExpect(status().isConflict());
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(taApplication.getCourseId(), taApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
         verify(mockContractInformation, times(0)).createContract(any());

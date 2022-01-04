@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
@@ -31,7 +30,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,7 +39,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles({"test", "mockCourseInformation", "mockContractInformation"})
-public class ApplicationServiceTest {
+public class TeachingAssistantApplicationServiceTest {
     @Autowired
     private transient ApplicationRepository applicationRepository;
 
@@ -58,7 +56,8 @@ public class ApplicationServiceTest {
     public void gradeBelowOneCheck() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidGradeApplication = new Application("CSE1300", "jsmith", 0.9f,
+        TeachingAssistantApplication invalidGradeTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 0.9f,
                 motivation, ApplicationStatus.PENDING);
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
@@ -69,7 +68,7 @@ public class ApplicationServiceTest {
                 new ArrayList<>()));
         // Act
 
-        ThrowingCallable c = () ->  applicationService.checkAndSave(invalidGradeApplication);
+        ThrowingCallable c = () ->  applicationService.checkAndSave(invalidGradeTeachingAssistantApplication);
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
@@ -81,7 +80,8 @@ public class ApplicationServiceTest {
     public void gradeOnOne() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application validUnsufficientGradeApplication = new Application("CSE1300", "jsmith", 1.0f,
+        TeachingAssistantApplication validUnsufficientGradeTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 1.0f,
                 motivation, ApplicationStatus.PENDING);
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
@@ -93,7 +93,7 @@ public class ApplicationServiceTest {
                 new ArrayList<>()));
         // Act
 
-        ThrowingCallable c = () ->  applicationService.checkAndSave(validUnsufficientGradeApplication);
+        ThrowingCallable c = () ->  applicationService.checkAndSave(validUnsufficientGradeTeachingAssistantApplication);
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
@@ -105,7 +105,8 @@ public class ApplicationServiceTest {
     public void gradeAboveTenCheck() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidGradeApplication = new Application("CSE1300", "jsmith", 10.1f,
+        TeachingAssistantApplication invalidGradeTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 10.1f,
                 motivation, ApplicationStatus.PENDING);
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
@@ -117,7 +118,7 @@ public class ApplicationServiceTest {
                 new ArrayList<>()));
         // Act
 
-        ThrowingCallable c = () ->  applicationService.checkAndSave(invalidGradeApplication);
+        ThrowingCallable c = () ->  applicationService.checkAndSave(invalidGradeTeachingAssistantApplication);
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
@@ -129,9 +130,10 @@ public class ApplicationServiceTest {
     public void gradeOnTen() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application validApplication = new Application("CSE1300", "jsmith", 10.0f,
+        TeachingAssistantApplication validTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 10.0f,
                 motivation, ApplicationStatus.PENDING);
-        assertThat(validApplication.meetsRequirements()).isTrue();
+        assertThat(validTeachingAssistantApplication.meetsRequirements()).isTrue();
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
@@ -142,7 +144,7 @@ public class ApplicationServiceTest {
                 new ArrayList<>()));
 
         //Act
-        applicationService.checkAndSave(validApplication);
+        applicationService.checkAndSave(validTeachingAssistantApplication);
 
         //Assert
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
@@ -153,9 +155,10 @@ public class ApplicationServiceTest {
     public void validCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application validApplication = new Application("CSE1200", "johndoe", (float) 6.0,
+        TeachingAssistantApplication validTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1200", "johndoe", (float) 6.0,
                 motivation, ApplicationStatus.PENDING);
-        assertThat(validApplication.meetsRequirements()).isTrue();
+        assertThat(validTeachingAssistantApplication.meetsRequirements()).isTrue();
 
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
@@ -166,7 +169,7 @@ public class ApplicationServiceTest {
                 new ArrayList<>()));
 
         //Act
-        applicationService.checkAndSave(validApplication);
+        applicationService.checkAndSave(validTeachingAssistantApplication);
 
         //Assert
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1200", "johndoe")))
@@ -177,13 +180,14 @@ public class ApplicationServiceTest {
     public void nonExistingCourseCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidApplication = new Application("CSE1300", "jsmith", 6.0f,
+        TeachingAssistantApplication invalidTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 6.0f,
                 motivation, ApplicationStatus.PENDING);
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(null);
 
         //Act
-        ThrowingCallable c = () -> applicationService.checkAndSave(invalidApplication);
+        ThrowingCallable c = () -> applicationService.checkAndSave(invalidTeachingAssistantApplication);
 
         //Assert
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(c);
@@ -195,9 +199,10 @@ public class ApplicationServiceTest {
     public void invalidGradeCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidApplication = new Application("CSE1300", "jsmith", 5.9f,
+        TeachingAssistantApplication invalidTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 5.9f,
                 motivation, ApplicationStatus.PENDING);
-        assertThat(invalidApplication.meetsRequirements()).isFalse();
+        assertThat(invalidTeachingAssistantApplication.meetsRequirements()).isFalse();
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
@@ -208,7 +213,7 @@ public class ApplicationServiceTest {
                 new ArrayList<>()));
 
         //Act
-        ThrowingCallable c = () -> applicationService.checkAndSave(invalidApplication);
+        ThrowingCallable c = () -> applicationService.checkAndSave(invalidTeachingAssistantApplication);
 
         //Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
@@ -220,9 +225,10 @@ public class ApplicationServiceTest {
     public void invalidDateCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
+        TeachingAssistantApplication invalidTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", (float) 5.9,
                 motivation, ApplicationStatus.PENDING);
-        assertThat(invalidApplication.meetsRequirements()).isFalse();
+        assertThat(invalidTeachingAssistantApplication.meetsRequirements()).isFalse();
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
@@ -233,7 +239,7 @@ public class ApplicationServiceTest {
                 new ArrayList<>()));
 
         //Act
-        ThrowingCallable c = () -> applicationService.checkAndSave(invalidApplication);
+        ThrowingCallable c = () -> applicationService.checkAndSave(invalidTeachingAssistantApplication);
 
         //Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
@@ -245,7 +251,8 @@ public class ApplicationServiceTest {
     @Test
     public void getWithInvalidCourseId() {
         // Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.ACCEPTED);
         String invalidCourseId = "CSE1305";
         applicationRepository.save(expected);
@@ -260,7 +267,8 @@ public class ApplicationServiceTest {
     @Test
     public void getStatusWithInvalidNetid() {
         // Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.ACCEPTED);
         String invalidNetid = "sjmith";
         applicationRepository.save(expected);
@@ -275,7 +283,8 @@ public class ApplicationServiceTest {
     @Test
     public void retrieveStatusRejectedApplication() {
         //Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.REJECTED);
 
         applicationRepository.save(expected);
@@ -291,7 +300,8 @@ public class ApplicationServiceTest {
     @Test
     public void retrieveStatusAcceptedApplication() {
         //Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.ACCEPTED);
 
         applicationRepository.save(expected);
@@ -308,17 +318,20 @@ public class ApplicationServiceTest {
     public void getApplicationsAndMaxApplicationsTest() {
         //Arrange
         String motivation = "I am motivated";
-        Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
+        TeachingAssistantApplication firstTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1200", "johndoe", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
+        TeachingAssistantApplication secondTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "johndoe", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        Application thirdApplication = new Application("CSE1400", "johndoe", 7.0f,
+        TeachingAssistantApplication thirdTeachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1400", "johndoe", 7.0f,
                 motivation, ApplicationStatus.PENDING);
 
         //Act
-        applicationRepository.save(firstApplication);
-        applicationRepository.save(secondApplication);
-        applicationRepository.save(thirdApplication);
+        applicationRepository.save(firstTeachingAssistantApplication);
+        applicationRepository.save(secondTeachingAssistantApplication);
+        applicationRepository.save(thirdTeachingAssistantApplication);
 
         //Assert
         assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
@@ -330,7 +343,8 @@ public class ApplicationServiceTest {
     @Test
     public void retrieveStatusPendingApplication() {
         //Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.PENDING);
 
         applicationRepository.save(expected);
@@ -346,7 +360,8 @@ public class ApplicationServiceTest {
     @Test
     public void retrieveStatusEmptyApplication() {
         //Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I want to become a TA", ApplicationStatus.PENDING);
         String notCourse = "Not a courseId";
         applicationRepository.save(expected);
@@ -361,7 +376,8 @@ public class ApplicationServiceTest {
     @Test
     public void retrieveInvalidStatusTest() {
         //Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.PENDING);
         String noApplicationCourseId = "CSE1200";
         applicationRepository.save(expected);
@@ -376,7 +392,8 @@ public class ApplicationServiceTest {
     @Test
     public void retrievePendingStatusTest() {
         //Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.PENDING);
 
         applicationRepository.save(expected);
@@ -385,7 +402,7 @@ public class ApplicationServiceTest {
         var result = applicationService.get(expected.getCourseId(), expected.getNetId());
 
         //Assert
-        assertThat(result).isInstanceOf(Application.class);
+        assertThat(result).isInstanceOf(TeachingAssistantApplication.class);
         assertThat(result.getStatus()).isEqualTo(ApplicationStatus.PENDING);
 
     }
@@ -393,7 +410,8 @@ public class ApplicationServiceTest {
     @Test
     public void retrieveAcceptedStatusTest() {
         //Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.ACCEPTED);
 
         applicationRepository.save(expected);
@@ -402,14 +420,15 @@ public class ApplicationServiceTest {
         var result = applicationService.get(expected.getCourseId(), expected.getNetId());
 
         //Assert
-        assertThat(result).isInstanceOf(Application.class);
+        assertThat(result).isInstanceOf(TeachingAssistantApplication.class);
         assertThat(result.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
     @Test
     public void retrieveRejectedStatusTest() {
         //Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I got a 10", ApplicationStatus.REJECTED);
 
         applicationRepository.save(expected);
@@ -418,7 +437,7 @@ public class ApplicationServiceTest {
         var result = applicationService.get(expected.getCourseId(), expected.getNetId());
 
         //Assert
-        assertThat(result).isInstanceOf(Application.class);
+        assertThat(result).isInstanceOf(TeachingAssistantApplication.class);
         assertThat(result.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
 
@@ -428,13 +447,15 @@ public class ApplicationServiceTest {
     public void checkAndWithdrawOnTimeTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        applicationRepository.save(application);
-        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.MAX);
+        applicationRepository.save(teachingAssistantApplication);
+        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(LocalDateTime.MAX);
 
         //Act
-        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+        boolean result = applicationService.checkAndWithdraw(
+                teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId());
 
         //Assert
         assertThat(result).isTrue();
@@ -444,13 +465,15 @@ public class ApplicationServiceTest {
     public void checkAndWithdrawTooLateTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        applicationRepository.save(application);
-        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.now());
+        applicationRepository.save(teachingAssistantApplication);
+        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(LocalDateTime.now());
 
         //Act
-        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+        boolean result = applicationService.checkAndWithdraw(
+                teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId());
 
         //Assert
         assertThat(result).isFalse();
@@ -460,13 +483,16 @@ public class ApplicationServiceTest {
     public void checkAndWithdrawJustTooLateTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        applicationRepository.save(application);
-        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.now().plusWeeks(3));
+        applicationRepository.save(teachingAssistantApplication);
+        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId()))
+                .thenReturn(LocalDateTime.now().plusWeeks(3));
 
         //Act
-        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+        boolean result = applicationService.checkAndWithdraw(
+                teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId());
 
         //Assert
         assertThat(result).isFalse();
@@ -476,14 +502,16 @@ public class ApplicationServiceTest {
     public void checkAndWithdrawJustOnTimeTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
-        applicationRepository.save(application);
-        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(
+        applicationRepository.save(teachingAssistantApplication);
+        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(
                 LocalDateTime.now().plusWeeks(3).plusDays(1));
 
         //Act
-        boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
+        boolean result = applicationService.checkAndWithdraw(
+                teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId());
 
         //Assert
         assertThat(result).isTrue();
@@ -492,12 +520,13 @@ public class ApplicationServiceTest {
     @Test
     public void getExisting() {
         // Arrange
-        Application expected = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication expected = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.ACCEPTED);
         applicationRepository.save(expected);
 
         // Act
-        Application actual = applicationService.get(expected.getCourseId(), expected.getNetId());
+        TeachingAssistantApplication actual = applicationService.get(expected.getCourseId(), expected.getNetId());
 
         // Assert
         assertThat(actual).isEqualTo(expected);
@@ -506,16 +535,18 @@ public class ApplicationServiceTest {
     @Test
     public void rejectValidApplication() {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
 
         // Act
-        applicationService.reject(application.getCourseId(), application.getNetId());
+        applicationService.reject(teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId());
 
         // Assert
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                        teachingAssistantApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
     }
@@ -523,19 +554,21 @@ public class ApplicationServiceTest {
     @Test
     public void rejectNonexistentApplication() {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
 
         // Act
-        ThrowingCallable c = () -> applicationService.reject("incorrect", application.getNetId());
+        ThrowingCallable c = () -> applicationService.reject("incorrect", teachingAssistantApplication.getNetId());
 
         // Assert
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(c);
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                        teachingAssistantApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
     }
@@ -549,19 +582,22 @@ public class ApplicationServiceTest {
     @CsvSource({"ACCEPTED", "REJECTED"})
     public void rejectNonPendingApplication(String status) {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
 
         // Act
-        ThrowingCallable c = () -> applicationService.reject(application.getCourseId(), application.getNetId());
+        ThrowingCallable c = () -> applicationService.reject(teachingAssistantApplication.getCourseId(),
+                teachingAssistantApplication.getNetId());
 
         // Assert
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                        teachingAssistantApplication.getNetId()))
                 .get();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
     }
@@ -569,7 +605,7 @@ public class ApplicationServiceTest {
     @Test
     public void extendEmptyListWithRatingTest() {
         //Arrange
-        List<Application> emptyList = new ArrayList<>();
+        List<TeachingAssistantApplication> emptyList = new ArrayList<>();
         List<PendingApplicationResponseModel> expectedResList = new ArrayList<>();
 
         //Act
@@ -582,9 +618,11 @@ public class ApplicationServiceTest {
     @Test
     public void extendWithRatingTest() {
         //Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.PENDING);
-        Application application2 = new Application("CSE1300", "wsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication2 = new TeachingAssistantApplication(
+                "CSE1300", "wsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.PENDING);
 
         String[] netIds = new String[]{"jsmith", "wsmith"};
@@ -596,7 +634,8 @@ public class ApplicationServiceTest {
         when(mockContractInformation.getTaRatings(List.of(netIds)))
                 .thenReturn(expectedMap);
 
-        var resultList = applicationService.extendWithRating(List.of(application, application2));
+        var resultList = applicationService.extendWithRating(
+                List.of(teachingAssistantApplication, teachingAssistantApplication2));
 
         var resultModel = new PendingApplicationResponseModel("CSE1300", "jsmith", 7.0f,
                 "I want to be cool too!", 8.0f);
@@ -611,9 +650,10 @@ public class ApplicationServiceTest {
     @Test
     public void acceptValidApplication() {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
 
         when(mockContractInformation.createContract(any())).thenReturn(true);
 
@@ -621,16 +661,18 @@ public class ApplicationServiceTest {
         int expectedMaxHours = 42;
 
         // Act
-        applicationService.accept(application.getCourseId(), application.getNetId(), expectedDuties, expectedMaxHours);
+        applicationService.accept(teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId(),
+                expectedDuties, expectedMaxHours);
 
         // Assert
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                        teachingAssistantApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
         verify(mockContractInformation).createContract(argThat(contract ->
-                contract.getCourseId().equals(application.getCourseId())
-                        && contract.getNetId().equals(application.getNetId())
+                contract.getCourseId().equals(teachingAssistantApplication.getCourseId())
+                        && contract.getNetId().equals(teachingAssistantApplication.getNetId())
                         && contract.getDuties().equals(expectedDuties)
                         && contract.getMaxHours() == expectedMaxHours
         ));
@@ -639,20 +681,22 @@ public class ApplicationServiceTest {
     @Test
     public void acceptNonexistentApplication() {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
 
         // Act
-        ThrowingCallable c = () -> applicationService.accept("incorrect", application.getNetId(),
+        ThrowingCallable c = () -> applicationService.accept("incorrect", teachingAssistantApplication.getNetId(),
                 "be a good TA", 45);
 
         // Assert
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(c);
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                        teachingAssistantApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation, times(0)).createContract(any());
@@ -667,20 +711,23 @@ public class ApplicationServiceTest {
     @CsvSource({"ACCEPTED", "REJECTED"})
     public void acceptNonPendingApplication(String status) {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be a cool!", ApplicationStatus.valueOf(status));
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
 
         // Act
-        ThrowingCallable c = () -> applicationService.accept(application.getCourseId(), application.getNetId(),
+        ThrowingCallable c = () -> applicationService.accept(teachingAssistantApplication.getCourseId(),
+                teachingAssistantApplication.getNetId(),
                 "be a good TA", 45);
 
         // Assert
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                        teachingAssistantApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.valueOf(status));
         verify(mockContractInformation, times(0)).createContract(any());
@@ -689,9 +736,10 @@ public class ApplicationServiceTest {
     @Test
     public void acceptValidApplicationButCreatingContractThrowsException() {
         // Arrange
-        Application application = new Application("CSE1300", "jsmith", 7.0f,
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
                 "I just want to be cool!", ApplicationStatus.PENDING);
-        applicationRepository.save(application);
+        applicationRepository.save(teachingAssistantApplication);
 
         when(mockContractInformation.createContract(any())).thenReturn(false);
 
@@ -699,20 +747,22 @@ public class ApplicationServiceTest {
         int expectedMaxHours = 42;
 
         // Act
-        ThrowingCallable c = () -> applicationService.accept(application.getCourseId(), application.getNetId(),
+        ThrowingCallable c = () -> applicationService.accept(teachingAssistantApplication.getCourseId(),
+                teachingAssistantApplication.getNetId(),
                 expectedDuties, expectedMaxHours);
 
         // Assert
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
-        Application actual = applicationRepository
-                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+        TeachingAssistantApplication actual = applicationRepository
+                .findById(new ApplicationKey(teachingAssistantApplication.getCourseId(),
+                        teachingAssistantApplication.getNetId()))
                 .orElseThrow();
         assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.PENDING);
         verify(mockContractInformation).createContract(argThat(contract ->
-                contract.getCourseId().equals(application.getCourseId())
-                        && contract.getNetId().equals(application.getNetId())
+                contract.getCourseId().equals(teachingAssistantApplication.getCourseId())
+                        && contract.getNetId().equals(teachingAssistantApplication.getNetId())
                         && contract.getDuties().equals(expectedDuties)
                         && contract.getMaxHours() == expectedMaxHours
         ));

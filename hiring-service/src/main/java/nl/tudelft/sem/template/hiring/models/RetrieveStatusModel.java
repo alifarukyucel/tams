@@ -3,7 +3,7 @@ package nl.tudelft.sem.template.hiring.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 
 @Data
@@ -19,16 +19,16 @@ public class RetrieveStatusModel {
     /**
      * Constructor that constructs a RetrieveStatusModel from an application and courseId.
      *
-     * @param application the application to retrieve a status from
+     * @param teachingAssistantApplication the application to retrieve a status from
      * @return RetrieveStatusModel of given application
      */
-    public static RetrieveStatusModel fromApplication(Application application) {
+    public static RetrieveStatusModel fromApplication(TeachingAssistantApplication teachingAssistantApplication) {
         return new RetrieveStatusModel(
-                application.getCourseId(),
-                application.getNetId(),
-                application.getMotivation(),
-                application.getGrade(),
-                application.getStatus()
+                teachingAssistantApplication.getCourseId(),
+                teachingAssistantApplication.getNetId(),
+                teachingAssistantApplication.getMotivation(),
+                teachingAssistantApplication.getGrade(),
+                teachingAssistantApplication.getStatus()
         );
     }
 }

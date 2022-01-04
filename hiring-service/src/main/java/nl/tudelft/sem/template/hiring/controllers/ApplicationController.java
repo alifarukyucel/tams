@@ -1,10 +1,10 @@
 package nl.tudelft.sem.template.hiring.controllers;
 
-import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
+import static nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication.createPendingApplication;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import nl.tudelft.sem.template.hiring.entities.Application;
+import nl.tudelft.sem.template.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.template.hiring.entities.compositekeys.ApplicationKey;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
@@ -62,14 +62,14 @@ public class ApplicationController {
             // It is not allowed to have more than 3 applications
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum number of applications has been reached!");
         }
-        Application application = createPendingApplication(
+        TeachingAssistantApplication teachingAssistantApplication = createPendingApplication(
                 request.getCourseId(),
                 authManager.getNetid(),
                 request.getGrade(),
                 request.getMotivation());
 
         try {
-            applicationService.checkAndSave(application);
+            applicationService.checkAndSave(teachingAssistantApplication);
             return ResponseEntity.ok("Applied successfully");
         } catch (NoSuchElementException e) {
             //Thrown when the course is not found.
@@ -89,8 +89,9 @@ public class ApplicationController {
     @GetMapping("/status/{course}")
     public ResponseEntity<RetrieveStatusModel> getStatusByCourse(@PathVariable String course) {
         try {
-            Application application = applicationService.get(course, authManager.getNetid());
-            RetrieveStatusModel status = RetrieveStatusModel.fromApplication(application);
+            TeachingAssistantApplication teachingAssistantApplication = applicationService
+                    .get(course, authManager.getNetid());
+            RetrieveStatusModel status = RetrieveStatusModel.fromApplication(teachingAssistantApplication);
 
             return ResponseEntity.ok(status);
         } catch (NoSuchElementException e) {
@@ -187,8 +188,10 @@ public class ApplicationController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
-        var extendedApplications = applicationService.extendWithRating(applications);
+        List<TeachingAssistantApplication> teachingAssistantApplications = applicationService
+                .findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        var extendedApplications = applicationService
+                .extendWithRating(teachingAssistantApplications);
 
         return ResponseEntity.ok(extendedApplications);
     }

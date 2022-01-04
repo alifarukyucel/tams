@@ -17,9 +17,9 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 @AllArgsConstructor
 @Entity
 @Builder
-@Table(name = "APPLICATION")
+@Table(name = "TA_APPLICATION")
 @IdClass(ApplicationKey.class)
-public class Application {
+public class TeachingAssistantApplication {
 
     // Lowest possible grade that can be achieved
     private static final transient float minGrade = 1.0f;
@@ -56,15 +56,15 @@ public class Application {
      * @param motivation String motivation
      * @return a newly created instance of an Application with the status "Pending".
      */
-    public static Application createPendingApplication(String courseId, String netId,
-                                                       float grade, String motivation) {
-        Application application = new Application();
-        application.setCourseId(courseId);
-        application.setNetId(netId);
-        application.setGrade(grade);
-        application.setMotivation(motivation);
-        application.setStatus(ApplicationStatus.PENDING);
-        return application;
+    public static TeachingAssistantApplication createPendingApplication(String courseId, String netId,
+                                                                        float grade, String motivation) {
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication();
+        teachingAssistantApplication.setCourseId(courseId);
+        teachingAssistantApplication.setNetId(netId);
+        teachingAssistantApplication.setGrade(grade);
+        teachingAssistantApplication.setMotivation(motivation);
+        teachingAssistantApplication.setStatus(ApplicationStatus.PENDING);
+        return teachingAssistantApplication;
     }
 
     /**
