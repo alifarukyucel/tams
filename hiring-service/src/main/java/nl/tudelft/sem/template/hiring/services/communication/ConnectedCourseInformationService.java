@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.hiring.services.communication;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
@@ -21,7 +22,11 @@ public class ConnectedCourseInformationService implements CourseInformation {
 
     @Override
     public LocalDateTime startDate(String courseId) {
-        return getCourseById(courseId).getStartDate();
+        var date = getCourseById(courseId).getStartDate();
+        if (date == null) {
+            throw new NoSuchElementException("Course does not exist");
+        }
+        return date;
     }
 
     @Override
