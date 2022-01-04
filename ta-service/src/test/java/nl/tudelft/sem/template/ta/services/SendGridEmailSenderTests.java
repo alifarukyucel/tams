@@ -44,27 +44,27 @@ public class SendGridEmailSenderTests {
     public void sendEmailSuccessful() throws IOException {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode expectedJson = mapper.readTree("{" +
-                "  \"from\": {" +
-                "    \"email\": \"" + from + "\"" +
-                "  }," +
-                "  \"subject\": \"" + subject + "\"," +
-                "  \"personalizations\": [" +
-                "    {" +
-                "      \"to\": [" +
-                "        {" +
-                "          \"email\": \"" + to + "\"" +
-                "        }" +
-                "      ]" +
-                "    }" +
-                "  ]," +
-                "  \"content\": [" +
-                "    {" +
-                "      \"type\": \"text/plain\"," +
-                "      \"value\": \"" + body + "\"" +
-                "    }" +
-                "  ]" +
-                "}"
+        JsonNode expectedJson = mapper.readTree("{"
+                + "  \"from\": {"
+                + "    \"email\": \"" + from + "\""
+                + "  },"
+                + "  \"subject\": \"" + subject + "\","
+                + "  \"personalizations\": ["
+                + "    {"
+                + "      \"to\": ["
+                + "        {"
+                + "          \"email\": \"" + to + "\""
+                + "        }"
+                + "      ]"
+                + "    }"
+                + "  ],"
+                + "  \"content\": ["
+                + "    {"
+                + "      \"type\": \"text/plain\","
+                + "      \"value\": \"" + body + "\""
+                + "    }"
+                + "  ]"
+                + "}"
         );
 
         // Act
