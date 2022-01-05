@@ -820,12 +820,12 @@ public class ApplicationControllerTest {
         when(mockContractInformation.getTaRatings(List.of(netIds)))
                 .thenReturn(expectedMap);
 
-        //Notice how in the following code application3 is not added because it isn't in the top-3 recommended.
+        //Notice how in the following code application4 is not added because it isn't in the top-4 recommended.
         //Also notice the order of which the applications were added to the expected result, in the order of TA-rating.
-        PendingApplicationResponseModel model = new PendingApplicationResponseModel(application, 8.0d);
         PendingApplicationResponseModel model2 = new PendingApplicationResponseModel(application2, 9.0d);
-        PendingApplicationResponseModel model3 = new PendingApplicationResponseModel(application3, 3.0d);
+        PendingApplicationResponseModel model = new PendingApplicationResponseModel(application, 8.0d);
         PendingApplicationResponseModel model5 = new PendingApplicationResponseModel(application5, -1.0d);
+        PendingApplicationResponseModel model3 = new PendingApplicationResponseModel(application3, 3.0d);
         List<PendingApplicationResponseModel> expectedResult = List.of(model2, model, model5, model3);
 
         //Act
