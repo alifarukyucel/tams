@@ -9,6 +9,9 @@ import nl.tudelft.sem.template.hiring.entities.Application;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PendingApplicationResponseModel implements Comparable<PendingApplicationResponseModel> {
+    //Minimum rating for a TA that is considered sufficient.
+    //TA's with a sufficient historical rating will be recommended faster than new TA's
+    //The new TA's will be recommended faster than TA's with an insufficient historical rating.
     private static double sufficientTaRating = 5.75d;
 
     private String courseId;
