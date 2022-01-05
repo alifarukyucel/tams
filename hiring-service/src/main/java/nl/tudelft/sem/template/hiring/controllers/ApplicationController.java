@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.hiring.controllers;
 
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -211,9 +212,17 @@ public class ApplicationController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
+        if (amount <= 0) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
         List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
         var extendedApplications = applicationService.extendWithRating(applications);
         Collections.sort(extendedApplications);
+
+        if (amount > extendedApplications.size()) {
+            amount = extendedApplications.size();
+        }
         return ResponseEntity.ok(extendedApplications.subList(0, amount));
     }
 }
