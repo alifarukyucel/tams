@@ -14,6 +14,7 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
+import nl.tudelft.sem.template.ta.interfaces.EmailSender;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -29,7 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional  // prevents lazy loading issues and will keep the connection open.
-@ActiveProfiles({"test", "mockCourseInformation"})
+@ActiveProfiles({"test", "mockCourseInformation", "mockEmailSender"})
 class ContractServiceTest {
 
     @Autowired
@@ -40,6 +41,9 @@ class ContractServiceTest {
 
     @Autowired
     private transient CourseInformation mockCourseInformation;
+
+    @Autowired
+    private transient EmailSender mockEmailSender;
 
     @Test
     void signExistingContract() {
