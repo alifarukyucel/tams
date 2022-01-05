@@ -269,6 +269,7 @@ class ContractServiceTest {
         Contract expected = contractRepository.getOne(
             new ContractId(contract.getNetId(), contract.getCourseId()));
         assertThat(contract).isEqualTo(expected);
+        verifyNoInteractions(mockEmailSender);
     }
 
     @Test
