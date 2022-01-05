@@ -12,4 +12,8 @@ public class ApplicationRequestModel {
     private float grade;
     private String motivation;
     private String contactEmail;
+
+    public ApplicationRequestModel(String courseId, float grade, String motivation) {
+        this(courseId, grade, motivation, null);
+    }
 }
