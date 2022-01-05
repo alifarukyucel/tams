@@ -41,6 +41,13 @@ public class ContractService {
             + "Please log into TAMS to review and sign the contract.\n\n"
             + "Best regards,\nThe programme administration of your faculty";
 
+    /**
+     * Create an instance of a ContractService.
+     *
+     * @param contractRepository the contract repository
+     * @param courseInformation  the course information service
+     * @param emailSender        an email sender
+     */
     public ContractService(ContractRepository contractRepository, CourseInformation courseInformation,
                            EmailSender emailSender) {
         this.contractRepository = contractRepository;
