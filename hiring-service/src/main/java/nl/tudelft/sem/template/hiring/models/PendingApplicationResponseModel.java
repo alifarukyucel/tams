@@ -12,7 +12,7 @@ public class PendingApplicationResponseModel implements Comparable<PendingApplic
     //Minimum rating for a TA that is considered sufficient.
     //TA's with a sufficient historical rating will be recommended faster than new TA's
     //The new TA's will be recommended faster than TA's with an insufficient historical rating.
-    private static double sufficientTaRating = 5.75d;
+    private static final double sufficientTaRating = 5.75d;
 
     private String courseId;
     private String netId;

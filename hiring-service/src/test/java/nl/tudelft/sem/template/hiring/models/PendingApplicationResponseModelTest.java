@@ -5,9 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import nl.tudelft.sem.template.hiring.entities.Application;
 import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.data.repository.query.Param;
 
 public class PendingApplicationResponseModelTest {
     @Test
