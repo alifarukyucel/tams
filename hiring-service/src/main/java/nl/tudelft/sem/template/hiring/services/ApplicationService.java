@@ -162,6 +162,7 @@ public class ApplicationService {
                 .withNetId(netId)
                 .withDuties(duties)
                 .withMaxHours(maxHours)
+                .withTaContactEmail(application.getContactEmail())
                 .build());
 
         if (!result) {
