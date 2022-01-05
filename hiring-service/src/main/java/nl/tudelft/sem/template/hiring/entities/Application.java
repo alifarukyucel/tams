@@ -50,6 +50,10 @@ public class Application {
     @Column(name = "CONTACT_EMAIL")
     private String contactEmail;
 
+    public Application(String courseId, String netId, float grade, String motivation, ApplicationStatus status) {
+        this(courseId, netId, grade, motivation, status, null);
+    }
+
     /**
      * Create an application with the status "Pending".
      *
