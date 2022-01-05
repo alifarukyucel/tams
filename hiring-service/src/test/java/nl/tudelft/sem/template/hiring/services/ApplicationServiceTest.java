@@ -612,7 +612,7 @@ public class ApplicationServiceTest {
     public void acceptValidApplication() {
         // Arrange
         Application application = new Application("CSE1300", "jsmith", 7.0f,
-                "I just want to be cool!", ApplicationStatus.PENDING);
+                "I just want to be cool!", ApplicationStatus.PENDING, "test@email.com");
         applicationRepository.save(application);
 
         when(mockContractInformation.createContract(any())).thenReturn(true);
@@ -633,6 +633,7 @@ public class ApplicationServiceTest {
                         && contract.getNetId().equals(application.getNetId())
                         && contract.getDuties().equals(expectedDuties)
                         && contract.getMaxHours() == expectedMaxHours
+                        && contract.getTaContactEmail().equals(application.getContactEmail())
         ));
     }
 
