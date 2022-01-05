@@ -10,6 +10,7 @@ import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.builders.directors.ContractDirector;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
+import nl.tudelft.sem.template.ta.interfaces.EmailSender;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.springframework.data.domain.Example;
@@ -30,9 +31,21 @@ public class ContractService {
 
     private final transient CourseInformation courseInformation;
 
-    public ContractService(ContractRepository contractRepository, CourseInformation courseInformation) {
+    private final EmailSender emailSender;
+
+    // Subject and body of the email sent to TAs when creating a contract
+    private final String taEmailSubjectTemplate = "You have been offered a TA position for %s";
+    private final String taEmailBodyTemplate = "Hi %s,\n\n"
+            + "The course staff of %s is offering you a TA position. Congratulations!\n"
+            + "Your duties are \"%s\", and the maximum number of hours is %s.\n"
+            + "Please log into TAMS to review and sign the contract.\n\n"
+            + "Best regards,\nThe programme administration of your faculty";
+
+    public ContractService(ContractRepository contractRepository, CourseInformation courseInformation,
+                           EmailSender emailSender) {
         this.contractRepository = contractRepository;
         this.courseInformation = courseInformation;
+        this.emailSender = emailSender;
     }
 
 
