@@ -1,13 +1,17 @@
 package nl.tudelft.sem.template.hiring.services.communication;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +127,54 @@ public class ConnectedCourseInformationServiceTests {
         // Assert
         assertThat(actual).isFalse();
         verify(mockMicroserviceCommunicationHelper, times(0)).get(any(), any(), any());
+    }
+
+    @Test
+    public void testStartDateReturnsCorrectDate() throws Exception {
+        // Arrange
+        String courseId = "CSE1110";
+
+        var date = LocalDateTime.now().plusDays(23);  // random amount to make sure method doesn't just return now
+        CourseInformationResponseModel expected = new CourseInformationResponseModel();
+        expected.setId(courseId);
+        expected.setStartDate(date);
+
+        when(mockMicroserviceCommunicationHelper.get(testUrl + getCourseByIdPath,
+            CourseInformationResponseModel.class, courseId))
+            .thenReturn(ResponseEntity.ok(expected));
+
+        // Act
+        LocalDateTime actual = connectedCourseInformationService.startDate(courseId);
+
+        // Assert
+        assertThat(actual).isSameAs(date);
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + getCourseByIdPath,
+            CourseInformationResponseModel.class, courseId);
+    }
+
+
+    @Test
+    public void testStartDateThrowsWhenNull() throws Exception {
+        // Arrange
+        String courseId = "CSE1110";
+
+        var date = LocalDateTime.now().plusDays(23);  // random amount to make sure method doesn't just return now
+        CourseInformationResponseModel expected = new CourseInformationResponseModel();
+        expected.setId(courseId);
+        expected.setStartDate(date);
+
+        when(mockMicroserviceCommunicationHelper.get(testUrl + getCourseByIdPath,
+            CourseInformationResponseModel.class, courseId))
+            .thenReturn(null);
+
+        // Act
+        ThrowableAssert.ThrowingCallable action = () ->
+            connectedCourseInformationService.startDate(courseId);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
+        verify(mockMicroserviceCommunicationHelper).get(testUrl + getCourseByIdPath,
+            CourseInformationResponseModel.class, courseId);
     }
 
     @Test
