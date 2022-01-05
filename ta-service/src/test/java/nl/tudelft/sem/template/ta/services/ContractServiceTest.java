@@ -3,6 +3,9 @@ package nl.tudelft.sem.template.ta.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -303,15 +306,26 @@ class ContractServiceTest {
                 .numberOfStudents(21)
                 .build());
 
+        String testContactEmail = "winstijn@tudelft.nl";
 
         // Act
         Contract saved = contractService.createUnsignedContract(
-                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                testContactEmail);
 
         // Assert
         assertThat(contractRepository.findAll().size()).isEqualTo(3);
         assertThat(contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310")))
             .isEqualTo(saved);
+
+        verify(mockEmailSender).sendEmail(testContactEmail,
+                "You have been offered a TA position for CSE2310",
+                "Hi WinstijnSmit,\n\n"
+                        + "The course staff of CSE2310 is offering you a TA position. Congratulations!\n"
+                        + "Your duties are \"Heel hard werken\", and the maximum number of hours is 20.\n"
+                        + "Please log into TAMS to review and sign the contract.\n\n"
+                        + "Best regards,\nThe programme administration of your faculty");
+        verifyNoMoreInteractions(mockEmailSender);
     }
 
     @Test
