@@ -403,13 +403,15 @@ class ContractServiceTest {
 
         // Act
         ThrowingCallable c = () -> contractService.createUnsignedContract(
-                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                "winstijn@tudelft.nl");
 
         // Assert
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
         assertThat(contractRepository.findAll().size()).isEqualTo(1);
+        verifyNoInteractions(mockEmailSender);
     }
 
     @Test
@@ -427,13 +429,15 @@ class ContractServiceTest {
 
         // Act
         ThrowingCallable c = () -> contractService.createUnsignedContract(
-                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                "winstijn@tudelft.nl");
 
         // Assert
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
         assertThat(contractRepository.findAll().size()).isZero();
+        verifyNoInteractions(mockEmailSender);
     }
 
     @Test
@@ -447,15 +451,20 @@ class ContractServiceTest {
 
         // Act
         ThrowingCallable actionNegativeMaxHours = () ->
-            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", -1, "Duties");
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", -1, "Duties",
+                    "winstijn@tudelft.nl");
         ThrowingCallable actionCourseNull = () ->
-            contractService.createUnsignedContract("WinstijnSmit", null, 10, "Duties");
+            contractService.createUnsignedContract("WinstijnSmit", null, 10, "Duties",
+                    "winstijn@tudelft.nl");
         ThrowingCallable actionCourseEmpty = () ->
-            contractService.createUnsignedContract("WinstijnSmit", "", 10, "Duties");
+            contractService.createUnsignedContract("WinstijnSmit", "", 10, "Duties",
+                    "winstijn@tudelft.nl");
         ThrowingCallable actionNetIdNull = () ->
-            contractService.createUnsignedContract(null, "", 10, "Duties");
+            contractService.createUnsignedContract(null, "", 10, "Duties",
+                    "winstijn@tudelft.nl");
         ThrowingCallable actionNetIdEmpty = () ->
-            contractService.createUnsignedContract("", "CSE2525", 10, "Duties");
+            contractService.createUnsignedContract("", "CSE2525", 10, "Duties",
+                    "winstijn@tudelft.nl");
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNegativeMaxHours);
@@ -464,6 +473,7 @@ class ContractServiceTest {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdNull);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdEmpty);
         assertThat(contractRepository.findAll().size()).isEqualTo(0);
+        verifyNoInteractions(mockEmailSender);
     }
 
 
@@ -487,12 +497,14 @@ class ContractServiceTest {
 
         // Act
         ThrowingCallable actionConflict = () ->
-            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 5, "Duties");
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 5, "Duties",
+                    "winstijn@tudelft.nl");
 
         // There should be an error because there is a conflict.
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionConflict);
         assertThat(contractRepository.findAll().size()).isEqualTo(1);
+        verifyNoInteractions(mockEmailSender);
     }
 
     @Test
