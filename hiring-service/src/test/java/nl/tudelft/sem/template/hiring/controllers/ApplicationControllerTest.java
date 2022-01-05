@@ -721,6 +721,68 @@ public class ApplicationControllerTest {
         result.andExpect(status().isForbidden());
     }
 
+    /**
+     * Test for checking if the method still works when an invalid index (too low) is provided.
+     * A parameterized test is used here to make sure it works for both 0 and a negative amount.
+     *
+     * @param amount The (invalid) amount of recommended applications to request.
+     */
+    @ParameterizedTest
+    @CsvSource({"0", "-1"})
+    public void getRecommendedApplicationsIndexTooLow(String amount) throws Exception {
+        //Arrange
+        List<PendingApplicationResponseModel> expected = new ArrayList<>();
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, "CSE1300"))
+                .thenReturn(true);
+
+        //Act
+        ResultActions action = mockMvc.perform(get("/applications/CSE1300/recommended/" + amount)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Joe"));
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+        
+        //Assert
+        List<PendingApplicationResponseModel> res = parsePendingApplicationsResult(result);
+        assertThat(res).isEqualTo(expected);
+    }
+    
+    @Test
+    public void getRecommendedApplicationsIndexTooHigh() throws Exception {
+        //Arrange
+        Application application = new Application("CSE1300", "asmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        applicationRepository.save(application);
+
+        when(mockCourseInformation.isResponsibleLecturer(exampleNetId, "CSE1300"))
+                .thenReturn(true);
+
+        String[] netIds = new String[]{"asmith"};
+        Map<String, Double> expectedMap = new HashMap<>() {{
+                put("asmith", 8.0d);
+            }
+        };
+        when(mockContractInformation.getTaRatings(List.of(netIds)))
+                .thenReturn(expectedMap);
+
+        PendingApplicationResponseModel model = new PendingApplicationResponseModel(application, 8.0d);
+        List<PendingApplicationResponseModel> expectedResult = List.of(model);
+
+
+        //Act
+        ResultActions action = mockMvc.perform(get("/applications/CSE1300/recommended/2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Joe"));
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //Assert
+        List<PendingApplicationResponseModel> res = parsePendingApplicationsResult(result);
+        assertThat(res).isEqualTo(expectedResult);
+    }
+
     @Test
     public void getRecommendedApplications() throws Exception {
         //Arrange
@@ -767,7 +829,7 @@ public class ApplicationControllerTest {
         List<PendingApplicationResponseModel> expectedResult = List.of(model2, model, model5, model3);
 
         //Act
-        ResultActions action = mockMvc.perform(get("/applications/CSE1300/recommended/3")
+        ResultActions action = mockMvc.perform(get("/applications/CSE1300/recommended/4")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Joe"));
         MvcResult result = action

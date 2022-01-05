@@ -43,7 +43,6 @@ public class PendingApplicationResponseModel implements Comparable<PendingApplic
         //Lastly the candidates with an insufficient rating
         double rating1 = this.getReformattedRating();
         double rating2 = other.getReformattedRating();
-        System.out.println(Double.compare(rating1, rating2));
         return (Double.compare(rating1, rating2));
     }
 
