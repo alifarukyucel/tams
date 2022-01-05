@@ -51,20 +51,21 @@ public class ContractService {
 
     /**
      * Create a contract that is unsigned.
+     * Optionally email the newly-hired TA to inform them they have a new contract to sign.
      * Note that this method ensures that the contract does not exist.
      *
      * @param courseId courseId of contract
      * @param netId netId of TA.
-     * @param maxHours max amount of hours g a TA can work
-     * @param duties of the TA
+     * @param maxHours max amount of hours a TA can work
+     * @param duties duties of the TA
+     * @param taContactEmail an email to contact the TA
      * @return a saved instance of Contract.
      * @throws IllegalArgumentException if any of the parameters are null or invalid,
      *                                  the contract already exists, or
      *                                  no more TAs are allowed to be hired for the course.
      */
-    public Contract createUnsignedContract(String netId, String courseId,
-                                                        int maxHours, String duties)
-                                            throws IllegalArgumentException {
+    public Contract createUnsignedContract(String netId, String courseId, int maxHours, String duties,
+                                           String taContactEmail) throws IllegalArgumentException {
 
         // Check if parameters were given are valid.
         if (StringUtils.isEmpty(netId)
@@ -95,6 +96,14 @@ public class ContractService {
 
         // save can also throw an IllegalArgumentException if failed.
         contract = save(contract);
+
+        // email the newly-hired TA if a contact email is specified
+        if (taContactEmail != null) {
+            String emailSubject = String.format(taEmailSubjectTemplate, courseId);
+            String emailBody = String.format(taEmailBodyTemplate, netId, courseId, duties, maxHours);
+            this.emailSender.sendEmail(taContactEmail, emailSubject, emailBody);
+        }
+
         return contract;
     }
 
