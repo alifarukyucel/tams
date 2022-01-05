@@ -38,13 +38,13 @@ public class PendingApplicationResponseModel implements Comparable<PendingApplic
         //First candidates with a sufficient rating
         //Then candidates that don't have a rating yet (They are set to have rating "-1")
         //Lastly the candidates with an insufficient rating
-        double rating1 = this.reformatRating();
-        double rating2 = other.reformatRating();
+        double rating1 = this.getReformattedRating();
+        double rating2 = other.getReformattedRating();
         System.out.println(Double.compare(rating1, rating2));
         return (Double.compare(rating1, rating2));
     }
 
-    private double reformatRating() {
+    private double getReformattedRating() {
         double rating = this.getTaRating();
 
         //Using a switch here is impossible because we are working with doubles

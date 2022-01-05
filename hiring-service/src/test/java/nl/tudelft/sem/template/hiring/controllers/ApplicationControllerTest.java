@@ -709,7 +709,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    private void getRecommendedApplicationsWhileNotBeingResponsibleLecturerTest() throws Exception {
+    public void getRecommendedApplicationsWhileNotBeingResponsibleLecturerTest() throws Exception {
         //Arrange
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, "CSE1300"))
                 .thenReturn(false);
@@ -733,26 +733,38 @@ public class ApplicationControllerTest {
         Application application4 = new Application("CSE1300", "dsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.PENDING);
         Application application5 = new Application("CSE1300", "esmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        Application application6 = new Application("CSE1300", "fsmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.ACCEPTED);
         applicationRepository.save(application);
         applicationRepository.save(application2);
         applicationRepository.save(application3);
         applicationRepository.save(application4);
         applicationRepository.save(application5);
+        applicationRepository.save(application6);
 
         when(mockCourseInformation.isResponsibleLecturer(exampleNetId, "CSE1300"))
                 .thenReturn(true);
 
-        String[] netIds = new String[]{"asmith", "bsmith", "csmith", "dsmith"};
+        String[] netIds = new String[]{"asmith", "bsmith", "csmith", "dsmith", "esmith"};
         Map<String, Double> expectedMap = new HashMap<>() {{
                 put("asmith", 8.0d);
                 put("bsmith", 9.0d);
                 put("csmith", 3.0d);
-                put("dsmith", -1.0d);
+                put("dsmith", 2.0d);
+                put("esmith", -1.0d);
             }
         };
         when(mockContractInformation.getTaRatings(List.of(netIds)))
                 .thenReturn(expectedMap);
+
+        //Notice how in the following code application3 is not added because it isn't in the top-3 recommended.
+        //Also notice the order of which the applications were added to the expected result, in the order of TA-rating.
+        PendingApplicationResponseModel model = new PendingApplicationResponseModel(application, 8.0d);
+        PendingApplicationResponseModel model2 = new PendingApplicationResponseModel(application2, 9.0d);
+        PendingApplicationResponseModel model3 = new PendingApplicationResponseModel(application3, 3.0d);
+        PendingApplicationResponseModel model5 = new PendingApplicationResponseModel(application5, -1.0d);
+        List<PendingApplicationResponseModel> expectedResult = List.of(model2, model, model5, model3);
 
         //Act
         ResultActions action = mockMvc.perform(get("/applications/CSE1300/recommended/3")
@@ -762,19 +774,8 @@ public class ApplicationControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        //Notice how in the following code application3 is not added because it isn't in the top-3 recommended.
-        //Also notice the order of which the applications were added to the expected result, in the order of TA-rating.
+        //Assert
         List<PendingApplicationResponseModel> res = parsePendingApplicationsResult(result);
-        PendingApplicationResponseModel model = new PendingApplicationResponseModel(application, 8.0d);
-        PendingApplicationResponseModel model2 = new PendingApplicationResponseModel(application2, 9.0d);
-        PendingApplicationResponseModel model4 = new PendingApplicationResponseModel(application4, -1.0d);
-        List<PendingApplicationResponseModel> expectedResult = new ArrayList<>() {{
-                add(model2);
-                add(model);
-                add(model4);
-            }
-        };
-
         assertThat(res).isEqualTo(expectedResult);
     }
 
