@@ -47,6 +47,9 @@ public class Application {
     @Column(name = "STATUS")
     private ApplicationStatus status;
 
+    @Column(name = "CONTACT_EMAIL")
+    private String contactEmail;
+
     /**
      * Create an application with the status "Pending".
      *
