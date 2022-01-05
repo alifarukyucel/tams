@@ -31,11 +31,11 @@ public class ContractService {
 
     private final transient CourseInformation courseInformation;
 
-    private final EmailSender emailSender;
+    private final transient EmailSender emailSender;
 
     // Subject and body of the email sent to TAs when creating a contract
-    private final String taEmailSubjectTemplate = "You have been offered a TA position for %s";
-    private final String taEmailBodyTemplate = "Hi %s,\n\n"
+    private final transient String taEmailSubjectTemplate = "You have been offered a TA position for %s";
+    private final transient String taEmailBodyTemplate = "Hi %s,\n\n"
             + "The course staff of %s is offering you a TA position. Congratulations!\n"
             + "Your duties are \"%s\", and the maximum number of hours is %s.\n"
             + "Please log into TAMS to review and sign the contract.\n\n"
