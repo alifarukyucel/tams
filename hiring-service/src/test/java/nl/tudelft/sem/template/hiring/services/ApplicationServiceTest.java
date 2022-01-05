@@ -216,17 +216,19 @@ public class ApplicationServiceTest {
                 .isEmpty();
     }
 
+    /**
+     * Boundary test off point for date checking.
+     */
     @Test
     public void invalidDateCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
+        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 6.9,
                 motivation, ApplicationStatus.PENDING);
-        assertThat(invalidApplication.meetsRequirements()).isFalse();
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
-                LocalDateTime.now(),
+                LocalDateTime.now().plusWeeks(3),
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -241,6 +243,31 @@ public class ApplicationServiceTest {
                 .isEmpty();
     }
 
+    /**
+     * Boundary test on point for date checking.
+     */
+    @Test
+    public void validDateCheckAndSaveTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 6.9,
+            motivation, ApplicationStatus.PENDING);
+
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+            "CSE1300",
+            LocalDateTime.now().plusWeeks(3).plusDays(1),
+            "CourseName",
+            "CourseDescription",
+            100,
+            new ArrayList<>()));
+
+        //Act
+        applicationService.checkAndSave(invalidApplication);
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+            .isPresent();
+    }
 
     @Test
     public void getWithInvalidCourseId() {
