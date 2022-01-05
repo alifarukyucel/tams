@@ -60,12 +60,14 @@ public class Application {
      * @return a newly created instance of an Application with the status "Pending".
      */
     public static Application createPendingApplication(String courseId, String netId,
-                                                       float grade, String motivation) {
+                                                       float grade, String motivation,
+                                                       String contactEmail) {
         Application application = new Application();
         application.setCourseId(courseId);
         application.setNetId(netId);
         application.setGrade(grade);
         application.setMotivation(motivation);
+        application.setContactEmail(contactEmail);
         application.setStatus(ApplicationStatus.PENDING);
         return application;
     }
