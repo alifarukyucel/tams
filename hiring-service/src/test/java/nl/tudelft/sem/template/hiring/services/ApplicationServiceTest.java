@@ -325,8 +325,6 @@ public class ApplicationServiceTest {
         applicationRepository.save(thirdApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
-                .isEmpty();
         assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
         assertThat(applicationService.hasReachedMaxApplication("johndoe")).isTrue();
     }
@@ -349,8 +347,6 @@ public class ApplicationServiceTest {
         applicationRepository.save(secondApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
-            .isEmpty();
         assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(2);
         assertThat(applicationService.hasReachedMaxApplication("johndoe")).isFalse();
     }
