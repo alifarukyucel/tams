@@ -329,6 +329,53 @@ class ContractServiceTest {
     }
 
     @Test
+    void createUnsignedContractWithoutContactEmail() {
+        // Arrange
+        contractRepository.save(new ConcreteContractBuilder()
+            .withNetId("Martin")
+            .withCourseId("CSE1105")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
+            .build()
+        );
+
+        contractRepository.save(new ConcreteContractBuilder()
+            .withNetId("Martin")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
+            .build()
+        );
+
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(21)
+                .build());
+
+        // Act
+        Contract saved = contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                null);
+
+        // Assert
+        assertThat(contractRepository.findAll().size()).isEqualTo(3);
+        assertThat(contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310")))
+            .isEqualTo(saved);
+        verifyNoInteractions(mockEmailSender);
+    }
+
+    @Test
     void createUnsignedContractExceedingTaLimit() {
         contractRepository.save(new ConcreteContractBuilder()
             .withNetId("Martin")
