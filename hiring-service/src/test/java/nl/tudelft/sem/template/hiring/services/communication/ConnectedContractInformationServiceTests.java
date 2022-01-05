@@ -34,7 +34,7 @@ public class ConnectedContractInformationServiceTests {
     }
 
     @Test
-    public void isResponsibleLecturer_withNoException_returnsTrue() throws Exception {
+    public void createContract_withNoException_returnsTrue() throws Exception {
         // Arrange
         String netId = "martin";
         String courseId = "CSE1110";
@@ -60,7 +60,7 @@ public class ConnectedContractInformationServiceTests {
     }
 
     @Test
-    public void isResponsibleLecturer_withException_returnsFalse() throws Exception {
+    public void createContract_withException_returnsFalse() throws Exception {
         // Arrange
         String netId = "martin";
         String courseId = "CSE1110";
