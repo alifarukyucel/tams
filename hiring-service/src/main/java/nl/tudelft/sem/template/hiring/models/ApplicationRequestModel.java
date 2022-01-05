@@ -11,4 +11,5 @@ public class ApplicationRequestModel {
     private String courseId;
     private float grade;
     private String motivation;
+    private String contactEmail;
 }
