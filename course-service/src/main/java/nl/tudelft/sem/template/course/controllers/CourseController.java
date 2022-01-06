@@ -79,10 +79,10 @@ public class CourseController {
                                                         @PathVariable String courseId) {
         try {
             courseService.isResponsibleLecturer(netId, courseId);
+            return ResponseEntity.ok(true);
         } catch (NoSuchElementException e) {
             return ResponseEntity.ok(false);
         }
-        return ResponseEntity.ok(true);
     }
 
     // ------------------------------ Setters -----------------------------------
