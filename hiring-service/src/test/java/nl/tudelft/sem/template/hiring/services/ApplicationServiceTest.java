@@ -216,17 +216,19 @@ public class ApplicationServiceTest {
                 .isEmpty();
     }
 
+    /**
+     * Boundary test off point for date checking.
+     */
     @Test
     public void invalidDateCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
+        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 6.9,
                 motivation, ApplicationStatus.PENDING);
-        assertThat(invalidApplication.meetsRequirements()).isFalse();
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
-                LocalDateTime.now(),
+                LocalDateTime.now().plusWeeks(3),
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -241,6 +243,31 @@ public class ApplicationServiceTest {
                 .isEmpty();
     }
 
+    /**
+     * Boundary test on point for date checking.
+     */
+    @Test
+    public void validDateCheckAndSaveTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 6.9,
+            motivation, ApplicationStatus.PENDING);
+
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+            "CSE1300",
+            LocalDateTime.now().plusWeeks(3).plusDays(1),
+            "CourseName",
+            "CourseDescription",
+            100,
+            new ArrayList<>()));
+
+        //Act
+        applicationService.checkAndSave(invalidApplication);
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+            .isPresent();
+    }
 
     @Test
     public void getWithInvalidCourseId() {
@@ -304,6 +331,10 @@ public class ApplicationServiceTest {
         assertThat(result).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
+    /**
+     * Boundary test.
+     * Reached Max Applications on point
+     */
     @Test
     public void getApplicationsAndMaxApplicationsTest() {
         //Arrange
@@ -321,10 +352,30 @@ public class ApplicationServiceTest {
         applicationRepository.save(thirdApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
-                .isEmpty();
         assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
         assertThat(applicationService.hasReachedMaxApplication("johndoe")).isTrue();
+    }
+
+    /**
+     * Boundary test.
+     * Reached Max Applications off point
+     */
+    @Test
+    public void maxApplicationsTestOffPoint() {
+        //Arrange
+        String motivation = "I am motivated";
+        Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
+            motivation, ApplicationStatus.PENDING);
+        Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
+            motivation, ApplicationStatus.PENDING);
+
+        //Act
+        applicationRepository.save(firstApplication);
+        applicationRepository.save(secondApplication);
+
+        //Assert
+        assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(2);
+        assertThat(applicationService.hasReachedMaxApplication("johndoe")).isFalse();
     }
 
     @Test
@@ -456,6 +507,9 @@ public class ApplicationServiceTest {
         assertThat(result).isFalse();
     }
 
+    /**
+     * Boundary test withdrawing off point.
+     */
     @Test
     public void checkAndWithdrawJustTooLateTest() {
         //Arrange
@@ -472,6 +526,9 @@ public class ApplicationServiceTest {
         assertThat(result).isFalse();
     }
 
+    /**
+     * Boundary test withdrawing on point.
+     */
     @Test
     public void checkAndWithdrawJustOnTimeTest() {
         //Arrange

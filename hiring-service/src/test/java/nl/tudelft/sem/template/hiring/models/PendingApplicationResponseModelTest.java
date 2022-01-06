@@ -23,6 +23,26 @@ public class PendingApplicationResponseModelTest {
         assertThat(model).isEqualTo(expected);
     }
 
+    /**
+     * Boundary test for the compare to method in relation to the sufficient rating.
+     */
+    @Test
+    public void compareToInsufficientBoundary() {
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+            "I want to be cool too!", ApplicationStatus.PENDING);
+        var p1 = new PendingApplicationResponseModel(application, 5.75d);
+        var p2 = new PendingApplicationResponseModel(application, 5.75d);
+        var p3 = new PendingApplicationResponseModel(application, 5.74d);
+
+        // on point
+        assertThat(p1.compareTo(p2)).isEqualTo(0);
+        assertThat(p2.compareTo(p1)).isEqualTo(0);
+
+        // off point
+        assertThat(p1.compareTo(p3)).isEqualTo(-1);
+        assertThat(p3.compareTo(p1)).isEqualTo(1);
+    }
+
     @Test
     public void compareToTest() {
         Application application = new Application("CSE1300", "jsmith", 7.0f,

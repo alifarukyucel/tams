@@ -310,6 +310,10 @@ class ContractServiceTest {
             .isEqualTo(saved);
     }
 
+    /**
+     * Boundary test for allowing contracts related to a 20:1 student-ta ratio.
+     * Off point.
+     */
     @Test
     void createUnsignedContractExceedingTaLimit() {
         contractRepository.save(new ConcreteContractBuilder()
@@ -347,6 +351,38 @@ class ContractServiceTest {
         assertThat(contractRepository.findAll().size()).isEqualTo(1);
     }
 
+    /**
+     * Boundary test for allowing contracts related to a 20:1 student-ta ratio.
+     * On point.
+     */
+    @Test
+    void onPointTaLimitReached() {
+        // precondition
+        assertThat(contractRepository.findAll().size()).isEqualTo(0);
+
+        // arrange
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+            .id("CSE2310")
+            .description("Very cool course")
+            .numberOfStudents(20)
+            .build());
+
+        // Act
+        contractService.createUnsignedContract(
+            contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+
+        // Assert
+        assertThat(contractRepository.findAll().size()).isEqualTo(1);
+    }
+
     @Test
     void createUnsignedContractInaccessibleCourseService() {
         Contract contract = new ConcreteContractBuilder()
@@ -371,6 +407,10 @@ class ContractServiceTest {
         assertThat(contractRepository.findAll().size()).isZero();
     }
 
+    /**
+     * Boundary test.
+     * Also tests the off point for max hours.
+     */
     @Test
     void createUnsignedContract_illegalArguments() {
         // Arrange
@@ -381,8 +421,8 @@ class ContractServiceTest {
                 .build());
 
         // Act
-        ThrowingCallable actionNegativeMaxHours = () ->
-            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", -1, "Duties");
+        ThrowingCallable actionNonPositiveHours = () ->
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 0, "Duties");
         ThrowingCallable actionCourseNull = () ->
             contractService.createUnsignedContract("WinstijnSmit", null, 10, "Duties");
         ThrowingCallable actionCourseEmpty = () ->
@@ -393,7 +433,7 @@ class ContractServiceTest {
             contractService.createUnsignedContract("", "CSE2525", 10, "Duties");
 
         // Assert
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNegativeMaxHours);
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNonPositiveHours);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseNull);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionCourseEmpty);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdNull);
