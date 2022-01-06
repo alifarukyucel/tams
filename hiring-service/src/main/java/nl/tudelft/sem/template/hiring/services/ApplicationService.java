@@ -26,6 +26,9 @@ public class ApplicationService {
     private final transient ContractInformation contractInformation;
     private final transient CourseInformation courseInformation;
 
+    // maximum number of applications per student
+    private static final transient int maxCandidacies = 3;
+
     /**
      * Constructor for the application service, with the corresponding repositories / information classes.
      * Spring automatically chooses the best implementation for those interfaces.
@@ -46,21 +49,25 @@ public class ApplicationService {
      * It also checks whether the course isn't starting in less than 3 months already.
      *
      * @param application the application to check.
-     * @return boolean whether the application meets the requirements and thus saved.
+     * @throws NoSuchElementException when the provided course does not exist
+     * @throws IllegalArgumentException when the provided grade is not valid
+     * @throws IllegalArgumentException when the application doesn't meet the requirements
+     * @throws IllegalArgumentException when the deadline for the course has already passed
      */
-    public boolean checkAndSave(Application application) {
+    public void checkAndSave(Application application) {
         CourseInformationResponseModel course = courseInformation.getCourseById(application.getCourseId());
         if (course == null) {
             //Course does not exist
-            return false;
+            throw new NoSuchElementException("This course does not exist.");
+        } else if (!application.hasValidGrade()) {
+            throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
         } else if (!application.meetsRequirements()) {
-            return false;
+            throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
         } else if (course.getStartDate().minusWeeks(3)
                 .isBefore(LocalDateTime.now())) {
-            return false;
+            throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
         applicationRepository.save(application);
-        return true;
     }
 
     /**
@@ -189,13 +196,64 @@ public class ApplicationService {
             netIds.add(application.getNetId());
         }
 
-        Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
+        Map<String, Double> taRatings = contractInformation.getTaRatings(netIds);
 
         for (Application application : applications) {
             String netId = application.getNetId();
-            Float rating = taRatings.get(netId);
+            Double rating = taRatings.get(netId);
             extendedApplications.add(new PendingApplicationResponseModel(application, rating));
         }
         return extendedApplications;
+    }
+
+    /**
+     * Retrieving the status of the application to see whether someone is accepted or rejected.
+     *
+     * @param courseId the courseId of the course for which we want to retrieve the status.
+     * @param netId the netId of the user that wants to retrieve a status.
+     * @return String containing the status in readable format.
+     * @throws NoSuchElementException when there is no application for that key
+     */
+    public ApplicationStatus retrieveStatus(String courseId, String netId) {
+        ApplicationKey key = new ApplicationKey(courseId, netId);
+        Optional<Application> applicationOptional = applicationRepository.findById(key);
+
+        if (applicationOptional.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        Application application = applicationOptional.get();
+        return application.getStatus();
+    }
+
+
+    /**
+     * Gets all applications that belong to a specific user.
+     *
+     * @param netId the netId of the user to get applications from.
+     * @return a list of all applications from the user.
+     */
+    public List<Application> getApplicationFromStudent(String netId) {
+        List<Application> allApplications = applicationRepository.findAll();
+        List<Application> result = new ArrayList<>();
+        for (Application application : allApplications) {
+            if (application.getNetId().equals(netId)) {
+                result.add(application);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks whether a user has already applied for 3 courses.
+     *
+     * @param netId the netid of the user for which we check the amount of applications.
+     * @return false when the maximum number of applications hasn't been reached or true otherwise.
+     */
+    public boolean hasReachedMaxApplication(String netId) {
+        if (getApplicationFromStudent(netId).size() < maxCandidacies) {
+            return false;
+        }
+        return true;
     }
 }

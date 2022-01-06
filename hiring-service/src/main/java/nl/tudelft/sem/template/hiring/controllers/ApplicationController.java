@@ -2,6 +2,8 @@ package nl.tudelft.sem.template.hiring.controllers;
 
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
@@ -11,9 +13,9 @@ import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
+import nl.tudelft.sem.template.hiring.models.RetrieveStatusModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.services.ApplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
 
 /**
  * The type Application controller.
@@ -54,23 +55,51 @@ public class ApplicationController {
      *
      * @param request request to apply to become a TA ( courseId, the grade, and motivation)
      * @return String informing if the application is being considered.
+     * @throws ResponseStatusException 403 when the application does not meet the requirements
+     * @throws ResponseStatusException 404 when the course cannot be found
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplicationRequestModel request) {
+        if (applicationService.hasReachedMaxApplication(authManager.getNetid())) {
+            // It is not allowed to have more than 3 applications
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum number of applications has been reached!");
+        }
         Application application = createPendingApplication(
                 request.getCourseId(),
                 authManager.getNetid(),
                 request.getGrade(),
                 request.getMotivation());
-        boolean success = applicationService.checkAndSave(application);
 
-
-        if (success) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
+        try {
+            applicationService.checkAndSave(application);
+            return ResponseEntity.ok("Applied successfully");
+        } catch (NoSuchElementException e) {
+            //Thrown when the course is not found.
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
+
+    /**
+     * Endpoint for fetching the status of a specific course for a signed in user.
+     *
+     * @param course the course to get the status from
+     * @return the status of that course
+     */
+
+    @GetMapping("/status/{course}")
+    public ResponseEntity<RetrieveStatusModel> getStatusByCourse(@PathVariable String course) {
+        try {
+            Application application = applicationService.get(course, authManager.getNetid());
+            RetrieveStatusModel status = RetrieveStatusModel.fromApplication(application);
+
+            return ResponseEntity.ok(status);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
 
     /**
      * API Endpoint for withdrawing an already existing application.
@@ -148,11 +177,12 @@ public class ApplicationController {
     }
 
     /**
-     * API Endpoint for retreiving all applications that are still pending as a JSON.
+     * API Endpoint for retrieving all applications that are still pending as a JSON.
      * These applications also contain their average rating as a TA, retreived from the TA-service.
      *
      * @param courseId The courseId as String.
      * @return The list of pending applications (extended with rating) for that course.
+     * @throws ResponseStatusException 403 if the user is not a responsible lecturer for the course
      */
     @GetMapping("/applications/{courseId}/pending")
     public ResponseEntity<List<PendingApplicationResponseModel>> getPendingApplications(@PathVariable String courseId) {
@@ -164,5 +194,35 @@ public class ApplicationController {
         var extendedApplications = applicationService.extendWithRating(applications);
 
         return ResponseEntity.ok(extendedApplications);
+    }
+
+    /**
+     * API Endpoint for retrieving the "best" X pending, recommended TA-candidates for a given course.
+     * Definition of "best" is determined and explained in the PendingApplicationResponseModel class
+     *
+     * @param courseId  The courseId as a String
+     * @param amount    The amount of candidates to fetch
+     * @return  A list of X pending applications (extended with rating) sorted by recommendation
+     * @throws ResponseStatusException 403 if the user is not a responsible lecturer for the course
+     */
+    @GetMapping("/applications/{courseId}/recommended/{amount}")
+    public ResponseEntity<List<PendingApplicationResponseModel>> getRecommendedApplications(@PathVariable String courseId,
+                                                                                            @PathVariable int amount) {
+        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        if (amount <= 0) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
+        List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        var extendedApplications = applicationService.extendWithRating(applications);
+        Collections.sort(extendedApplications);
+
+        if (amount > extendedApplications.size()) {
+            amount = extendedApplications.size();
+        }
+        return ResponseEntity.ok(extendedApplications.subList(0, amount));
     }
 }
