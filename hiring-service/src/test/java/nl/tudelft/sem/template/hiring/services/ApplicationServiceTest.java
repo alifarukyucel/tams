@@ -305,13 +305,13 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    public void getApplicationsBelowMaxApplicationsTest() {
+    public void getApplicationsAndTwoApplicationsTest() {
         //Arrange
         String motivation = "I am motivated";
         Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
                 motivation, ApplicationStatus.ACCEPTED);
         Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
-                motivation, ApplicationStatus.REJECTED);
+                motivation, ApplicationStatus.PENDING);
         Application thirdApplication = new Application("CSE1400", "johndoe", 7.0f,
                 motivation, ApplicationStatus.PENDING);
 
@@ -327,7 +327,7 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    public void getApplicationsAndMaxApplicationsTest() {
+    public void getApplicationsAndExactlyThreeApplicationsTest() {
         //Arrange
         String motivation = "I am motivated";
         Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
