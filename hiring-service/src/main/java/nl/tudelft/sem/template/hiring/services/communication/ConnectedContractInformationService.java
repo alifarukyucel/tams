@@ -33,10 +33,16 @@ public class ConnectedContractInformationService implements ContractInformation 
     @Override
     public Map<String, Double> getTaRatings(List<String> netIds) {
         try {
-            String netIdString = netIds.toString();
-            String reformattedNetIds = netIdString.substring(1, netIdString.length() - 1);
+            //A regular toString() doesn't work here because it leaves spaces between the values.
+            StringBuilder netIdString = new StringBuilder();
+            for (String netId : netIds) {
+                netIdString.append(netId).append(',');
+            }
+
+            //Still have to substring here to remove the last comma.
+            String reformattedNetIds = netIdString.substring(0, netIdString.length() - 1);
             String url = baseUrl + "/contracts/ratings?netIds=" + reformattedNetIds;
-            return (Map<String, Double>) comm.get(url, Map.class);
+            return (Map<String, Double>) comm.get(url, Map.class).getBody();
         } catch (Exception ex) {
             return new HashMap<>();
         }
