@@ -14,14 +14,38 @@ public class PendingApplicationResponseModelTest {
                 "I want to be cool too!", ApplicationStatus.PENDING);
 
         //Act
-        var model = new PendingApplicationResponseModel(application, 8.0f);
+        var model = new PendingApplicationResponseModel(application, 8.0d);
 
         var expected = new PendingApplicationResponseModel("CSE1300", "jsmith", 7.0f,
-                "I want to be cool too!", 8.0f);
+                "I want to be cool too!", 8.0d);
 
         //Assert
         assertThat(model).isEqualTo(expected);
     }
 
+    @Test
+    public void compareToTest() {
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        var p1 = new PendingApplicationResponseModel(application, 9.0d);
+        var p2 = new PendingApplicationResponseModel(application, 5.75d);
+        var p3 = new PendingApplicationResponseModel(application, 5.74d);
+        var p4 = new PendingApplicationResponseModel(application, -1.0d);
+        var p5 = new PendingApplicationResponseModel(application, 9.0d);
+
+        //Compare 2 sufficient ratings
+        assertThat(p1.compareTo(p2)).isEqualTo(-1);
+        assertThat(p2.compareTo(p1)).isEqualTo(1);
+
+        //Compare sufficient to insufficient and non-existing
+        assertThat(p2.compareTo(p3)).isEqualTo(-1);
+        assertThat(p2.compareTo(p4)).isEqualTo(-1);
+
+        //Compare insufficient to non-existing
+        assertThat(p3.compareTo(p4)).isEqualTo(1);
+
+        //Compare 2 equal ratings
+        assertThat(p1.compareTo(p5)).isEqualTo(0);
+    }
 
 }
