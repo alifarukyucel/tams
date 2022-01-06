@@ -31,12 +31,11 @@ public class ConnectedContractInformationService implements ContractInformation 
     }
 
     @Override
-    public Map<String, Float> getTaRatings(List<String> netIds) {
+    public Map<String, Double> getTaRatings(List<String> netIds) {
         try {
-            return (Map<String, Float>) comm.get(baseUrl + "/contracts/ratings", Map.class, "netIds=" + netIds.toString()).getBody();
+            return (Map<String, Double>) comm.get(baseUrl + "/contracts/ratings", Map.class, "netIds=" + netIds.toString()).getBody();
         } catch (Exception ex) {
             return new HashMap<>();
         }
-//        return new HashMap<>();
     }
 }
