@@ -185,7 +185,7 @@ public class CourseTests {
     }
 
     @Test
-    public void isResponsibleLecturer_correctLecturer_200Ok() throws Exception {
+    public void isResponsibleLecturer_correctLecturer_200OkTrue() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -198,11 +198,16 @@ public class CourseTests {
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        action.andExpect(status().isOk());
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Boolean actual = Boolean.valueOf(result.getResponse().getContentAsString());
+        assertThat(actual).isTrue();
     }
 
     @Test
-    public void isResponsibleLecturer_withMultipleLecturers_200Ok() throws Exception {
+    public void isResponsibleLecturer_withMultipleLecturers_200OkTrue() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         responsibleLecturers.add("anniballePanichella");
@@ -216,11 +221,16 @@ public class CourseTests {
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        action.andExpect(status().isOk());
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Boolean actual = Boolean.valueOf(result.getResponse().getContentAsString());
+        assertThat(actual).isTrue();
     }
 
     @Test
-    public void isResponsibleLecturer_lecturerDoesNotExist_404NotFound() throws Exception {
+    public void isResponsibleLecturer_lecturerDoesNotExist_200OkFalse() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -233,11 +243,16 @@ public class CourseTests {
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        action.andExpect(status().isNotFound());
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Boolean actual = Boolean.valueOf(result.getResponse().getContentAsString());
+        assertThat(actual).isFalse();
     }
 
     @Test
-    public void isResponsibleLecturer_courseDoesNotExist_404NotFound() throws Exception {
+    public void isResponsibleLecturer_courseDoesNotExist_200OkFalse() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -250,6 +265,11 @@ public class CourseTests {
                 .header("Authorization", "Bearer Mulder"));
 
         // Assert
-        action.andExpect(status().isNotFound());
+        MvcResult result = action
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Boolean actual = Boolean.valueOf(result.getResponse().getContentAsString());
+        assertThat(actual).isFalse();
     }
 }
