@@ -33,7 +33,9 @@ public class ConnectedContractInformationService implements ContractInformation 
     @Override
     public Map<String, Double> getTaRatings(List<String> netIds) {
         try {
-            return (Map<String, Double>) comm.get(baseUrl + "/contracts/ratings", Map.class, "netIds=" + netIds.toString()).getBody();
+            String reformattedNetIds = netIds.toString().substring(1, netIds.size()-1);
+            String url = baseUrl + "/contracts/ratings?netIds=" + reformattedNetIds;
+            return (Map<String, Double>) comm.get(url, Map.class);
         } catch (Exception ex) {
             return new HashMap<>();
         }
