@@ -200,11 +200,11 @@ public class ApplicationService {
             netIds.add(application.getNetId());
         }
 
-        Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
+        Map<String, Double> taRatings = contractInformation.getTaRatings(netIds);
 
         for (Application application : applications) {
             String netId = application.getNetId();
-            Float rating = taRatings.get(netId);
+            Double rating = taRatings.get(netId);
             extendedApplications.add(new PendingApplicationResponseModel(application, rating));
         }
         return extendedApplications;
