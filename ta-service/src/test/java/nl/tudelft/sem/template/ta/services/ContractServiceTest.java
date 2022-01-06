@@ -443,12 +443,24 @@ class ContractServiceTest {
             .numberOfStudents(20)
             .build());
 
+        String testContactEmail = "winstijn@tudelft.nl";
+
         // Act
         contractService.createUnsignedContract(
-            contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                testContactEmail);
 
         // Assert
         assertThat(contractRepository.findAll().size()).isEqualTo(1);
+
+        verify(mockEmailSender).sendEmail(testContactEmail,
+                "You have been offered a TA position for CSE2310",
+                "Hi WinstijnSmit,\n\n"
+                        + "The course staff of CSE2310 is offering you a TA position. Congratulations!\n"
+                        + "Your duties are \"Heel hard werken\", and the maximum number of hours is 20.\n"
+                        + "Please log into TAMS to review and sign the contract.\n\n"
+                        + "Best regards,\nThe programme administration of your faculty");
+        verifyNoMoreInteractions(mockEmailSender);
     }
 
     @Test
