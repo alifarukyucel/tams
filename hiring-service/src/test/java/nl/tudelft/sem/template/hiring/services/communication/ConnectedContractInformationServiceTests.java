@@ -1,11 +1,13 @@
 package nl.tudelft.sem.template.hiring.services.communication;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.MAP;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @SpringBootTest
 @ActiveProfiles({"test", "mockMicroserviceCommunicationHelper"})
@@ -99,8 +97,8 @@ public class ConnectedContractInformationServiceTests {
         String extendedUrl = testUrl +  getTaRatingsPath + "?netIds=" + netIds.get(0) + "," + netIds.get(1);
 
         Map<String, Double> expectedMap = new HashMap<>() {{
-            put("asmith", 9.0d);
-            put("bsmith", -1.0d);
+                put("asmith", 9.0d);
+                put("bsmith", -1.0d);
             }
         };
 
@@ -126,7 +124,7 @@ public class ConnectedContractInformationServiceTests {
         Map<String, Double> actual = connectedContractInformationService.getTaRatings(netIds);
 
         //Assert
-//        assertThat(actual).isEqualTo(new HashMap<>());
+        assertThat(actual).isEqualTo(new HashMap<>());
         verify(mockMicroserviceCommunicationHelper).get(extendedUrl, Map.class);
     }
 }
