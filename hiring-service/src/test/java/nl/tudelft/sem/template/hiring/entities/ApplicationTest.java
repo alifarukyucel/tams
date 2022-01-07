@@ -35,6 +35,9 @@ public class ApplicationTest {
         assertThat(defaultPendingApplication).isEqualTo(pendingApplication);
     }
 
+    /**
+     * Boundary test off point.
+     */
     @Test
     public void doesNotMeetRequirementsApplicationTest() {
         //Arrange
@@ -45,7 +48,7 @@ public class ApplicationTest {
 
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
                 grade, motivation);
-        pendingApplication.setGrade(5.9f);
+        pendingApplication.setGrade(Math.nextDown(6.0f));
 
         //Act
         boolean meetsRequirements = pendingApplication.meetsRequirements();
@@ -54,6 +57,9 @@ public class ApplicationTest {
         assertThat(meetsRequirements).isFalse();
     }
 
+    /**
+     * Boundary test on point.
+     */
     @Test
     public void meetsRequirementsApplicationTest() {
         //Arrange
@@ -73,6 +79,9 @@ public class ApplicationTest {
         assertThat(meetsRequirements).isTrue();
     }
 
+    /**
+     * Boundary test off point.
+     */
     @Test
     public void gradeBelowOneApplicationTest() {
         //Arrange
@@ -83,7 +92,7 @@ public class ApplicationTest {
 
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
                 grade, motivation);
-        pendingApplication.setGrade(0.9f);
+        pendingApplication.setGrade(Math.nextDown(1.0f));
 
         //Act
         boolean validGrade = pendingApplication.hasValidGrade();
@@ -92,6 +101,9 @@ public class ApplicationTest {
         assertThat(validGrade).isFalse();
     }
 
+    /**
+     * Boundary test on point.
+     */
     @Test
     public void gradeOneApplicationTest() {
         //Arrange
@@ -111,6 +123,9 @@ public class ApplicationTest {
         assertThat(validGrade).isTrue();
     }
 
+    /**
+     * Boundary test off point.
+     */
     @Test
     public void gradeAboveTenApplicationTest() {
         //Arrange
@@ -121,7 +136,7 @@ public class ApplicationTest {
 
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
                 grade, motivation);
-        pendingApplication.setGrade(10.1f);
+        pendingApplication.setGrade(Math.nextUp(10.0f));
 
         //Act
         boolean validGrade = pendingApplication.hasValidGrade();
@@ -130,6 +145,9 @@ public class ApplicationTest {
         assertThat(validGrade).isFalse();
     }
 
+    /**
+     * Boundary test on point.
+     */
     @Test
     public void gradeTenApplicationTest() {
         //Arrange
