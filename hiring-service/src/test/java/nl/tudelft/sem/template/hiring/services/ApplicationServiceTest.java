@@ -304,8 +304,32 @@ public class ApplicationServiceTest {
         assertThat(result).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
+    // Off-point test for hasReachedMax(), 2 application
     @Test
-    public void getApplicationsAndMaxApplicationsTest() {
+    public void getApplicationsAndTwoApplicationsTest() {
+        //Arrange
+        String motivation = "I am motivated";
+        Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
+                motivation, ApplicationStatus.ACCEPTED);
+        Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        Application thirdApplication = new Application("CSE1400", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+
+        //Act
+        applicationRepository.save(firstApplication);
+        applicationRepository.save(secondApplication);
+        applicationRepository.save(thirdApplication);
+
+        //Assert
+        assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
+        assertThat(applicationService.hasReachedMaxApplication("johndoe")).isFalse();
+
+    }
+
+    // On-point test for hasReachedMax(), 3 applications
+    @Test
+    public void getApplicationsAndExactlyThreeApplicationsTest() {
         //Arrange
         String motivation = "I am motivated";
         Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
