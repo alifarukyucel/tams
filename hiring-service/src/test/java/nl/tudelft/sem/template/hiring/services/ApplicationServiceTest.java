@@ -697,6 +697,35 @@ public class ApplicationServiceTest {
     public void acceptValidApplication() {
         // Arrange
         Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be cool!", ApplicationStatus.PENDING, "test@email.com");
+        applicationRepository.save(application);
+
+        when(mockContractInformation.createContract(any())).thenReturn(true);
+
+        String expectedDuties = "Do TA stuff";
+        int expectedMaxHours = 42;
+
+        // Act
+        applicationService.accept(application.getCourseId(), application.getNetId(), expectedDuties, expectedMaxHours);
+
+        // Assert
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        verify(mockContractInformation).createContract(argThat(contract ->
+                contract.getCourseId().equals(application.getCourseId())
+                        && contract.getNetId().equals(application.getNetId())
+                        && contract.getDuties().equals(expectedDuties)
+                        && contract.getMaxHours() == expectedMaxHours
+                        && contract.getTaContactEmail().equals(application.getContactEmail())
+        ));
+    }
+
+    @Test
+    public void acceptValidApplicationWithoutContactEmail() {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
                 "I just want to be cool!", ApplicationStatus.PENDING);
         applicationRepository.save(application);
 
@@ -718,6 +747,7 @@ public class ApplicationServiceTest {
                         && contract.getNetId().equals(application.getNetId())
                         && contract.getDuties().equals(expectedDuties)
                         && contract.getMaxHours() == expectedMaxHours
+                        && contract.getTaContactEmail() == null
         ));
     }
 

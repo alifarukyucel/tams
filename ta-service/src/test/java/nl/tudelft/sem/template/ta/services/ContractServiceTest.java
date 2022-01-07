@@ -3,6 +3,9 @@ package nl.tudelft.sem.template.ta.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
+import nl.tudelft.sem.template.ta.interfaces.EmailSender;
 import nl.tudelft.sem.template.ta.repositories.ContractRepository;
 import nl.tudelft.sem.template.ta.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -29,7 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional  // prevents lazy loading issues and will keep the connection open.
-@ActiveProfiles({"test", "mockCourseInformation"})
+@ActiveProfiles({"test", "mockCourseInformation", "mockEmailSender"})
 class ContractServiceTest {
 
     @Autowired
@@ -40,6 +44,9 @@ class ContractServiceTest {
 
     @Autowired
     private transient CourseInformation mockCourseInformation;
+
+    @Autowired
+    private transient EmailSender mockEmailSender;
 
     @Test
     void signExistingContract() {
@@ -262,6 +269,7 @@ class ContractServiceTest {
         Contract expected = contractRepository.getOne(
             new ContractId(contract.getNetId(), contract.getCourseId()));
         assertThat(contract).isEqualTo(expected);
+        verifyNoInteractions(mockEmailSender);
     }
 
     @Test
@@ -299,15 +307,73 @@ class ContractServiceTest {
                 .numberOfStudents(21)
                 .build());
 
+        String testContactEmail = "winstijn@tudelft.nl";
 
         // Act
         Contract saved = contractService.createUnsignedContract(
-                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                testContactEmail);
 
         // Assert
         assertThat(contractRepository.findAll().size()).isEqualTo(3);
         assertThat(contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310")))
             .isEqualTo(saved);
+
+        verify(mockEmailSender).sendEmail(testContactEmail,
+                "You have been offered a TA position for CSE2310",
+                "Hi WinstijnSmit,\n\n"
+                        + "The course staff of CSE2310 is offering you a TA position. Congratulations!\n"
+                        + "Your duties are \"Heel hard werken\", and the maximum number of hours is 20.\n"
+                        + "Please log into TAMS to review and sign the contract.\n\n"
+                        + "Best regards,\nThe programme administration of your faculty");
+        verifyNoMoreInteractions(mockEmailSender);
+    }
+
+    @Test
+    void createUnsignedContractWithoutContactEmail() {
+        // Arrange
+        contractRepository.save(new ConcreteContractBuilder()
+            .withNetId("Martin")
+            .withCourseId("CSE1105")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
+            .build()
+        );
+
+        contractRepository.save(new ConcreteContractBuilder()
+            .withNetId("Martin")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
+            .build()
+        );
+
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("WinstijnSmit")
+            .withCourseId("CSE2310")
+            .withSigned(false)
+            .withMaxHours(20)
+            .withDuties("Heel hard werken")
+            .build();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(21)
+                .build());
+
+        // Act
+        Contract saved = contractService.createUnsignedContract(
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                null);
+
+        // Assert
+        assertThat(contractRepository.findAll().size()).isEqualTo(3);
+        assertThat(contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310")))
+            .isEqualTo(saved);
+        verifyNoInteractions(mockEmailSender);
     }
 
     /**
@@ -342,13 +408,15 @@ class ContractServiceTest {
 
         // Act
         ThrowingCallable c = () -> contractService.createUnsignedContract(
-                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                "winstijn@tudelft.nl");
 
         // Assert
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
         assertThat(contractRepository.findAll().size()).isEqualTo(1);
+        verifyNoInteractions(mockEmailSender);
     }
 
     /**
@@ -375,12 +443,24 @@ class ContractServiceTest {
             .numberOfStudents(20)
             .build());
 
+        String testContactEmail = "winstijn@tudelft.nl";
+
         // Act
         contractService.createUnsignedContract(
-            contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                testContactEmail);
 
         // Assert
         assertThat(contractRepository.findAll().size()).isEqualTo(1);
+
+        verify(mockEmailSender).sendEmail(testContactEmail,
+                "You have been offered a TA position for CSE2310",
+                "Hi WinstijnSmit,\n\n"
+                        + "The course staff of CSE2310 is offering you a TA position. Congratulations!\n"
+                        + "Your duties are \"Heel hard werken\", and the maximum number of hours is 20.\n"
+                        + "Please log into TAMS to review and sign the contract.\n\n"
+                        + "Best regards,\nThe programme administration of your faculty");
+        verifyNoMoreInteractions(mockEmailSender);
     }
 
     @Test
@@ -398,13 +478,15 @@ class ContractServiceTest {
 
         // Act
         ThrowingCallable c = () -> contractService.createUnsignedContract(
-                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties());
+                contract.getNetId(), contract.getCourseId(), contract.getMaxHours(), contract.getDuties(),
+                "winstijn@tudelft.nl");
 
         // Assert
         assertThatIllegalArgumentException()
                 .isThrownBy(c);
 
         assertThat(contractRepository.findAll().size()).isZero();
+        verifyNoInteractions(mockEmailSender);
     }
 
     /**
@@ -422,15 +504,20 @@ class ContractServiceTest {
 
         // Act
         ThrowingCallable actionNonPositiveHours = () ->
-            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 0, "Duties");
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 0, "Duties",
+                    "winstijn@tudelft.nl");
         ThrowingCallable actionCourseNull = () ->
-            contractService.createUnsignedContract("WinstijnSmit", null, 10, "Duties");
+            contractService.createUnsignedContract("WinstijnSmit", null, 10, "Duties",
+                    "winstijn@tudelft.nl");
         ThrowingCallable actionCourseEmpty = () ->
-            contractService.createUnsignedContract("WinstijnSmit", "", 10, "Duties");
+            contractService.createUnsignedContract("WinstijnSmit", "", 10, "Duties",
+                    "winstijn@tudelft.nl");
         ThrowingCallable actionNetIdNull = () ->
-            contractService.createUnsignedContract(null, "", 10, "Duties");
+            contractService.createUnsignedContract(null, "", 10, "Duties",
+                    "winstijn@tudelft.nl");
         ThrowingCallable actionNetIdEmpty = () ->
-            contractService.createUnsignedContract("", "CSE2525", 10, "Duties");
+            contractService.createUnsignedContract("", "CSE2525", 10, "Duties",
+                    "winstijn@tudelft.nl");
 
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNonPositiveHours);
@@ -439,6 +526,7 @@ class ContractServiceTest {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdNull);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionNetIdEmpty);
         assertThat(contractRepository.findAll().size()).isEqualTo(0);
+        verifyNoInteractions(mockEmailSender);
     }
 
 
@@ -462,12 +550,14 @@ class ContractServiceTest {
 
         // Act
         ThrowingCallable actionConflict = () ->
-            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 5, "Duties");
+            contractService.createUnsignedContract("WinstijnSmit", "CSE2525", 5, "Duties",
+                    "winstijn@tudelft.nl");
 
         // There should be an error because there is a conflict.
         // Assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(actionConflict);
         assertThat(contractRepository.findAll().size()).isEqualTo(1);
+        verifyNoInteractions(mockEmailSender);
     }
 
     @Test

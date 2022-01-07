@@ -16,7 +16,7 @@ public class ApplicationTest {
     public void setUp() {
         String motivation = "I just want to be a TA!";
         defaultPendingApplication = new Application("CSE1200", "johndoe", (float) 6.0,
-                motivation, ApplicationStatus.PENDING);
+                motivation, ApplicationStatus.PENDING, "somebodytoucha@myspaghet.it");
     }
 
     @Test
@@ -26,10 +26,11 @@ public class ApplicationTest {
         String netId = defaultPendingApplication.getNetId();
         float grade = defaultPendingApplication.getGrade();
         String motivation = defaultPendingApplication.getMotivation();
+        String contactEmail = defaultPendingApplication.getContactEmail();
 
         //Act
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
-                grade, motivation);
+                grade, motivation, contactEmail);
 
         //Assert
         assertThat(defaultPendingApplication).isEqualTo(pendingApplication);
@@ -45,9 +46,10 @@ public class ApplicationTest {
         String netId = defaultPendingApplication.getNetId();
         float grade = defaultPendingApplication.getGrade();
         String motivation = defaultPendingApplication.getMotivation();
+        String contactEmail = defaultPendingApplication.getContactEmail();
 
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
-                grade, motivation);
+                grade, motivation, contactEmail);
         pendingApplication.setGrade(Math.nextDown(6.0f));
 
         //Act
@@ -67,9 +69,10 @@ public class ApplicationTest {
         String netId = defaultPendingApplication.getNetId();
         float grade = defaultPendingApplication.getGrade();
         String motivation = defaultPendingApplication.getMotivation();
+        String contactEmail = defaultPendingApplication.getContactEmail();
 
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
-                grade, motivation);
+                grade, motivation, contactEmail);
         pendingApplication.setGrade(6.0f);
 
         //Act
@@ -89,9 +92,10 @@ public class ApplicationTest {
         String netId = defaultPendingApplication.getNetId();
         float grade = defaultPendingApplication.getGrade();
         String motivation = defaultPendingApplication.getMotivation();
+        String contactEmail = defaultPendingApplication.getContactEmail();
 
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
-                grade, motivation);
+                grade, motivation, contactEmail);
         pendingApplication.setGrade(Math.nextDown(1.0f));
 
         //Act
@@ -111,9 +115,10 @@ public class ApplicationTest {
         String netId = defaultPendingApplication.getNetId();
         float grade = defaultPendingApplication.getGrade();
         String motivation = defaultPendingApplication.getMotivation();
+        String contactEmail = defaultPendingApplication.getContactEmail();
 
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
-                grade, motivation);
+                grade, motivation, contactEmail);
         pendingApplication.setGrade(1.0f);
 
         //Act
@@ -133,9 +138,10 @@ public class ApplicationTest {
         String netId = defaultPendingApplication.getNetId();
         float grade = defaultPendingApplication.getGrade();
         String motivation = defaultPendingApplication.getMotivation();
+        String contactEmail = defaultPendingApplication.getContactEmail();
 
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
-                grade, motivation);
+                grade, motivation, contactEmail);
         pendingApplication.setGrade(Math.nextUp(10.0f));
 
         //Act
@@ -155,9 +161,10 @@ public class ApplicationTest {
         String netId = defaultPendingApplication.getNetId();
         float grade = defaultPendingApplication.getGrade();
         String motivation = defaultPendingApplication.getMotivation();
+        String contactEmail = defaultPendingApplication.getContactEmail();
 
         Application pendingApplication = Application.createPendingApplication(courseId, netId,
-                grade, motivation);
+                grade, motivation, contactEmail);
         pendingApplication.setGrade(10.0f);
 
         //Act
