@@ -333,7 +333,8 @@ public class ApplicationServiceTest {
 
     /**
      * Boundary test.
-     * Reached Max Applications on point
+     * Off-point for reaching maximum amount of applications
+     * 2 pending applications
      */
     @Test
     public void getApplicationsAndTwoApplicationsTest() {
@@ -358,7 +359,8 @@ public class ApplicationServiceTest {
     }
 
     /**
-     * On-point test for reaching maximum amount of applications.
+     * Boundary test.
+     * On-point for reaching maximum amount of applications
      * 3 pending applications
      */
     @Test

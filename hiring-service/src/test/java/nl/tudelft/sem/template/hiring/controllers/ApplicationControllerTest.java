@@ -273,7 +273,8 @@ public class ApplicationControllerTest {
     }
 
     /**
-     * On-point test for reaching maximum amount of applications.
+     * Boundary test.
+     * On-point test for reaching maximum amount of applications
      * 3 pending applications
      */
     @Test
@@ -316,9 +317,9 @@ public class ApplicationControllerTest {
     }
 
     /**
-     * Off-point test for reaching maximum  amount of applications.
+     * Boundary test.
+     * Off-point test for reaching maximum  amount of applications
      * 2 pending applications
-     * 2 closed applications, which should not be taken into account
      */
     @Test
     public void oneMoreApplicationPossibleTest() throws Exception {
@@ -759,12 +760,12 @@ public class ApplicationControllerTest {
         MvcResult result = action
                 .andExpect(status().isOk())
                 .andReturn();
-        
+
         //Assert
         List<PendingApplicationResponseModel> res = parsePendingApplicationsResult(result);
         assertThat(res).isEqualTo(expected);
     }
-    
+
     @Test
     public void getRecommendedApplicationsIndexTooHigh() throws Exception {
         //Arrange
