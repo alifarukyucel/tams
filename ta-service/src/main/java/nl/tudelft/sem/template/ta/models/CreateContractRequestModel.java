@@ -15,4 +15,5 @@ public class CreateContractRequestModel {
     private String netId;
     private String duties; 
     private int maxHours;
+    private String taContactEmail;
 }

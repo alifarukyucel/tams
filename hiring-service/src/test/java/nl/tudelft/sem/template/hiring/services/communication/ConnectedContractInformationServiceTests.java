@@ -49,6 +49,7 @@ public class ConnectedContractInformationServiceTests {
                 .withNetId(netId)
                 .withDuties("Be a good TA")
                 .withMaxHours(42)
+                .withTaContactEmail("martin@tudelft.nl")
                 .build();
 
         when(mockMicroserviceCommunicationHelper.post(testUrl + createContractPath,
@@ -75,6 +76,7 @@ public class ConnectedContractInformationServiceTests {
                 .withNetId(netId)
                 .withDuties("Be a good TA")
                 .withMaxHours(42)
+                .withTaContactEmail("martin@tudelft.nl")
                 .build();
 
         when(mockMicroserviceCommunicationHelper.post(testUrl + createContractPath,
