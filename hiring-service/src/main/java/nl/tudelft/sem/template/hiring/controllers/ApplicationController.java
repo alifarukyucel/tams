@@ -68,7 +68,8 @@ public class ApplicationController {
                 request.getCourseId(),
                 authManager.getNetid(),
                 request.getGrade(),
-                request.getMotivation());
+                request.getMotivation(),
+                request.getContactEmail());
 
         try {
             applicationService.checkAndSave(application);

@@ -34,7 +34,7 @@ public class ConnectedContractInformationServiceTests {
     }
 
     @Test
-    public void isResponsibleLecturer_withNoException_returnsTrue() throws Exception {
+    public void createContract_withNoException_returnsTrue() throws Exception {
         // Arrange
         String netId = "martin";
         String courseId = "CSE1110";
@@ -44,6 +44,7 @@ public class ConnectedContractInformationServiceTests {
                 .withNetId(netId)
                 .withDuties("Be a good TA")
                 .withMaxHours(42)
+                .withTaContactEmail("martin@tudelft.nl")
                 .build();
 
         when(mockMicroserviceCommunicationHelper.post(testUrl + createContractPath,
@@ -60,7 +61,7 @@ public class ConnectedContractInformationServiceTests {
     }
 
     @Test
-    public void isResponsibleLecturer_withException_returnsFalse() throws Exception {
+    public void createContract_withException_returnsFalse() throws Exception {
         // Arrange
         String netId = "martin";
         String courseId = "CSE1110";
@@ -70,6 +71,7 @@ public class ConnectedContractInformationServiceTests {
                 .withNetId(netId)
                 .withDuties("Be a good TA")
                 .withMaxHours(42)
+                .withTaContactEmail("martin@tudelft.nl")
                 .build();
 
         when(mockMicroserviceCommunicationHelper.post(testUrl + createContractPath,

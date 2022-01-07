@@ -845,7 +845,7 @@ public class ApplicationControllerTest {
     public void acceptValidApplication() throws Exception {
         // Arrange
         Application application = new Application("CSE1300", "jsmith", 7.0f,
-                "I just want to be a cool!", ApplicationStatus.PENDING);
+                "I just want to be a cool!", ApplicationStatus.PENDING, "tueindhoven@utwente.nl");
         applicationRepository.save(application);
 
         ApplicationAcceptRequestModel model = ApplicationAcceptRequestModel.builder()
@@ -878,6 +878,7 @@ public class ApplicationControllerTest {
                         && contract.getNetId().equals(application.getNetId())
                         && contract.getDuties().equals(model.getDuties())
                         && contract.getMaxHours() == model.getMaxHours()
+                        && contract.getTaContactEmail().equals(application.getContactEmail())
         ));
     }
 
