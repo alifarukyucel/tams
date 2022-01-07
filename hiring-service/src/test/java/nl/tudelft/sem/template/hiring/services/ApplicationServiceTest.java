@@ -333,10 +333,38 @@ public class ApplicationServiceTest {
 
     /**
      * Boundary test.
-     * Reached Max Applications on point
+     * Off-point for reaching maximum amount of applications
+     * 2 pending applications
      */
     @Test
-    public void getApplicationsAndMaxApplicationsTest() {
+    public void getApplicationsAndTwoApplicationsTest() {
+        //Arrange
+        String motivation = "I am motivated";
+        Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
+                motivation, ApplicationStatus.ACCEPTED);
+        Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        Application thirdApplication = new Application("CSE1400", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+
+        //Act
+        applicationRepository.save(firstApplication);
+        applicationRepository.save(secondApplication);
+        applicationRepository.save(thirdApplication);
+
+        //Assert
+        assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
+        assertThat(applicationService.hasReachedMaxApplication("johndoe")).isFalse();
+
+    }
+
+    /**
+     * Boundary test.
+     * On-point for reaching maximum amount of applications
+     * 3 pending applications
+     */
+    @Test
+    public void getApplicationsAndExactlyThreeApplicationsTest() {
         //Arrange
         String motivation = "I am motivated";
         Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
