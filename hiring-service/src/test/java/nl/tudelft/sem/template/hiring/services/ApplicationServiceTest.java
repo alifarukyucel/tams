@@ -305,7 +305,7 @@ public class ApplicationServiceTest {
     }
 
     /**
-     * Off-point test for reaching maximum  amount of applications
+     * Off-point test for reaching maximum  amount of applications.
      * 2 pending applications
      * 1 closed applications, which should not be taken into account
      */
@@ -332,7 +332,7 @@ public class ApplicationServiceTest {
     }
 
     /**
-     * On-point test for reaching maximum amount of applications
+     * On-point test for reaching maximum amount of applications.
      * 3 pending applications
      */
     @Test
