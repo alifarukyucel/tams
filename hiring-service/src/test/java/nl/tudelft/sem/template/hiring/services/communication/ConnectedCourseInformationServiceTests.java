@@ -26,8 +26,8 @@ import org.springframework.test.context.TestPropertySource;
 public class ConnectedCourseInformationServiceTests {
     static final String testUrl = "testUrl";
 
-    public static final String isResponsibleLecturerPath = "/{courseId}/lecturer/{netId}";
-    public static final String getCourseByIdPath = "/{id}";
+    private static final String isResponsibleLecturerPath = "/{courseId}/lecturer/{netId}";
+    private static final String getCourseByIdPath = "/{id}";
 
     @Autowired
     private transient ConnectedCourseInformationService connectedCourseInformationService;

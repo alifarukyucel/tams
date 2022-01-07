@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +26,7 @@ import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.ApplicationAcceptRequestModel;
 import nl.tudelft.sem.template.hiring.models.ApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
+import nl.tudelft.sem.template.hiring.providers.TimeProvider;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.security.TokenVerifier;
@@ -53,11 +53,18 @@ import org.springframework.test.web.servlet.ResultActions;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier",
-                    "mockCourseInformation", "mockContractInformation"})
+                    "mockCourseInformation", "mockContractInformation", "mockTimeProvider"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class ApplicationControllerTest {
-    private static final String exampleNetId = "johndoe";
+    private static final transient String exampleNetId = "johndoe";
+
+    //This is the assumed current time for testing.
+    //Because LocalDateTime.now() can't be used to test properly, we use this time as the current time
+    private static final transient LocalDateTime assumedCurrentTime = LocalDateTime.of(2022, 1, 1, 0, 0);
+
+    @Autowired
+    private transient TimeProvider timeProvider;
 
     @Autowired
     private transient ApplicationRepository applicationRepository;
@@ -88,6 +95,7 @@ public class ApplicationControllerTest {
         when(mockAuthenticationManager.getNetid()).thenReturn(exampleNetId);
         when(mockTokenVerifier.validate(anyString())).thenReturn(true);
         when(mockTokenVerifier.parseNetid(anyString())).thenReturn(exampleNetId);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(assumedCurrentTime);
     }
 
     @Test
@@ -98,6 +106,7 @@ public class ApplicationControllerTest {
 
         ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
                 LocalDateTime.MAX,
@@ -125,6 +134,7 @@ public class ApplicationControllerTest {
 
         ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
                 LocalDateTime.MAX,
@@ -152,6 +162,7 @@ public class ApplicationControllerTest {
 
         ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
                 LocalDateTime.MAX,
@@ -178,6 +189,7 @@ public class ApplicationControllerTest {
 
         ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
                 LocalDateTime.MAX,
@@ -204,6 +216,8 @@ public class ApplicationControllerTest {
                 "I want to");
 
         ApplicationKey validKey = new ApplicationKey(validModel.getCourseId(), exampleNetId);
+
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
                 LocalDateTime.MAX,
@@ -232,6 +246,7 @@ public class ApplicationControllerTest {
 
         ApplicationKey invalidKey = new ApplicationKey(invalidModel.getCourseId(), exampleNetId);
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
                 LocalDateTime.MAX,
@@ -292,9 +307,10 @@ public class ApplicationControllerTest {
 
         ApplicationKey validKey = new ApplicationKey(fourthApplicationModel.getCourseId(), exampleNetId);
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
-                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                LocalDateTime.MAX,
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -327,9 +343,10 @@ public class ApplicationControllerTest {
 
         ApplicationKey validKey = new ApplicationKey(thirdApplicationModel.getCourseId(), exampleNetId);
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
-                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                LocalDateTime.MAX,
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -359,6 +376,7 @@ public class ApplicationControllerTest {
                 .netId(onTime.getNetId())
                 .build();
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.startDate(onTime.getCourseId()))
                 .thenReturn(LocalDateTime.MAX);
 
@@ -490,8 +508,9 @@ public class ApplicationControllerTest {
                 .netId(tooLate.getNetId())
                 .build();
 
+        //AssumedCurrentTime is used here the startTime of the course to guarantee the deadline has passed
         when(mockCourseInformation.startDate(tooLate.getCourseId()))
-                .thenReturn(LocalDateTime.now());
+                .thenReturn(assumedCurrentTime);
 
         // act
         ResultActions onTimeResult  = mockMvc.perform(delete("/withdraw")
@@ -502,7 +521,6 @@ public class ApplicationControllerTest {
         // assert
         assertThat(applicationRepository.findById(key)).isNotEmpty();
         onTimeResult.andExpect(status().isForbidden());
-
     }
 
     @Test

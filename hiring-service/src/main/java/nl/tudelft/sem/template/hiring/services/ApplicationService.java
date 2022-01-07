@@ -67,8 +67,7 @@ public class ApplicationService {
             throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
         } else if (!application.meetsRequirements()) {
             throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
-        } else if (course.getStartDate().minusWeeks(3)
-                .isBefore(timeProvider.getCurrentLocalDateTime())) {
+        } else if (!course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime().plusWeeks(3))) {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
         applicationRepository.save(application);

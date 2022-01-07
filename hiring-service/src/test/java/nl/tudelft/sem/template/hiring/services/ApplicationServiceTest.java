@@ -9,9 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,15 +21,16 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
+import nl.tudelft.sem.template.hiring.providers.TimeProvider;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -40,8 +39,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@ActiveProfiles({"test", "mockCourseInformation", "mockContractInformation"})
+@ActiveProfiles({"test", "mockCourseInformation", "mockContractInformation", "mockTimeProvider"})
 public class ApplicationServiceTest {
+    //This is the assumed current time for testing.
+    //Because LocalDateTime.now() can't be used to test properly, we use this time as the current time
+    private static final transient LocalDateTime assumedCurrentTime = LocalDateTime.of(2022, 1, 1, 0, 0);
+
+    @Autowired
+    private transient TimeProvider timeProvider;
+
     @Autowired
     private transient ApplicationRepository applicationRepository;
 
@@ -54,12 +60,22 @@ public class ApplicationServiceTest {
     @Autowired
     private transient ContractInformation mockContractInformation;
 
+    /**
+     * Setup mocking before tests run.
+     */
+    @BeforeEach
+    public void setup() {
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(assumedCurrentTime);
+    }
+
     @Test
     public void gradeBelowOneCheck() {
         //Arrange
         String motivation = "I just want to be a cool!";
         Application invalidGradeApplication = new Application("CSE1300", "jsmith", 0.9f,
                 motivation, ApplicationStatus.PENDING);
+
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
                 LocalDateTime.MAX,
@@ -84,6 +100,7 @@ public class ApplicationServiceTest {
         Application validUnsufficientGradeApplication = new Application("CSE1300", "jsmith", 1.0f,
                 motivation, ApplicationStatus.PENDING);
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
                 LocalDateTime.MAX,
@@ -108,6 +125,7 @@ public class ApplicationServiceTest {
         Application invalidGradeApplication = new Application("CSE1300", "jsmith", 10.1f,
                 motivation, ApplicationStatus.PENDING);
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
                 LocalDateTime.MAX,
@@ -133,9 +151,10 @@ public class ApplicationServiceTest {
                 motivation, ApplicationStatus.PENDING);
         assertThat(validApplication.meetsRequirements()).isTrue();
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
-                LocalDateTime.of(2024, Month.SEPTEMBER, 1, 9, 0, 0),
+                LocalDateTime.MAX,
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -157,6 +176,7 @@ public class ApplicationServiceTest {
                 motivation, ApplicationStatus.PENDING);
         assertThat(validApplication.meetsRequirements()).isTrue();
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
                 "CSE1200",
                 LocalDateTime.MAX,
@@ -199,6 +219,7 @@ public class ApplicationServiceTest {
                 motivation, ApplicationStatus.PENDING);
         assertThat(invalidApplication.meetsRequirements()).isFalse();
 
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
                 LocalDateTime.MAX,
@@ -228,7 +249,7 @@ public class ApplicationServiceTest {
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
-                LocalDateTime.now().plusWeeks(3),
+                assumedCurrentTime.plusWeeks(3),
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -255,7 +276,7 @@ public class ApplicationServiceTest {
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
             "CSE1300",
-            LocalDateTime.now().plusWeeks(3).plusDays(1),
+            assumedCurrentTime.plusWeeks(3).plusDays(1),
             "CourseName",
             "CourseDescription",
             100,
@@ -482,6 +503,8 @@ public class ApplicationServiceTest {
         Application application = new Application("CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
         applicationRepository.save(application);
+
+        //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
         when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.MAX);
 
         //Act
@@ -498,7 +521,9 @@ public class ApplicationServiceTest {
         Application application = new Application("CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
         applicationRepository.save(application);
-        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.now());
+
+        //When the startTime is the current time, the deadline has passed already
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(assumedCurrentTime);
 
         //Act
         boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
@@ -517,7 +542,7 @@ public class ApplicationServiceTest {
         Application application = new Application("CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
         applicationRepository.save(application);
-        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(LocalDateTime.now().plusWeeks(3));
+        when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(assumedCurrentTime.plusWeeks(3));
 
         //Act
         boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());
@@ -537,7 +562,7 @@ public class ApplicationServiceTest {
                 motivation, ApplicationStatus.PENDING);
         applicationRepository.save(application);
         when(mockCourseInformation.startDate(application.getCourseId())).thenReturn(
-                LocalDateTime.now().plusWeeks(3).plusDays(1));
+                assumedCurrentTime.plusWeeks(3).plusNanos(1));
 
         //Act
         boolean result = applicationService.checkAndWithdraw(application.getCourseId(), application.getNetId());

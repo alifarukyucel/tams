@@ -1,9 +1,8 @@
 package nl.tudelft.sem.template.hiring.providers.implementations;
 
+import java.time.LocalDateTime;
 import nl.tudelft.sem.template.hiring.providers.TimeProvider;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 /**
  * An abstract time provider to make services testable.
