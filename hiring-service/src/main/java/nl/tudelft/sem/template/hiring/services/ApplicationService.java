@@ -12,6 +12,7 @@ import nl.tudelft.sem.template.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.template.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.template.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.template.hiring.models.PendingApplicationResponseModel;
+import nl.tudelft.sem.template.hiring.providers.TimeProvider;
 import nl.tudelft.sem.template.hiring.repositories.ApplicationRepository;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.template.hiring.services.communication.models.CreateContractRequestModel;
@@ -26,6 +27,8 @@ public class ApplicationService {
     private final transient ContractInformation contractInformation;
     private final transient CourseInformation courseInformation;
 
+    private final transient TimeProvider timeProvider;
+
     // maximum number of applications per student
     private static final transient int maxCandidacies = 3;
 
@@ -38,10 +41,11 @@ public class ApplicationService {
      * @param courseInformation         The course information
      */
     public ApplicationService(ApplicationRepository applicationRepository, ContractInformation contractInformation,
-                              CourseInformation courseInformation) {
+                              CourseInformation courseInformation, TimeProvider timeProvider) {
         this.applicationRepository = applicationRepository;
         this.contractInformation = contractInformation;
         this.courseInformation = courseInformation;
+        this.timeProvider = timeProvider;
     }
 
     /**
@@ -64,7 +68,7 @@ public class ApplicationService {
         } else if (!application.meetsRequirements()) {
             throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
         } else if (course.getStartDate().minusWeeks(3)
-                .isBefore(LocalDateTime.now())) {
+                .isBefore(timeProvider.getCurrentLocalDateTime())) {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
         applicationRepository.save(application);
@@ -111,8 +115,7 @@ public class ApplicationService {
      */
     public boolean checkAndWithdraw(String courseId, String netId) {
         LocalDateTime deadline = courseInformation.startDate(courseId).minusWeeks(3);
-        if (LocalDateTime.now().compareTo(deadline) < 0) {
-
+        if (timeProvider.getCurrentLocalDateTime().isBefore(deadline)) {
             applicationRepository.delete(this.get(courseId, netId));
             return true;
         }
