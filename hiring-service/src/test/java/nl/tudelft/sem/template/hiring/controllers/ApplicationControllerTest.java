@@ -272,6 +272,10 @@ public class ApplicationControllerTest {
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
     }
 
+    /**
+     * On-point test for reaching maximum amount of applications.
+     * 3 pending applications
+     */
     @Test
     public void tooManyApplicationsTest() throws Exception {
         //Arrange
@@ -311,6 +315,11 @@ public class ApplicationControllerTest {
         assertThat(applicationRepository.findById(validKey)).isEmpty();
     }
 
+    /**
+     * Off-point test for reaching maximum  amount of applications.
+     * 2 pending applications
+     * 2 closed applications, which should not be taken into account
+     */
     @Test
     public void oneMoreApplicationPossibleTest() throws Exception {
         //Arrange

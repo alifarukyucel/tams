@@ -358,7 +358,7 @@ public class ApplicationServiceTest {
     }
 
     /**
-     * On-point test for reaching maximum amount of applications
+     * On-point test for reaching maximum amount of applications.
      * 3 pending applications
      */
     @Test
