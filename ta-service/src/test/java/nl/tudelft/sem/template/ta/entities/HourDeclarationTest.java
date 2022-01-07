@@ -10,6 +10,8 @@ class HourDeclarationTest {
 
     @Test
     void testBuilder() {
+        //LocalDateTime.now() can be used here since it is not used to check for equality
+        //Therefore it doesn't need to be mocked
         LocalDateTime time = LocalDateTime.now();
         Contract c1 = new Contract();
         HourDeclaration hour1 = new ConcreteHourDeclarationBuilder()
@@ -34,6 +36,8 @@ class HourDeclarationTest {
 
     @Test
     void testSetters() {
+        //LocalDateTime.now() can be used here since it is not used to check for equality
+        //Therefore it doesn't need to be mocked
         LocalDateTime time = LocalDateTime.now();
         Contract c1 = new Contract();
         HourDeclaration hour1 = new HourDeclaration();

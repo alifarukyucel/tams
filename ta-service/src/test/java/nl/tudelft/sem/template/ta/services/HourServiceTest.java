@@ -266,7 +266,7 @@ class HourServiceTest {
         SubmitHoursRequestModel submitHoursRequestModel = SubmitHoursRequestModel.builder()
             .desc("hello")
             .workedTime(5)
-            .date(LocalDateTime.now())
+            .date(LocalDateTime.now())  //Any random LocalDateTime could be used here
             .course(defaultContract.getCourseId())
             .build();
 
