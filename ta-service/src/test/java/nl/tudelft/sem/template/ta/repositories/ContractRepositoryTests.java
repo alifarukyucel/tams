@@ -97,6 +97,31 @@ public class ContractRepositoryTests {
         contractRepository.saveAll(contracts);
     }
 
+    /**
+     * Boundary test for ignored negative numbers in SQL statement.
+     */
+    @Test
+    void testNegativeValuesAreIgnored() {
+        contracts.add(new ConcreteContractBuilder()
+            .withNetId("Maurits")
+            .withCourseId("CSE1210")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(true) // not signed should not be included.
+            .withRating(Math.nextDown(0.0d))
+            .build()
+        );
+
+        Collection<String> netIds = List.of("Maurits");
+
+        // Act
+        var query = queryAndParse(netIds);
+
+        // Assert
+        assertThat(query.keySet().size()).isEqualTo(1);
+        assertThat(query.get("Maurits")).isEqualTo(mauritsAverage);
+    }
+
     // TEST: Get average of an empty collection
     @Test
     void queryAverageRatingOfNetIds_empty() {
