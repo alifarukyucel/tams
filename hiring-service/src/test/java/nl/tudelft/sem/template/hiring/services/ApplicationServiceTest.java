@@ -304,7 +304,11 @@ public class ApplicationServiceTest {
         assertThat(result).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
-    // Off-point test for hasReachedMax(), 2 application
+    /**
+     * Off-point test for reaching maximum  amount of applications
+     * 2 pending applications
+     * 1 closed applications, which should not be taken into account
+     */
     @Test
     public void getApplicationsAndTwoApplicationsTest() {
         //Arrange
@@ -327,7 +331,10 @@ public class ApplicationServiceTest {
 
     }
 
-    // On-point test for hasReachedMax(), 3 applications
+    /**
+     * On-point test for reaching maximum amount of applications
+     * 3 pending applications
+     */
     @Test
     public void getApplicationsAndExactlyThreeApplicationsTest() {
         //Arrange
