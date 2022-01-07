@@ -619,9 +619,9 @@ public class ApplicationServiceTest {
                 "I want to be cool too!", ApplicationStatus.PENDING);
 
         String[] netIds = new String[]{"jsmith", "wsmith"};
-        Map<String, Float> expectedMap = new HashMap<>() {{
-                put("jsmith", 8.0f);
-                put("wsmith", 9.0f);
+        Map<String, Double> expectedMap = new HashMap<>() {{
+                put("jsmith", 8.0d);
+                put("wsmith", 9.0d);
             }
         };
         when(mockContractInformation.getTaRatings(List.of(netIds)))
@@ -630,9 +630,9 @@ public class ApplicationServiceTest {
         var resultList = applicationService.extendWithRating(List.of(application, application2));
 
         var resultModel = new PendingApplicationResponseModel("CSE1300", "jsmith", 7.0f,
-                "I want to be cool too!", 8.0f);
+                "I want to be cool too!", 8.0d);
         var resultModel2 = new PendingApplicationResponseModel("CSE1300", "wsmith", 7.0f,
-                "I want to be cool too!", 9.0f);
+                "I want to be cool too!", 9.0d);
         List<PendingApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
 
         assertThat(resultList).isEqualTo(expectedList);
