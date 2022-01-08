@@ -182,7 +182,7 @@ public class HiringController {
 
     /**
      * API Endpoint for retrieving all applications that are still pending as a JSON.
-     * These applications also contain their average rating as a TA, retreived from the TA-service.
+     * These applications also contain their average rating as a TA, retreived from the TA-microservice.
      *
      * @param courseId The courseId as String.
      * @return The list of pending applications (extended with rating) for that course.

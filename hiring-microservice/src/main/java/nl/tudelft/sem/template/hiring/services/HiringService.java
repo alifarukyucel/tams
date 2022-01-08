@@ -177,7 +177,7 @@ public class HiringService {
     }
 
     /**
-     * Takes in a list of applications and extends them with a TA-rating, retreived from the TA-service.
+     * Takes in a list of applications and extends them with a TA-rating, retreived from the TA-microservice.
      *
      * @param teachingAssistantApplications A list of the desired applications to be extended with a rating.
      * @return a list of extendApplicationRequestModels, created with the extended applications and the TA-ratings.
