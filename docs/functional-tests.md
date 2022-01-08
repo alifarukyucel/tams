@@ -2,6 +2,33 @@
 
 ### The system shall allow users to authenticate using their netid and password, and then issue a token that is used to authenticate the user in other API requests.
 
+##### Logging in with a valid account
+1. Register a user
+2. Log in with that username and password
+3. Verify that a token has been issued
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/25387e78d1754100e812ce2152a50d3b32e14e1d/authentication-microservice/src/test/java/nl/tudelft/sem/tams/authentication/integration/UsersTests.java#L59
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/25387e78d1754100e812ce2152a50d3b32e14e1d/authentication-microservice/src/test/java/nl/tudelft/sem/tams/authentication/integration/UsersTests.java#L115
+
+##### Logging in with an invalid password
+1. Register a user
+2. Log in with that username and another password
+3. Verify that 403 has been returned
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/25387e78d1754100e812ce2152a50d3b32e14e1d/authentication-microservice/src/test/java/nl/tudelft/sem/tams/authentication/integration/UsersTests.java#L59
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/25387e78d1754100e812ce2152a50d3b32e14e1d/authentication-microservice/src/test/java/nl/tudelft/sem/tams/authentication/integration/UsersTests.java#L193
+
+##### Logging in with an invalid username
+1. Register a user
+2. Log in with another username and a password
+3. Verify that 403 has been returned
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/25387e78d1754100e812ce2152a50d3b32e14e1d/authentication-microservice/src/test/java/nl/tudelft/sem/tams/authentication/integration/UsersTests.java#L59
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/25387e78d1754100e812ce2152a50d3b32e14e1d/authentication-microservice/src/test/java/nl/tudelft/sem/tams/authentication/integration/UsersTests.java#L163
+
 ### The system shall allow users to register using a netid and password.
 
 ### The system shall let students candidate themselves as a TA by sending a request to the API including a short motivation statement and their grade for that course.
