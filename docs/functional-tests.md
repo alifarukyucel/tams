@@ -31,6 +31,21 @@
 
 ### The system shall allow users to register using a netid and password.
 
+##### Registering a new user
+1. Register a user with a new username and password
+2. Verify the response is 200
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/25387e78d1754100e812ce2152a50d3b32e14e1d/authentication-microservice/src/test/java/nl/tudelft/sem/tams/authentication/integration/UsersTests.java#L59
+
+##### Registering a user with an existing username
+1. Register a user
+2. Register another user with the same username
+3. Verify the response is 400
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/25387e78d1754100e812ce2152a50d3b32e14e1d/authentication-microservice/src/test/java/nl/tudelft/sem/tams/authentication/integration/UsersTests.java#L85 
+
 ### The system shall let students candidate themselves as a TA by sending a request to the API including a short motivation statement and their grade for that course.
 
 ### The system shall not accept a TA application for a course if they do not submit a grade or that grade is lower than 6.0.
