@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class HourDeclarationTest {
+    //Arbitrary time to use for the hour declarations
+    private static final LocalDateTime arbitraryTime = LocalDateTime.of(2000, 1, 1, 0, 0);
 
     @Test
     void testBuilder() {
-        //LocalDateTime.now() can be used here since it is not used to check for equality
-        //Therefore it doesn't need to be mocked
-        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime time = arbitraryTime;
         Contract c1 = new Contract();
         HourDeclaration hour1 = new ConcreteHourDeclarationBuilder()
             .withId(UUID.randomUUID())
@@ -36,9 +36,7 @@ class HourDeclarationTest {
 
     @Test
     void testSetters() {
-        //LocalDateTime.now() can be used here since it is not used to check for equality
-        //Therefore it doesn't need to be mocked
-        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime time = arbitraryTime;
         Contract c1 = new Contract();
         HourDeclaration hour1 = new HourDeclaration();
         hour1.setId(UUID.randomUUID());
