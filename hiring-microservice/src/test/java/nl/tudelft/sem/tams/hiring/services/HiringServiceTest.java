@@ -596,7 +596,8 @@ public class HiringServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
         taApplicationRepository.save(teachingAssistantApplication);
-        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(assumedCurrentTime.plusWeeks(3));
+        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId()))
+                .thenReturn(assumedCurrentTime.plusWeeks(3));
 
         //Act
         boolean result = taApplicationService.checkAndWithdraw(
