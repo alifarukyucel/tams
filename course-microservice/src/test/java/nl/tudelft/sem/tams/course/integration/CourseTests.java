@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.tudelft.sem.tams.course.entities.Course;
 import nl.tudelft.sem.tams.course.models.CourseAddResponsibleLecturerRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseCreationRequestModel;
