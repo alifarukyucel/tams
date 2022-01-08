@@ -56,7 +56,7 @@ import org.springframework.test.web.servlet.ResultActions;
                     "mockCourseInformation", "mockContractInformation"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
-public class TeachingAssistantApplicationControllerTest {
+public class HiringControllerTest {
     private static final String exampleNetId = "johndoe";
 
     @Autowired
