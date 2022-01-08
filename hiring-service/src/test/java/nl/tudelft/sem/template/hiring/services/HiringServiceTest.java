@@ -39,12 +39,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles({"test", "mockCourseInformation", "mockContractInformation"})
-public class TeachingAssistantApplicationServiceTest {
+public class HiringServiceTest {
     @Autowired
     private transient TeachingAssistantApplicationRepository taApplicationRepository;
 
     @Autowired
-    private transient TeachingAssistantApplicationService taApplicationService;
+    private transient HiringService taApplicationService;
 
     @Autowired
     private transient CourseInformation mockCourseInformation;
