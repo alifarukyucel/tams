@@ -1,6 +1,6 @@
 rootProject.name = 'template'
 
-include 'authentication-service'
-include 'course-service'
-include 'hiring-service'
-include 'ta-service'
+include 'authentication-microservice'
+include 'course-microservice'
+include 'hiring-microservice'
+include 'ta-microservice'
