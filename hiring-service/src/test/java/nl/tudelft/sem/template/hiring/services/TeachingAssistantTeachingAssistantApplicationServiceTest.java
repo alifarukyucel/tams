@@ -746,7 +746,8 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         int expectedMaxHours = 42;
 
         // Act
-        taApplicationService.accept(teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId(), expectedDuties, expectedMaxHours);
+        taApplicationService.accept(teachingAssistantApplication.getCourseId(),
+                teachingAssistantApplication.getNetId(), expectedDuties, expectedMaxHours);
 
         // Assert
         TeachingAssistantApplication actual = taApplicationRepository

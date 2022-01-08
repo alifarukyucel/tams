@@ -213,8 +213,8 @@ public class TeachingAssistantApplicationController {
      * @throws ResponseStatusException 403 if the user is not a responsible lecturer for the course
      */
     @GetMapping("/applications/{courseId}/recommended/{amount}")
-    public ResponseEntity<List<PendingTeachingAssistantApplicationResponseModel>> getRecommendedApplications(@PathVariable String courseId,
-                                                                                            @PathVariable int amount) {
+    public ResponseEntity<List<PendingTeachingAssistantApplicationResponseModel>> getRecommendedApplications(
+            @PathVariable String courseId, @PathVariable int amount) {
         if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -223,7 +223,8 @@ public class TeachingAssistantApplicationController {
             return ResponseEntity.ok(new ArrayList<>());
         }
 
-        List<TeachingAssistantApplication> applications = taApplicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        List<TeachingAssistantApplication> applications = taApplicationService.findAllByCourseAndStatus(
+                courseId, ApplicationStatus.PENDING);
         var extendedApplications = taApplicationService.extendWithRating(applications);
         Collections.sort(extendedApplications);
 

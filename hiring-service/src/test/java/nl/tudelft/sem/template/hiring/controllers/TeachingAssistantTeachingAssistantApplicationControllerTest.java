@@ -800,7 +800,7 @@ public class TeachingAssistantTeachingAssistantApplicationControllerTest {
         when(mockContractInformation.getTaRatings(List.of(netIds)))
                 .thenReturn(expectedMap);
 
-        PendingTeachingAssistantApplicationResponseModel model = new PendingTeachingAssistantApplicationResponseModel(application, 8.0d);
+        var model = new PendingTeachingAssistantApplicationResponseModel(application, 8.0d);
         List<PendingTeachingAssistantApplicationResponseModel> expectedResult = List.of(model);
 
 

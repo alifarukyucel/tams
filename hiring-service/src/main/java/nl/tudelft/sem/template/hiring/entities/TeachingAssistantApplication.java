@@ -50,7 +50,8 @@ public class TeachingAssistantApplication {
     @Column(name = "CONTACT_EMAIL")
     private String contactEmail;
 
-    public TeachingAssistantApplication(String courseId, String netId, float grade, String motivation, ApplicationStatus status) {
+    public TeachingAssistantApplication(String courseId, String netId, float grade, String motivation,
+                                        ApplicationStatus status) {
         this(courseId, netId, grade, motivation, status, null);
     }
 
