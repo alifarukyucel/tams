@@ -37,7 +37,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 
 /**
- * Integration tests mainly for courseController.
+ * Integration tests for CourseController.
  *
  * @created 09 /12/2021, 20:58
  */
