@@ -287,6 +287,11 @@ public class ApplicationControllerTest {
         assertThat(applicationRepository.findById(invalidKey)).isEmpty();
     }
 
+    /**
+     * Boundary test.
+     * On-point test for reaching maximum amount of applications
+     * 3 pending applications
+     */
     @Test
     public void tooManyApplicationsTest() throws Exception {
         //Arrange
@@ -327,9 +332,22 @@ public class ApplicationControllerTest {
         assertThat(applicationRepository.findById(validKey)).isEmpty();
     }
 
+    /**
+     * Boundary test.
+     * Off-point test for reaching maximum  amount of applications
+     * 2 pending applications
+     */
     @Test
     public void oneMoreApplicationPossibleTest() throws Exception {
         //Arrange
+        Application acceptedApplication = new Application("CSE1000", exampleNetId, 7.0f,
+                "I just want to be a cool!", ApplicationStatus.ACCEPTED);
+        applicationRepository.save(acceptedApplication);
+
+        Application rejectedApplication = new Application("CSE1100", exampleNetId, 7.0f,
+                "I just want to be a cool!", ApplicationStatus.REJECTED);
+        applicationRepository.save(rejectedApplication);
+
         Application application1 = new Application("CSE1300", exampleNetId, 7.0f,
                 "I just want to be a cool!", ApplicationStatus.PENDING);
         applicationRepository.save(application1);
@@ -760,12 +778,12 @@ public class ApplicationControllerTest {
         MvcResult result = action
                 .andExpect(status().isOk())
                 .andReturn();
-        
+
         //Assert
         List<PendingApplicationResponseModel> res = parsePendingApplicationsResult(result);
         assertThat(res).isEqualTo(expected);
     }
-    
+
     @Test
     public void getRecommendedApplicationsIndexTooHigh() throws Exception {
         //Arrange

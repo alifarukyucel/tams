@@ -254,9 +254,12 @@ public class ApplicationService {
      * @return false when the maximum number of applications hasn't been reached or true otherwise.
      */
     public boolean hasReachedMaxApplication(String netId) {
-        if (getApplicationFromStudent(netId).size() < maxCandidacies) {
-            return false;
-        }
-        return true;
+        long pendingApplicationsCount = getApplicationFromStudent(netId)
+                .stream()
+                .filter(application ->
+                        application.getStatus().equals(ApplicationStatus.PENDING))
+                .count();
+
+        return pendingApplicationsCount >= maxCandidacies;
     }
 }
