@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import nl.tudelft.sem.template.hiring.models.TeachingAssistantApplicationAcceptRequestModel;
 import org.junit.jupiter.api.Test;
 
-public class TeachingAssistantTeachingAssistantApplicationAcceptRequestModelBuilderTest {
+public class TeachingAssistantApplicationAcceptRequestModelBuilderTest {
 
     private TeachingAssistantApplicationAcceptRequestModel model;
 

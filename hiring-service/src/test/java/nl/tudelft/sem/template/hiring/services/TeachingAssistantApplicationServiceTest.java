@@ -39,7 +39,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles({"test", "mockCourseInformation", "mockContractInformation"})
-public class TeachingAssistantTeachingAssistantApplicationServiceTest {
+public class TeachingAssistantApplicationServiceTest {
     @Autowired
     private transient TeachingAssistantApplicationRepository taApplicationRepository;
 
