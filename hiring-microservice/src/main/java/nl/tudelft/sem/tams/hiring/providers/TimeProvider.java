@@ -1,4 +1,5 @@
-package nl.tudelft.sem.template.hiring.providers;
+package nl.tudelft.sem.tams.hiring.providers;
+
 
 import java.time.LocalDateTime;
 

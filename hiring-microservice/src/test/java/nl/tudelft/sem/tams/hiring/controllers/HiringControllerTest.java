@@ -26,6 +26,7 @@ import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
 import nl.tudelft.sem.tams.hiring.models.TeachingAssistantApplicationAcceptRequestModel;
 import nl.tudelft.sem.tams.hiring.models.TeachingAssistantApplicationRequestModel;
+import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
 import nl.tudelft.sem.tams.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.tams.hiring.security.AuthManager;
 import nl.tudelft.sem.tams.hiring.security.TokenVerifier;
@@ -56,8 +57,6 @@ import org.springframework.test.web.servlet.ResultActions;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class HiringControllerTest {
-    private static final String exampleNetId = "johndoe";
-
     private static final transient String exampleNetId = "johndoe";
 
     //This is the assumed current time for testing.

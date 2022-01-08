@@ -1,7 +1,8 @@
-package nl.tudelft.sem.template.hiring.providers.implementations;
+
+package nl.tudelft.sem.tams.hiring.providers.implementations;
 
 import java.time.LocalDateTime;
-import nl.tudelft.sem.template.hiring.providers.TimeProvider;
+import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
 import org.springframework.stereotype.Component;
 
 /**
