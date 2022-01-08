@@ -1,4 +1,4 @@
-rootProject.name = 'template'
+rootProject.name = 'tams'
 
 include 'authentication-microservice'
 include 'course-microservice'
