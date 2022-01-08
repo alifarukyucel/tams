@@ -58,11 +58,36 @@
 
 ### The system shall let students sign their TA contract by sending an API request.
 
+#### Signing a contract
+1. Submit course id for which the user has a contract
+2. Verify the response is 200
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L144
+
+#### Signing an already signed contract
+1. Submit course id for which the user has a contract
+2. Submit the same course id again
+3. Verify the response is 409
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L165
+
+#### Signing a non-existent contract
+1. Submit course id for which the user has no contract posted
+2. Verify the response is 404
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L188
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L208
+
 ### The system shall let lecturers accept students who have applied to TA a course by sending their netid, the respective course id, hours to be worked, and extra contract information to the API. The application status of that student shall then be changed to ‘accepted’.
 
 ### The system shall expose the amount of hours and the comments for those hours written by TAs that still need to be approved or rejected for their course for each TA to the responsible lecturers via the API. 
 
 ### The system shall let lecturers approve or reject working hours declared by TAs of their own courses by posting to the API.
+
+// maurits
 
 ### The system shall let lecturers request a JSON list of all TA applications for one of their courses including netid, grade, status of application, and the existence of former and present TA contracts of students for the same or other courses as well as the rating (if available).
 
@@ -76,11 +101,15 @@
 
 ### The system shall not allow a TA to declare hours if this were to go over the limit stated in their contract.
 
+// maurits
+
 ### The system shall let a lecturer rate a TA based on their performance by sending an API request.
 
 ### The system shall not allow a lecturer to hire more than 1 TA for every 20 students in the course.
 
 ### The system shall allow a TA to specify how many hours they actually worked on the course by posting the course id and the amount of hours to the API.
+
+// maurits
 
 ### The system shall upon request create a list of recommendees, the best candidates based on experience and rating. The returned list shall be in the same format as the list returned by the endpoint to retrieve all applicants.
 
