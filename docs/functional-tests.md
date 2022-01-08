@@ -101,7 +101,23 @@
 
 ### The system shall not allow a TA to declare hours if this were to go over the limit stated in their contract.
 
-// maurits
+#### Block declaring hours if going over hours stated in contract
+1. Declare hours going over possible remaining hours in contract
+2. Verify 409
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L225
+
+Respective underlying service code is also boundary tested
+
+#### Block approving hours by lecturer if going over contract
+1. Make sure approving hour declaration would go over budget 
+2. Submit hour declaration id and true to approve 
+3. Verify 409
+
+**Relevant tests:**
+
+Respective underlying service code is boundary tested
 
 ### The system shall let a lecturer rate a TA based on their performance by sending an API request.
 
