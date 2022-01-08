@@ -87,7 +87,28 @@
 
 ### The system shall let lecturers approve or reject working hours declared by TAs of their own courses by posting to the API.
 
-// maurits
+#### Approve existing hours
+1. Submit hour declaration id and desired state to endpoint
+2. Verify 200
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L247
+
+#### Re-approve existing hours
+1. Submit hour declaration id and true to endpoint
+2. Submit hour declaration id and true to endpoint again
+3. Verify 409
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L267
+
+#### Approve hours you shouldn't be able to approve
+1. logged-in user does not have approval permissions for this course
+2. Submit hour declaration id and true to endpoint
+3. Verify 403
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L290
 
 ### The system shall let lecturers request a JSON list of all TA applications for one of their courses including netid, grade, status of application, and the existence of former and present TA contracts of students for the same or other courses as well as the rating (if available).
 
