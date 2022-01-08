@@ -1,5 +1,5 @@
 include:
-  - authentication-service/.gitlab-ci.yml
-  - course-service/.gitlab-ci.yml
-  - hiring-service/.gitlab-ci.yml
-  - ta-service/.gitlab-ci.yml
+  - authentication-microservice/.gitlab-ci.yml
+  - course-microservice/.gitlab-ci.yml
+  - hiring-microservice/.gitlab-ci.yml
+  - ta-microservice/.gitlab-ci.yml
