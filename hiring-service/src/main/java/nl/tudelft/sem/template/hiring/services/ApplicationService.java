@@ -30,7 +30,7 @@ public class ApplicationService {
     private static final transient int maxCandidacies = 3;
     
     // Amount of weeks before a course starts when withdrawal is still allowed
-    // e.g. withdrawal is allowed before x weeks before the course starts.
+    // e.g. withdrawal is allowed x weeks before the course starts.
     private static final transient int withdrawalWindow = 3;
 
     /**
