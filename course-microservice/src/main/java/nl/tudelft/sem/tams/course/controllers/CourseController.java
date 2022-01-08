@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.tams.course.entities.Course;
+import nl.tudelft.sem.tams.course.models.CourseAddResponsibleLecturerRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseCreationRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseResponseModel;
 import nl.tudelft.sem.tams.course.security.AuthManager;
