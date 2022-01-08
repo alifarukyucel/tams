@@ -146,7 +146,22 @@ Respective underlying service code is boundary tested
 
 ### The system shall allow a TA to specify how many hours they actually worked on the course by posting the course id and the amount of hours to the API.
 
-// maurits
+#### Submit hour declaration
+1. Submit hours
+2. Verify 200
+3. Verify hours have been properly saved
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L142
+
+#### Submit hour declaration with missing db entries such as course or contract
+1. Make sure no valid course or contract exists for which hours are declared
+2. Declare hours
+3. Verify 404
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L180
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L202
 
 ### The system shall upon request create a list of recommendees, the best candidates based on experience and rating. The returned list shall be in the same format as the list returned by the endpoint to retrieve all applicants.
 
