@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class TeachingAssistantApplicationService {
+public class HiringService {
 
     private final transient TeachingAssistantApplicationRepository taApplicationRepository;
 
@@ -37,9 +37,9 @@ public class TeachingAssistantApplicationService {
      * @param contractInformation       The contract information
      * @param courseInformation         The course information
      */
-    public TeachingAssistantApplicationService(TeachingAssistantApplicationRepository taApplicationRepository,
-                                               ContractInformation contractInformation,
-                                               CourseInformation courseInformation) {
+    public HiringService(TeachingAssistantApplicationRepository taApplicationRepository,
+                         ContractInformation contractInformation,
+                         CourseInformation courseInformation) {
         this.taApplicationRepository = taApplicationRepository;
         this.contractInformation = contractInformation;
         this.courseInformation = courseInformation;

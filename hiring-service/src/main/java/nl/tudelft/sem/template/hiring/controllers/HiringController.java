@@ -15,7 +15,7 @@ import nl.tudelft.sem.template.hiring.models.RetrieveTeachingAssistantApplicatio
 import nl.tudelft.sem.template.hiring.models.TeachingAssistantApplicationAcceptRequestModel;
 import nl.tudelft.sem.template.hiring.models.TeachingAssistantApplicationRequestModel;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
-import nl.tudelft.sem.template.hiring.services.TeachingAssistantApplicationService;
+import nl.tudelft.sem.template.hiring.services.HiringService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class HiringController {
     private final transient AuthManager authManager;
 
-    private final transient TeachingAssistantApplicationService taApplicationService;
+    private final transient HiringService taApplicationService;
     private final transient CourseInformation courseInformation;
 
     /**
@@ -44,7 +44,7 @@ public class HiringController {
      * @param courseInformation  the course information
      */
     public HiringController(AuthManager authManager,
-                            TeachingAssistantApplicationService taApplicationService,
+                            HiringService taApplicationService,
                             CourseInformation courseInformation) {
         this.authManager = authManager;
         this.taApplicationService = taApplicationService;

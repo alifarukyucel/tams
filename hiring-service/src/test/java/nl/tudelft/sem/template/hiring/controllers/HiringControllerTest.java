@@ -30,7 +30,7 @@ import nl.tudelft.sem.template.hiring.models.TeachingAssistantApplicationRequest
 import nl.tudelft.sem.template.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.template.hiring.security.AuthManager;
 import nl.tudelft.sem.template.hiring.security.TokenVerifier;
-import nl.tudelft.sem.template.hiring.services.TeachingAssistantApplicationService;
+import nl.tudelft.sem.template.hiring.services.HiringService;
 import nl.tudelft.sem.template.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.template.hiring.utils.JsonUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +63,7 @@ public class HiringControllerTest {
     private transient TeachingAssistantApplicationRepository taApplicationRepository;
 
     @Autowired
-    private transient TeachingAssistantApplicationService taApplicationService;
+    private transient HiringService taApplicationService;
 
     @Autowired
     private transient MockMvc mockMvc;
