@@ -1,7 +1,7 @@
-Authentication: ![Authentication coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-authentication-service)
-Course: ![Course coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-course-service)
-Hiring: ![Hiring coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-hiring-service)
-TA: ![TA coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-ta-service)
+Authentication: ![Authentication coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-authentication-microservice)
+Course: ![Course coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-course-microservice)
+Hiring: ![Hiring coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-hiring-microservice)
+TA: ![TA coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-ta-microservice)
 
 # CSE2115 - Project
 
