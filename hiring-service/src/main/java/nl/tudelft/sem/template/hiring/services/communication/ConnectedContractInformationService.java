@@ -31,7 +31,13 @@ public class ConnectedContractInformationService implements ContractInformation 
     }
 
     @Override
-    public Map<String, Float> getTaRatings(List<String> netIds) {
-        return new HashMap<>();
+    public Map<String, Double> getTaRatings(List<String> netIds) {
+        try {
+            String reformattedNetIds = String.join(",", netIds);
+            String url = baseUrl + "/contracts/ratings?netIds=" + reformattedNetIds;
+            return (Map<String, Double>) comm.get(url, Map.class).getBody();
+        } catch (Exception ex) {
+            return new HashMap<>();
+        }
     }
 }

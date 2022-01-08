@@ -2,6 +2,8 @@ package nl.tudelft.sem.template.hiring.controllers;
 
 import static nl.tudelft.sem.template.hiring.entities.Application.createPendingApplication;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.template.hiring.entities.Application;
@@ -66,7 +68,8 @@ public class ApplicationController {
                 request.getCourseId(),
                 authManager.getNetid(),
                 request.getGrade(),
-                request.getMotivation());
+                request.getMotivation(),
+                request.getContactEmail());
 
         try {
             applicationService.checkAndSave(application);
@@ -175,11 +178,12 @@ public class ApplicationController {
     }
 
     /**
-     * API Endpoint for retreiving all applications that are still pending as a JSON.
+     * API Endpoint for retrieving all applications that are still pending as a JSON.
      * These applications also contain their average rating as a TA, retreived from the TA-service.
      *
      * @param courseId The courseId as String.
      * @return The list of pending applications (extended with rating) for that course.
+     * @throws ResponseStatusException 403 if the user is not a responsible lecturer for the course
      */
     @GetMapping("/applications/{courseId}/pending")
     public ResponseEntity<List<PendingApplicationResponseModel>> getPendingApplications(@PathVariable String courseId) {
@@ -191,5 +195,35 @@ public class ApplicationController {
         var extendedApplications = applicationService.extendWithRating(applications);
 
         return ResponseEntity.ok(extendedApplications);
+    }
+
+    /**
+     * API Endpoint for retrieving the "best" X pending, recommended TA-candidates for a given course.
+     * Definition of "best" is determined and explained in the PendingApplicationResponseModel class
+     *
+     * @param courseId  The courseId as a String
+     * @param amount    The amount of candidates to fetch
+     * @return  A list of X pending applications (extended with rating) sorted by recommendation
+     * @throws ResponseStatusException 403 if the user is not a responsible lecturer for the course
+     */
+    @GetMapping("/applications/{courseId}/recommended/{amount}")
+    public ResponseEntity<List<PendingApplicationResponseModel>> getRecommendedApplications(@PathVariable String courseId,
+                                                                                            @PathVariable int amount) {
+        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        if (amount <= 0) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
+        List<Application> applications = applicationService.findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        var extendedApplications = applicationService.extendWithRating(applications);
+        Collections.sort(extendedApplications);
+
+        if (amount > extendedApplications.size()) {
+            amount = extendedApplications.size();
+        }
+        return ResponseEntity.ok(extendedApplications.subList(0, amount));
     }
 }

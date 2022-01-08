@@ -216,17 +216,19 @@ public class ApplicationServiceTest {
                 .isEmpty();
     }
 
+    /**
+     * Boundary test off point for date checking.
+     */
     @Test
     public void invalidDateCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
-        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 5.9,
+        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 6.9,
                 motivation, ApplicationStatus.PENDING);
-        assertThat(invalidApplication.meetsRequirements()).isFalse();
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
-                LocalDateTime.now(),
+                LocalDateTime.now().plusWeeks(3),
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -241,6 +243,31 @@ public class ApplicationServiceTest {
                 .isEmpty();
     }
 
+    /**
+     * Boundary test on point for date checking.
+     */
+    @Test
+    public void validDateCheckAndSaveTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        Application invalidApplication = new Application("CSE1300", "jsmith", (float) 6.9,
+            motivation, ApplicationStatus.PENDING);
+
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+            "CSE1300",
+            LocalDateTime.now().plusWeeks(3).plusDays(1),
+            "CourseName",
+            "CourseDescription",
+            100,
+            new ArrayList<>()));
+
+        //Act
+        applicationService.checkAndSave(invalidApplication);
+
+        //Assert
+        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
+            .isPresent();
+    }
 
     @Test
     public void getWithInvalidCourseId() {
@@ -304,8 +331,40 @@ public class ApplicationServiceTest {
         assertThat(result).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
+    /**
+     * Boundary test.
+     * Off-point for reaching maximum amount of applications
+     * 2 pending applications
+     */
     @Test
-    public void getApplicationsAndMaxApplicationsTest() {
+    public void getApplicationsAndTwoApplicationsTest() {
+        //Arrange
+        String motivation = "I am motivated";
+        Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
+                motivation, ApplicationStatus.ACCEPTED);
+        Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        Application thirdApplication = new Application("CSE1400", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+
+        //Act
+        applicationRepository.save(firstApplication);
+        applicationRepository.save(secondApplication);
+        applicationRepository.save(thirdApplication);
+
+        //Assert
+        assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
+        assertThat(applicationService.hasReachedMaxApplication("johndoe")).isFalse();
+
+    }
+
+    /**
+     * Boundary test.
+     * On-point for reaching maximum amount of applications
+     * 3 pending applications
+     */
+    @Test
+    public void getApplicationsAndExactlyThreeApplicationsTest() {
         //Arrange
         String motivation = "I am motivated";
         Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
@@ -321,10 +380,30 @@ public class ApplicationServiceTest {
         applicationRepository.save(thirdApplication);
 
         //Assert
-        assertThat(applicationRepository.findById(new ApplicationKey("CSE1300", "jsmith")))
-                .isEmpty();
         assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
         assertThat(applicationService.hasReachedMaxApplication("johndoe")).isTrue();
+    }
+
+    /**
+     * Boundary test.
+     * Reached Max Applications off point
+     */
+    @Test
+    public void maxApplicationsTestOffPoint() {
+        //Arrange
+        String motivation = "I am motivated";
+        Application firstApplication = new Application("CSE1200", "johndoe", 7.0f,
+            motivation, ApplicationStatus.PENDING);
+        Application secondApplication = new Application("CSE1300", "johndoe", 7.0f,
+            motivation, ApplicationStatus.PENDING);
+
+        //Act
+        applicationRepository.save(firstApplication);
+        applicationRepository.save(secondApplication);
+
+        //Assert
+        assertThat(applicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(2);
+        assertThat(applicationService.hasReachedMaxApplication("johndoe")).isFalse();
     }
 
     @Test
@@ -456,6 +535,9 @@ public class ApplicationServiceTest {
         assertThat(result).isFalse();
     }
 
+    /**
+     * Boundary test withdrawing off point.
+     */
     @Test
     public void checkAndWithdrawJustTooLateTest() {
         //Arrange
@@ -472,6 +554,9 @@ public class ApplicationServiceTest {
         assertThat(result).isFalse();
     }
 
+    /**
+     * Boundary test withdrawing on point.
+     */
     @Test
     public void checkAndWithdrawJustOnTimeTest() {
         //Arrange
@@ -588,9 +673,9 @@ public class ApplicationServiceTest {
                 "I want to be cool too!", ApplicationStatus.PENDING);
 
         String[] netIds = new String[]{"jsmith", "wsmith"};
-        Map<String, Float> expectedMap = new HashMap<>() {{
-                put("jsmith", 8.0f);
-                put("wsmith", 9.0f);
+        Map<String, Double> expectedMap = new HashMap<>() {{
+                put("jsmith", 8.0d);
+                put("wsmith", 9.0d);
             }
         };
         when(mockContractInformation.getTaRatings(List.of(netIds)))
@@ -599,9 +684,9 @@ public class ApplicationServiceTest {
         var resultList = applicationService.extendWithRating(List.of(application, application2));
 
         var resultModel = new PendingApplicationResponseModel("CSE1300", "jsmith", 7.0f,
-                "I want to be cool too!", 8.0f);
+                "I want to be cool too!", 8.0d);
         var resultModel2 = new PendingApplicationResponseModel("CSE1300", "wsmith", 7.0f,
-                "I want to be cool too!", 9.0f);
+                "I want to be cool too!", 9.0d);
         List<PendingApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
 
         assertThat(resultList).isEqualTo(expectedList);
@@ -610,6 +695,35 @@ public class ApplicationServiceTest {
 
     @Test
     public void acceptValidApplication() {
+        // Arrange
+        Application application = new Application("CSE1300", "jsmith", 7.0f,
+                "I just want to be cool!", ApplicationStatus.PENDING, "test@email.com");
+        applicationRepository.save(application);
+
+        when(mockContractInformation.createContract(any())).thenReturn(true);
+
+        String expectedDuties = "Do TA stuff";
+        int expectedMaxHours = 42;
+
+        // Act
+        applicationService.accept(application.getCourseId(), application.getNetId(), expectedDuties, expectedMaxHours);
+
+        // Assert
+        Application actual = applicationRepository
+                .findById(new ApplicationKey(application.getCourseId(), application.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        verify(mockContractInformation).createContract(argThat(contract ->
+                contract.getCourseId().equals(application.getCourseId())
+                        && contract.getNetId().equals(application.getNetId())
+                        && contract.getDuties().equals(expectedDuties)
+                        && contract.getMaxHours() == expectedMaxHours
+                        && contract.getTaContactEmail().equals(application.getContactEmail())
+        ));
+    }
+
+    @Test
+    public void acceptValidApplicationWithoutContactEmail() {
         // Arrange
         Application application = new Application("CSE1300", "jsmith", 7.0f,
                 "I just want to be cool!", ApplicationStatus.PENDING);
@@ -633,6 +747,7 @@ public class ApplicationServiceTest {
                         && contract.getNetId().equals(application.getNetId())
                         && contract.getDuties().equals(expectedDuties)
                         && contract.getMaxHours() == expectedMaxHours
+                        && contract.getTaContactEmail() == null
         ));
     }
 

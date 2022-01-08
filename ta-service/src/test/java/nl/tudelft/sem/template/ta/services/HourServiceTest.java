@@ -122,13 +122,16 @@ class HourServiceTest {
         }
     }
 
+    /**
+     * Boundary test, making sure non-positive hours cannot be submitted.
+     */
     @Test
-    void blockSubmittingNegativeHours() {
+    void blockSubmittingNonPositiveHours() {
         //arrange
         hoursRepository.deleteAll();
         HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
             .withContractId(defaultContract)
-            .withWorkedTime(-5)
+            .withWorkedTime(0)
             .withApproved(false)
             .withReviewed(false)
             .build();
@@ -139,6 +142,27 @@ class HourServiceTest {
         // assert
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
         assertThat(hoursRepository.findAll().size()).isEqualTo(0);
+    }
+
+    /**
+     * Boundary test, making sure positive hours can be submitted.
+     */
+    @Test
+    void allowSubmittingPositiveHours() {
+        //arrange
+        hoursRepository.deleteAll();
+        HourDeclaration hourDeclaration = new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(1)
+            .withApproved(false)
+            .withReviewed(false)
+            .build();
+
+        //act
+        hourService.checkAndSave(hourDeclaration);
+
+        // assert
+        assertThat(hoursRepository.findAll().size()).isEqualTo(1);
     }
 
     @Test
@@ -289,6 +313,10 @@ class HourServiceTest {
         assertThat(hourDeclaration).isEqualTo(optionalFound.get());
     }
 
+    /**
+     * Boundary test for submitting hours.
+     * on point.
+     */
     @Test
     void submitMaxRemainingHoursPopulatedDatabase() {
         // arrange
@@ -309,6 +337,10 @@ class HourServiceTest {
         assertThat(hourDeclaration).isEqualTo(optionalFound.get());
     }
 
+    /**
+     * Boundary test for submitting hours.
+     * off point.
+     */
     @Test
     void submitMoreThanMaxRemainingHoursPopulatedDatabase() {
         // arrange
@@ -327,6 +359,9 @@ class HourServiceTest {
         assertThat(hoursRepository.findAll().size()).isEqualTo(hourDeclarations.size());
     }
 
+    /**
+     * Boundary test.
+     */
     @Test
     void submitHoursCloseToMax() {
         //arrange
@@ -348,6 +383,9 @@ class HourServiceTest {
         assertThat(hourDeclaration).isEqualTo(optionalFound.get());
     }
 
+    /**
+     * Boundary test.
+     */
     @Test
     void submitHoursEqualToMax() {
         //arrange
@@ -369,6 +407,9 @@ class HourServiceTest {
         assertThat(hourDeclaration).isEqualTo(optionalFound.get());
     }
 
+    /**
+     * Boundary test.
+     */
     @Test
     void submitHoursOverMax() {
         //arrange
@@ -387,6 +428,10 @@ class HourServiceTest {
         assertThat(hoursRepository.findAll().size()).isEqualTo(0);
     }
 
+    /**
+     * Boundary test for approving hours.
+     * off point.
+     */
     @Test
     void approveHoursOverContract() {
         // arrange
@@ -426,6 +471,10 @@ class HourServiceTest {
         assertThat(hoursRepository.getOne(hourDeclaration.getId()).getReviewed()).isTrue();
     }
 
+    /**
+     * Boundary test for approving hours.
+     * on point.
+     */
     @Test
     void approveHoursExactMaxContract() {
         // arrange
