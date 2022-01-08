@@ -163,6 +163,7 @@ public class TeachingAssistantApplicationService {
                 .withNetId(netId)
                 .withDuties(duties)
                 .withMaxHours(maxHours)
+                .withTaContactEmail(teachingAssistantApplication.getContactEmail())
                 .build());
 
         if (!result) {
@@ -198,11 +199,11 @@ public class TeachingAssistantApplicationService {
             netIds.add(teachingAssistantApplication.getNetId());
         }
 
-        Map<String, Float> taRatings = contractInformation.getTaRatings(netIds);
+        Map<String, Double> taRatings = contractInformation.getTaRatings(netIds);
 
         for (TeachingAssistantApplication teachingAssistantApplication : teachingAssistantApplications) {
             String netId = teachingAssistantApplication.getNetId();
-            Float rating = taRatings.get(netId);
+            Double rating = taRatings.get(netId);
             extendedApplications.add(new PendingTeachingAssistantApplicationResponseModel(
                     teachingAssistantApplication, rating));
         }
@@ -254,9 +255,12 @@ public class TeachingAssistantApplicationService {
      * @return false when the maximum number of applications hasn't been reached or true otherwise.
      */
     public boolean hasReachedMaxApplication(String netId) {
-        if (getApplicationFromStudent(netId).size() < maxCandidacies) {
-            return false;
-        }
-        return true;
+        long pendingApplicationsCount = getApplicationFromStudent(netId)
+                .stream()
+                .filter(application ->
+                        application.getStatus().equals(ApplicationStatus.PENDING))
+                .count();
+
+        return pendingApplicationsCount >= maxCandidacies;
     }
 }

@@ -47,6 +47,13 @@ public class TeachingAssistantApplication {
     @Column(name = "STATUS")
     private ApplicationStatus status;
 
+    @Column(name = "CONTACT_EMAIL")
+    private String contactEmail;
+
+    public TeachingAssistantApplication(String courseId, String netId, float grade, String motivation, ApplicationStatus status) {
+        this(courseId, netId, grade, motivation, status, null);
+    }
+
     /**
      * Create an application with the status "Pending".
      *
@@ -57,12 +64,14 @@ public class TeachingAssistantApplication {
      * @return a newly created instance of an Application with the status "Pending".
      */
     public static TeachingAssistantApplication createPendingApplication(String courseId, String netId,
-                                                                        float grade, String motivation) {
+                                                                        float grade, String motivation,
+                                                                        String contactEmail) {
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication();
         teachingAssistantApplication.setCourseId(courseId);
         teachingAssistantApplication.setNetId(netId);
         teachingAssistantApplication.setGrade(grade);
         teachingAssistantApplication.setMotivation(motivation);
+        teachingAssistantApplication.setContactEmail(contactEmail);
         teachingAssistantApplication.setStatus(ApplicationStatus.PENDING);
         return teachingAssistantApplication;
     }

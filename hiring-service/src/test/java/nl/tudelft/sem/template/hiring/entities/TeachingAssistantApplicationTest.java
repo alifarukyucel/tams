@@ -16,7 +16,7 @@ public class TeachingAssistantApplicationTest {
     public void setUp() {
         String motivation = "I just want to be a TA!";
         defaultPendingTaApplication = new TeachingAssistantApplication("CSE1200", "johndoe", (float) 6.0,
-                motivation, ApplicationStatus.PENDING);
+                motivation, ApplicationStatus.PENDING, "sus@amog.us");
     }
 
     @Test
@@ -26,15 +26,19 @@ public class TeachingAssistantApplicationTest {
         String netId = defaultPendingTaApplication.getNetId();
         float grade = defaultPendingTaApplication.getGrade();
         String motivation = defaultPendingTaApplication.getMotivation();
+        String contactEmail = defaultPendingTaApplication.getContactEmail();
 
         //Act
         TeachingAssistantApplication pendingTaApplication = TeachingAssistantApplication.createPendingApplication(
-                courseId, netId, grade, motivation);
+                courseId, netId, grade, motivation, contactEmail);
 
         //Assert
         assertThat(defaultPendingTaApplication).isEqualTo(pendingTaApplication);
     }
 
+    /**
+     * Boundary test off point.
+     */
     @Test
     public void doesNotMeetRequirementsApplicationTest() {
         //Arrange
@@ -42,10 +46,11 @@ public class TeachingAssistantApplicationTest {
         String netId = defaultPendingTaApplication.getNetId();
         float grade = defaultPendingTaApplication.getGrade();
         String motivation = defaultPendingTaApplication.getMotivation();
+        String contactEmail = defaultPendingTaApplication.getContactEmail();
 
         TeachingAssistantApplication pendingTaApplication = TeachingAssistantApplication.createPendingApplication(
-                courseId, netId, grade, motivation);
-        pendingTaApplication.setGrade(5.9f);
+                courseId, netId, grade, motivation, contactEmail);
+        pendingTaApplication.setGrade(Math.nextDown(6.0f));
 
         //Act
         boolean meetsRequirements = pendingTaApplication.meetsRequirements();
@@ -54,6 +59,9 @@ public class TeachingAssistantApplicationTest {
         assertThat(meetsRequirements).isFalse();
     }
 
+    /**
+     * Boundary test on point.
+     */
     @Test
     public void meetsRequirementsApplicationTest() {
         //Arrange
@@ -61,9 +69,10 @@ public class TeachingAssistantApplicationTest {
         String netId = defaultPendingTaApplication.getNetId();
         float grade = defaultPendingTaApplication.getGrade();
         String motivation = defaultPendingTaApplication.getMotivation();
+        String contactEmail = defaultPendingTaApplication.getContactEmail();
 
         TeachingAssistantApplication pendingTaApplication = TeachingAssistantApplication.createPendingApplication(
-                courseId, netId, grade, motivation);
+                courseId, netId, grade, motivation, contactEmail);
         pendingTaApplication.setGrade(6.0f);
 
         //Act
@@ -73,6 +82,9 @@ public class TeachingAssistantApplicationTest {
         assertThat(meetsRequirements).isTrue();
     }
 
+    /**
+     * Boundary test off point.
+     */
     @Test
     public void gradeBelowOneApplicationTest() {
         //Arrange
@@ -80,10 +92,11 @@ public class TeachingAssistantApplicationTest {
         String netId = defaultPendingTaApplication.getNetId();
         float grade = defaultPendingTaApplication.getGrade();
         String motivation = defaultPendingTaApplication.getMotivation();
+        String contactEmail = defaultPendingTaApplication.getContactEmail();
 
         TeachingAssistantApplication pendingTaApplication = TeachingAssistantApplication.createPendingApplication(
-                courseId, netId, grade, motivation);
-        pendingTaApplication.setGrade(0.9f);
+                courseId, netId, grade, motivation, contactEmail);
+        pendingTaApplication.setGrade(Math.nextDown(1.0f));
 
         //Act
         boolean validGrade = pendingTaApplication.hasValidGrade();
@@ -92,6 +105,9 @@ public class TeachingAssistantApplicationTest {
         assertThat(validGrade).isFalse();
     }
 
+    /**
+     * Boundary test on point.
+     */
     @Test
     public void gradeOneApplicationTest() {
         //Arrange
@@ -99,9 +115,10 @@ public class TeachingAssistantApplicationTest {
         String netId = defaultPendingTaApplication.getNetId();
         float grade = defaultPendingTaApplication.getGrade();
         String motivation = defaultPendingTaApplication.getMotivation();
+        String contactEmail = defaultPendingTaApplication.getContactEmail();
 
         TeachingAssistantApplication pendingTaApplication = TeachingAssistantApplication.createPendingApplication(
-                courseId, netId, grade, motivation);
+                courseId, netId, grade, motivation, contactEmail);
         pendingTaApplication.setGrade(1.0f);
 
         //Act
@@ -111,6 +128,9 @@ public class TeachingAssistantApplicationTest {
         assertThat(validGrade).isTrue();
     }
 
+    /**
+     * Boundary test off point.
+     */
     @Test
     public void gradeAboveTenApplicationTest() {
         //Arrange
@@ -118,10 +138,11 @@ public class TeachingAssistantApplicationTest {
         String netId = defaultPendingTaApplication.getNetId();
         float grade = defaultPendingTaApplication.getGrade();
         String motivation = defaultPendingTaApplication.getMotivation();
+        String contactEmail = defaultPendingTaApplication.getContactEmail();
 
         TeachingAssistantApplication pendingTaApplication = TeachingAssistantApplication.createPendingApplication(
-                courseId, netId, grade, motivation);
-        pendingTaApplication.setGrade(10.1f);
+                courseId, netId, grade, motivation, contactEmail);
+        pendingTaApplication.setGrade(Math.nextUp(10.0f));
 
         //Act
         boolean validGrade = pendingTaApplication.hasValidGrade();
@@ -130,6 +151,9 @@ public class TeachingAssistantApplicationTest {
         assertThat(validGrade).isFalse();
     }
 
+    /**
+     * Boundary test on point.
+     */
     @Test
     public void gradeTenApplicationTest() {
         //Arrange
@@ -137,9 +161,10 @@ public class TeachingAssistantApplicationTest {
         String netId = defaultPendingTaApplication.getNetId();
         float grade = defaultPendingTaApplication.getGrade();
         String motivation = defaultPendingTaApplication.getMotivation();
+        String contactEmail = defaultPendingTaApplication.getContactEmail();
 
         TeachingAssistantApplication pendingTaApplication = TeachingAssistantApplication.createPendingApplication(
-                courseId, netId, grade, motivation);
+                courseId, netId, grade, motivation, contactEmail);
         pendingTaApplication.setGrade(10.0f);
 
         //Act

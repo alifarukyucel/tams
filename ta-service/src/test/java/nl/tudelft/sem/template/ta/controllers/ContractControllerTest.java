@@ -3,6 +3,9 @@ package nl.tudelft.sem.template.ta.controllers;
 import static nl.tudelft.sem.template.ta.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,6 +21,7 @@ import nl.tudelft.sem.template.ta.entities.Contract;
 import nl.tudelft.sem.template.ta.entities.builders.ConcreteContractBuilder;
 import nl.tudelft.sem.template.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.template.ta.interfaces.CourseInformation;
+import nl.tudelft.sem.template.ta.interfaces.EmailSender;
 import nl.tudelft.sem.template.ta.models.AcceptContractRequestModel;
 import nl.tudelft.sem.template.ta.models.ContractResponseModel;
 import nl.tudelft.sem.template.ta.models.CreateContractRequestModel;
@@ -44,7 +48,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier", "mockCourseInformation"})
+@ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier", "mockCourseInformation", "mockEmailSender"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 @Transactional
@@ -67,6 +71,9 @@ class ContractControllerTest {
 
     @Autowired
     private CourseInformation mockCourseInformation;
+
+    @Autowired
+    private EmailSender mockEmailSender;
 
     private Contract defaultContract;
     private List<Contract> contracts;
@@ -400,6 +407,59 @@ class ContractControllerTest {
                     .isEqualTo(response); // verify that is saved is ours.
         assertThat(contractRepository.findAll().size()).isEqualTo(size + 1);
 
+        verifyNoInteractions(mockEmailSender);
+    }
+
+    @Test
+    void createContractWithContactEmail() throws Exception {
+        // Arrange
+        mockAuthentication("Stefan", true);
+        String testContactEmail = "winstijn@tudelft.nl";
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+                .courseId("CSE2310")
+                .netId("BillGates")
+                .maxHours(10)
+                .duties("My duties")
+                .taContactEmail(testContactEmail)
+                .build();
+        int size = contractRepository.findAll().size();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(41)
+                .build());
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isOk())
+            .andReturn();
+
+        ContractResponseModel response =
+            JsonUtil.deserialize(result.getResponse().getContentAsString(), ContractResponseModel.class);
+
+        assertThat(response).isNotNull();
+        assertThat(ContractResponseModel.fromContract(
+                        contractRepository.getOne(new ContractId("BillGates", "CSE2310"))
+                    ))
+                    .isEqualTo(response); // verify that is saved is ours.
+        assertThat(contractRepository.findAll().size()).isEqualTo(size + 1);
+
+        verify(mockEmailSender).sendEmail(testContactEmail,
+                "You have been offered a TA position for CSE2310",
+                "Hi BillGates,\n\n"
+                        + "The course staff of CSE2310 is offering you a TA position. Congratulations!\n"
+                        + "Your duties are \"My duties\", and the maximum number of hours is 10.\n"
+                        + "Please log into TAMS to review and sign the contract.\n\n"
+                        + "Best regards,\nThe programme administration of your faculty");
+        verifyNoMoreInteractions(mockEmailSender);
     }
 
     @Test

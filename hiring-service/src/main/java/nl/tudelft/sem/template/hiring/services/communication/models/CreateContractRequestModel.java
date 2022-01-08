@@ -11,8 +11,9 @@ import lombok.NoArgsConstructor;
 public class CreateContractRequestModel {
     private String courseId;
     private String netId;
-    private String duties; 
+    private String duties;
     private int maxHours;
+    private String taContactEmail;
 
     public static CreateContractRequestModelBuilder builder() {
         return new CreateContractRequestModelBuilder();
@@ -26,6 +27,7 @@ public class CreateContractRequestModel {
         private transient String netId;
         private transient String duties;
         private transient int maxHours;
+        private transient String taContactEmail;
 
         CreateContractRequestModelBuilder() {
         }
@@ -50,8 +52,13 @@ public class CreateContractRequestModel {
             return this;
         }
 
+        public CreateContractRequestModelBuilder withTaContactEmail(String taContactEmail) {
+            this.taContactEmail = taContactEmail;
+            return this;
+        }
+
         public CreateContractRequestModel build() {
-            return new CreateContractRequestModel(courseId, netId, duties, maxHours);
+            return new CreateContractRequestModel(courseId, netId, duties, maxHours, taContactEmail);
         }
     }
 }

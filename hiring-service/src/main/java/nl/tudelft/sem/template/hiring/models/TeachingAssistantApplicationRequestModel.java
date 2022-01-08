@@ -11,4 +11,9 @@ public class TeachingAssistantApplicationRequestModel {
     private String courseId;
     private float grade;
     private String motivation;
+    private String contactEmail;
+
+    public TeachingAssistantApplicationRequestModel(String courseId, float grade, String motivation) {
+        this(courseId, grade, motivation, null);
+    }
 }

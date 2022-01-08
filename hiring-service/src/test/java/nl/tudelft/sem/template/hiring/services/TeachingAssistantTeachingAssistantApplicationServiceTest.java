@@ -221,18 +221,20 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 .isEmpty();
     }
 
+    /**
+     * Boundary test off point for date checking.
+     */
     @Test
     public void invalidDateCheckAndSaveTest() {
         //Arrange
         String motivation = "I just want to be a cool!";
         TeachingAssistantApplication invalidTeachingAssistantApplication = new TeachingAssistantApplication(
-                "CSE1300", "jsmith", (float) 5.9,
+                "CSE1300", "jsmith", (float) 6.9,
                 motivation, ApplicationStatus.PENDING);
-        assertThat(invalidTeachingAssistantApplication.meetsRequirements()).isFalse();
 
         when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
                 "CSE1300",
-                LocalDateTime.now(),
+                LocalDateTime.now().plusWeeks(3),
                 "CourseName",
                 "CourseDescription",
                 100,
@@ -247,6 +249,31 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 .isEmpty();
     }
 
+    /**
+     * Boundary test on point for date checking.
+     */
+    @Test
+    public void validDateCheckAndSaveTest() {
+        //Arrange
+        String motivation = "I just want to be a cool!";
+        TeachingAssistantApplication invalidApplication = new TeachingAssistantApplication("CSE1300", "jsmith", (float) 6.9,
+            motivation, ApplicationStatus.PENDING);
+
+        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
+            "CSE1300",
+            LocalDateTime.now().plusWeeks(3).plusDays(1),
+            "CourseName",
+            "CourseDescription",
+            100,
+            new ArrayList<>()));
+
+        //Act
+        taApplicationService.checkAndSave(invalidApplication);
+
+        //Assert
+        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
+            .isPresent();
+    }
 
     @Test
     public void getWithInvalidCourseId() {
@@ -314,8 +341,40 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         assertThat(result).isEqualTo(ApplicationStatus.ACCEPTED);
     }
 
+    /**
+     * Boundary test.
+     * Off-point for reaching maximum amount of applications
+     * 2 pending applications
+     */
     @Test
-    public void getApplicationsAndMaxApplicationsTest() {
+    public void getApplicationsAndTwoApplicationsTest() {
+        //Arrange
+        String motivation = "I am motivated";
+        TeachingAssistantApplication firstApplication = new TeachingAssistantApplication("CSE1200", "johndoe", 7.0f,
+                motivation, ApplicationStatus.ACCEPTED);
+        TeachingAssistantApplication secondApplication = new TeachingAssistantApplication("CSE1300", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+        TeachingAssistantApplication thirdApplication = new TeachingAssistantApplication("CSE1400", "johndoe", 7.0f,
+                motivation, ApplicationStatus.PENDING);
+
+        //Act
+        taApplicationRepository.save(firstApplication);
+        taApplicationRepository.save(secondApplication);
+        taApplicationRepository.save(thirdApplication);
+
+        //Assert
+        assertThat(taApplicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
+        assertThat(taApplicationService.hasReachedMaxApplication("johndoe")).isFalse();
+
+    }
+
+    /**
+     * Boundary test.
+     * On-point for reaching maximum amount of applications
+     * 3 pending applications
+     */
+    @Test
+    public void getApplicationsAndExactlyThreeApplicationsTest() {
         //Arrange
         String motivation = "I am motivated";
         TeachingAssistantApplication firstTeachingAssistantApplication = new TeachingAssistantApplication(
@@ -334,10 +393,30 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         taApplicationRepository.save(thirdTeachingAssistantApplication);
 
         //Assert
-        assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
-                .isEmpty();
         assertThat(taApplicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(3);
         assertThat(taApplicationService.hasReachedMaxApplication("johndoe")).isTrue();
+    }
+
+    /**
+     * Boundary test.
+     * Reached Max Applications off point
+     */
+    @Test
+    public void maxApplicationsTestOffPoint() {
+        //Arrange
+        String motivation = "I am motivated";
+        TeachingAssistantApplication firstApplication = new TeachingAssistantApplication("CSE1200", "johndoe", 7.0f,
+            motivation, ApplicationStatus.PENDING);
+        TeachingAssistantApplication secondApplication = new TeachingAssistantApplication("CSE1300", "johndoe", 7.0f,
+            motivation, ApplicationStatus.PENDING);
+
+        //Act
+        taApplicationRepository.save(firstApplication);
+        taApplicationRepository.save(secondApplication);
+
+        //Assert
+        assertThat(taApplicationService.getApplicationFromStudent("johndoe")).size().isEqualTo(2);
+        assertThat(taApplicationService.hasReachedMaxApplication("johndoe")).isFalse();
     }
 
     @Test
@@ -479,6 +558,9 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         assertThat(result).isFalse();
     }
 
+    /**
+     * Boundary test withdrawing off point.
+     */
     @Test
     public void checkAndWithdrawJustTooLateTest() {
         //Arrange
@@ -498,6 +580,9 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
         assertThat(result).isFalse();
     }
 
+    /**
+     * Boundary test withdrawing on point.
+     */
     @Test
     public void checkAndWithdrawJustOnTimeTest() {
         //Arrange
@@ -626,9 +711,9 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 "I want to be cool too!", ApplicationStatus.PENDING);
 
         String[] netIds = new String[]{"jsmith", "wsmith"};
-        Map<String, Float> expectedMap = new HashMap<>() {{
-                put("jsmith", 8.0f);
-                put("wsmith", 9.0f);
+        Map<String, Double> expectedMap = new HashMap<>() {{
+                put("jsmith", 8.0d);
+                put("wsmith", 9.0d);
             }
         };
         when(mockContractInformation.getTaRatings(List.of(netIds)))
@@ -638,9 +723,9 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                 List.of(teachingAssistantApplication, teachingAssistantApplication2));
 
         var resultModel = new PendingTeachingAssistantApplicationResponseModel("CSE1300", "jsmith", 7.0f,
-                "I want to be cool too!", 8.0f);
+                "I want to be cool too!", 8.0d);
         var resultModel2 = new PendingTeachingAssistantApplicationResponseModel("CSE1300", "wsmith", 7.0f,
-                "I want to be cool too!", 9.0f);
+                "I want to be cool too!", 9.0d);
         List<PendingTeachingAssistantApplicationResponseModel> expectedList = List.of(resultModel, resultModel2);
 
         assertThat(resultList).isEqualTo(expectedList);
@@ -649,6 +734,37 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
 
     @Test
     public void acceptValidApplication() {
+        // Arrange
+        TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
+                "CSE1300", "jsmith", 7.0f,
+                "I just want to be cool!", ApplicationStatus.PENDING, "test@email.com");
+        taApplicationRepository.save(teachingAssistantApplication);
+
+        when(mockContractInformation.createContract(any())).thenReturn(true);
+
+        String expectedDuties = "Do TA stuff";
+        int expectedMaxHours = 42;
+
+        // Act
+        taApplicationService.accept(teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId(), expectedDuties, expectedMaxHours);
+
+        // Assert
+        TeachingAssistantApplication actual = taApplicationRepository
+                .findById(new TeachingAssistantApplicationKey(
+                        teachingAssistantApplication.getCourseId(), teachingAssistantApplication.getNetId()))
+                .orElseThrow();
+        assertThat(actual.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        verify(mockContractInformation).createContract(argThat(contract ->
+                contract.getCourseId().equals(teachingAssistantApplication.getCourseId())
+                        && contract.getNetId().equals(teachingAssistantApplication.getNetId())
+                        && contract.getDuties().equals(expectedDuties)
+                        && contract.getMaxHours() == expectedMaxHours
+                        && contract.getTaContactEmail().equals(teachingAssistantApplication.getContactEmail())
+        ));
+    }
+
+    @Test
+    public void acceptValidApplicationWithoutContactEmail() {
         // Arrange
         TeachingAssistantApplication teachingAssistantApplication = new TeachingAssistantApplication(
                 "CSE1300", "jsmith", 7.0f,
@@ -675,6 +791,7 @@ public class TeachingAssistantTeachingAssistantApplicationServiceTest {
                         && contract.getNetId().equals(teachingAssistantApplication.getNetId())
                         && contract.getDuties().equals(expectedDuties)
                         && contract.getMaxHours() == expectedMaxHours
+                        && contract.getTaContactEmail() == null
         ));
     }
 
