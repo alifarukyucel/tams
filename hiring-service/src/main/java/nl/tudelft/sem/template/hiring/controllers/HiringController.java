@@ -27,25 +27,25 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The type Application controller.
+ * The HiringController.
  */
 @RestController
-public class TeachingAssistantApplicationController {
+public class HiringController {
     private final transient AuthManager authManager;
 
     private final transient TeachingAssistantApplicationService taApplicationService;
     private final transient CourseInformation courseInformation;
 
     /**
-     * Instantiates a new Application controller.
+     * Instantiates a new HiringController.
      *
      * @param authManager        the auth manager
      * @param taApplicationService the application service
      * @param courseInformation  the course information
      */
-    public TeachingAssistantApplicationController(AuthManager authManager,
-                                                  TeachingAssistantApplicationService taApplicationService,
-                                                  CourseInformation courseInformation) {
+    public HiringController(AuthManager authManager,
+                            TeachingAssistantApplicationService taApplicationService,
+                            CourseInformation courseInformation) {
         this.authManager = authManager;
         this.taApplicationService = taApplicationService;
         this.courseInformation = courseInformation;
