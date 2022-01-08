@@ -52,7 +52,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void getExistingCourse() {
+    public void getExistingCourse() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -67,7 +67,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void getNonExistingCourse() {
+    public void getNonExistingCourse() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -80,7 +80,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void createCourse_NoExistingCourseInDatabase() {
+    public void createCourse_NoExistingCourseInDatabase() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -95,7 +95,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void createCourse_ExistingCourseInDatabase_throwsConflictException() {
+    public void createCourse_ExistingCourseInDatabase_throwsConflictException() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -109,7 +109,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void isResponsibleLecturer() {
+    public void isResponsibleLecturer() {
         // Arrange
         responsibleLecturers.add(expectedResponsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -124,7 +124,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void isResponsibleLecturer_multipleLecturers() {
+    public void isResponsibleLecturer_multipleLecturers() {
         // Arrange
         responsibleLecturers.add(expectedResponsibleLecturer);
         responsibleLecturers.add("annibalePanichella");
@@ -140,7 +140,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void isNotResponsibleLecturer_differentLecturer_throwsNoSuchElementException() {
+    public void isNotResponsibleLecturer_differentLecturer_throwsNoSuchElementException() {
         // Arrange
         String wrongLecturer = "someOtherGuy";
         responsibleLecturers.add(wrongLecturer);
@@ -159,7 +159,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void isNotResponsibleLecturer_differentCourse_throwsNoSuchElementException() {
+    public void isNotResponsibleLecturer_differentCourse_throwsNoSuchElementException() {
         // Arrange
         responsibleLecturers.add(expectedResponsibleLecturer);
 
@@ -185,7 +185,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void isResponsibleLecturer_courseDoesNotExist_throwsNoSuchElementException() {
+    public void isResponsibleLecturer_courseDoesNotExist_throwsNoSuchElementException() {
         // Arrange
         responsibleLecturers.add(expectedResponsibleLecturer);
 
@@ -199,7 +199,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void addResponsibleLecturers_courseDoesNotExist_throwsNoSuchElementException() {
+    public void addResponsibleLecturers_courseDoesNotExist_throwsNoSuchElementException() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -215,7 +215,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void addResponsibleLecturers_doNotAddIfLecturerAlreadyExists() {
+    public void addResponsibleLecturers_doNotAddIfLecturerAlreadyExists() {
         // Arrange
         responsibleLecturers.add(expectedResponsibleLecturer);  // already exists
         Course course = new Course(testCourseId, testStartDate, testCourseName,
@@ -231,7 +231,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void addResponsibleLecturers_addSingleLecturer() {
+    public void addResponsibleLecturers_addSingleLecturer() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -246,7 +246,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void addResponsibleLecturers_addMultipleLecturers_asMultipleArguments() {
+    public void addResponsibleLecturers_addMultipleLecturers_asMultipleArguments() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -262,7 +262,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void addResponsibleLecturers_addMultipleLecturers_asList() {
+    public void addResponsibleLecturers_addMultipleLecturers_asList() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);

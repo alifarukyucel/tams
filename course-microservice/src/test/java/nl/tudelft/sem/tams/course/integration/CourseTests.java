@@ -46,7 +46,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @ActiveProfiles({"test", "mockTokenVerifier", "mockAuthenticationManager"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
-class CourseTests {
+public class CourseTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -92,7 +92,7 @@ class CourseTests {
     }
 
     @Test
-    void getExistingCourse() throws Exception {
+    public void getExistingCourse() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -113,7 +113,7 @@ class CourseTests {
     }
 
     @Test
-    void getNonExistingCourse() throws Exception {
+    public void getNonExistingCourse() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -134,7 +134,7 @@ class CourseTests {
     }
 
     @Test
-    void createCourse_NoExistingCourseInDatabase() throws Exception {
+    public void createCourse_NoExistingCourseInDatabase() throws Exception {
         // Arrange
         mockAuthentication("Andy", true);
 
@@ -161,7 +161,7 @@ class CourseTests {
     }
 
     @Test
-    void createCourse_ExistingCourseInDatabase_throwsConflictException() throws Exception {
+    public void createCourse_ExistingCourseInDatabase_throwsConflictException() throws Exception {
         // Arrange
         mockAuthentication(responsibleLecturer, true);
 
@@ -185,7 +185,7 @@ class CourseTests {
     }
 
     @Test
-    void isResponsibleLecturer_correctLecturer_200OkTrue() throws Exception {
+    public void isResponsibleLecturer_correctLecturer_200OkTrue() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -207,7 +207,7 @@ class CourseTests {
     }
 
     @Test
-    void isResponsibleLecturer_withMultipleLecturers_200OkTrue() throws Exception {
+    public void isResponsibleLecturer_withMultipleLecturers_200OkTrue() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         responsibleLecturers.add("anniballePanichella");
@@ -230,7 +230,7 @@ class CourseTests {
     }
 
     @Test
-    void isResponsibleLecturer_lecturerDoesNotExist_200OkFalse() throws Exception {
+    public void isResponsibleLecturer_lecturerDoesNotExist_200OkFalse() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -252,7 +252,7 @@ class CourseTests {
     }
 
     @Test
-    void isResponsibleLecturer_courseDoesNotExist_200OkFalse() throws Exception {
+    public void isResponsibleLecturer_courseDoesNotExist_200OkFalse() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -274,7 +274,7 @@ class CourseTests {
     }
 
     @Test
-    void addResponsibleLecturers_courseDoesNotExist_403Forbidden() throws Exception {
+    public void addResponsibleLecturers_courseDoesNotExist_403Forbidden() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer);  // to be authenticated as responsible lecturer
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -291,7 +291,7 @@ class CourseTests {
     }
 
     @Test
-    void addResponsibleLecturers_addSingleLecturer_userIsNotaLecturer() throws Exception {
+    public void addResponsibleLecturers_addSingleLecturer_userIsNotaLecturer() throws Exception {
         // Arrange
         // responsible lecturers is empty, hence, the requesting user is not authenticated as a lecturer
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -308,7 +308,7 @@ class CourseTests {
     }
 
     @Test
-    void addResponsibleLecturers_addSingleLecturer() throws Exception {
+    public void addResponsibleLecturers_addSingleLecturer() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer); // to be authenticated as responsible lecturer
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -328,7 +328,7 @@ class CourseTests {
     }
 
     @Test
-    void addResponsibleLecturers_addMultipleLecturers() throws Exception {
+    public void addResponsibleLecturers_addMultipleLecturers() throws Exception {
         // Arrange
         responsibleLecturers.add(responsibleLecturer); // to be authenticated as responsible lecturer
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
@@ -354,7 +354,7 @@ class CourseTests {
     }
 
     @Test
-    void addResponsibleLecturers_addMultipleLecturers_userIsNotaLecturer_403Forbidden() throws Exception {
+    public void addResponsibleLecturers_addMultipleLecturers_userIsNotaLecturer_403Forbidden() throws Exception {
         // Arrange
         // responsible lecturers is empty, hence, the requesting user is not authenticated as a lecturer
         Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
