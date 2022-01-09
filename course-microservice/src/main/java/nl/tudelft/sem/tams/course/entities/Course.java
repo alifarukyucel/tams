@@ -9,11 +9,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 
 
 /**
@@ -31,6 +31,7 @@ import org.hibernate.Hibernate;
 @RequiredArgsConstructor                             // Use Lombok to get rid of getters, setters,
 @AllArgsConstructor                                  // constructors and other java boilerplate code
 @Entity
+@EqualsAndHashCode
 @Table(name = "course")
 public class Course {
 
@@ -52,16 +53,4 @@ public class Course {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> responsibleLecturers;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-        Course course = (Course) o;
-        return id != null && id.equals(course.id);
-    }
 }
