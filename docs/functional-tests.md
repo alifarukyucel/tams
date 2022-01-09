@@ -161,6 +161,18 @@ Respective underlying service code is boundary tested
 **Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L267
 
+#### Approve more hours than allowed by contract
+1. Create contract with 20 allowed hours
+2. Submit hour declaration of 15 hours
+3. Approve that hour declaration
+4. Submit hour declaration of 6 hours
+5. Try to approve that declaration
+6. Verify 409
+7. Verify declaration has not been marked approved or reviewed
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/fe182b81efab8afb6a98bc88c40cf0a46e185dd8/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L312
+
 #### Approve hours you shouldn't be able to approve
 1. logged-in user does not have approval permissions for this course
 2. Submit hour declaration id and true to endpoint
