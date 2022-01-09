@@ -73,6 +73,22 @@ Respective underlying service code is boundary tested
 
 ### The system shall let users create a course including a unique course id, start date, and number of students. After the course is created, the user shall be assigned as its responsible lecturer.
 
+#### Creating a course
+1. Submit course model to endpoint
+2. Verify the response is 200
+3. Verify data was saved correctly
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L137
+
+#### Creating the same course twice
+1. Submit course model
+2. Verify 409
+3. Verify original data has not been overwritten
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/e9b609c729370b125e164f677a1ebeee23b881b0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L164
+
 ### The system shall let students fetch their TA contract including course name, total amount of hours, extra information, and whether the contract is signed, in JSON format from the API.
 
 ### The system shall let students sign their TA contract by sending an API request.
@@ -288,14 +304,15 @@ Respective underlying service code is boundary tested
 ### The system shall not allow a lecturer to hire more than 1 TA for every 20 students in the course.
 
 #### Block hiring when ratio between student and ta becomes too large
-1. Save an accepted application in the hiring service
-2. Mock Course information to return x students
-3. Submit a new application
-4. Verify 409
-5. Verify application has not been saved
+1. Create course of 40 students
+2. Create a TA contract for that course
+3. Create another TA contract for that course
+4. Create a third TA contract for that course
+7. Verify 400
+8. Verify contract has not been saved
 
 **Relevant tests:**
-
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/7f82e170910fdf8532e934f9b5184127a5ed7036/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L415
 
 Respective underlying service code is boundary tested
 
