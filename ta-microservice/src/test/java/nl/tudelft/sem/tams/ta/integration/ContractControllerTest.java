@@ -147,6 +147,8 @@ class ContractControllerTest {
     @Test
     void updateActualHours() throws Exception {
         // arrange
+        defaultContract.setSigned(true);
+        defaultContract = contractRepository.save(defaultContract);
         Integer toSetHours = 7;
 
         // pre-condition
@@ -173,6 +175,10 @@ class ContractControllerTest {
 
     @Test
     void updateActualHoursNonExistentContract() throws Exception {
+        // arrange
+        defaultContract.setSigned(true);
+        defaultContract = contractRepository.save(defaultContract);
+
         // act
         ResultActions results = mockMvc.perform(post("/contracts/" + defaultContract.getCourseId() + "noise" + "/set-hours/" + 23)
             .contentType(MediaType.APPLICATION_JSON)
@@ -185,6 +191,8 @@ class ContractControllerTest {
     @Test
     void updateActualHoursIllegalValue() throws Exception {
         // arrange
+        defaultContract.setSigned(true);
+        defaultContract = contractRepository.save(defaultContract);
         Integer toSetHours = -1;
 
         // pre-condition
@@ -201,6 +209,33 @@ class ContractControllerTest {
 
         // assert
         results.andExpect(status().isBadRequest());
+
+        assertThat(contractRepository.findById(
+                new ContractId(defaultContract.getNetId(), defaultContract.getCourseId()))
+            .orElseThrow()
+            .getActualWorkedHours())
+            .isNotEqualTo(toSetHours);
+    }
+
+    @Test
+    void updateActualHoursNotSigned() throws Exception {
+        // arrange
+        Integer toSetHours = 7;
+
+        // pre-condition
+        assertThat(contractRepository.findById(
+                new ContractId(defaultContract.getNetId(), defaultContract.getCourseId()))
+            .orElseThrow()
+            .getActualWorkedHours())
+            .isNotEqualTo(toSetHours);
+
+        // act
+        ResultActions results = mockMvc.perform(post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isForbidden());
 
         assertThat(contractRepository.findById(
                 new ContractId(defaultContract.getNetId(), defaultContract.getCourseId()))
@@ -893,7 +928,8 @@ class ContractControllerTest {
                         (String) map.get("duties"),
                         (Double) map.get("rating"),
                         (int) map.get("maxHours"),
-                        (boolean) map.get("signed")
+                        (boolean) map.get("signed"),
+                        (int) map.get("actualWorkedHours")
             ));
         }
         return list;
