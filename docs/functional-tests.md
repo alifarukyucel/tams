@@ -48,7 +48,26 @@
 
 ### The system shall let students candidate themselves as a TA by sending a request to the API including a short motivation statement and their grade for that course.
 
-### The system shall not accept a TA application for a course if they do not submit a grade or that grade is lower than 6.0.
+#### Applying to become a ta
+1. Submit model
+2. Verify 200
+3. Verify application has been saved
+
+**Relevant tests**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L150
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L205
+
+#### The system shall not accept a TA application for a course if they do not submit a grade or that grade is lower than 6.0.
+1. Submit model with too low grades
+2. Verify 403
+3. Verify application has not been saved
+
+**Relevant tests**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L94
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L122
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L177
+
+Respective underlying service code is boundary tested
 
 ### The system shall notify students if they have been accepted or rejected as a TA for a particular course by allowing them to submit an API request to retrieve that.
 
@@ -164,7 +183,7 @@
 2. Submit a fourth application for the same user
 3. Verify 403
 
-**Relvant tests:**
+**Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L288
 
 ### The system shall not allow a TA to declare hours if this were to go over the limit stated in their contract.
@@ -176,7 +195,7 @@
 **Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L225
 
-Respective underlying service code is also boundary tested
+Respective underlying service code is boundary tested
 
 #### Block approving hours by lecturer if going over contract
 1. Make sure approving hour declaration would go over budget 
