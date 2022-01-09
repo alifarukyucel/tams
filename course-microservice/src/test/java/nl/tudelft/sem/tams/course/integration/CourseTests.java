@@ -375,4 +375,59 @@ public class CourseTests {
         // Assert
         action.andExpect(status().isForbidden());
     }
+
+    @Test
+    public void removeResponsibleLecturers_courseDoesNotExist_403Forbidden() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);  // to be authenticated as responsible lecturer
+        responsibleLecturers.add("lecturer2");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/nonExistingCourse/removeLecturer/lecturer2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void removeResponsibleLecturers_lecturerDoesNotExist() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);  // to be authenticated as responsible lecturer
+        responsibleLecturers.add("lecturer");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/removeLecturer/nonExistentLecturer")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isOk());
+    }
+
+    @Test
+    public void removeResponsibleLecturers_removeSingleLecturer() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);  // to be authenticated as responsible lecturer
+        responsibleLecturers.add("lecturer2");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/removeLecturer/lecturer2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isOk());
+    }
+
 }
