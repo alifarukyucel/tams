@@ -68,13 +68,20 @@ public class HiringService {
         if (course == null) {
             //Course does not exist
             throw new NoSuchElementException("This course does not exist.");
-        } else if (!teachingAssistantApplication.hasValidGrade()) {
+        }
+
+        if (!teachingAssistantApplication.hasValidGrade()) {
             throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
-        } else if (!teachingAssistantApplication.meetsRequirements()) {
+        }
+
+        if (!teachingAssistantApplication.meetsRequirements()) {
             throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
-        } else if (!course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime().plusWeeks(3))) {
+        }
+
+        if (!course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime().plusWeeks(3))) {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
+
         taApplicationRepository.save(teachingAssistantApplication);
     }
 
