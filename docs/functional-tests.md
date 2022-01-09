@@ -91,6 +91,16 @@ Respective underlying service code is boundary tested
 
 ### The system shall let students fetch their TA contract including course name, total amount of hours, extra information, and whether the contract is signed, in JSON format from the API.
 
+#### Retrieving own contract
+1. Create a course
+2. Create a contract for a TA
+3. As that TA, make a request to retrieve the contract
+4. Verify response status is 200
+5. Verify contract details are correct
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/9236d75c5af1c0842da8ae57a49478b52bf35be0/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L339
+
 ### The system shall let students sign their TA contract by sending an API request.
 
 #### Signing a contract
