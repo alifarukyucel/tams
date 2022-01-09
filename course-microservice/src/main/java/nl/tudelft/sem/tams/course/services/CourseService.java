@@ -111,4 +111,35 @@ public class CourseService {
 
     // -------------------- Deletions ------------------------
 
+    /**
+     * Remove netIds as responsible lecturers from the given course.
+     *
+     * @param courseId                      Id of the course to remove responsible lecturers from
+     * @param netIds                        NetId(s) of the responsible lecturers to be removed
+     * @throws NoSuchElementException       if course does not exist
+     */
+    public void removeResponsibleLecturers(String courseId, List<String> netIds) throws NoSuchElementException {
+        Course course = getCourseById(courseId); // throws NoSuchElementException if course doesn't exist
+
+        List<String> respLecturers = course.getResponsibleLecturers();
+        respLecturers.removeAll(netIds);
+        Set<String> noDuplicates = new HashSet<>(respLecturers);
+        course.setResponsibleLecturers(new ArrayList<>(noDuplicates));
+
+        courseRepository.deleteById(courseId);
+        courseRepository.save(course);
+    }
+
+    /**
+     * Overloaded removeResponsibleLecturers method that accepts a single or multiple netIds as parameters.
+     *
+     * @param courseId                      Id of the course to remove responsible lecturers from
+     * @param netIds                        NetId(s) of the responsible lecturers to be removed
+     * @throws NoSuchElementException       if course does not exist
+     */
+    public void removeResponsibleLecturers(String courseId, String... netIds)
+            throws NoSuchElementException {
+        removeResponsibleLecturers(courseId, List.of(netIds));
+    }
+
 }
