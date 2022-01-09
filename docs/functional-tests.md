@@ -266,6 +266,41 @@ Respective underlying service code is boundary tested
 
 ### The system shall let lecturers reject students who have applied to TA a course by sending their netid and the respective course id.
 
+#### Reject a student for a course you are responsible for
+1. Submit a ta-application for a course
+2. Submit course id and netid to reject
+3. Verify 200 OK
+4. Check status of ta-application to have changed to "rejected"
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L540
+
+#### Reject a student for a course you are not responsible for
+1. Submit a ta-application for a course
+2. Submit course id and netid to reject
+3. Verify 403
+4. Check status of ta-application to not have changed
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L570
+
+#### Reject a student that hasn't even applied
+1. Submit course id and netid to reject
+2. Verify 404
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L600
+
+#### Reject a ta-application that is not pending
+1. Submit a ta-application for a course
+2. Submit course id and netid to accept / reject
+3. Submit course id and netid to reject this again
+4. Verify 409
+5. Check status of ta-application to not have changed after 2
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L636
+
 ### The system shall allow students to withdraw their candidacy unless they can no longer apply as a TA.
 
 #### Withdraw within allowed timeframe
