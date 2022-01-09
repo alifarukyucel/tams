@@ -287,14 +287,15 @@ Respective underlying service code is boundary tested
 ### The system shall not allow a lecturer to hire more than 1 TA for every 20 students in the course.
 
 #### Block hiring when ratio between student and ta becomes too large
-1. Save an accepted application in the hiring service
-2. Mock Course information to return x students
-3. Submit a new application
-4. Verify 409
-5. Verify application has not been saved
+1. Create course of 40 students
+2. Create a TA contract for that course
+3. Create another TA contract for that course
+4. Create a third TA contract for that course
+7. Verify 400
+8. Verify contract has not been saved
 
 **Relevant tests:**
-
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/7f82e170910fdf8532e934f9b5184127a5ed7036/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L415
 
 Respective underlying service code is boundary tested
 
