@@ -120,6 +120,19 @@ public class ContractController {
         }
     }
 
+    @PostMapping("/{course}/set-hours/{hours}")
+    public ResponseEntity<String> setWorkedHours(@PathVariable String course, @PathVariable int hours)
+            throws ResponseStatusException {
+        try {
+            contractService.updateHours(authManager.getNetid(), course, hours);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     /**
      * Endpoint for fetching all the contracts of a signed-in user.
      *
