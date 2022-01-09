@@ -35,6 +35,8 @@ public class CourseController {
 
     private final transient CourseService courseService;
 
+    private final transient String notAuthorizedMessage = "You should be a responsible lecturer to execute this operation.";
+
     /**
      * Instantiates a new Course controller.
      *
@@ -122,8 +124,7 @@ public class CourseController {
         try {
             courseService.isResponsibleLecturer(authManager.getNetid(), courseId);
         } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "You should be a responsible lecturer to execute this operation.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, notAuthorizedMessage);
         }
         courseService.addResponsibleLecturers(courseId, netId); // this can't throw NoSuchElementException since
         // whether a course exists or not is already checked by isResponsibleLecturer.
@@ -146,8 +147,7 @@ public class CourseController {
         try {
             courseService.isResponsibleLecturer(authManager.getNetid(), courseId);
         } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "You should be a responsible lecturer to execute this operation.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, notAuthorizedMessage);
         }
         courseService.addResponsibleLecturers(courseId, model.getResponsibleLecturers()); // this can't throw
         // NoSuchElementException since whether a course exists or not is already checked by isResponsibleLecturer.
@@ -171,8 +171,7 @@ public class CourseController {
         try {
             courseService.isResponsibleLecturer(authManager.getNetid(), courseId);
         } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "You should be a responsible lecturer to execute this operation.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, notAuthorizedMessage);
         }
         courseService.removeResponsibleLecturers(courseId, netId); // this can't throw NoSuchElementException since
         // whether a course exists or not is already checked by isResponsibleLecturer.
@@ -195,8 +194,7 @@ public class CourseController {
         try {
             courseService.isResponsibleLecturer(authManager.getNetid(), courseId);
         } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "You should be a responsible lecturer to execute this operation.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, notAuthorizedMessage);
         }
         courseService.removeResponsibleLecturers(courseId, model.getResponsibleLecturers());
         // this can't throw NoSuchElementException since whether a course exists or not is already
