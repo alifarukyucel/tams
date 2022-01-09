@@ -261,6 +261,7 @@ class HourControllerTest {
         results.andExpect(status().isOk());
         HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
         assertThat(hour.getApproved()).isTrue();
+        assertThat(hour.getReviewed()).isTrue();
     }
 
     @Test
