@@ -241,6 +241,34 @@ public class HiringControllerTest {
 
     }
 
+    @Test
+    public void applyTooLate() throws Exception {
+        //Arrange
+        TeachingAssistantApplicationRequestModel validModel = new TeachingAssistantApplicationRequestModel(
+                "CSE1200", 6.0f, "I want to");
+
+        TeachingAssistantApplicationKey validKey = new TeachingAssistantApplicationKey(
+                validModel.getCourseId(), exampleNetId);
+
+        // the deadline has passed (boundary test)
+        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
+                "CSE1200",
+                assumedCurrentTime.plusWeeks(3),
+                "CourseName",
+                "CourseDescription",
+                100,
+                new ArrayList<>()));
+
+        //Act
+        ResultActions validResults = mockMvc.perform(post("/apply")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(validModel))
+                .header("Authorization", "Bearer Joe"));
+        //assert
+        validResults.andExpect(status().isForbidden());
+        assertThat(taApplicationRepository.findById(validKey)).isEmpty();
+
+    }
 
     @Test
     public void insufficientGradeApplicationTest() throws Exception {
