@@ -256,6 +256,14 @@ Respective underlying service code is boundary tested
 
 ### The system shall not allow a student to candidate as TA later than 3 weeks before the course starts.
 
+#### Apply to a course after the deadline
+1. Create a course with a deadline less than 3 weeks in the future
+2. Try to apply for created course
+3. Verify 403
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/a4fa9f4cd4264ab83d292f76b2252076c8ccb2ba/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L245
+
 ### The system shall let lecturers reject students who have applied to TA a course by sending their netid and the respective course id.
 
 ### The system shall allow students to withdraw their candidacy unless they can no longer apply as a TA.
