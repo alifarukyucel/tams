@@ -64,9 +64,4 @@ public class Course {
         Course course = (Course) o;
         return id != null && id.equals(course.id);
     }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }
