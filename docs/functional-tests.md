@@ -524,3 +524,11 @@ Respective underlying service code is boundary tested
 
 **Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L399
+
+#### Remove a responsible lecturer from a nonexistent course
+1. Remove a lecturer with a course code that does not correspond to an existing course
+2. Verify the response is 403
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L381
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L489
