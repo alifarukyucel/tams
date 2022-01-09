@@ -12,5 +12,6 @@ public class ContractDirector {
     public void createUnsignedContract(ContractBuilder contractBuilder) {
         contractBuilder.withRating(0);
         contractBuilder.withSigned(false);
+        contractBuilder.withActualWorkedHours(0);
     }
 }

@@ -70,6 +70,90 @@ class ContractServiceTest {
     }
 
     @Test
+    void updateActualHours() {
+        // arrange
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(true)
+            .withActualWorkedHours(5)
+            .build();
+        contract = contractRepository.save(contract);
+
+        // act
+        contractService.updateHours("PVeldHuis", "CSE2310", 7);
+
+        // assert
+        assertThat(contractRepository.findById(
+            new ContractId(contract.getNetId(), contract.getCourseId()))
+            .orElseThrow()
+            .getActualWorkedHours())
+            .isEqualTo(7);
+    }
+
+    @Test
+    void updateActualHoursNonExistentContract() {
+        // arrange
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(true)
+            .withActualWorkedHours(5)
+            .build();
+        contractRepository.save(contract);
+
+        // act
+        ThrowingCallable updateNonExisting = () ->
+            contractService.updateHours("PVeldHuis", "CSE3245", 7);
+
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(updateNonExisting);
+    }
+
+    @Test
+    void updateActualHoursIllegalValue() {
+        // arrange
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(true)
+            .withActualWorkedHours(5)
+            .build();
+        contractRepository.save(contract);
+
+        // act
+        ThrowingCallable update = () ->
+            contractService.updateHours("PVeldHuis", "CSE2310", -1);
+
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(update);
+    }
+
+    @Test
+    void updateActualHoursNotSignedContract() {
+        // arrange
+        Contract contract = new ConcreteContractBuilder()
+            .withNetId("PVeldHuis")
+            .withCourseId("CSE2310")
+            .withMaxHours(5)
+            .withDuties("Work really hard")
+            .withSigned(false)
+            .withActualWorkedHours(5)
+            .build();
+        contractRepository.save(contract);
+
+        // act
+        ThrowingCallable update = () ->
+            contractService.updateHours("PVeldHuis", "CSE2310", 7);
+
+        assertThatExceptionOfType(IllegalCallerException.class).isThrownBy(update);
+    }
+
+    @Test
     void signNonExistingContract() {
         // arrange
         Contract contract = new ConcreteContractBuilder()

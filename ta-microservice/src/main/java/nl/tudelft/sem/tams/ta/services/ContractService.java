@@ -278,6 +278,21 @@ public class ContractService {
         return result;
     }
 
+    /**
+     * Updates the actually worked hours of the contract.
+     *
+     * @param netId user netId
+     * @param course course for which user has a contract
+     * @param hours the new hour value to set
+     */
+    public void updateHours(String netId, String course, int hours) {
+        Contract contract = getContract(netId, course);
+        if (!contract.getSigned()) {
+            throw new IllegalCallerException("Contract has not been signed yet");
+        }
+        contract.setActualWorkedHours(hours);
+        save(contract);
+    }
 
     /**
      * Saves a given contract object back to the database.
@@ -300,7 +315,7 @@ public class ContractService {
     private Example<Contract> createContractExample(String netId, String courseId) {
         ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
                                                         .withIgnoreNullValues()
-                                                        .withIgnorePaths("rating");
+                                                        .withIgnorePaths("rating", "actualWorkedHours");
         Example<Contract> example = Example.of(
                 new ConcreteContractBuilder()
                         .withCourseId(courseId)
