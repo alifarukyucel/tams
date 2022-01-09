@@ -1,11 +1,9 @@
 package nl.tudelft.sem.tams.course.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
 import nl.tudelft.sem.tams.course.entities.Course;
 import nl.tudelft.sem.tams.course.models.CourseAddResponsibleLecturerRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseCreationRequestModel;
+import nl.tudelft.sem.tams.course.models.CourseRemoveResponsibleLecturerRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseResponseModel;
 import nl.tudelft.sem.tams.course.security.AuthManager;
 import nl.tudelft.sem.tams.course.services.CourseService;
@@ -18,6 +16,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -154,5 +156,34 @@ public class CourseController {
     }
 
     // ---------------------------------- Deletions -------------------------------
+
+    @PutMapping(value = "{courseId}/removeLecturer/{netId}")   // {courseId}/removeLecturer/{netId}
+    public ResponseEntity<String> removeResponsibleLecturers(@PathVariable String courseId,
+                                                             @PathVariable String netId) {
+        try {
+            courseService.isResponsibleLecturer(authManager.getNetid(), courseId);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You should be a responsible lecturer to execute this operation.");
+        }
+        courseService.removeResponsibleLecturers(courseId, netId); // this can't throw NoSuchElementException since
+        // whether a course exists or not is already checked by isResponsibleLecturer.
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(value = "{courseId}/removeLecturer/")   // {courseId}/removeLecturer/
+    public ResponseEntity<String> removeResponsibleLecturers(
+            @PathVariable String courseId, @RequestBody CourseRemoveResponsibleLecturerRequestModel model) {
+        try {
+            courseService.isResponsibleLecturer(authManager.getNetid(), courseId);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You should be a responsible lecturer to execute this operation.");
+        }
+        courseService.removeResponsibleLecturers(courseId, model.getResponsibleLecturers());
+        // this can't throw NoSuchElementException since whether a course exists or not is already
+        // checked by isResponsibleLecturer.
+        return ResponseEntity.ok().build();
+    }
 
 }
