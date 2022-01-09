@@ -73,6 +73,22 @@ Respective underlying service code is boundary tested
 
 ### The system shall let users create a course including a unique course id, start date, and number of students. After the course is created, the user shall be assigned as its responsible lecturer.
 
+#### Creating a course
+1. Submit course model to endpoint
+2. Verify the response is 200
+3. Verify data was saved correctly
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L137
+
+#### Creating the same course twice
+1. Submit course model
+2. Verify 409
+3. Verify original data has not been overwritten
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/e9b609c729370b125e164f677a1ebeee23b881b0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L164
+
 ### The system shall let students fetch their TA contract including course name, total amount of hours, extra information, and whether the contract is signed, in JSON format from the API.
 
 ### The system shall let students sign their TA contract by sending an API request.
