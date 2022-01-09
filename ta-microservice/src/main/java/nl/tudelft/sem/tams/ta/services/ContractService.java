@@ -275,6 +275,19 @@ public class ContractService {
         return result;
     }
 
+    /**
+     * Updates the actually worked hours of the contract
+     *
+     * @param netId user netId
+     * @param course course for which user has a contract
+     * @param hours the new hour value to set
+     * @return The contract of the user
+     */
+    public Contract updateHours(String netId, String course, int hours) {
+        Contract contract = getContract(netId, course);
+        contract.setActualWorkedHours(hours);
+        return save(contract);
+    }
 
     /**
      * Saves a given contract object back to the database.
