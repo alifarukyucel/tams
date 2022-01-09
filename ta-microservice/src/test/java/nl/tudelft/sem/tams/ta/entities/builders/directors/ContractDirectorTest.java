@@ -32,6 +32,7 @@ public class ContractDirectorTest {
         //arrange
         assertThat(contract.getSigned()).isFalse();
         assertThat(contract.getRating()).isZero();
+        assertThat(contract.getActualWorkedHours()).isZero();
     }
 
     @Test
@@ -49,5 +50,6 @@ public class ContractDirectorTest {
         assertThat(contract.getSigned()).isFalse();
         assertThat(contract.getRating()).isZero();
         assertThat(contract.getCourseId()).isNull();
+        assertThat(contract.getActualWorkedHours()).isZero();
     }
 }

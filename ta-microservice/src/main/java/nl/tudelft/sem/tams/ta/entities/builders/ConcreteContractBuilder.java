@@ -13,6 +13,7 @@ public class ConcreteContractBuilder implements ContractBuilder {
     private transient String duties;
     private transient Boolean signed;
     private transient double rating;
+    private transient int actualWorkedHours;
 
     public ConcreteContractBuilder() {
     }
@@ -47,7 +48,12 @@ public class ConcreteContractBuilder implements ContractBuilder {
         return this;
     }
 
+    public ConcreteContractBuilder withActualWorkedHours(int hours) {
+        this.actualWorkedHours = hours;
+        return this;
+    }
+
     public Contract build() {
-        return new Contract(netId, courseId, maxHours, duties, signed, rating);
+        return new Contract(netId, courseId, maxHours, duties, signed, rating, actualWorkedHours);
     }
 }

@@ -121,6 +121,31 @@ public class ContractController {
     }
 
     /**
+     * Sets actual worked hours attribute on the contract.
+     *
+     * @param course course id for which contract exists
+     * @param hours amount of hours actually worked on the course
+     * @return 200 OK if successful
+     * @throws ResponseStatusException  403 if contract has not been signed
+     *                                  404 if no contract exists
+     *                                  400 if hour value is too low
+     */
+    @PostMapping("/{course}/set-hours/{hours}")
+    public ResponseEntity<String> setWorkedHours(@PathVariable String course, @PathVariable int hours)
+            throws ResponseStatusException {
+        try {
+            contractService.updateHours(authManager.getNetid(), course, hours);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalCallerException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+    }
+
+    /**
      * Endpoint for fetching all the contracts of a signed-in user.
      *
      * @return a list of contracts that belong to the signed-in user.

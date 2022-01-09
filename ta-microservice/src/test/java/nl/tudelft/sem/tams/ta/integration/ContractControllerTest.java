@@ -2,6 +2,7 @@ package nl.tudelft.sem.tams.ta.integration;
 
 import static nl.tudelft.sem.tams.ta.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.tams.ta.entities.Contract;
 import nl.tudelft.sem.tams.ta.entities.builders.ConcreteContractBuilder;
@@ -32,6 +34,7 @@ import nl.tudelft.sem.tams.ta.security.TokenVerifier;
 import nl.tudelft.sem.tams.ta.services.ContractService;
 import nl.tudelft.sem.tams.ta.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.tams.ta.utils.JsonUtil;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,6 +93,7 @@ class ContractControllerTest {
             .withDuties("Work really hard")
             .withSigned(false)
             .withRating(5)
+            .withActualWorkedHours(5)
             .build();
         contracts.add(defaultContract);
 
@@ -138,6 +142,110 @@ class ContractControllerTest {
 
     void mockAuthentication(String netId) {
         mockAuthentication(netId, false);
+    }
+
+    @Test
+    void updateActualHours() throws Exception {
+        // arrange
+        defaultContract.setSigned(true);
+        defaultContract = contractRepository.save(defaultContract);
+        Integer toSetHours = 7;
+
+        // pre-condition
+        assertThat(contractRepository.findById(
+                new ContractId(defaultContract.getNetId(), defaultContract.getCourseId()))
+            .orElseThrow()
+            .getActualWorkedHours())
+            .isNotEqualTo(toSetHours);
+
+        // act
+        ResultActions results = mockMvc.perform(
+            post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isOk());
+
+        assertThat(contractRepository.findById(
+                new ContractId(defaultContract.getNetId(), defaultContract.getCourseId()))
+            .orElseThrow()
+            .getActualWorkedHours())
+            .isEqualTo(toSetHours);
+    }
+
+    @Test
+    void updateActualHoursNonExistentContract() throws Exception {
+        // arrange
+        defaultContract.setSigned(true);
+        defaultContract = contractRepository.save(defaultContract);
+
+        // act
+        ResultActions results = mockMvc.perform(
+            post("/contracts/" + defaultContract.getCourseId() + "noise" + "/set-hours/" + 23)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateActualHoursIllegalValue() throws Exception {
+        // arrange
+        defaultContract.setSigned(true);
+        defaultContract = contractRepository.save(defaultContract);
+        Integer toSetHours = -1;
+
+        // pre-condition
+        assertThat(contractRepository.findById(
+                new ContractId(defaultContract.getNetId(), defaultContract.getCourseId()))
+            .orElseThrow()
+            .getActualWorkedHours())
+            .isNotEqualTo(toSetHours);
+
+        // act
+        ResultActions results = mockMvc.perform(
+            post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isBadRequest());
+
+        assertThat(contractRepository.findById(
+                new ContractId(defaultContract.getNetId(), defaultContract.getCourseId()))
+            .orElseThrow()
+            .getActualWorkedHours())
+            .isNotEqualTo(toSetHours);
+    }
+
+    @Test
+    void updateActualHoursNotSigned() throws Exception {
+        // arrange
+        Integer toSetHours = 7;
+
+        // pre-condition
+        assertThat(contractRepository.findById(
+                new ContractId(defaultContract.getNetId(), defaultContract.getCourseId()))
+            .orElseThrow()
+            .getActualWorkedHours())
+            .isNotEqualTo(toSetHours);
+
+        // act
+        ResultActions results = mockMvc.perform(
+            post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isForbidden());
+
+        assertThat(contractRepository.findById(
+                new ContractId(defaultContract.getNetId(), defaultContract.getCourseId()))
+            .orElseThrow()
+            .getActualWorkedHours())
+            .isNotEqualTo(toSetHours);
     }
 
     @Test
@@ -856,7 +964,8 @@ class ContractControllerTest {
                         (String) map.get("duties"),
                         (Double) map.get("rating"),
                         (int) map.get("maxHours"),
-                        (boolean) map.get("signed")
+                        (boolean) map.get("signed"),
+                        (int) map.get("actualWorkedHours")
             ));
         }
         return list;
