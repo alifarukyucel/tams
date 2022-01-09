@@ -30,6 +30,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional  // prevents lazy loading issues and will keep the connection open.
 class HourServiceTest {
+    //Arbitrary time to use for the hour declarations
+    private static final LocalDateTime arbitraryTime = LocalDateTime.of(2000, 1, 1, 0, 0);
 
     @Autowired
     private transient HourService hourService;
@@ -264,7 +266,7 @@ class HourServiceTest {
         SubmitHoursRequestModel submitHoursRequestModel = SubmitHoursRequestModel.builder()
             .desc("hello")
             .workedTime(5)
-            .date(LocalDateTime.now())
+            .date(arbitraryTime)
             .course(defaultContract.getCourseId())
             .build();
 

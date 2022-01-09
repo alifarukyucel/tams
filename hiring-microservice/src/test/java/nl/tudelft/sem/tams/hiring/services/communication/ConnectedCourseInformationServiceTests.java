@@ -26,8 +26,11 @@ import org.springframework.test.context.TestPropertySource;
 public class ConnectedCourseInformationServiceTests {
     static final String testUrl = "testUrl";
 
-    public static final String isResponsibleLecturerPath = "/{courseId}/lecturer/{netId}";
-    public static final String getCourseByIdPath = "/{id}";
+    private static final String isResponsibleLecturerPath = "/{courseId}/lecturer/{netId}";
+    private static final String getCourseByIdPath = "/{id}";
+
+    //Arbitrary time to use where an arbitrary time is needed.
+    private static final LocalDateTime arbitraryTime = LocalDateTime.of(2000, 1, 1, 0, 0);
 
     @Autowired
     private transient ConnectedCourseInformationService connectedCourseInformationService;
@@ -134,7 +137,7 @@ public class ConnectedCourseInformationServiceTests {
         // Arrange
         String courseId = "CSE1110";
 
-        var date = LocalDateTime.now().plusDays(23);  // random amount to make sure method doesn't just return now
+        var date = arbitraryTime; // random amount to make sure method doesn't just return now
         CourseInformationResponseModel expected = new CourseInformationResponseModel();
         expected.setId(courseId);
         expected.setStartDate(date);
@@ -158,7 +161,7 @@ public class ConnectedCourseInformationServiceTests {
         // Arrange
         String courseId = "CSE1110";
 
-        var date = LocalDateTime.now().plusDays(23);  // random amount to make sure method doesn't just return now
+        var date = arbitraryTime;
         CourseInformationResponseModel expected = new CourseInformationResponseModel();
         expected.setId(courseId);
         expected.setStartDate(date);

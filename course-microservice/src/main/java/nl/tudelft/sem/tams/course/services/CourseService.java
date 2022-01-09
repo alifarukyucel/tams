@@ -1,6 +1,10 @@
 package nl.tudelft.sem.tams.course.services;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import javax.transaction.Transactional;
 import nl.tudelft.sem.tams.course.entities.Course;
 import nl.tudelft.sem.tams.course.repositories.CourseRepository;
@@ -71,6 +75,38 @@ public class CourseService {
             throw new ConflictException("A course already exists with that id.");
         }
         courseRepository.save(course);
+    }
+
+    /**
+     * Add netIds as responsible lecturers to the given course.
+     *
+     * @param courseId                      Id of the course to add responsible lecturers to
+     * @param netIds                        NetId(s) of the responsible lecturers to be added
+     * @throws NoSuchElementException       if course does not exist
+     */
+    public void addResponsibleLecturers(String courseId, List<String> netIds)
+            throws NoSuchElementException {
+        Course course = getCourseById(courseId); // throws NoSuchElementException if course doesn't exist
+
+        List<String> respLecturers = course.getResponsibleLecturers();
+        respLecturers.addAll(netIds);
+        Set<String> noDuplicates = new HashSet<>(respLecturers);
+        course.setResponsibleLecturers(new ArrayList<>(noDuplicates));
+
+        courseRepository.deleteById(courseId);
+        courseRepository.save(course);
+    }
+
+    /**
+     * Overloaded addResponsibleLecturers method that accepts a single or multiple netIds as parameters.
+     *
+     * @param courseId                      Id of the course to add responsible lecturers to
+     * @param netIds                        NetId(s) of the responsible lecturers to be added
+     * @throws NoSuchElementException       if course does not exist
+     */
+    public void addResponsibleLecturers(String courseId, String... netIds)
+            throws NoSuchElementException {
+        addResponsibleLecturers(courseId, List.of(netIds));
     }
 
     // -------------------- Deletions ------------------------

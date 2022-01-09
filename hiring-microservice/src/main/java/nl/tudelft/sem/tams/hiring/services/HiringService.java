@@ -12,6 +12,7 @@ import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.tams.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
+import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
 import nl.tudelft.sem.tams.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.tams.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.tams.hiring.services.communication.models.CreateContractRequestModel;
@@ -25,6 +26,8 @@ public class HiringService {
 
     private final transient ContractInformation contractInformation;
     private final transient CourseInformation courseInformation;
+
+    private final transient TimeProvider timeProvider;
 
     // maximum number of applications per student
     private static final transient int maxCandidacies = 3;
@@ -43,10 +46,11 @@ public class HiringService {
      */
     public HiringService(TeachingAssistantApplicationRepository taApplicationRepository,
                          ContractInformation contractInformation,
-                         CourseInformation courseInformation) {
+                         CourseInformation courseInformation, TimeProvider timeProvider) {
         this.taApplicationRepository = taApplicationRepository;
         this.contractInformation = contractInformation;
         this.courseInformation = courseInformation;
+        this.timeProvider = timeProvider;
     }
 
     /**
@@ -68,8 +72,7 @@ public class HiringService {
             throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
         } else if (!teachingAssistantApplication.meetsRequirements()) {
             throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
-        } else if (course.getStartDate().minusWeeks(3)
-                .isBefore(LocalDateTime.now())) {
+        } else if (!course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime().plusWeeks(3))) {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
         taApplicationRepository.save(teachingAssistantApplication);
@@ -116,8 +119,7 @@ public class HiringService {
      */
     public boolean checkAndWithdraw(String courseId, String netId) {
         LocalDateTime deadline = courseInformation.startDate(courseId).minusWeeks(withdrawalWindow);
-        if (LocalDateTime.now().compareTo(deadline) < 0) {
-
+        if (timeProvider.getCurrentLocalDateTime().isBefore(deadline)) {
             taApplicationRepository.delete(this.get(courseId, netId));
             return true;
         }
