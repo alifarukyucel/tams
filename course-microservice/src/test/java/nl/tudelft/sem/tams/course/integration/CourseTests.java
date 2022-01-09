@@ -105,12 +105,14 @@ public class CourseTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer SomeHackingProdigy"));
 
-        Course expected = courseRepository.getById(course.getId());
-
         // Assert
         result.andExpect(status().isOk());
-        assertThat(expected.getId()).isNotNull();
-        assertThat(expected).isEqualTo(course);
+
+        CourseResponseModel response =
+                JsonUtil.deserialize(result.andReturn().getResponse().getContentAsString(), CourseResponseModel.class);
+
+        assertThat(response.getId()).isEqualTo(course.getId());
+        assertThat(response.getDescription()).isEqualTo(course.getDescription());
     }
 
     @Test
@@ -125,13 +127,9 @@ public class CourseTests {
         ResultActions action = mockMvc.perform(get("/CSE9999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Andy"));
-
-        Course expected = courseRepository.getById(course.getId());
         
         // Assert
         action.andExpect(status().isNotFound());
-        assertThat(expected.getId()).isNotNull();
-        assertThat(expected).isEqualTo(course);
     }
 
     @Test
@@ -170,8 +168,8 @@ public class CourseTests {
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(existingCourse);
 
-        CourseCreationRequestModel courseModel = new CourseCreationRequestModel(testCourseId, testStartDate,
-                testCourseName, testDescription, testNumberOfStudents);
+        CourseCreationRequestModel courseModel = new CourseCreationRequestModel(testCourseId, testStartDate.plusDays(1),
+                testCourseName + " Conflict", testDescription + " Conflict", testNumberOfStudents + 1);
 
         // Act
         ResultActions action = mockMvc.perform(post("/create")
@@ -180,9 +178,9 @@ public class CourseTests {
                 .header("Authorization", "Bearer Andy"));
 
         // Assert
-        MvcResult result = action
-                .andExpect(status().isConflict())
-                .andReturn();
+        action.andExpect(status().isConflict());
+
+        assertThat(courseRepository.findAll().size()).isEqualTo(1);
     }
 
     @Test
@@ -338,8 +336,7 @@ public class CourseTests {
 
         List<String> addedResponsibleLecturers = new ArrayList<>(
                 List.of(responsibleLecturer, "addedLecturer", "addedLecturer2"));
-        CourseAddResponsibleLecturerRequestModel model = new CourseAddResponsibleLecturerRequestModel(testCourseId,
-                testStartDate, testCourseName, testDescription, testNumberOfStudents, addedResponsibleLecturers);
+        var model = new CourseAddResponsibleLecturerRequestModel(addedResponsibleLecturers);
 
         // Act
         ResultActions action = mockMvc.perform(put("/CSE2115/addLecturer/")
@@ -364,8 +361,7 @@ public class CourseTests {
 
         List<String> addedResponsibleLecturers = new ArrayList<>(
                 List.of(responsibleLecturer, "addedLecturer", "addedLecturer2"));
-        CourseAddResponsibleLecturerRequestModel model = new CourseAddResponsibleLecturerRequestModel(testCourseId,
-                testStartDate, testCourseName, testDescription, testNumberOfStudents, addedResponsibleLecturers);
+        var model = new CourseAddResponsibleLecturerRequestModel(addedResponsibleLecturers);
 
         // Act
         ResultActions action = mockMvc.perform(put("/CSE2115/addLecturer/")

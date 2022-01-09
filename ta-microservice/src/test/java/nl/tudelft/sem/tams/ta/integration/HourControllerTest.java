@@ -261,6 +261,28 @@ class HourControllerTest {
         results.andExpect(status().isOk());
         HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
         assertThat(hour.getApproved()).isTrue();
+        assertThat(hour.getReviewed()).isTrue();
+    }
+
+    @Test
+    void reviewExistingHoursWithoutApproving() throws Exception {
+        // arrange
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(false)
+            .id(defaultHourDeclaration.getId())
+            .build();
+
+        // act
+        ResultActions results = mockMvc.perform(put("/hours/approve")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isOk());
+        HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
+        assertThat(hour.getApproved()).isFalse();
+        assertThat(hour.getReviewed()).isTrue();
     }
 
     @Test
@@ -284,6 +306,35 @@ class HourControllerTest {
         results.andExpect(status().isConflict());
         HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
         assertThat(hour.getApproved()).isTrue();
+    }
+
+    @Test
+    void approveMoreHoursThanAllowed() throws Exception {
+        // arrange
+        hourDeclarationRepository.save(new ConcreteHourDeclarationBuilder()
+            .withContractId(defaultContract)
+            .withWorkedTime(15)
+            .withApproved(true)
+            .withReviewed(true)
+            .build());
+        defaultHourDeclaration.setWorkedTime(6);
+        defaultHourDeclaration = hourDeclarationRepository.save(defaultHourDeclaration);
+        AcceptHoursRequestModel model = AcceptHoursRequestModel.builder()
+            .accept(true)
+            .id(defaultHourDeclaration.getId())
+            .build();
+
+        // act
+        ResultActions results = mockMvc.perform(put("/hours/approve")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Pieter"));
+
+        // assert
+        results.andExpect(status().isConflict());
+        HourDeclaration hour = hourDeclarationRepository.getOne(defaultHourDeclaration.getId());
+        assertThat(hour.getReviewed()).isFalse();
+        assertThat(hour.getApproved()).isFalse();
     }
 
     @Test
