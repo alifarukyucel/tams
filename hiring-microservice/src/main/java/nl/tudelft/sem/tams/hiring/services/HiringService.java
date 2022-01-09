@@ -31,6 +31,10 @@ public class HiringService {
 
     // maximum number of applications per student
     private static final transient int maxCandidacies = 3;
+    
+    // Amount of weeks before a course starts when withdrawal is still allowed
+    // e.g. withdrawal is allowed x weeks before the course starts.
+    private static final transient int withdrawalWindow = 3;
 
     /**
      * Constructor for the application service, with the corresponding repositories / information classes.
@@ -114,7 +118,7 @@ public class HiringService {
      * @return true if on time or false if too late
      */
     public boolean checkAndWithdraw(String courseId, String netId) {
-        LocalDateTime deadline = courseInformation.startDate(courseId).minusWeeks(3);
+        LocalDateTime deadline = courseInformation.startDate(courseId).minusWeeks(withdrawalWindow);
         if (timeProvider.getCurrentLocalDateTime().isBefore(deadline)) {
             taApplicationRepository.delete(this.get(courseId, netId));
             return true;
