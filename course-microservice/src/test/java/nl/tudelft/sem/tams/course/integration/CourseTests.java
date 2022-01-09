@@ -169,8 +169,8 @@ public class CourseTests {
                 testNumberOfStudents, responsibleLecturers);
         courseRepository.save(existingCourse);
 
-        CourseCreationRequestModel courseModel = new CourseCreationRequestModel(testCourseId, testStartDate,
-                testCourseName, testDescription, testNumberOfStudents);
+        CourseCreationRequestModel courseModel = new CourseCreationRequestModel(testCourseId, testStartDate.plusDays(1),
+                testCourseName + " Conflict", testDescription + " Conflict", testNumberOfStudents + 1);
 
         // Act
         ResultActions action = mockMvc.perform(post("/create")
@@ -179,9 +179,9 @@ public class CourseTests {
                 .header("Authorization", "Bearer Andy"));
 
         // Assert
-        MvcResult result = action
-                .andExpect(status().isConflict())
-                .andReturn();
+        action.andExpect(status().isConflict());
+
+        assertThat(courseRepository.findById(testCourseId).orElseThrow()).isEqualTo(existingCourse);
     }
 
     @Test
