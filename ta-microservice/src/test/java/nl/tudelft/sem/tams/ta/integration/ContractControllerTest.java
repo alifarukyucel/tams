@@ -159,7 +159,8 @@ class ContractControllerTest {
             .isNotEqualTo(toSetHours);
 
         // act
-        ResultActions results = mockMvc.perform(post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
+        ResultActions results = mockMvc.perform(
+            post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
             .contentType(MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer Pieter"));
 
@@ -180,7 +181,8 @@ class ContractControllerTest {
         defaultContract = contractRepository.save(defaultContract);
 
         // act
-        ResultActions results = mockMvc.perform(post("/contracts/" + defaultContract.getCourseId() + "noise" + "/set-hours/" + 23)
+        ResultActions results = mockMvc.perform(
+            post("/contracts/" + defaultContract.getCourseId() + "noise" + "/set-hours/" + 23)
             .contentType(MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer Pieter"));
 
@@ -203,7 +205,8 @@ class ContractControllerTest {
             .isNotEqualTo(toSetHours);
 
         // act
-        ResultActions results = mockMvc.perform(post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
+        ResultActions results = mockMvc.perform(
+            post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
             .contentType(MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer Pieter"));
 
@@ -230,7 +233,8 @@ class ContractControllerTest {
             .isNotEqualTo(toSetHours);
 
         // act
-        ResultActions results = mockMvc.perform(post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
+        ResultActions results = mockMvc.perform(
+            post("/contracts/" + defaultContract.getCourseId() + "/set-hours/" + toSetHours)
             .contentType(MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer Pieter"));
 
