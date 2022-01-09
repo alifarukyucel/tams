@@ -18,6 +18,7 @@ public class ContractResponseModel {
     private double rating;
     private int maxHours;
     private boolean signed;
+    private int actualWorkedHours;
 
     /**
      * Create an instance of ContractResponseModel based on given contract.
@@ -31,7 +32,8 @@ public class ContractResponseModel {
             contract.getDuties(),
             contract.getRating(),
             contract.getMaxHours(),
-            contract.getSigned()
+            contract.getSigned(),
+            contract.getActualWorkedHours()
         );
     }
 

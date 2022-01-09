@@ -26,6 +26,7 @@ public class ContractBuilderTest {
         assertThat(contract.getDuties()).isNull();
         assertThat(contract.getSigned()).isNull();
         assertThat(contract.getRating()).isZero();
+        assertThat(contract.getActualWorkedHours()).isZero();
     }
 
     @Test
@@ -45,6 +46,7 @@ public class ContractBuilderTest {
         assertThat(contract.getDuties()).isNull();
         assertThat(contract.getSigned()).isNull();
         assertThat(contract.getRating()).isZero();
+        assertThat(contract.getActualWorkedHours()).isZero();
     }
 
     @Test
@@ -64,6 +66,7 @@ public class ContractBuilderTest {
         assertThat(contract.getDuties()).isNull();
         assertThat(contract.getSigned()).isNull();
         assertThat(contract.getRating()).isZero();
+        assertThat(contract.getActualWorkedHours()).isZero();
     }
 
     @Test
@@ -83,6 +86,7 @@ public class ContractBuilderTest {
         assertThat(contract.getMaxHours()).isNull();
         assertThat(contract.getSigned()).isNull();
         assertThat(contract.getRating()).isZero();
+        assertThat(contract.getActualWorkedHours()).isZero();
     }
 
     @Test
@@ -102,6 +106,7 @@ public class ContractBuilderTest {
         assertThat(contract.getDuties()).isNull();
         assertThat(contract.getMaxHours()).isNull();
         assertThat(contract.getRating()).isZero();
+        assertThat(contract.getActualWorkedHours()).isZero();
     }
 
     @Test
@@ -121,6 +126,27 @@ public class ContractBuilderTest {
         assertThat(contract.getDuties()).isNull();
         assertThat(contract.getSigned()).isNull();
         assertThat(contract.getMaxHours()).isNull();
+        assertThat(contract.getActualWorkedHours()).isZero();
+    }
+
+    @Test
+    public void testWithHours() {
+        //arrange
+        int hours = 2;
+
+        //act
+        contract = new ConcreteContractBuilder()
+            .withActualWorkedHours(hours)
+            .build();
+
+        //assert
+        assertThat(contract.getActualWorkedHours()).isEqualTo(hours);
+        assertThat(contract.getNetId()).isNull();
+        assertThat(contract.getCourseId()).isNull();
+        assertThat(contract.getDuties()).isNull();
+        assertThat(contract.getSigned()).isNull();
+        assertThat(contract.getMaxHours()).isNull();
+        assertThat(contract.getRating()).isZero();
     }
 
     @Test
@@ -132,6 +158,7 @@ public class ContractBuilderTest {
         String duties = "DUTIES";
         boolean signed = true;
         double rating = 2.0;
+        int hours = 14;
 
         //act
         contract = new ConcreteContractBuilder()
@@ -141,6 +168,7 @@ public class ContractBuilderTest {
                 .withDuties(duties)
                 .withSigned(signed)
                 .withRating(rating)
+                .withActualWorkedHours(hours)
                 .build();
 
         //assert

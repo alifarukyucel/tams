@@ -18,5 +18,7 @@ public interface ContractBuilder {
 
     ContractBuilder withRating(double rating);
 
+    ContractBuilder withActualWorkedHours(int hours);
+
     Contract build();
 }
