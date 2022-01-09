@@ -283,10 +283,13 @@ public class ContractService {
      * @param hours the new hour value to set
      * @return The contract of the user
      */
-    public Contract updateHours(String netId, String course, int hours) {
+    public void updateHours(String netId, String course, int hours) {
         Contract contract = getContract(netId, course);
+        if (!contract.getSigned()) {
+            throw new IllegalCallerException("Contract has not been signed yet");
+        }
         contract.setActualWorkedHours(hours);
-        return save(contract);
+        save(contract);
     }
 
     /**
