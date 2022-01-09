@@ -467,6 +467,8 @@ Respective underlying service code is boundary tested
     
 ### The system shall let the responsible lecturer of a certain course add other users as responsible lectures of that course with the same rights via an API request.
 
+To add a responsible lecturer to a course, the requesting user must also be a responsible lecturer of the course.
+
 #### Add a responsible lecturer
 1. Create a course
 2. Add another user as a lecturer
@@ -480,7 +482,7 @@ Respective underlying service code is boundary tested
 #### Add a responsible lecturer without being a lecturer
 1. Create a course
 2. As another user, add a lecturer
-3. Verify the response is 403
+3. Verify the response is 403 Forbidden
 4. Verify that the user has not been added as a lecturer
 
 **Relevant tests:**
@@ -489,7 +491,7 @@ Respective underlying service code is boundary tested
 
 #### Add a responsible lecturer to a nonexistent course
 1. Add a lecturer to a course code that does not correspond to an existing course
-2. Verify the response is false
+2. Verify the response is 403
 
 **Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/3f266f53afbb173a2a2a2391c1dbdd55c07b160d/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L275
@@ -497,11 +499,13 @@ Respective underlying service code is boundary tested
 
 ### The system shall allow any responsible lecturer to remove other responsible lecturer other than themselves from that course via an API request.
 
+To remove a responsible lecturer from a course, the requesting user must also be a responsible lecturer of the course.
+
 #### Remove a responsible lecturer
 1. Create a course
 2. Add another user as a lecturer
 3. Verify the response is 200
-4. Verify that the user has actually been added as a lecturer
+4. Verify that the aforementioned user has actually been removed
 
 **Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L417
@@ -510,17 +514,17 @@ Respective underlying service code is boundary tested
 #### Remove a responsible lecturer without being a lecturer
 1. Create a course
 2. Add another user as a lecturer
-2. As a third user, remove the newly-added lecturer
-4. Verify that the user has not been removed as a lecturer
+2. As a third user, who is not a responsible lecturer, remove the newly-added lecturer
+4. Verify that the user has not been removed and that the response is 403 Forbidden
 
 **Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L514
 
-#### Remove a responsible lecturer who is not a lecturer
+#### Remove a responsible lecturer who is not a lecturer of the course
 1. Create a course
 2. Add another user as a lecturer
-2. As the lecturer, remove a third user as a lecturer
-4. Verify that the user has not been removed as a lecturer
+2. Attempt to remove a third user who is not a lecturer of the course as a lecturer
+4. Verify that the user has not been removed
 
 **Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L399
