@@ -20,19 +20,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class CourseAddResponsibleLecturerRequestModel {
     @NotNull
-    private String id;
-
-    @JsonSerialize(using = ToStringSerializer.class)
-    @JsonDeserialize
-    private LocalDateTime startDate;
-
-    private String name;
-
-    private String description;
-
-    private int numberOfStudents;
-
-    @NotNull
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> responsibleLecturers;
 }

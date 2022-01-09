@@ -335,8 +335,7 @@ public class CourseTests {
 
         List<String> addedResponsibleLecturers = new ArrayList<>(
                 List.of(responsibleLecturer, "addedLecturer", "addedLecturer2"));
-        CourseAddResponsibleLecturerRequestModel model = new CourseAddResponsibleLecturerRequestModel(testCourseId,
-                testStartDate, testCourseName, testDescription, testNumberOfStudents, addedResponsibleLecturers);
+        var model = new CourseAddResponsibleLecturerRequestModel(addedResponsibleLecturers);
 
         // Act
         ResultActions action = mockMvc.perform(put("/CSE2115/addLecturer/")
@@ -361,8 +360,7 @@ public class CourseTests {
 
         List<String> addedResponsibleLecturers = new ArrayList<>(
                 List.of(responsibleLecturer, "addedLecturer", "addedLecturer2"));
-        CourseAddResponsibleLecturerRequestModel model = new CourseAddResponsibleLecturerRequestModel(testCourseId,
-                testStartDate, testCourseName, testDescription, testNumberOfStudents, addedResponsibleLecturers);
+        var model = new CourseAddResponsibleLecturerRequestModel(addedResponsibleLecturers);
 
         // Act
         ResultActions action = mockMvc.perform(put("/CSE2115/addLecturer/")
