@@ -1,3 +1,5 @@
+![TAMS](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/raw/c0d6906ba57f40a6a43761e02c6dd7d797946a52/docs/tams.png?inline=false)
+
 Authentication: ![Authentication coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-authentication-microservice)
 Course: ![Course coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-course-microservice)
 Hiring: ![Hiring coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-hiring-microservice)
@@ -30,12 +32,7 @@ The coverage report is generated in: build/reports/jacoco/test/html, which does 
 gradle checkStyleMain
 gradle checkStyleTest
 gradle pmdMain
-gradle pmdTest
 ```
-
-### Notes
-- You should have a local .gitignore file to make sure that any OS-specific and IDE-specific files do not get pushed to the repo (e.g. .idea). These files do not belong in the .gitignore on the repo.
-- You can add issue and merge request templates in the .gitlab folder on your repo. 
 
 ## Group Members
 
