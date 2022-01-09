@@ -22,6 +22,7 @@ class ContractTest {
                 .withSigned(false)
                 .withNetId("PieterDelft")
                 .withDuties("You need to work!")
+                .withActualWorkedHours(15)
                 .build();
     }
 
@@ -32,6 +33,7 @@ class ContractTest {
         Assertions.assertFalse(contract.getSigned());
         Assertions.assertEquals("PieterDelft", contract.getNetId());
         Assertions.assertEquals("You need to work!", contract.getDuties());
+        Assertions.assertEquals(15, contract.getActualWorkedHours());
     }
 
     /**
@@ -84,6 +86,31 @@ class ContractTest {
         assertThat(contract.getRating()).isEqualTo(10.0d);
     }
 
+    /**
+     * Boundary test.
+     */
+    @Test
+    void actualHoursOnPoint() {
+        // act
+        contract.setActualWorkedHours(0);
+
+        // assert
+        assertThat(contract.getActualWorkedHours()).isEqualTo(0);
+    }
+
+
+    /**
+     * Boundary test
+     */
+    @Test
+    void actualHoursOffPoint() {
+        // act
+        ThrowableAssert.ThrowingCallable action = () -> contract.setActualWorkedHours(-1);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+    }
+
     @Test
     void testSetters() {
         contract = new Contract();
@@ -93,6 +120,7 @@ class ContractTest {
         contract.setNetId("PieterDelft");
         contract.setRating(10);
         contract.setDuties("You need to work!");
+        contract.setActualWorkedHours(13);
 
         Assertions.assertEquals("build", contract.getCourseId());
         Assertions.assertEquals(5, contract.getMaxHours());
@@ -100,5 +128,6 @@ class ContractTest {
         Assertions.assertFalse(contract.getSigned());
         Assertions.assertEquals("PieterDelft", contract.getNetId());
         Assertions.assertEquals("You need to work!", contract.getDuties());
+        Assertions.assertEquals(13, contract.getActualWorkedHours());
     }
 }

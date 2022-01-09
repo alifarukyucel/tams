@@ -37,6 +37,9 @@ public class Contract {
     @Column(columnDefinition = "double precision default 0")
     private double rating;
 
+    @Column
+    private int actualWorkedHours;
+
 
     /**
      * Set the rating of this contract.
@@ -51,5 +54,20 @@ public class Contract {
         }
 
         this.rating = rating;
+    }
+
+    /**
+     * Set the actual worked hours of this contract.
+     * Hours need to be larger or equal to 0
+     *
+     * @param hours new value
+     * @throws IllegalArgumentException hours < 0
+     */
+    public void setActualWorkedHours(int hours) throws IllegalArgumentException {
+        if (hours < 0) {
+            throw new IllegalArgumentException("Rating must be between 0 and 10.");
+        }
+
+        this.actualWorkedHours = hours;
     }
 }
