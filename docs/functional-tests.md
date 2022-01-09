@@ -183,6 +183,23 @@ Respective underlying service code is boundary tested
 
 ### The system shall let lecturers request a JSON list of all TA applications for one of their courses including netid, grade, status of application, and the existence of former and present TA contracts of students for the same or other courses as well as the rating (if available).
 
+#### Retrieve all pending TA-applications for a course you are responsible for
+1. Apply for TA with different users for the course
+2. Create and rate contracts for (some of) those users
+3. Submit course id
+4. Verify 200 OK
+5. Verify the correct list is returned
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L683
+
+#### Retrieve all pending applications for a course you are not responsible for
+1. Submit course id, the user does not have lecturer status for this course
+2. Verify 403
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L732
+
 ### The system shall not allow a student to candidate as TA later than 3 weeks before the course starts.
 
 ### The system shall let lecturers reject students who have applied to TA a course by sending their netid and the respective course id.
