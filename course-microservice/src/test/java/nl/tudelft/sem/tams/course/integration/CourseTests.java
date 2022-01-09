@@ -104,12 +104,14 @@ public class CourseTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer SomeHackingProdigy"));
 
-        Course expected = courseRepository.getById(course.getId());
-
         // Assert
         result.andExpect(status().isOk());
-        assertThat(expected.getId()).isNotNull();
-        assertThat(expected).isEqualTo(course);
+
+        CourseResponseModel response =
+                JsonUtil.deserialize(result.andReturn().getResponse().getContentAsString(), CourseResponseModel.class);
+
+        assertThat(response.getId()).isEqualTo(course.getId());
+        assertThat(response.getDescription()).isEqualTo(course.getDescription());
     }
 
     @Test
@@ -124,13 +126,9 @@ public class CourseTests {
         ResultActions action = mockMvc.perform(get("/CSE9999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer Andy"));
-
-        Course expected = courseRepository.getById(course.getId());
         
         // Assert
         action.andExpect(status().isNotFound());
-        assertThat(expected.getId()).isNotNull();
-        assertThat(expected).isEqualTo(course);
     }
 
     @Test
@@ -181,7 +179,7 @@ public class CourseTests {
         // Assert
         action.andExpect(status().isConflict());
 
-        assertThat(courseRepository.findById(testCourseId).orElseThrow()).isEqualTo(existingCourse);
+        assertThat(courseRepository.findAll().size()).isEqualTo(1);
     }
 
     @Test
