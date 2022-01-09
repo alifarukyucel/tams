@@ -515,3 +515,12 @@ Respective underlying service code is boundary tested
 
 **Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L514
+
+#### Remove a responsible lecturer who is not a lecturer
+1. Create a course
+2. Add another user as a lecturer
+2. As the lecturer, remove a third user as a lecturer
+4. Verify that the user has not been removed as a lecturer
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L399
