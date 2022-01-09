@@ -71,6 +71,25 @@ Respective underlying service code is boundary tested
 
 ### The system shall notify students if they have been accepted or rejected as a TA for a particular course by allowing them to submit an API request to retrieve that.
 
+#### Check existing application for status
+1. Submit application to system with user 1
+2. With a lecturer account, set application status
+3. Submit course id to check the status as user 1
+4. Verify 200 is returned
+5. Verify the returned status
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L449
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L476
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L503
+
+#### Check non-existing application for status
+1. Submit course id for which this user has no application submitted
+2. Verify 404
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L421
+
 ### The system shall let users create a course including a unique course id, start date, and number of students. After the course is created, the user shall be assigned as its responsible lecturer.
 
 #### Creating a course
@@ -355,6 +374,41 @@ Respective underlying service code is boundary tested
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L202
 
 ### The system shall upon request create a list of recommendees, the best candidates based on experience and rating. The returned list shall be in the same format as the list returned by the endpoint to retrieve all applicants.
+
+#### Retrieve a list of the "best" candidates for a course you are responsible for 
+1. Apply for TA with different users for the course
+2. Create and rate contracts for (some of) those users
+3. Submit course id and amount of candidates
+4. Verify 200 OK
+5. Verify the correct list is returned
+
+**Relevant tests:**
+-https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L838
+
+#### Retrieve a list of the "best" candidates for a course you are responsible for with a zero-or-negative amount
+1. Submit course id and a 0 / negative amount of candidates
+2. Verify 200 OK
+3. Verify an empty list is returned
+
+**Relevant tests:**
+-https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L783
+
+#### Retrieve a list of the "best" candidates for a course you are responsible for with a too high amount
+1. Apply for TA with different users for the course
+2. Create and rate contracts for (some of) those users
+3. Submit course id and an amount higher than the number of applicants.
+4. Verify 200 OK
+5. Verify a correct list of all applicants (sorted by recommendation) is returned.
+
+**Relevant tests:**
+-https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L803
+
+#### Retrieve a list of the "best" candidates for a course you are not responsible for
+1. Submit course id, the user does not have lecturer status for this course
+2. Verify 403
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L763
 
 ### The system shall notify the students of their TA approval via an automatically sent email.
 
