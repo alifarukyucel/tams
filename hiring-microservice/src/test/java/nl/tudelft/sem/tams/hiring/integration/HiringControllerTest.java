@@ -1,4 +1,4 @@
-package nl.tudelft.sem.tams.hiring.controllers;
+package nl.tudelft.sem.tams.hiring.integration;
 
 import static nl.tudelft.sem.tams.hiring.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
