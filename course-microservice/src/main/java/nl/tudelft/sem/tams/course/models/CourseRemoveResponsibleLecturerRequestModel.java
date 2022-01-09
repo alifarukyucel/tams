@@ -17,6 +17,5 @@ import lombok.NoArgsConstructor;
 public class CourseRemoveResponsibleLecturerRequestModel {
 
     @NotNull
-    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> responsibleLecturers;
 }
