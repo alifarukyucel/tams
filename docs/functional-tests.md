@@ -138,11 +138,20 @@ Respective underlying service code is boundary tested
 ### The system shall let lecturers approve or reject working hours declared by TAs of their own courses by posting to the API.
 
 #### Approve existing hours
-1. Submit hour declaration id and desired state to endpoint
+1. Submit hour declaration id and approved state to endpoint
 2. Verify 200
+3. Verify hours are marked as approved and reviewed
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L247
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/66b75de0d255c736e1c237c489af1ce954f80b29/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L247
+
+#### Reject hours
+1. Submit hour declaration id and rejected state to endpoint
+2. Verify 200
+3. Verify hours are marked as reviewed but not approved
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/66b75de0d255c736e1c237c489af1ce954f80b29/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L268
 
 #### Re-approve existing hours
 1. Submit hour declaration id and true to endpoint
