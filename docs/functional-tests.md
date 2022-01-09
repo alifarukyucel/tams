@@ -282,10 +282,18 @@ Respective underlying service code is boundary tested
 
 ### The system shall upon request create a list of recommendees, the best candidates based on experience and rating. The returned list shall be in the same format as the list returned by the endpoint to retrieve all applicants.
 
-### The system shall have the functionality to send emails.
-
 ### The system shall notify the students of their TA approval via an automatically sent email.
 
+#### Send email when creating contract (and by extension approving application) 
+1. As a lecturer, create a course
+2. As a student, apply to be a TA for that course
+3. As a lecturer, approve that application
+4. Verify an approval email has been sent
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L216
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/d8c0ef23d08c51ee322ce335da99aa7c9478291f/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L414
+    
 ### The system shall let the responsible lecturer of a certain course add other users as responsible lectures of that course with the same rights via an API request.
 
 ### The system shall allow any responsible lecturer to remove other responsible lecturer other than themselves from that course via an API request.
