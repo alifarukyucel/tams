@@ -467,5 +467,15 @@ Respective underlying service code is boundary tested
     
 ### The system shall let the responsible lecturer of a certain course add other users as responsible lectures of that course with the same rights via an API request.
 
+#### Add a responsible lecturer
+1. Create a course
+2. Add another user as a lecturer
+3. Verify the response is 200
+4. Verify that the user has actually been added as a lecturer
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/3f266f53afbb173a2a2a2391c1dbdd55c07b160d/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L309
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/3f266f53afbb173a2a2a2391c1dbdd55c07b160d/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L329
+
 ### The system shall allow any responsible lecturer to remove other responsible lecturer other than themselves from that course via an API request.
 
