@@ -120,6 +120,14 @@ public class ContractController {
         }
     }
 
+    /**
+     * Sets actual worked hours attribute on the contract.
+     *
+     * @param course course id for which contract exists
+     * @param hours amount of hours actually worked on the course
+     * @return 200 OK if successful
+     * @throws ResponseStatusException if unsuccessful
+     */
     @PostMapping("/{course}/set-hours/{hours}")
     public ResponseEntity<String> setWorkedHours(@PathVariable String course, @PathVariable int hours)
             throws ResponseStatusException {

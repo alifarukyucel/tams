@@ -276,12 +276,11 @@ public class ContractService {
     }
 
     /**
-     * Updates the actually worked hours of the contract
+     * Updates the actually worked hours of the contract.
      *
      * @param netId user netId
      * @param course course for which user has a contract
      * @param hours the new hour value to set
-     * @return The contract of the user
      */
     public void updateHours(String netId, String course, int hours) {
         Contract contract = getContract(netId, course);
@@ -313,7 +312,7 @@ public class ContractService {
     private Example<Contract> createContractExample(String netId, String courseId) {
         ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
                                                         .withIgnoreNullValues()
-                                                        .withIgnorePaths("rating" , "actualWorkedHours");
+                                                        .withIgnorePaths("rating", "actualWorkedHours");
         Example<Contract> example = Example.of(
                 new ConcreteContractBuilder()
                         .withCourseId(courseId)
