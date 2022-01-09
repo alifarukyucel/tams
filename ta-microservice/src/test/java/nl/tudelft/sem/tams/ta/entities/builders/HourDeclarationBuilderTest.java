@@ -9,6 +9,8 @@ import nl.tudelft.sem.tams.ta.entities.HourDeclaration;
 import org.junit.jupiter.api.Test;
 
 public class HourDeclarationBuilderTest {
+    //Arbitrary time to use for the hour declarations
+    private static final LocalDateTime arbitraryTime = LocalDateTime.of(2000, 1, 1, 0, 0);
 
     private HourDeclaration hourDeclaration;
 
@@ -95,7 +97,7 @@ public class HourDeclarationBuilderTest {
     @Test
     public void testWithDate() {
         //arrange
-        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime date = arbitraryTime;
 
         //act
         hourDeclaration = new ConcreteHourDeclarationBuilder()
@@ -167,7 +169,7 @@ public class HourDeclarationBuilderTest {
         Integer workedTime = 60;
         boolean approved = true;
         boolean reviewed = false;
-        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime date = arbitraryTime;
         String desc = "description";
         Contract contract = new ConcreteContractBuilder()
                 .withNetId("kverhoef")

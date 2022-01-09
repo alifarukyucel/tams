@@ -11,6 +11,8 @@ import nl.tudelft.sem.tams.ta.entities.builders.ConcreteHourDeclarationBuilder;
 import org.junit.jupiter.api.Test;
 
 public class HourDeclarationDirectorTest {
+    //Arbitrary time to use for the hour declarations
+    private static final LocalDateTime arbitraryTime = LocalDateTime.of(2000, 1, 1, 0, 0);
 
     private HourDeclaration hourDeclaration;
 
@@ -19,7 +21,6 @@ public class HourDeclarationDirectorTest {
         //arrange
         UUID id = UUID.randomUUID();
         Integer workedTime = 60;
-        LocalDateTime date = LocalDateTime.now();
         String desc = "description";
         Contract contract = new ConcreteContractBuilder()
                 .withNetId("kverhoef")
@@ -38,7 +39,7 @@ public class HourDeclarationDirectorTest {
         hourDeclaration = builder
                 .withId(id)
                 .withWorkedTime(workedTime)
-                .withDate(date)
+                .withDate(arbitraryTime)
                 .withDescription(desc)
                 .withContractId(contract)
                 .build();
