@@ -277,4 +277,89 @@ public class CourseServiceTests {
                 .containsExactlyInAnyOrder(expectedResponsibleLecturer, "lecturer2");
     }
 
+    @Test
+    public void removeResponsibleLecturers_courseDoesNotExist_throwsNoSuchElementException() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ThrowableAssert.ThrowingCallable action = () ->
+                courseService.removeResponsibleLecturers("courseThatDoesNotExist", expectedResponsibleLecturer);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(action);
+    }
+
+    @Test
+    public void removeResponsibleLecturers_removeLecturerThatDoesNotExist() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        courseService.removeResponsibleLecturers(course.getId(), expectedResponsibleLecturer);
+
+        // Assert
+        List<String> expectedResponsibleLecturers = courseRepository.getById(course.getId()).getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers)
+                .containsExactlyInAnyOrder();
+    }
+
+    @Test
+    public void removeResponsibleLecturers_removeSingleLecturer() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        courseService.removeResponsibleLecturers(course.getId(), expectedResponsibleLecturer);
+
+        // Assert
+        List<String> expectedResponsibleLecturers = courseRepository.getById(course.getId()).getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers)
+                .containsExactlyInAnyOrder();
+    }
+
+    @Test
+    public void removeResponsibleLecturers_removeMultipleLecturers_asMultipleArguments() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);
+        responsibleLecturers.add("lecturer2");
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        courseService.removeResponsibleLecturers(course.getId(), expectedResponsibleLecturer, "lecturer2");
+
+        // Assert
+        List<String> expectedResponsibleLecturers = courseRepository.getById(course.getId()).getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers)
+                .containsExactlyInAnyOrder();
+    }
+
+    @Test
+    public void removeResponsibleLecturers_removeMultipleLecturers_asList() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        courseService.removeResponsibleLecturers(course.getId(), List.of(expectedResponsibleLecturer, "lecturer2"));
+
+        // Assert
+        List<String> expectedResponsibleLecturers = courseRepository.getById(course.getId()).getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers)
+                .containsExactlyInAnyOrder();
+    }
+
 }

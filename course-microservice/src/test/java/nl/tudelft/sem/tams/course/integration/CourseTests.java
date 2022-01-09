@@ -16,6 +16,7 @@ import java.util.List;
 import nl.tudelft.sem.tams.course.entities.Course;
 import nl.tudelft.sem.tams.course.models.CourseAddResponsibleLecturerRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseCreationRequestModel;
+import nl.tudelft.sem.tams.course.models.CourseRemoveResponsibleLecturerRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseResponseModel;
 import nl.tudelft.sem.tams.course.repositories.CourseRepository;
 import nl.tudelft.sem.tams.course.security.AuthManager;
@@ -371,6 +372,164 @@ public class CourseTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(model))
                 .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void removeResponsibleLecturers_courseDoesNotExist_403Forbidden() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);  // to be authenticated as responsible lecturer
+        responsibleLecturers.add("lecturer2");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/nonExistingCourse/removeLecturer/lecturer2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void removeResponsibleLecturers_lecturerDoesNotExist() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);  // to be authenticated as responsible lecturer
+        responsibleLecturers.add("lecturer");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/removeLecturer/nonExistentLecturer")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isOk());  // Remove lecturers method is idempotent, so doesn't throw an exception.
+    }
+
+    @Test
+    public void removeResponsibleLecturers_removeSingleLecturer() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);  // to be authenticated as responsible lecturer
+        responsibleLecturers.add("lecturer2");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/removeLecturer/lecturer2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        Course expectedCourse = courseRepository.getById(course.getId());
+        List<String> expectedResponsibleLecturers = expectedCourse.getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers).containsExactlyInAnyOrder(responsibleLecturer);
+        action.andExpect(status().isOk());
+    }
+
+    @Test
+    public void removeResponsibleLecturers_removeMultipleLecturers_asMultipleArguments() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer); // to be authenticated as responsible lecturer
+        responsibleLecturers.add("lecturer2");
+        responsibleLecturers.add("lecturer3");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/removeLecturer/lecturer2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        Course expectedCourse = courseRepository.getById(course.getId());
+        List<String> expectedResponsibleLecturers = expectedCourse.getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers).containsExactlyInAnyOrder(responsibleLecturer, "lecturer3");
+        action.andExpect(status().isOk());
+    }
+
+    @Test
+    public void removeResponsibleLecturers_removeMultipleLecturers_asList() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer); // to be authenticated as responsible lecturer
+        responsibleLecturers.add("lecturer2");
+        responsibleLecturers.add("lecturer3");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        List<String> toBeRemovedResponsibleLecturers = new ArrayList<>(
+                List.of("lecturer2", "lecturer3"));
+        CourseRemoveResponsibleLecturerRequestModel model =
+            new CourseRemoveResponsibleLecturerRequestModel(toBeRemovedResponsibleLecturers);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/removeLecturer/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(model))
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        Course expectedCourse = courseRepository.getById(course.getId());
+        List<String> expectedResponsibleLecturers = expectedCourse.getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers).containsExactlyInAnyOrder(responsibleLecturer);
+        action.andExpect(status().isOk());
+    }
+
+    @Test
+    public void removeResponsibleLecturers_removeMultipleLecturers_courseDoesNotExist_throws403() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer); // to be authenticated as responsible lecturer
+        responsibleLecturers.add("lecturer2");
+        responsibleLecturers.add("lecturer3");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+            testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        List<String> toBeRemovedResponsibleLecturers = new ArrayList<>(
+            List.of("lecturer2", "lecturer3"));
+        CourseRemoveResponsibleLecturerRequestModel model =
+            new CourseRemoveResponsibleLecturerRequestModel(toBeRemovedResponsibleLecturers);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/nonExistentCourse/removeLecturer/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void removeResponsibleLecturers_notAuthenticated_throws403() throws Exception {
+        // Arrange
+        // responsibleLecturer is not in responsibleLecturers, therefore not authenticated.
+        responsibleLecturers.add("lecturer2");
+        responsibleLecturers.add("lecturer3");
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+            testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        List<String> toBeRemovedResponsibleLecturers = new ArrayList<>(
+            List.of("lecturer2", "lecturer3"));
+        CourseRemoveResponsibleLecturerRequestModel model =
+            new CourseRemoveResponsibleLecturerRequestModel(toBeRemovedResponsibleLecturers);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2215/removeLecturer/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Mulder"));
 
         // Assert
         action.andExpect(status().isForbidden());
