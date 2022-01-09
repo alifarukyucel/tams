@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.course.models;
+package nl.tudelft.sem.tams.course.models;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
