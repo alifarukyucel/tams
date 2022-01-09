@@ -410,6 +410,38 @@ class ContractControllerTest {
         verifyNoInteractions(mockEmailSender);
     }
 
+
+    @Test
+    void createContractExceedingLimit() throws Exception {
+        // Arrange
+        mockAuthentication("Stefan", true);
+        CreateContractRequestModel model = CreateContractRequestModel.builder()
+            .courseId("CSE2310").netId("BillGates").maxHours(10).duties("My duties").build();
+        int size = contractRepository.findAll().size();
+
+        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
+                .id("CSE2310")
+                .description("Very cool course")
+                .numberOfStudents(39)
+                .build());
+
+        // Act
+        ResultActions action = mockMvc.perform(post("/contracts/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(serialize(model))
+            .header("Authorization", "Bearer Winstijn")
+        );
+
+        // Assert
+        MvcResult result = action
+            .andExpect(status().isBadRequest())
+            .andReturn();
+
+        assertThat(contractRepository.findAll().size()).isEqualTo(size);
+
+        verifyNoInteractions(mockEmailSender);
+    }
+
     @Test
     void createContractWithContactEmail() throws Exception {
         // Arrange
