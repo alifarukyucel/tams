@@ -1,8 +1,6 @@
 package nl.tudelft.sem.tams.course.models;
 
 import java.util.List;
-import javax.persistence.ElementCollection;
-import javax.persistence.FetchType;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
