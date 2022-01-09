@@ -1,4 +1,4 @@
-package nl.tudelft.sem.tams.ta.controllers;
+package nl.tudelft.sem.tams.ta.integration;
 
 import static nl.tudelft.sem.tams.ta.utils.JsonUtil.deserialize;
 import static nl.tudelft.sem.tams.ta.utils.JsonUtil.serialize;
