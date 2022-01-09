@@ -469,8 +469,8 @@ public class CourseTests {
 
         List<String> toBeRemovedResponsibleLecturers = new ArrayList<>(
                 List.of("lecturer2", "lecturer3"));
-        CourseRemoveResponsibleLecturerRequestModel model = new CourseRemoveResponsibleLecturerRequestModel(testCourseId,
-                testStartDate, testCourseName, testDescription, testNumberOfStudents, toBeRemovedResponsibleLecturers);
+        CourseRemoveResponsibleLecturerRequestModel model =
+            new CourseRemoveResponsibleLecturerRequestModel(toBeRemovedResponsibleLecturers);
 
         // Act
         ResultActions action = mockMvc.perform(put("/CSE2115/removeLecturer/")
@@ -497,8 +497,8 @@ public class CourseTests {
 
         List<String> toBeRemovedResponsibleLecturers = new ArrayList<>(
             List.of("lecturer2", "lecturer3"));
-        CourseRemoveResponsibleLecturerRequestModel model = new CourseRemoveResponsibleLecturerRequestModel(testCourseId,
-            testStartDate, testCourseName, testDescription, testNumberOfStudents, toBeRemovedResponsibleLecturers);
+        CourseRemoveResponsibleLecturerRequestModel model =
+            new CourseRemoveResponsibleLecturerRequestModel(toBeRemovedResponsibleLecturers);
 
         // Act
         ResultActions action = mockMvc.perform(put("/nonExistentCourse/removeLecturer/")
@@ -522,8 +522,8 @@ public class CourseTests {
 
         List<String> toBeRemovedResponsibleLecturers = new ArrayList<>(
             List.of("lecturer2", "lecturer3"));
-        CourseRemoveResponsibleLecturerRequestModel model = new CourseRemoveResponsibleLecturerRequestModel(testCourseId,
-            testStartDate, testCourseName, testDescription, testNumberOfStudents, toBeRemovedResponsibleLecturers);
+        CourseRemoveResponsibleLecturerRequestModel model =
+            new CourseRemoveResponsibleLecturerRequestModel(toBeRemovedResponsibleLecturers);
 
         // Act
         ResultActions action = mockMvc.perform(put("/CSE2215/removeLecturer/")
