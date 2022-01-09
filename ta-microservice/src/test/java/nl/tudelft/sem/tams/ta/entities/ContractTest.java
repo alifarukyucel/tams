@@ -100,7 +100,7 @@ class ContractTest {
 
 
     /**
-     * Boundary test
+     * Boundary test.
      */
     @Test
     void actualHoursOffPoint() {
