@@ -168,6 +168,26 @@ Respective underlying service code is boundary tested
 
 ### The system shall allow students to withdraw their candidacy unless they can no longer apply as a TA.
 
+#### Withdraw within allowed timeframe
+1. Submit valid application
+2. Attempt withdrawal more than 3 weeks before the course starts
+3. Verify 200
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L378
+
+Respective underlying service code is boundary tested
+
+#### Withdraw outside allowed timeframe
+1. Submit valid application
+2. Attempts withdrawal less than 3 weeks before the course starts
+3. Verify 403
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L513
+
+Respective underlying service code is boundary tested
+
 ### The system shall not allow a student to candidate as TA if they have already applied to be a TA for 3 courses that quarter.
 
 #### Allowed to become a ta
