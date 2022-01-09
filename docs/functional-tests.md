@@ -151,6 +151,22 @@
 
 ### The system shall not allow a student to candidate as TA if they have already applied to be a TA for 3 courses that quarter.
 
+#### Allowed to become a ta
+1. Submit two applications for the same user
+2. Submit a third application for the same user
+3. Verify 200
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L333
+
+#### Not allowed to become a ta
+1. Submit 3 applications for the same user
+2. Submit a fourth application for the same user
+3. Verify 403
+
+**Relvant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L288
+
 ### The system shall not allow a TA to declare hours if this were to go over the limit stated in their contract.
 
 #### Block declaring hours if going over hours stated in contract
