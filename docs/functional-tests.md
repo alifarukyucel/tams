@@ -173,6 +173,25 @@ Respective underlying service code is boundary tested
 
 ### The system shall let a lecturer rate a TA based on their performance by sending an API request.
 
+#### Normally rate a contract
+1. Submit course id and net id of the student, include a respective rating between 0 and 10
+2. Verify 200
+3. Verify rating has been saved
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L568
+
+#### Rate a contract with invalid ratings
+1. Submit course id and net id of the student, include a respective rating outside 0 and 10
+2. Verify 400
+3. Verify rating did not change
+
+**Relevant tests**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L636
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L657
+
+Respective underlying service code is boundary tested
+
 ### The system shall not allow a lecturer to hire more than 1 TA for every 20 students in the course.
 
 ### The system shall allow a TA to specify how many hours they actually worked on the course by posting the course id and the amount of hours to the API.
