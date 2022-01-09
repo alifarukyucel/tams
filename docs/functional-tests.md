@@ -536,3 +536,31 @@ To remove a responsible lecturer from a course, the requesting user must also be
 **Relevant tests:**
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L381
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/096407e09d2f0d85f2507df7cea725d14ba54fa0/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L489
+
+### Allow a TA to mark "actually worked hours"
+
+#### Setting total worked hours
+1. Sign the respective contract beforehand
+2. Submit course id and positive amount of total hours to endpoint
+3. Verify 200
+4. Verify correct value has been saved
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/368f7e2810cc4fa47d8541cda39ebd3415669387/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L148
+
+#### Setting total worked hours with illegal values
+1. Sign the respective contract beforehand
+2. Submit course id and a negative amount of hours to endpoint 
+3. Verify 400
+4. Verify previous value has not been overwritten
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/368f7e2810cc4fa47d8541cda39ebd3415669387/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L194
+
+#### Setting total worked hours on an unsigned contract
+2. Submit course id and positive amount of total hours to endpoint
+3. Verify 403
+4. Verify previous value has not been overwritten
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/368f7e2810cc4fa47d8541cda39ebd3415669387/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L224
