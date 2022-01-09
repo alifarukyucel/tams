@@ -194,6 +194,18 @@ Respective underlying service code is boundary tested
 
 ### The system shall not allow a lecturer to hire more than 1 TA for every 20 students in the course.
 
+#### Block hiring when ratio between student and ta becomes too large
+1. Save an accepted application in the hiring service
+2. Mock Course information to return x students
+3. Submit a new application
+4. Verify 409
+5. Verify application has not been saved
+
+**Relevant tests:**
+
+
+Respective underlying service code is boundary tested
+
 ### The system shall allow a TA to specify how many hours they actually worked on the course by posting the course id and the amount of hours to the API.
 
 #### Submit hour declaration
