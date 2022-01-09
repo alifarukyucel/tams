@@ -487,5 +487,13 @@ Respective underlying service code is boundary tested
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/3f266f53afbb173a2a2a2391c1dbdd55c07b160d/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L292
 - https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/3f266f53afbb173a2a2a2391c1dbdd55c07b160d/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L354
 
+#### Add a responsible lecturer to a nonexistent course
+1. Add a lecturer to a course code that does not correspond to an existent course
+2. Verify the response is false
+
+**Relevant tests:**
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/3f266f53afbb173a2a2a2391c1dbdd55c07b160d/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L275
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/3f266f53afbb173a2a2a2391c1dbdd55c07b160d/course-microservice/src/test/java/nl/tudelft/sem/tams/course/integration/CourseTests.java#L253
+
 ### The system shall allow any responsible lecturer to remove other responsible lecturer other than themselves from that course via an API request.
 
