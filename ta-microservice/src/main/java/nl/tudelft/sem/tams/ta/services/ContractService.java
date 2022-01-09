@@ -313,7 +313,7 @@ public class ContractService {
     private Example<Contract> createContractExample(String netId, String courseId) {
         ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
                                                         .withIgnoreNullValues()
-                                                        .withIgnorePaths("rating");
+                                                        .withIgnorePaths("rating" , "actualWorkedHours");
         Example<Contract> example = Example.of(
                 new ConcreteContractBuilder()
                         .withCourseId(courseId)
