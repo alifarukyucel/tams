@@ -65,7 +65,7 @@ public class Contract {
      */
     public void setActualWorkedHours(int hours) throws IllegalArgumentException {
         if (hours < 0) {
-            throw new IllegalArgumentException("Rating must be between 0 and 10.");
+            throw new IllegalArgumentException("Actual worked hours cannot be smaller than 0");
         }
 
         this.actualWorkedHours = hours;
