@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.tams.course.entities.Course;
+import nl.tudelft.sem.tams.course.models.CourseAddResponsibleLecturerRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseCreationRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseResponseModel;
 import nl.tudelft.sem.tams.course.security.AuthManager;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,7 +33,7 @@ public class CourseController {
     private final transient AuthManager authManager;
 
     private final transient CourseService courseService;
-    
+
     /**
      * Instantiates a new Course controller.
      *
@@ -51,7 +53,7 @@ public class CourseController {
      * @param id            id of course
      * @return the course found in the database with the given id
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") // id
     public ResponseEntity<CourseResponseModel> getCourseById(@PathVariable String id)
             throws NoSuchElementException {
         try {
@@ -71,9 +73,9 @@ public class CourseController {
      * @return 200 OK with true if user is responsible lecturer of the course
      *         200 OK with false if not.
      */
-    @GetMapping("{courseId}/lecturer/{netId}")
+    @GetMapping("{courseId}/lecturer/{netId}") // {courseId}/lecturer/{netId}
     public ResponseEntity<Boolean> isResponsibleLecturer(@PathVariable String netId,
-                                                        @PathVariable String courseId) {
+                                                         @PathVariable String courseId) {
         try {
             courseService.isResponsibleLecturer(netId, courseId);
             return ResponseEntity.ok(true);
@@ -92,8 +94,8 @@ public class CourseController {
      * @param courseModel   the course to be created
      * @return the course returned from the database (with a manually-assigned id)
      */
-    @PostMapping(value = "/create", consumes = "application/json")
-    ResponseEntity<CourseResponseModel> createCourse(@RequestBody CourseCreationRequestModel courseModel)
+    @PostMapping(value = "/create", consumes = "application/json") // create
+    public ResponseEntity<CourseResponseModel> createCourse(@RequestBody CourseCreationRequestModel courseModel)
             throws ResponseStatusException {
         Course course = new Course(courseModel.getId(),
                 courseModel.getStartDate(), courseModel.getName(),
@@ -102,6 +104,53 @@ public class CourseController {
         courseService.createCourse(course);
         CourseResponseModel response = CourseResponseModel.fromCourse(course);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * PUT endpoint that adds the given netId as a responsible lecturer to the given course.
+     *
+     * @param courseId          Id of the course to add responsible lecturers to
+     * @param netId             NetId of the responsible lecturer to be added
+     * @return                  403 FORBIDDEN if the requesting user is not a responsible lecturer
+     *                          404 NOT FOUND if the course does not exist
+     *                          200 OK if given netId is successfully added
+     */
+    @PutMapping(value = "{courseId}/addLecturer/{netId}")   // {courseId}/addLecturer/{netId}
+    public ResponseEntity<String> addResponsibleLecturers(@PathVariable String courseId,
+                                                          @PathVariable String netId) {
+        try {
+            courseService.isResponsibleLecturer(authManager.getNetid(), courseId);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You should be a responsible lecturer to execute this operation.");
+        }
+        courseService.addResponsibleLecturers(courseId, netId); // this can't throw NoSuchElementException since
+        // whether a course exists or not is already checked by isResponsibleLecturer.
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * PUT endpoint that adds the given netIds as responsible lecturers to the given course.
+     * Effectively replaces the existing course's responsible lecturers field with the new one.
+     *
+     * @param courseId          Id of the course to add responsible lecturers to
+     * @param model             Course object with updated responsible lecturers
+     * @return                  403 FORBIDDEN if the requesting user is not a responsible lecturer
+     *                          404 NOT FOUND if the course does not exist
+     *                          200 OK if given netId is successfully added
+     */
+    @PutMapping(value = "{courseId}/addLecturer/")   // {courseId}/addLecturer/
+    public ResponseEntity<String> addResponsibleLecturers(@PathVariable String courseId,
+                                                          @RequestBody CourseAddResponsibleLecturerRequestModel model) {
+        try {
+            courseService.isResponsibleLecturer(authManager.getNetid(), courseId);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You should be a responsible lecturer to execute this operation.");
+        }
+        courseService.addResponsibleLecturers(courseId, model.getResponsibleLecturers()); // this can't throw
+        // NoSuchElementException since whether a course exists or not is already checked by isResponsibleLecturer.
+        return ResponseEntity.ok().build();
     }
 
     // ---------------------------------- Deletions -------------------------------

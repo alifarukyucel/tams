@@ -1,6 +1,8 @@
 package nl.tudelft.sem.tams.course.integration;
 
+import static nl.tudelft.sem.tams.course.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,7 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import nl.tudelft.sem.tams.course.entities.Course;
+import nl.tudelft.sem.tams.course.models.CourseAddResponsibleLecturerRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseCreationRequestModel;
 import nl.tudelft.sem.tams.course.models.CourseResponseModel;
 import nl.tudelft.sem.tams.course.repositories.CourseRepository;
@@ -33,7 +37,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 
 /**
- * Integration tests mainly for courseController.
+ * Integration tests for CourseController.
  *
  * @created 09 /12/2021, 20:58
  */
@@ -130,7 +134,7 @@ public class CourseTests {
     }
 
     @Test
-    void createCourse_NoExistingCourseInDatabase() throws Exception {
+    public void createCourse_NoExistingCourseInDatabase() throws Exception {
         // Arrange
         mockAuthentication("Andy", true);
 
@@ -140,7 +144,7 @@ public class CourseTests {
         // Act
         ResultActions action = mockMvc.perform(post("/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.serialize(courseModel))
+                .content(serialize(courseModel))
                 .header("Authorization", "Bearer Andy"));
 
         // Assert
@@ -157,7 +161,7 @@ public class CourseTests {
     }
 
     @Test
-    void createCourse_ExistingCourseInDatabase_throwsConflictException() throws Exception {
+    public void createCourse_ExistingCourseInDatabase_throwsConflictException() throws Exception {
         // Arrange
         mockAuthentication(responsibleLecturer, true);
 
@@ -171,7 +175,7 @@ public class CourseTests {
         // Act
         ResultActions action = mockMvc.perform(post("/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.serialize(courseModel))
+                .content(serialize(courseModel))
                 .header("Authorization", "Bearer Andy"));
 
         // Assert
@@ -267,5 +271,108 @@ public class CourseTests {
 
         Boolean actual = Boolean.valueOf(result.getResponse().getContentAsString());
         assertThat(actual).isFalse();
+    }
+
+    @Test
+    public void addResponsibleLecturers_courseDoesNotExist_403Forbidden() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer);  // to be authenticated as responsible lecturer
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/nonExistingCourse/addLecturer/lecturer2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void addResponsibleLecturers_addSingleLecturer_userIsNotaLecturer() throws Exception {
+        // Arrange
+        // responsible lecturers is empty, hence, the requesting user is not authenticated as a lecturer
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/addLecturer/addedLecturer")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void addResponsibleLecturers_addSingleLecturer() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer); // to be authenticated as responsible lecturer
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/addLecturer/lecturer2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        Course expectedCourse = courseRepository.getById(course.getId());
+        List<String> expectedResponsibleLecturers = expectedCourse.getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers).containsExactlyInAnyOrder(responsibleLecturer, "lecturer2");
+        action.andExpect(status().isOk());
+    }
+
+    @Test
+    public void addResponsibleLecturers_addMultipleLecturers() throws Exception {
+        // Arrange
+        responsibleLecturers.add(responsibleLecturer); // to be authenticated as responsible lecturer
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        List<String> addedResponsibleLecturers = new ArrayList<>(
+                List.of(responsibleLecturer, "addedLecturer", "addedLecturer2"));
+        CourseAddResponsibleLecturerRequestModel model = new CourseAddResponsibleLecturerRequestModel(testCourseId,
+                testStartDate, testCourseName, testDescription, testNumberOfStudents, addedResponsibleLecturers);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/addLecturer/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(model))
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        Course expectedCourse = courseRepository.getById(course.getId());
+        List<String> expectedResponsibleLecturers = expectedCourse.getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers).containsExactlyInAnyOrder("fmulder", "addedLecturer", "addedLecturer2");
+        action.andExpect(status().isOk());
+    }
+
+    @Test
+    public void addResponsibleLecturers_addMultipleLecturers_userIsNotaLecturer_403Forbidden() throws Exception {
+        // Arrange
+        // responsible lecturers is empty, hence, the requesting user is not authenticated as a lecturer
+        Course course = new Course(testCourseId, testStartDate, testCourseName, testDescription,
+                testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        List<String> addedResponsibleLecturers = new ArrayList<>(
+                List.of(responsibleLecturer, "addedLecturer", "addedLecturer2"));
+        CourseAddResponsibleLecturerRequestModel model = new CourseAddResponsibleLecturerRequestModel(testCourseId,
+                testStartDate, testCourseName, testDescription, testNumberOfStudents, addedResponsibleLecturers);
+
+        // Act
+        ResultActions action = mockMvc.perform(put("/CSE2115/addLecturer/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serialize(model))
+                .header("Authorization", "Bearer Mulder"));
+
+        // Assert
+        action.andExpect(status().isForbidden());
     }
 }

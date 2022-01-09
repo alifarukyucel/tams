@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.tams.course.entities.Course;
 import nl.tudelft.sem.tams.course.repositories.CourseRepository;
@@ -51,7 +52,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void getExistingCourse() {
+    public void getExistingCourse() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -66,7 +67,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void getNonExistingCourse() {
+    public void getNonExistingCourse() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -79,7 +80,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void createCourse_NoExistingCourseInDatabase() {
+    public void createCourse_NoExistingCourseInDatabase() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -94,7 +95,7 @@ public class CourseServiceTests {
     }
 
     @Test
-    void createCourse_ExistingCourseInDatabase_throwsConflictException() {
+    public void createCourse_ExistingCourseInDatabase_throwsConflictException() {
         // Arrange
         Course course = new Course(testCourseId, testStartDate, testCourseName,
                 testDescription, testNumberOfStudents, responsibleLecturers);
@@ -195,6 +196,85 @@ public class CourseServiceTests {
         // Assert
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(action);
+    }
+
+    @Test
+    public void addResponsibleLecturers_courseDoesNotExist_throwsNoSuchElementException() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        ThrowableAssert.ThrowingCallable action = () ->
+                courseService.addResponsibleLecturers("courseThatDoesNotExist", expectedResponsibleLecturer);
+
+        // Assert
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(action);
+    }
+
+    @Test
+    public void addResponsibleLecturers_doNotAddIfLecturerAlreadyExists() {
+        // Arrange
+        responsibleLecturers.add(expectedResponsibleLecturer);  // already exists
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        courseService.addResponsibleLecturers(course.getId(), expectedResponsibleLecturer);  // try to add it
+
+        // Assert
+        assertThat(courseRepository.getById(course.getId()).getResponsibleLecturers())
+                .containsExactly(expectedResponsibleLecturer);  // no duplicates
+    }
+
+    @Test
+    public void addResponsibleLecturers_addSingleLecturer() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        courseService.addResponsibleLecturers(course.getId(), expectedResponsibleLecturer);
+
+        // Assert
+        assertThat(courseRepository.getById(course.getId()).getResponsibleLecturers())
+                .containsExactly(expectedResponsibleLecturer);
+    }
+
+    @Test
+    public void addResponsibleLecturers_addMultipleLecturers_asMultipleArguments() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        courseService.addResponsibleLecturers(course.getId(), expectedResponsibleLecturer, "lecturer2");
+
+        // Assert
+        List<String> expectedResponsibleLecturers = courseRepository.getById(course.getId()).getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers)
+                .containsExactlyInAnyOrder(expectedResponsibleLecturer, "lecturer2");
+    }
+
+    @Test
+    public void addResponsibleLecturers_addMultipleLecturers_asList() {
+        // Arrange
+        Course course = new Course(testCourseId, testStartDate, testCourseName,
+                testDescription, testNumberOfStudents, responsibleLecturers);
+        courseRepository.save(course);
+
+        // Act
+        courseService.addResponsibleLecturers(course.getId(), List.of(expectedResponsibleLecturer, "lecturer2"));
+
+        // Assert
+        List<String> expectedResponsibleLecturers = courseRepository.getById(course.getId()).getResponsibleLecturers();
+        assertThat(expectedResponsibleLecturers)
+                .containsExactlyInAnyOrder(expectedResponsibleLecturer, "lecturer2");
     }
 
 }
