@@ -54,8 +54,8 @@
 3. Verify application has been saved
 
 **Relevant tests**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L150
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L205
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L150
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L205
 
 #### The system shall not accept a TA application for a course if they do not submit a grade or that grade is lower than 6.0.
 1. Submit model with too low grades
@@ -63,9 +63,9 @@
 3. Verify application has not been saved
 
 **Relevant tests**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L94
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L122
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L177
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L94
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L122
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L177
 
 Respective underlying service code is boundary tested
 
@@ -136,7 +136,7 @@ Respective underlying service code is boundary tested
 2. Verify the response is 200
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L144
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L144
 
 #### Signing an already signed contract
 1. Submit course id for which the user has a contract
@@ -144,15 +144,15 @@ Respective underlying service code is boundary tested
 3. Verify the response is 409
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L165
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L165
 
 #### Signing a non-existent contract
 1. Submit course id for which the user has no contract posted
 2. Verify the response is 404
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L188
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L208
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L188
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L208
 
 ### The system shall let lecturers accept students who have applied to TA a course by sending their netid, the respective course id, hours to be worked, and extra contract information to the API. The application status of that student shall then be changed to ‘accepted’.
 
@@ -162,15 +162,15 @@ Respective underlying service code is boundary tested
 3. Verify 200
 
 **Relevant tests**:
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L883
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L928
 
 #### Create new contract on the ta microservice side
 1. Submit model, usually submitted by hiring microservice
 2. Verify 200
 
 **Relevant tests**:
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L375
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L414
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L375
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L446
 
 ### The system shall expose the amount of hours and the comments for those hours written by TAs that still need to be approved or rejected for their course for each TA to the responsible lecturers via the API. 
 
@@ -180,14 +180,14 @@ Respective underlying service code is boundary tested
 3. Verify correct list is returned
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L398
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/66b75de0d255c736e1c237c489af1ce954f80b29/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L420
 
 #### Fetch hour declarations with illegal arguments
 1. Submit course id, the user does not have lecturer status for this course
 2. Verify 403
 
 **Relevant tests**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L437
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/66b75de0d255c736e1c237c489af1ce954f80b29/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L459
 
 ### The system shall let lecturers approve or reject working hours declared by TAs of their own courses by posting to the API.
 
@@ -213,7 +213,7 @@ Respective underlying service code is boundary tested
 3. Verify 409
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L267
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L267
 
 #### Approve more hours than allowed by contract
 1. Create contract with 20 allowed hours
@@ -233,7 +233,7 @@ Respective underlying service code is boundary tested
 3. Verify 403
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L290
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L290
 
 ### The system shall let lecturers request a JSON list of all TA applications for one of their courses including netid, grade, status of application, and the existence of former and present TA contracts of students for the same or other courses as well as the rating (if available).
 
@@ -273,7 +273,7 @@ Respective underlying service code is boundary tested
 4. Check status of ta-application to have changed to "rejected"
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L540
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L585
 
 #### Reject a student for a course you are not responsible for
 1. Submit a ta-application for a course
@@ -282,14 +282,14 @@ Respective underlying service code is boundary tested
 4. Check status of ta-application to not have changed
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L570
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L615
 
 #### Reject a student that hasn't even applied
 1. Submit course id and netid to reject
 2. Verify 404
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L600
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L645
 
 #### Reject a ta-application that is not pending
 1. Submit a ta-application for a course
@@ -299,7 +299,7 @@ Respective underlying service code is boundary tested
 5. Check status of ta-application to not have changed after 2
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L636
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L681
 
 ### The system shall allow students to withdraw their candidacy unless they can no longer apply as a TA.
 
@@ -309,7 +309,7 @@ Respective underlying service code is boundary tested
 3. Verify 200
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L378
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L423
 
 Respective underlying service code is boundary tested
 
@@ -319,7 +319,7 @@ Respective underlying service code is boundary tested
 3. Verify 403
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L513
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L558
 
 Respective underlying service code is boundary tested
 
@@ -331,7 +331,7 @@ Respective underlying service code is boundary tested
 3. Verify 200
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L333
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L378
 
 #### Not allowed to become a ta
 1. Submit 3 applications for the same user
@@ -339,7 +339,7 @@ Respective underlying service code is boundary tested
 3. Verify 403
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/controllers/HiringControllerTest.java#L288
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/hiring-microservice/src/test/java/nl/tudelft/sem/tams/hiring/integration/HiringControllerTest.java#L333
 
 ### The system shall not allow a TA to declare hours if this were to go over the limit stated in their contract.
 
@@ -348,7 +348,7 @@ Respective underlying service code is boundary tested
 2. Verify 409
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L225
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L225
 
 Respective underlying service code is boundary tested
 
@@ -369,7 +369,7 @@ Respective underlying service code is boundary tested
 3. Verify rating has been saved
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L568
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L600
 
 #### Rate a contract with invalid ratings
 1. Submit course id and net id of the student, include a respective rating outside 0 and 10
@@ -377,8 +377,8 @@ Respective underlying service code is boundary tested
 3. Verify rating did not change
 
 **Relevant tests**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L636
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/ContractControllerTest.java#L657
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L668
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/ContractControllerTest.java#L689
 
 Respective underlying service code is boundary tested
 
@@ -405,7 +405,7 @@ Respective underlying service code is boundary tested
 3. Verify hours have been properly saved
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L142
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L142
 
 #### Submit hour declaration with missing db entries such as course or contract
 1. Make sure no valid course or contract exists for which hours are declared
@@ -413,8 +413,8 @@ Respective underlying service code is boundary tested
 3. Verify 404
 
 **Relevant tests:**
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L180
-- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/4408c65270b1fc9c2d355fb5856873aa74828ff1/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/controllers/HourControllerTest.java#L202
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L180
+- https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/blob/40295a12f5fbbaf0d7a673ab9621ece297d718ca/ta-microservice/src/test/java/nl/tudelft/sem/tams/ta/integration/HourControllerTest.java#L202
 
 ### The system shall upon request create a list of recommendees, the best candidates based on experience and rating. The returned list shall be in the same format as the list returned by the endpoint to retrieve all applicants.
 
