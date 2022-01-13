@@ -33,6 +33,12 @@ public class ConnectedCourseInformationService implements CourseInformation {
         }
     }
 
+    /**
+     * Returns the course information response model.
+     *
+     * @param id id of the course.
+     * @return all information found on the course.
+     */
     @Override
     public CourseInformationResponseModel getCourseById(String id) {
         if (id == null) {
@@ -46,4 +52,20 @@ public class ConnectedCourseInformationService implements CourseInformation {
             return null;
         }
     }
+
+    /**
+     * Returns an amount of students for a course.
+     *
+     * @param courseId the course id to check for student
+     * @return amount of students
+     */
+    @Override
+    public int getAmountOfStudents(String courseId) {
+        CourseInformationResponseModel model = getCourseById(courseId);
+        if (model == null) {
+            throw new IllegalArgumentException("Could not retrieve course");
+        }
+        return model.getNumberOfStudents();
+    }
+
 }
