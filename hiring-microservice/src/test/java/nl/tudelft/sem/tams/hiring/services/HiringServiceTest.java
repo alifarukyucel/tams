@@ -555,7 +555,15 @@ public class HiringServiceTest {
         taApplicationRepository.save(teachingAssistantApplication);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(LocalDateTime.MAX);
+        when(mockCourseInformation.getCourseById(teachingAssistantApplication.getCourseId()))
+                .thenReturn(new CourseInformationResponseModel(
+                        "CSE1200",
+                        LocalDateTime.MAX,
+                        "CourseName",
+                        "CourseDescription",
+                        100,
+                        new ArrayList<>())
+                );
 
         //Act
         boolean result = taApplicationService.checkAndWithdraw(
@@ -575,7 +583,15 @@ public class HiringServiceTest {
         taApplicationRepository.save(teachingAssistantApplication);
 
         //When the startTime is the current time, the deadline has passed already
-        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(assumedCurrentTime);
+        when(mockCourseInformation.getCourseById(teachingAssistantApplication.getCourseId()))
+                .thenReturn(new CourseInformationResponseModel(
+                        "CSE1200",
+                        assumedCurrentTime,
+                        "CourseName",
+                        "CourseDescription",
+                        100,
+                        new ArrayList<>())
+                );
 
         //Act
         boolean result = taApplicationService.checkAndWithdraw(
@@ -596,8 +612,15 @@ public class HiringServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
         taApplicationRepository.save(teachingAssistantApplication);
-        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId()))
-                .thenReturn(assumedCurrentTime.plusWeeks(3));
+        when(mockCourseInformation.getCourseById(teachingAssistantApplication.getCourseId()))
+                .thenReturn(new CourseInformationResponseModel(
+                                "CSE1200",
+                                assumedCurrentTime.plusWeeks(3),
+                                "CourseName",
+                                "CourseDescription",
+                                100,
+                                new ArrayList<>())
+                        );
 
         //Act
         boolean result = taApplicationService.checkAndWithdraw(
@@ -618,8 +641,15 @@ public class HiringServiceTest {
                 "CSE1300", "jsmith", 7.0f,
                 motivation, ApplicationStatus.PENDING);
         taApplicationRepository.save(teachingAssistantApplication);
-        when(mockCourseInformation.startDate(teachingAssistantApplication.getCourseId())).thenReturn(
-                assumedCurrentTime.plusWeeks(3).plusNanos(1));
+        when(mockCourseInformation.getCourseById(teachingAssistantApplication.getCourseId())).thenReturn(
+                new CourseInformationResponseModel(
+                        "CSE1200",
+                        assumedCurrentTime.plusWeeks(3).plusNanos(1),
+                        "CourseName",
+                        "CourseDescription",
+                        100,
+                        new ArrayList<>())
+                );
 
         //Act
         boolean result = taApplicationService.checkAndWithdraw(
