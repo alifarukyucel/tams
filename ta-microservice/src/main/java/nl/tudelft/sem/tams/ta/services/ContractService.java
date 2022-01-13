@@ -11,6 +11,7 @@ import nl.tudelft.sem.tams.ta.entities.builders.directors.ContractDirector;
 import nl.tudelft.sem.tams.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.tams.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.ta.interfaces.EmailSender;
+import nl.tudelft.sem.tams.ta.models.CreateContractRequestModel;
 import nl.tudelft.sem.tams.ta.repositories.ContractRepository;
 import nl.tudelft.sem.tams.ta.services.communication.models.CourseInformationResponseModel;
 import org.springframework.data.domain.Example;
@@ -64,21 +65,20 @@ public class ContractService {
      * Optionally email the newly-hired TA to inform them they have a new contract to sign.
      * Note that this method ensures that the contract does not exist.
      *
-     * @param netId netId of TA.
-     * @param courseId courseId of contract
-     * @param maxHours max amount of hours a TA can work
-     * @param duties duties of the TA
-     * @param taContactEmail an email to contact the TA
+     * @param contractModel a model containing netId of the TA, courseId of contract,
+     *                      max amount of hours a TA can work, duties of the TA
+     *                      and an email to contact the TA with.
      * @return a saved instance of Contract.
      * @throws IllegalArgumentException if any of the parameters are null or invalid,
      *                                  the contract already exists, or
      *                                  no more TAs are allowed to be hired for the course.
      */
-    public Contract createUnsignedContract(String netId, String courseId, int maxHours, String duties,
-                                           String taContactEmail) throws IllegalArgumentException {
+    public Contract createUnsignedContract(CreateContractRequestModel contractModel) throws IllegalArgumentException {
 
         // Verify if a contract can be made with the parameters given.
-        verifyContractCreationParameters(netId, courseId, maxHours);
+        verifyContractCreationParameters(contractModel.getNetId(),
+                                         contractModel.getCourseId(),
+                                         contractModel.getMaxHours());
 
         // Create a new unsigned contract with a builder.
         var builder = new ConcreteContractBuilder();
@@ -86,17 +86,17 @@ public class ContractService {
 
         // Create the actual contract with the builder.
         Contract contract = builder
-            .withNetId(netId)
-            .withCourseId(courseId)
-            .withMaxHours(maxHours)
-            .withDuties(duties)
+            .withNetId(contractModel.getNetId())
+            .withCourseId(contractModel.getCourseId())
+            .withMaxHours(contractModel.getMaxHours())
+            .withDuties(contractModel.getDuties())
             .build();
 
         // save can also throw an IllegalArgumentException if failed.
         contract = save(contract);
 
         // Email the newly-hired TA if a contact email is specified
-        sendContractCreatedEmail(taContactEmail, contract);
+        sendContractCreatedEmail(contractModel.getTaContactEmail(), contract);
 
         return contract;
     }
