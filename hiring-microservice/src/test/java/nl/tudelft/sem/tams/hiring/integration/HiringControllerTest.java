@@ -431,14 +431,8 @@ public class HiringControllerTest {
                 .build();
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById(onTime.getCourseId()))
-                .thenReturn(new CourseInformationResponseModel(
-                        "CSE1200",
-                        LocalDateTime.MAX,
-                        "CourseName",
-                        "CourseDescription",
-                        100,
-                        new ArrayList<>()));
+        when(mockCourseInformation.startDate(onTime.getCourseId()))
+                .thenReturn(LocalDateTime.MAX);
 
         // act
         ResultActions onTimeResult  = mockMvc.perform(delete("/withdraw")
@@ -573,14 +567,8 @@ public class HiringControllerTest {
                 .build();
 
         //AssumedCurrentTime is used here the startTime of the course to guarantee the deadline has passed
-        when(mockCourseInformation.getCourseById(tooLate.getCourseId()))
-                .thenReturn(new CourseInformationResponseModel(
-                        "CSE1200",
-                        assumedCurrentTime,
-                        "CourseName",
-                        "CourseDescription",
-                        100,
-                        new ArrayList<>()));
+        when(mockCourseInformation.startDate(tooLate.getCourseId()))
+                .thenReturn(assumedCurrentTime);
 
         // act
         ResultActions onTimeResult  = mockMvc.perform(delete("/withdraw")
