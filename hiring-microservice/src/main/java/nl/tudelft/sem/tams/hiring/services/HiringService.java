@@ -13,7 +13,6 @@ import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
 import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
 import nl.tudelft.sem.tams.hiring.repositories.TeachingAssistantApplicationRepository;
-import nl.tudelft.sem.tams.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.tams.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.stereotype.Service;
 
@@ -71,13 +70,7 @@ public class HiringService {
     }
 
     private void checkApplicationDeadline(TeachingAssistantApplication teachingAssistantApplication) {
-        CourseInformationResponseModel course = courseInformation.getCourseById(teachingAssistantApplication.getCourseId());
-        if (course == null) {
-            //Course does not exist
-            throw new NoSuchElementException("This course does not exist.");
-        }
-
-        if (!isApplicationPeriodOpen(course)) {
+        if (!isApplicationPeriodOpen(teachingAssistantApplication.getCourseId())) {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
     }
@@ -133,7 +126,7 @@ public class HiringService {
      * @return true if on time or false if too late
      */
     public boolean checkAndWithdraw(String courseId, String netId) {
-        boolean canApplyAndWithdraw = isApplicationPeriodOpen(courseInformation.getCourseById(courseId));
+        boolean canApplyAndWithdraw = isApplicationPeriodOpen(courseId);
 
         if (!canApplyAndWithdraw) {
             return false;
@@ -287,8 +280,8 @@ public class HiringService {
         return pendingApplicationsCount >= maxCandidacies;
     }
 
-    private boolean isApplicationPeriodOpen(CourseInformationResponseModel course) {
-        return course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime()
+    private boolean isApplicationPeriodOpen(String courseId) {
+        return courseInformation.startDate(courseId).isAfter(timeProvider.getCurrentLocalDateTime()
                 .plusWeeks(applicationWindowDurationInWeeks));
     }
 }
