@@ -133,54 +133,6 @@ public class ConnectedCourseInformationServiceTests {
     }
 
     @Test
-    public void testStartDateReturnsCorrectDate() throws Exception {
-        // Arrange
-        String courseId = "CSE1110";
-
-        var date = arbitraryTime; // random amount to make sure method doesn't just return now
-        CourseInformationResponseModel expected = new CourseInformationResponseModel();
-        expected.setId(courseId);
-        expected.setStartDate(date);
-
-        when(mockMicroserviceCommunicationHelper.get(testUrl + getCourseByIdPath,
-            CourseInformationResponseModel.class, courseId))
-            .thenReturn(ResponseEntity.ok(expected));
-
-        // Act
-        LocalDateTime actual = connectedCourseInformationService.startDate(courseId);
-
-        // Assert
-        assertThat(actual).isSameAs(date);
-        verify(mockMicroserviceCommunicationHelper).get(testUrl + getCourseByIdPath,
-            CourseInformationResponseModel.class, courseId);
-    }
-
-
-    @Test
-    public void testStartDateThrowsWhenNull() throws Exception {
-        // Arrange
-        String courseId = "CSE1110";
-
-        var date = arbitraryTime;
-        CourseInformationResponseModel expected = new CourseInformationResponseModel();
-        expected.setId(courseId);
-        expected.setStartDate(date);
-
-        when(mockMicroserviceCommunicationHelper.get(testUrl + getCourseByIdPath,
-            CourseInformationResponseModel.class, courseId))
-            .thenReturn(null);
-
-        // Act
-        ThrowableAssert.ThrowingCallable action = () ->
-            connectedCourseInformationService.startDate(courseId);
-
-        // Assert
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(action);
-        verify(mockMicroserviceCommunicationHelper).get(testUrl + getCourseByIdPath,
-            CourseInformationResponseModel.class, courseId);
-    }
-
-    @Test
     public void getCourseById_withValidCourse_returnsCorrectCourse() throws Exception {
         // Arrange
         String courseId = "CSE1110";
