@@ -385,11 +385,7 @@ class ContractServiceTest {
             .withDuties("Heel hard werken")
             .build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(21)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(21);
 
         String testContactEmail = "winstijn@tudelft.nl";
 
@@ -442,11 +438,7 @@ class ContractServiceTest {
             .withDuties("Heel hard werken")
             .build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(21)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(21);
 
         // Act
         Contract saved = contractService.createUnsignedContract(
@@ -483,11 +475,7 @@ class ContractServiceTest {
             .withDuties("Heel hard werken")
             .build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(20)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(20);
 
 
         // Act
@@ -521,11 +509,7 @@ class ContractServiceTest {
             .withDuties("Heel hard werken")
             .build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-            .id("CSE2310")
-            .description("Very cool course")
-            .numberOfStudents(20)
-            .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(20);
 
         String testContactEmail = "winstijn@tudelft.nl";
 
@@ -557,7 +541,8 @@ class ContractServiceTest {
             .withDuties("Heel hard werken")
             .build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(null);
+        when(mockCourseInformation.getAmountOfStudents("CSE2310"))
+            .thenThrow(new IllegalArgumentException("Course does not exist"));
 
 
         // Act
@@ -580,11 +565,7 @@ class ContractServiceTest {
     @Test
     void createUnsignedContract_illegalArguments() {
         // Arrange
-        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2525")
-                .description("Very cool course")
-                .numberOfStudents(10000)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2525")).thenReturn(10000);
 
         // Act
         ThrowingCallable actionNonPositiveHours = () ->
@@ -626,11 +607,7 @@ class ContractServiceTest {
             .build();
         contractRepository.save(contract);
 
-        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2525")
-                .description("Very cool course")
-                .numberOfStudents(10000)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2525")).thenReturn(10000);
 
         // Act
         ThrowingCallable actionConflict = () ->
