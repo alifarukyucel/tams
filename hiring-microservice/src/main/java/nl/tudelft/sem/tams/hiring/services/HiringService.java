@@ -77,7 +77,7 @@ public class HiringService {
             throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
         }
 
-        if (!course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime().plusWeeks(3))) {
+        if (!isApplicationPeriodOpen(course)) {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
 
