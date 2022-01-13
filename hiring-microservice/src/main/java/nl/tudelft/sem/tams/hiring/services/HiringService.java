@@ -124,12 +124,14 @@ public class HiringService {
      * @return true if on time or false if too late
      */
     public boolean checkAndWithdraw(String courseId, String netId) {
-        LocalDateTime deadline = courseInformation.startDate(courseId).minusWeeks(withdrawalWindow);
-        if (timeProvider.getCurrentLocalDateTime().isBefore(deadline)) {
-            taApplicationRepository.delete(this.get(courseId, netId));
-            return true;
+        boolean canApplyAndWithdraw = isApplicationPeriodOpen(courseInformation.getCourseById(courseId));
+
+        if (!canApplyAndWithdraw) {
+            return false;
         }
-        return false;
+
+        taApplicationRepository.delete(this.get(courseId, netId));
+        return true;
     }
 
     /**
