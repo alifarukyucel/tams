@@ -126,12 +126,9 @@ public class ContractService {
      * @throws IllegalArgumentException if the course cannot be retrieved.
      */
     private boolean isTaLimitReached(String courseId) {
-        CourseInformationResponseModel model = courseInformation.getCourseById(courseId);
-        if (model == null) {
-            throw new IllegalArgumentException("Could not retrieve course");
-        }
+        int numberOfTas = courseInformation.getAmountOfStudents(courseId);
 
-        int allowedTas = (int) Math.ceil(model.getNumberOfStudents() / studentsPerOneTa);
+        int allowedTas = (int) Math.ceil(numberOfTas / studentsPerOneTa);
 
         long hiredTas = contractRepository.count(createContractExample(null, courseId));
 
