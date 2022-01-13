@@ -1,6 +1,5 @@
 package nl.tudelft.sem.tams.hiring.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class HiringService {
     
     // Amount of weeks before a course starts when withdrawal is still allowed
     // e.g. withdrawal is allowed x weeks before the course starts.
-    private static final transient int withdrawalWindow = 3;
+    private static final transient int applicationWindowDurationInWeeks = 3;
 
     /**
      * Constructor for the application service, with the corresponding repositories / information classes.
@@ -278,6 +277,7 @@ public class HiringService {
     }
 
     private boolean isApplicationPeriodOpen(CourseInformationResponseModel course) {
-        return course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime().plusWeeks(withdrawalWindow));
+        return course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime()
+                .plusWeeks(applicationWindowDurationInWeeks));
     }
 }
