@@ -14,10 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import nl.tudelft.sem.tams.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
@@ -107,13 +104,7 @@ public class HiringControllerTest {
                 invalidModel.getCourseId(), exampleNetId);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1200")).thenReturn(LocalDateTime.MAX);
 
         //Act
         ResultActions invalidResults = mockMvc.perform(post("/apply")
@@ -136,13 +127,7 @@ public class HiringControllerTest {
                 validModel.getCourseId(), exampleNetId);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1200")).thenReturn(LocalDateTime.MAX);
 
         //Act
         ResultActions validResults = mockMvc.perform(post("/apply")
@@ -165,13 +150,7 @@ public class HiringControllerTest {
                 validModel.getCourseId(), exampleNetId);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1200")).thenReturn(LocalDateTime.MAX);
 
         //Act
         ResultActions validResults = mockMvc.perform(post("/apply")
@@ -193,13 +172,7 @@ public class HiringControllerTest {
                 invalidModel.getCourseId(), exampleNetId);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1200")).thenReturn(LocalDateTime.MAX);
 
         //Act
         ResultActions invalidResults = mockMvc.perform(post("/apply")
@@ -222,13 +195,7 @@ public class HiringControllerTest {
                 validModel.getCourseId(), exampleNetId);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1200")).thenReturn(LocalDateTime.MAX);
 
         //Act
         ResultActions validResults = mockMvc.perform(post("/apply")
@@ -251,13 +218,7 @@ public class HiringControllerTest {
                 validModel.getCourseId(), exampleNetId);
 
         // the deadline has passed (boundary test)
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                assumedCurrentTime.plusWeeks(3),
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1200")).thenReturn(assumedCurrentTime.plusWeeks(3));
 
         //Act
         ResultActions validResults = mockMvc.perform(post("/apply")
@@ -280,13 +241,7 @@ public class HiringControllerTest {
                 invalidModel.getCourseId(), exampleNetId);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1200")).thenReturn(LocalDateTime.MAX);
 
         //Act
         ResultActions invalidResults = mockMvc.perform(post("/apply")
@@ -308,7 +263,7 @@ public class HiringControllerTest {
         TeachingAssistantApplicationKey invalidKey = new TeachingAssistantApplicationKey(
                 invalidModel.getCourseId(), exampleNetId);
 
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(null);
+        when(mockCourseInformation.startDate("CSE1200")).thenThrow(NoSuchElementException.class);
 
         //Act
         ResultActions invalidResults = mockMvc.perform(post("/apply")
@@ -398,13 +353,7 @@ public class HiringControllerTest {
                 thirdApplicationModel.getCourseId(), exampleNetId);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1200")).thenReturn(LocalDateTime.MAX);
 
         //Act
         ResultActions oneMorePossible = mockMvc.perform(post("/apply")
