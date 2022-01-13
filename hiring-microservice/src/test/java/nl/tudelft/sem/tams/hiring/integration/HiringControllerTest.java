@@ -14,7 +14,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import nl.tudelft.sem.tams.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
