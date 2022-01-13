@@ -21,15 +21,6 @@ public class ConnectedCourseInformationService implements CourseInformation {
     }
 
     @Override
-    public LocalDateTime startDate(String courseId) {
-        var date = getCourseById(courseId);
-        if (date == null) {
-            throw new NoSuchElementException("Course does not exist");
-        }
-        return date.getStartDate();
-    }
-
-    @Override
     public boolean isResponsibleLecturer(String netId, String courseId) {
         if (netId == null || courseId == null) {
             return false;
