@@ -276,4 +276,8 @@ public class HiringService {
 
         return pendingApplicationsCount >= maxCandidacies;
     }
+
+    private boolean isApplicationPeriodOpen(CourseInformationResponseModel course) {
+        return course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime().plusWeeks(withdrawalWindow));
+    }
 }
