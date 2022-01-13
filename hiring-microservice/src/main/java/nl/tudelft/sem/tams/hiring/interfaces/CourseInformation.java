@@ -8,4 +8,6 @@ public interface CourseInformation {
     boolean isResponsibleLecturer(String netId, String courseId);
 
     CourseInformationResponseModel getCourseById(String id);
+
+    LocalDateTime startDate(String courseId);
 }
