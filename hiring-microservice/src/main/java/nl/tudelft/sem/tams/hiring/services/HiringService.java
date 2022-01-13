@@ -65,13 +65,7 @@ public class HiringService {
     public void checkAndSave(TeachingAssistantApplication teachingAssistantApplication) {
         checkApplicationDeadline(teachingAssistantApplication);
 
-        if (!teachingAssistantApplication.hasValidGrade()) {
-            throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
-        }
-
-        if (!teachingAssistantApplication.meetsRequirements()) {
-            throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
-        }
+        checkApplicationRequirements(teachingAssistantApplication);
 
         taApplicationRepository.save(teachingAssistantApplication);
     }
@@ -87,6 +81,17 @@ public class HiringService {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
     }
+
+    private void checkApplicationRequirements(TeachingAssistantApplication teachingAssistantApplication) {
+        if (!teachingAssistantApplication.hasValidGrade()) {
+            throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
+        }
+
+        if (!teachingAssistantApplication.meetsRequirements()) {
+            throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
+        }
+    }
+
 
     /**
      * Finds all applications with a given courseId and status.
