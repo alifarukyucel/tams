@@ -63,11 +63,7 @@ public class HiringService {
      * @throws IllegalArgumentException when the deadline for the course has already passed
      */
     public void checkAndSave(TeachingAssistantApplication teachingAssistantApplication) {
-        CourseInformationResponseModel course = courseInformation.getCourseById(teachingAssistantApplication.getCourseId());
-        if (course == null) {
-            //Course does not exist
-            throw new NoSuchElementException("This course does not exist.");
-        }
+        checkApplicationDeadline(teachingAssistantApplication);
 
         if (!teachingAssistantApplication.hasValidGrade()) {
             throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
@@ -77,11 +73,19 @@ public class HiringService {
             throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
         }
 
+        taApplicationRepository.save(teachingAssistantApplication);
+    }
+
+    private void checkApplicationDeadline(TeachingAssistantApplication teachingAssistantApplication) {
+        CourseInformationResponseModel course = courseInformation.getCourseById(teachingAssistantApplication.getCourseId());
+        if (course == null) {
+            //Course does not exist
+            throw new NoSuchElementException("This course does not exist.");
+        }
+
         if (!isApplicationPeriodOpen(course)) {
             throw new IllegalArgumentException("The deadline for applying for this course has already passed");
         }
-
-        taApplicationRepository.save(teachingAssistantApplication);
     }
 
     /**
