@@ -64,8 +64,8 @@ public class ContractService {
      * Optionally email the newly-hired TA to inform them they have a new contract to sign.
      * Note that this method ensures that the contract does not exist.
      *
-     * @param courseId courseId of contract
      * @param netId netId of TA.
+     * @param courseId courseId of contract
      * @param maxHours max amount of hours a TA can work
      * @param duties duties of the TA
      * @param taContactEmail an email to contact the TA
@@ -77,22 +77,10 @@ public class ContractService {
     public Contract createUnsignedContract(String netId, String courseId, int maxHours, String duties,
                                            String taContactEmail) throws IllegalArgumentException {
 
-        // Check if parameters were given are valid.
-        if (StringUtils.isEmpty(netId)
-            || StringUtils.isEmpty(courseId)
-            || maxHours <= 0) {
-            throw new IllegalArgumentException("netId, courseId, maxHours are required and need to be valid.");
-        }
+        // Verify if a contract can be made with the parameters given.
+        verifyContractCreationParameters(netId, courseId, maxHours);
 
-        // Check if contract already exists - return an error if not.
-        if (contractExists(netId, courseId)) {
-            throw new IllegalArgumentException("This contract already exists!");
-        }
-
-        if (isTaLimitReached(courseId)) {
-            throw new IllegalArgumentException("No more TAs can be hired for this course.");
-        }
-
+        // Create a new unsigned contract with a builder.
         var builder = new ConcreteContractBuilder();
         new ContractDirector().createUnsignedContract(builder);
 
@@ -107,16 +95,11 @@ public class ContractService {
         // save can also throw an IllegalArgumentException if failed.
         contract = save(contract);
 
-        // email the newly-hired TA if a contact email is specified
-        if (taContactEmail != null) {
-            String emailSubject = String.format(taEmailSubjectTemplate, courseId);
-            String emailBody = String.format(taEmailBodyTemplate, netId, courseId, duties, maxHours);
-            this.emailSender.sendEmail(taContactEmail, emailSubject, emailBody);
-        }
+        // Email the newly-hired TA if a contact email is specified
+        sendContractCreatedEmail(taContactEmail, contract);
 
         return contract;
     }
-
 
     /**
      * Returns the requested contract based on the users netId and the specified CourseId.
@@ -322,6 +305,51 @@ public class ContractService {
                         .withNetId(netId)
                         .build(), ignoreAllFields);
         return example;
+    }
+
+    /**
+     * Checks and verifies if a contract can be created with the given netId, courseId and maxHours.
+     * Throws an IllegalArgumentException if it is not possible.
+     *
+     * @param netId the netId of the contract
+     * @param courseId the courseId of the contract
+     * @param maxHours the maximum hours of the contract
+     * @throws IllegalArgumentException if parameters are invalid
+     */
+    private void verifyContractCreationParameters(String netId, String courseId, int maxHours)
+        throws IllegalArgumentException {
+
+        // Check if parameters were given are valid.
+        if (StringUtils.isEmpty(netId)
+            || StringUtils.isEmpty(courseId)
+            || maxHours <= 0) {
+            throw new IllegalArgumentException("netId, courseId, maxHours are required and need to be valid.");
+        }
+
+        // Check if contract already exists - return an error if not.
+        if (contractExists(netId, courseId)) {
+            throw new IllegalArgumentException("This contract already exists!");
+        }
+
+        if (isTaLimitReached(courseId)) {
+            throw new IllegalArgumentException("No more TAs can be hired for this course.");
+        }
+    }
+
+    /**
+     * Sends an email to the given email address describing the given contract.
+     * Does nothing when the email is null.
+     *
+     * @param email email address to which the email should be sent
+     * @param contract the contract that will be detailed inside of the email.
+     */
+    private void sendContractCreatedEmail(String email, Contract contract) {
+        if (email != null && contract != null) {
+            String emailSubject = String.format(taEmailSubjectTemplate, contract.getCourseId());
+            String emailBody = String.format(taEmailBodyTemplate, contract.getNetId(), contract.getCourseId(),
+                contract.getDuties(), contract.getMaxHours());
+            this.emailSender.sendEmail(email, emailSubject, emailBody);
+        }
     }
 
 }
