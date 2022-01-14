@@ -190,9 +190,6 @@ public class ContractController {
         if (!authManager.getNetid().equals(netId)) {
             checkAuthorized(course);
         }
-        if (netId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passed user ID not parsed correctly");
-        }
 
         return findContractBy(netId, course);
     }
