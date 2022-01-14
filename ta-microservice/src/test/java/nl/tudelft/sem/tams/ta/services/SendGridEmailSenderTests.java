@@ -18,10 +18,8 @@ import com.sendgrid.Request;
 import com.sendgrid.SendGrid;
 import java.io.IOException;
 import java.lang.reflect.Field;
-
 import nl.tudelft.sem.tams.ta.entities.Contract;
 import nl.tudelft.sem.tams.ta.entities.builders.ConcreteContractBuilder;
-import nl.tudelft.sem.tams.ta.entities.builders.interfaces.ContractBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
