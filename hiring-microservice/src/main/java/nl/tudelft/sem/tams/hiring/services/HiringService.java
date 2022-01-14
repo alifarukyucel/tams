@@ -70,6 +70,10 @@ public class HiringService {
             throw new NoSuchElementException("This course does not exist.");
         }
 
+        if (hasReachedMaxApplication(teachingAssistantApplication.getNetId())) {
+            throw new IllegalArgumentException("Maximum number of applications has been reached!");
+        }
+
         if (!teachingAssistantApplication.hasValidGrade()) {
             throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
         }

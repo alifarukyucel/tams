@@ -59,16 +59,8 @@ public class HiringController {
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody TeachingAssistantApplicationRequestModel request) {
-        if (taApplicationService.hasReachedMaxApplication(authManager.getNetid())) {
-            // It is not allowed to have more than 3 applications
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum number of applications has been reached!");
-        }
         TeachingAssistantApplication teachingAssistantApplication = TeachingAssistantApplication.createPendingApplication(
-                request.getCourseId(),
-                authManager.getNetid(),
-                request.getGrade(),
-                request.getMotivation(),
-                request.getContactEmail());
+                request, authManager.getNetid());
 
         try {
             taApplicationService.checkAndSave(teachingAssistantApplication);
