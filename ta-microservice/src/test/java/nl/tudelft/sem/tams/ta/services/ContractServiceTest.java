@@ -645,52 +645,6 @@ class ContractServiceTest {
     }
 
     @Test
-    void contractExists_true() {
-        // Arrange
-        Contract contract = new ConcreteContractBuilder()
-            .withNetId("PVeldHuis")
-            .withCourseId("CSE2310")
-            .withMaxHours(5)
-            .withDuties("Work really hard")
-            .withSigned(false)
-            .build();
-        contract = contractRepository.save(contract);
-
-        // Act
-        boolean exists = contractService.contractExists("PVeldHuis", "CSE2310");
-
-        // Assert
-        assertThat(exists).isTrue();
-    }
-
-    @Test
-    void contractExists_false() {
-        // Arrange
-        Contract c1 = new ConcreteContractBuilder()
-            .withNetId("PVeldHuis")
-            .withCourseId("CS2310")
-            .withMaxHours(5)
-            .withDuties("Work really hard")
-            .withSigned(false)
-            .build();
-        contractRepository.save(c1);
-        Contract c2 = new ConcreteContractBuilder()
-            .withNetId("WinstijnSmit")
-            .withCourseId("CSE2300")
-            .withMaxHours(5)
-            .withDuties("Work really hard")
-            .withSigned(false)
-            .build();
-        contractRepository.save(c2);
-
-        // Act
-        boolean exists = contractService.contractExists("WinstijnSmit", "CSE2310");
-
-        // Assert
-        assertThat(exists).isFalse();
-    }
-
-    @Test
     void rate() {
         // Arrange
         Contract contract = new ConcreteContractBuilder()

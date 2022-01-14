@@ -165,24 +165,6 @@ public class ContractService {
         return contracts;
     }
 
-
-    /**
-     * Returns whether a contract already exists.
-     *
-     * @param netId The contract's netId (required)
-     * @param courseId The contract's courseId (required)
-     * @return boolean whether contract exists.
-     */
-    public boolean contractExists(String netId, String courseId) {
-        try {
-            // This method throws an exception when contract does not exist.
-            getContract(netId, courseId);
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
-        }
-    }
-
     /**
      * Set a contracts signed status to true.
      *
@@ -312,7 +294,7 @@ public class ContractService {
         }
 
         // Check if contract already exists - return an error if not.
-        if (contractExists(netId, courseId)) {
+        if (contractRepository.existsById(new ContractId(netId, courseId))) {
             throw new IllegalArgumentException("This contract already exists!");
         }
 
