@@ -14,6 +14,13 @@ public class BaseHiringController {
     protected final transient CourseInformation courseInformation;
     protected final transient HiringService hiringService;
 
+    /**
+     * Instantiates a new BaseHiringController.
+     *
+     * @param authManager        the auth manager
+     * @param hiringService the application service
+     * @param courseInformation  the course information
+     */
     protected BaseHiringController(AuthManager authManager, CourseInformation courseInformation, HiringService hiringService) {
         this.authManager = authManager;
         this.courseInformation = courseInformation;
