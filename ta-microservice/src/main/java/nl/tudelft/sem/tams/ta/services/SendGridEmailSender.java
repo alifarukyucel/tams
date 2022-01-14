@@ -33,7 +33,7 @@ public class SendGridEmailSender implements EmailSender {
      * @param subjectText the subject of the email
      * @param bodyText the plain-text body of the email
      */
-    protected void sendEmail(String recipient, String subjectText, String bodyText) {
+    public void sendEmail(String recipient, String subjectText, String bodyText) {
         try {
             Email from = new Email(fromEmail);
             Email to = new Email(recipient);
@@ -68,10 +68,11 @@ public class SendGridEmailSender implements EmailSender {
                 + "The course staff of %s is offering you a TA position. Congratulations!\n"
                 + "Your duties are \"%s\", and the maximum number of hours is %s.\n"
                 + "Please log into TAMS to review and sign the contract.\n\n"
-                + "Best regards,\nThe programme administration of your faculty";
+                + "Best regards,\nThe programme administration of your faculty\n"
+                + "Feel free to contact us at %s";
 
             String emailBody = String.format(taEmailBodyTemplate, contract.getNetId(), contract.getCourseId(),
-                contract.getDuties(), contract.getMaxHours());
+                contract.getDuties(), contract.getMaxHours(), fromEmail);
             sendEmail(email, emailSubject, emailBody);
         }
     }
