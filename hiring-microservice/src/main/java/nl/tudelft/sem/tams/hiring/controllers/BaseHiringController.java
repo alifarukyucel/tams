@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 /**
  * Abstract class for HiringControllers.
  */
-public class BaseHiringController {
+public abstract class BaseHiringController {
     protected final transient AuthManager authManager;
     protected final transient CourseInformation courseInformation;
     protected final transient HiringService hiringService;
