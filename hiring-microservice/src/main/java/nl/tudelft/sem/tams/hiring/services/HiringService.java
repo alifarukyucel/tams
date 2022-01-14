@@ -280,4 +280,15 @@ public class HiringService {
 
         return pendingApplicationsCount >= maxCandidacies;
     }
+
+    /**
+     * Creates a list of pending TA-applications, extended with a rating fetched from the TA-microservice.
+     *
+     * @param courseId The course to fetch the applications for.
+     * @return a list of extended TeachingAssistantApplications.
+     */
+    public List<PendingTeachingAssistantApplicationResponseModel> getExtendedPendingApplications(String courseId) {
+        List<TeachingAssistantApplication> applications = findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        return extendWithRating(applications);
+    }
 }
