@@ -28,13 +28,13 @@ public class ApplicantHiringController extends BaseHiringController {
      * Instantiates a new ApplicantHiringController.
      *
      * @param authManager        the auth manager
-     * @param taApplicationService the application service
+     * @param hiringService the application service
      * @param courseInformation  the course information
      */
     public ApplicantHiringController(AuthManager authManager,
-                                     HiringService taApplicationService,
+                                     HiringService hiringService,
                                      CourseInformation courseInformation) {
-        super(authManager, courseInformation, taApplicationService);
+        super(authManager, courseInformation, hiringService);
     }
 
     /**
@@ -51,7 +51,7 @@ public class ApplicantHiringController extends BaseHiringController {
                 request, authManager.getNetid());
 
         try {
-            taApplicationService.checkAndSave(teachingAssistantApplication);
+            hiringService.checkAndSave(teachingAssistantApplication);
             return ResponseEntity.ok("Applied successfully");
         } catch (NoSuchElementException e) {
             //Thrown when the course is not found.
@@ -71,7 +71,7 @@ public class ApplicantHiringController extends BaseHiringController {
     @GetMapping("/status/{course}")
     public ResponseEntity<RetrieveTeachingAssistantApplicationStatusModel> getStatusByCourse(@PathVariable String course) {
         try {
-            TeachingAssistantApplication teachingAssistantApplication = taApplicationService
+            TeachingAssistantApplication teachingAssistantApplication = hiringService
                     .get(course, authManager.getNetid());
             RetrieveTeachingAssistantApplicationStatusModel status = RetrieveTeachingAssistantApplicationStatusModel
                     .fromApplication(teachingAssistantApplication);
@@ -92,7 +92,7 @@ public class ApplicantHiringController extends BaseHiringController {
     public ResponseEntity<String> withdraw(@RequestBody TeachingAssistantApplicationKey model) {
 
         try {
-            if (taApplicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
+            if (hiringService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
                 return ResponseEntity.ok().build();
             }
             throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");

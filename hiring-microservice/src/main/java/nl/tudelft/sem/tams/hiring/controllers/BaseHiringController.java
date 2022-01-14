@@ -12,12 +12,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class BaseHiringController {
     protected final transient AuthManager authManager;
     protected final transient CourseInformation courseInformation;
-    protected final transient HiringService taApplicationService;
+    protected final transient HiringService hiringService;
 
-    protected BaseHiringController(AuthManager authManager, CourseInformation courseInformation, HiringService taApplicationService) {
+    protected BaseHiringController(AuthManager authManager, CourseInformation courseInformation, HiringService hiringService) {
         this.authManager = authManager;
         this.courseInformation = courseInformation;
-        this.taApplicationService = taApplicationService;
+        this.hiringService = hiringService;
     }
 
     protected void checkIsResponsibleLecturer(String courseId) {

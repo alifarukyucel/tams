@@ -28,13 +28,13 @@ public class LecturerHiringController extends BaseHiringController {
      * Instantiates a new LecturerHiringController.
      *
      * @param authManager        the auth manager
-     * @param taApplicationService the application service
+     * @param hiringService the application service
      * @param courseInformation  the course information
      */
     public LecturerHiringController(AuthManager authManager,
-                                    HiringService taApplicationService,
+                                    HiringService hiringService,
                                     CourseInformation courseInformation) {
-        super(authManager, courseInformation, taApplicationService);
+        super(authManager, courseInformation, hiringService);
     }
 
     /**
@@ -51,7 +51,7 @@ public class LecturerHiringController extends BaseHiringController {
         checkIsResponsibleLecturer(model.getCourseId());       //Throws ResponseStatusException 403
 
         try {
-            this.taApplicationService.accept(model.getCourseId(), model.getNetId(), model.getDuties(),
+            this.hiringService.accept(model.getCourseId(), model.getNetId(), model.getDuties(),
                     model.getMaxHours());
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -76,7 +76,7 @@ public class LecturerHiringController extends BaseHiringController {
         checkIsResponsibleLecturer(model.getCourseId());       //Throws ResponseStatusException 403
 
         try {
-            this.taApplicationService.reject(model.getCourseId(), model.getNetId());
+            this.hiringService.reject(model.getCourseId(), model.getNetId());
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
@@ -100,7 +100,7 @@ public class LecturerHiringController extends BaseHiringController {
         checkIsResponsibleLecturer(courseId);       //Throws ResponseStatusException 403
 
         List<PendingTeachingAssistantApplicationResponseModel> extendedApplications =
-                taApplicationService.getExtendedPendingApplications(courseId, false, null);
+                hiringService.getExtendedPendingApplications(courseId, false, null);
 
         return ResponseEntity.ok(extendedApplications);
     }
@@ -124,7 +124,7 @@ public class LecturerHiringController extends BaseHiringController {
         }
 
         List<PendingTeachingAssistantApplicationResponseModel> extendedApplications =
-                taApplicationService.getExtendedPendingApplications(courseId, true, amount);
+                hiringService.getExtendedPendingApplications(courseId, true, amount);
 
         return ResponseEntity.ok(extendedApplications);
     }
