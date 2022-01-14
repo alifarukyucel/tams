@@ -103,7 +103,13 @@ public class ContractService {
         double studentsPerOneTa = 20f;
         int allowedTas = (int) Math.ceil(numberOfTas / studentsPerOneTa);
 
-        long hiredTas = contractRepository.count(createContractExample(null, courseId));
+        long hiredTas;
+
+        try {
+            hiredTas = getContractsBy(null, courseId).size();
+        } catch (NoSuchElementException e) {
+            hiredTas = 0;
+        }
 
         return hiredTas >= allowedTas;
     }
@@ -140,11 +146,15 @@ public class ContractService {
      */
     public List<Contract> getContractsBy(String netId, String courseId)
             throws NoSuchElementException {
-        if (netId == null) {
-            throw new NoSuchElementException("netId must be specified to search for contracts");
-        }
 
-        Example<Contract> example = createContractExample(netId, courseId);
+        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
+            .withIgnoreNullValues()
+            .withIgnorePaths("rating", "actualWorkedHours");
+        Example<Contract> example = Example.of(
+            new ConcreteContractBuilder()
+                .withCourseId(courseId)
+                .withNetId(netId)
+                .build(), ignoreAllFields);
 
         // Search for all the contract with a certain netId.
         List<Contract> contracts = contractRepository.findAll(example);
@@ -242,26 +252,6 @@ public class ContractService {
      */
     public Contract save(Contract contract) {
         return contractRepository.save(contract);
-    }
-
-    /**
-     * Creates an example which can be used to find a Contract
-     * with a certain netId and courseId inside the database.
-     *
-     * @param netId the example's netId
-     * @param courseId  the example's courseId
-     * @return an example contract.
-     */
-    private Example<Contract> createContractExample(String netId, String courseId) {
-        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
-                                                        .withIgnoreNullValues()
-                                                        .withIgnorePaths("rating", "actualWorkedHours");
-        Example<Contract> example = Example.of(
-                new ConcreteContractBuilder()
-                        .withCourseId(courseId)
-                        .withNetId(netId)
-                        .build(), ignoreAllFields);
-        return example;
     }
 
     /**
