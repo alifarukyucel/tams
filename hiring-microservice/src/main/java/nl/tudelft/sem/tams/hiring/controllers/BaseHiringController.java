@@ -12,7 +12,7 @@ public class BaseHiringController {
     protected final transient AuthManager authManager;
     protected final transient CourseInformation courseInformation;
 
-    public BaseHiringController(AuthManager authManager, CourseInformation courseInformation) {
+    protected BaseHiringController(AuthManager authManager, CourseInformation courseInformation, HiringService taApplicationService) {
         this.authManager = authManager;
         this.courseInformation = courseInformation;
     }
