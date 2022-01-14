@@ -39,7 +39,7 @@ public class ConnectedCourseInformationService implements CourseInformation {
      * @param id id of the course.
      * @return all information found on the course.
      */
-    public CourseInformationResponseModel getCourseById(String id) {
+    protected CourseInformationResponseModel getCourseById(String id) {
         if (id == null) {
             return null;
         }
