@@ -1,6 +1,7 @@
 package nl.tudelft.sem.tams.ta.services.communication;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import nl.tudelft.sem.tams.ta.services.communication.models.CourseInformationResponseModel;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,5 +177,35 @@ public class ConnectedCourseInformationServiceTests {
         // Assert
         assertThat(actual).isNull();
         verify(mockMicroserviceCommunicationHelper, times(0)).get(any(), any(), any());
+    }
+
+    @Test
+    public void getAmountOfStudentsCourseIsNull() {
+        // Act
+        ThrowableAssert.ThrowingCallable action = () -> connectedCourseInformationService.getAmountOfStudents(null);
+
+        // assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(action);
+    }
+
+    @Test
+    public void getAmountOfStudents() throws Exception {
+        // Arrange
+        String courseId = "CSE1110";
+        int expected = 52;
+
+        CourseInformationResponseModel data = new CourseInformationResponseModel();
+        data.setId(courseId);
+        data.setNumberOfStudents(expected);
+
+        when(mockMicroserviceCommunicationHelper.get(testUrl + getCourseByIdPath,
+            CourseInformationResponseModel.class, courseId))
+            .thenReturn(ResponseEntity.ok(data));
+
+        // Act
+        int actual = connectedCourseInformationService.getAmountOfStudents(courseId);
+
+        // Assert
+        assertThat(actual).isEqualTo(expected);
     }
 }

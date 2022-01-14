@@ -387,11 +387,7 @@ class ContractServiceTest {
                 .duties("Heel hard werken")
                 .taContactEmail(testContactEmail).build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(21)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(21);
 
         // Act
         Contract saved = contractService.createUnsignedContract(contractModel);
@@ -439,11 +435,7 @@ class ContractServiceTest {
             .duties("Heel hard werken")
             .taContactEmail(null).build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(21)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(21);
 
         // Act
         Contract saved = contractService.createUnsignedContract(contractModel);
@@ -479,11 +471,7 @@ class ContractServiceTest {
             .duties("Heel hard werken")
             .taContactEmail(testContactEmail).build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(20)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(20);
 
         // Act
         ThrowingCallable c = () -> contractService.createUnsignedContract(contractModel);
@@ -515,11 +503,7 @@ class ContractServiceTest {
             .duties("Heel hard werken")
             .taContactEmail(testContactEmail).build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-            .id("CSE2310")
-            .description("Very cool course")
-            .numberOfStudents(20)
-            .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(20);
 
         // Act
         contractService.createUnsignedContract(contractModel);
@@ -546,7 +530,8 @@ class ContractServiceTest {
             .duties("Heel hard werken")
             .taContactEmail("winstijn@tudelft.nl").build();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(null);
+        when(mockCourseInformation.getAmountOfStudents("CSE2310"))
+            .thenThrow(new IllegalArgumentException("Course does not exist"));
 
 
         // Act
@@ -567,11 +552,7 @@ class ContractServiceTest {
     @Test
     void createUnsignedContract_illegalArguments() {
         // Arrange
-        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2525")
-                .description("Very cool course")
-                .numberOfStudents(10000)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2525")).thenReturn(10000);
 
         CreateContractRequestModel contractModel1 = CreateContractRequestModel.builder()
             .netId("WinstijnSmit")
@@ -650,11 +631,7 @@ class ContractServiceTest {
             .duties("Heel hard werken")
             .taContactEmail("winstijn@tudelft.nl").build();
 
-        when(mockCourseInformation.getCourseById("CSE2525")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2525")
-                .description("Very cool course")
-                .numberOfStudents(10000)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2525")).thenReturn(10000);
 
         // Act
         ThrowingCallable actionConflict = () ->
