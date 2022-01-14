@@ -20,7 +20,6 @@ import nl.tudelft.sem.tams.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.ta.interfaces.EmailSender;
 import nl.tudelft.sem.tams.ta.models.CreateContractRequestModel;
 import nl.tudelft.sem.tams.ta.repositories.ContractRepository;
-import nl.tudelft.sem.tams.ta.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -397,13 +396,7 @@ class ContractServiceTest {
         assertThat(contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310")))
             .isEqualTo(saved);
 
-        verify(mockEmailSender).sendEmail(testContactEmail,
-                "You have been offered a TA position for CSE2310",
-                "Hi WinstijnSmit,\n\n"
-                        + "The course staff of CSE2310 is offering you a TA position. Congratulations!\n"
-                        + "Your duties are \"Heel hard werken\", and the maximum number of hours is 20.\n"
-                        + "Please log into TAMS to review and sign the contract.\n\n"
-                        + "Best regards,\nThe programme administration of your faculty");
+        verify(mockEmailSender).sendContractCreatedEmail(testContactEmail, saved);
         verifyNoMoreInteractions(mockEmailSender);
     }
 
@@ -444,7 +437,7 @@ class ContractServiceTest {
         assertThat(contractRepository.findAll().size()).isEqualTo(3);
         assertThat(contractRepository.getOne(new ContractId("WinstijnSmit", "CSE2310")))
             .isEqualTo(saved);
-        verifyNoInteractions(mockEmailSender);
+        verify(mockEmailSender).sendContractCreatedEmail(null, saved);
     }
 
     /**
@@ -506,18 +499,12 @@ class ContractServiceTest {
         when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(20);
 
         // Act
-        contractService.createUnsignedContract(contractModel);
+        Contract saved = contractService.createUnsignedContract(contractModel);
 
         // Assert
         assertThat(contractRepository.findAll().size()).isEqualTo(1);
 
-        verify(mockEmailSender).sendEmail(testContactEmail,
-                "You have been offered a TA position for CSE2310",
-                "Hi WinstijnSmit,\n\n"
-                        + "The course staff of CSE2310 is offering you a TA position. Congratulations!\n"
-                        + "Your duties are \"Heel hard werken\", and the maximum number of hours is 20.\n"
-                        + "Please log into TAMS to review and sign the contract.\n\n"
-                        + "Best regards,\nThe programme administration of your faculty");
+        verify(mockEmailSender).sendContractCreatedEmail(testContactEmail, saved);
         verifyNoMoreInteractions(mockEmailSender);
     }
 

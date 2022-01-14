@@ -83,7 +83,7 @@ public class ContractService {
         contract = contractRepository.save(contract);
 
         // Email the newly-hired TA if a contact email is specified
-        sendContractCreatedEmail(contractModel.getTaContactEmail(), contract);
+        emailSender.sendContractCreatedEmail(contractModel.getTaContactEmail(), contract);
 
         return contract;
     }
@@ -293,28 +293,6 @@ public class ContractService {
         }
     }
 
-    /**
-     * Sends an email to the given email address describing the given contract.
-     * Does nothing when the email is null.
-     *
-     * @param email email address to which the email should be sent
-     * @param contract the contract that will be detailed inside of the email.
-     */
-    private void sendContractCreatedEmail(String email, Contract contract) {
-        if (email != null && contract != null) {
-            // Subject and body of the email sent to TAs when creating a contract
-            String taEmailSubjectTemplate = "You have been offered a TA position for %s";
-            String emailSubject = String.format(taEmailSubjectTemplate, contract.getCourseId());
-            String taEmailBodyTemplate = "Hi %s,\n\n"
-                + "The course staff of %s is offering you a TA position. Congratulations!\n"
-                + "Your duties are \"%s\", and the maximum number of hours is %s.\n"
-                + "Please log into TAMS to review and sign the contract.\n\n"
-                + "Best regards,\nThe programme administration of your faculty";
 
-            String emailBody = String.format(taEmailBodyTemplate, contract.getNetId(), contract.getCourseId(),
-                contract.getDuties(), contract.getMaxHours());
-            this.emailSender.sendEmail(email, emailSubject, emailBody);
-        }
-    }
 
 }
