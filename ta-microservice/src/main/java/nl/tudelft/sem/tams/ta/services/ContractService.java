@@ -13,7 +13,6 @@ import nl.tudelft.sem.tams.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.ta.interfaces.EmailSender;
 import nl.tudelft.sem.tams.ta.models.CreateContractRequestModel;
 import nl.tudelft.sem.tams.ta.repositories.ContractRepository;
-import nl.tudelft.sem.tams.ta.services.communication.models.CourseInformationResponseModel;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -27,23 +26,11 @@ import org.springframework.util.StringUtils;
 public class ContractService {
 
 
-    // This value represents how many students there need to be to justify the need of a TA.
-    // It is used to calculate how many TAs are needed for a course.
-    private final transient double studentsPerOneTa = 20f;
-
     private final transient ContractRepository contractRepository;
 
     private final transient CourseInformation courseInformation;
 
     private final transient EmailSender emailSender;
-
-    // Subject and body of the email sent to TAs when creating a contract
-    private final transient String taEmailSubjectTemplate = "You have been offered a TA position for %s";
-    private final transient String taEmailBodyTemplate = "Hi %s,\n\n"
-            + "The course staff of %s is offering you a TA position. Congratulations!\n"
-            + "Your duties are \"%s\", and the maximum number of hours is %s.\n"
-            + "Please log into TAMS to review and sign the contract.\n\n"
-            + "Best regards,\nThe programme administration of your faculty";
 
     /**
      * Create an instance of a ContractService.
@@ -111,6 +98,9 @@ public class ContractService {
     private boolean isTaLimitReached(String courseId) {
         int numberOfTas = courseInformation.getAmountOfStudents(courseId);
 
+        // This value represents how many students there need to be to justify the need of a TA.
+        // It is used to calculate how many TAs are needed for a course.
+        double studentsPerOneTa = 20f;
         int allowedTas = (int) Math.ceil(numberOfTas / studentsPerOneTa);
 
         long hiredTas = contractRepository.count(createContractExample(null, courseId));
@@ -312,7 +302,15 @@ public class ContractService {
      */
     private void sendContractCreatedEmail(String email, Contract contract) {
         if (email != null && contract != null) {
+            // Subject and body of the email sent to TAs when creating a contract
+            String taEmailSubjectTemplate = "You have been offered a TA position for %s";
             String emailSubject = String.format(taEmailSubjectTemplate, contract.getCourseId());
+            String taEmailBodyTemplate = "Hi %s,\n\n"
+                + "The course staff of %s is offering you a TA position. Congratulations!\n"
+                + "Your duties are \"%s\", and the maximum number of hours is %s.\n"
+                + "Please log into TAMS to review and sign the contract.\n\n"
+                + "Best regards,\nThe programme administration of your faculty";
+
             String emailBody = String.format(taEmailBodyTemplate, contract.getNetId(), contract.getCourseId(),
                 contract.getDuties(), contract.getMaxHours());
             this.emailSender.sendEmail(email, emailSubject, emailBody);
