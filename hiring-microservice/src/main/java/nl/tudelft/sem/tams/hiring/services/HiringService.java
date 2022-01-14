@@ -252,10 +252,10 @@ public class HiringService {
      */
     public List<TeachingAssistantApplication> getApplicationFromStudent(String netId) {
         List<TeachingAssistantApplication> allTeachingAssistantApplications = taApplicationRepository.findAll();
-        List<TeachingAssistantApplication> result = new ArrayList<>();
-        for (TeachingAssistantApplication teachingAssistantApplication : allTeachingAssistantApplications) {
-            if (teachingAssistantApplication.getNetId().equals(netId)) {
-                result.add(teachingAssistantApplication);
+        return allTeachingAssistantApplications
+                .stream()
+                .filter(application ->
+                        application.getNetId().equals(netId)).collect(Collectors.toList());
             }
         }
         return result;
