@@ -1,11 +1,8 @@
 package nl.tudelft.sem.tams.hiring.services;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+
 import nl.tudelft.sem.tams.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
@@ -284,11 +281,23 @@ public class HiringService {
     /**
      * Creates a list of pending TA-applications, extended with a rating fetched from the TA-microservice.
      *
-     * @param courseId The course to fetch the applications for.
+     * @param courseId  The course to fetch the applications for.
+     * @param sorted    Whether the list should be sorted.
+     * @param amount    Number of entries in the returned list, null indicates the full list.
      * @return a list of extended TeachingAssistantApplications.
      */
-    public List<PendingTeachingAssistantApplicationResponseModel> getExtendedPendingApplications(String courseId) {
+    public List<PendingTeachingAssistantApplicationResponseModel> getExtendedPendingApplications(String courseId, boolean sorted, Integer amount) {
         List<TeachingAssistantApplication> applications = findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
-        return extendWithRating(applications);
+        var extended = extendWithRating(applications);
+
+        if (amount == null || amount > extended.size()) {
+            amount = extended.size();
+        }
+
+        if (sorted) {
+            Collections.sort(extended);
+        }
+
+        return extended.subList(0, amount);
     }
 }

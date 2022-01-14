@@ -178,7 +178,7 @@ public class HiringController {
         checkIsResponsibleLecturer(courseId);       //Throws ResponseStatusException 403
 
         List<PendingTeachingAssistantApplicationResponseModel> extendedApplications =
-                taApplicationService.getExtendedPendingApplications(courseId);
+                taApplicationService.getExtendedPendingApplications(courseId, false, null);
 
         return ResponseEntity.ok(extendedApplications);
     }
@@ -202,12 +202,9 @@ public class HiringController {
         }
 
         List<PendingTeachingAssistantApplicationResponseModel> extendedApplications =
-                taApplicationService.getExtendedPendingApplications(courseId);
+                taApplicationService.getExtendedPendingApplications(courseId, true, amount);
 
-        Collections.sort(extendedApplications);
-        amount = Math.min(amount, extendedApplications.size());
-
-        return ResponseEntity.ok(extendedApplications.subList(0, amount));
+        return ResponseEntity.ok(extendedApplications);
     }
 
     private void checkIsResponsibleLecturer(String courseId) {
