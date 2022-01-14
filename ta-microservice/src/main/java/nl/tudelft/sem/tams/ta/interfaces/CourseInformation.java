@@ -5,5 +5,5 @@ import nl.tudelft.sem.tams.ta.services.communication.models.CourseInformationRes
 public interface CourseInformation {
     boolean isResponsibleLecturer(String netId, String courseId);
 
-    CourseInformationResponseModel getCourseById(String id);
+    int getAmountOfStudents(String courseId);
 }

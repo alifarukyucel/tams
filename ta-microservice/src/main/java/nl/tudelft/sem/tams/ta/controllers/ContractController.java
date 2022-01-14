@@ -63,9 +63,7 @@ public class ContractController {
         checkAuthorized(request.getCourseId());
 
         try {
-            Contract contract = contractService.createUnsignedContract(
-                    request.getNetId(), request.getCourseId(), request.getMaxHours(), request.getDuties(),
-                    request.getTaContactEmail());
+            Contract contract = contractService.createUnsignedContract(request);
             return ResponseEntity.ok(ContractResponseModel.fromContract(contract));
 
         } catch (IllegalArgumentException e) {
