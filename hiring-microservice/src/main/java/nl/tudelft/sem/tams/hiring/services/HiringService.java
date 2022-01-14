@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import nl.tudelft.sem.tams.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
@@ -31,7 +32,7 @@ public class HiringService {
 
     // maximum number of applications per student
     private static final transient int maxCandidacies = 3;
-    
+
     // Amount of weeks before a course starts when withdrawal is still allowed
     // e.g. withdrawal is allowed x weeks before the course starts.
     private static final transient int withdrawalWindow = 3;
@@ -206,21 +207,19 @@ public class HiringService {
             return extendedApplications;
         }
 
-        List<String> netIds = new ArrayList<>();
-
-        for (TeachingAssistantApplication teachingAssistantApplication : teachingAssistantApplications) {
-            netIds.add(teachingAssistantApplication.getNetId());
-        }
+        List<String> netIds = teachingAssistantApplications
+                .stream()
+                .map(application ->
+                        application.getNetId()).collect(Collectors.toList());
 
         Map<String, Double> taRatings = contractInformation.getTaRatings(netIds);
 
-        for (TeachingAssistantApplication teachingAssistantApplication : teachingAssistantApplications) {
-            String netId = teachingAssistantApplication.getNetId();
-            Double rating = taRatings.get(netId);
-            extendedApplications.add(new PendingTeachingAssistantApplicationResponseModel(
-                    teachingAssistantApplication, rating));
-        }
-        return extendedApplications;
+        return teachingAssistantApplications
+                .stream()
+                .map(application ->
+                        new PendingTeachingAssistantApplicationResponseModel(
+                                application, taRatings.get(application.getNetId())))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -256,9 +255,6 @@ public class HiringService {
                 .stream()
                 .filter(application ->
                         application.getNetId().equals(netId)).collect(Collectors.toList());
-            }
-        }
-        return result;
     }
 
     /**
