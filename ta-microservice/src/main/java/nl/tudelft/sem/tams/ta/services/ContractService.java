@@ -95,6 +95,7 @@ public class ContractService {
      * @return true if more TAs can be hired.
      * @throws IllegalArgumentException if the course cannot be retrieved.
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")  // it does not like the try catch trick
     private boolean isTaLimitReached(String courseId) {
         int numberOfTas = courseInformation.getAmountOfStudents(courseId);
 
