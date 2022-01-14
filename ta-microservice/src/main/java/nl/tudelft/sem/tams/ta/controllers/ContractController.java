@@ -14,6 +14,7 @@ import nl.tudelft.sem.tams.ta.security.AuthManager;
 import nl.tudelft.sem.tams.ta.services.ContractService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -115,8 +116,6 @@ public class ContractController {
             return ResponseEntity.ok("Successfully saved rating!");
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -138,8 +137,6 @@ public class ContractController {
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (IllegalCallerException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
@@ -227,18 +224,13 @@ public class ContractController {
      * @throws ResponseStatusException if no contracts have been found.
      */
     private ResponseEntity<List<ContractResponseModel>> findContractBy(
-        String netId, String courseId) throws ResponseStatusException  {
+            String netId, String courseId) throws ResponseStatusException  {
+        List<Contract> contracts = contractService.getContractsBy(netId, courseId);
+        List<ContractResponseModel> response = contracts.stream().map(contract ->
+                ContractResponseModel.fromContract(contract)
+        ).collect(Collectors.toList());
 
-        try {
-            List<Contract> contracts = contractService.getContractsBy(netId, courseId);
-            List<ContractResponseModel> response = contracts.stream().map(contract ->
-                    ContractResponseModel.fromContract(contract)
-                ).collect(Collectors.toList());
-
-            return ResponseEntity.ok(response);
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -268,6 +260,17 @@ public class ContractController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                 "Only a responsible lecturer is allowed to make this request.");
         }
+    }
+
+    /**
+     * ExceptionHandler for NoSuchElementExceptions thrown throughout the class.
+     *
+     * @param ex    NoSuchElementException
+     * @return      404 NOT FOUND
+     */
+    @ExceptionHandler(value = {NoSuchElementException.class})
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 }
