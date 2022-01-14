@@ -1,8 +1,12 @@
 package nl.tudelft.sem.tams.hiring.services;
 
 import java.time.LocalDateTime;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import nl.tudelft.sem.tams.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
@@ -286,7 +290,9 @@ public class HiringService {
      * @param amount    Number of entries in the returned list, null indicates the full list.
      * @return a list of extended TeachingAssistantApplications.
      */
-    public List<PendingTeachingAssistantApplicationResponseModel> getExtendedPendingApplications(String courseId, boolean sorted, Integer amount) {
+    public List<PendingTeachingAssistantApplicationResponseModel> getExtendedPendingApplications(String courseId,
+                                                                                                 boolean sorted,
+                                                                                                 Integer amount) {
         List<TeachingAssistantApplication> applications = findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
         var extended = extendWithRating(applications);
 
