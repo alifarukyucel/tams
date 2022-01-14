@@ -93,7 +93,7 @@ public class ContractService {
             .build();
 
         // save can also throw an IllegalArgumentException if failed.
-        contract = save(contract);
+        contract = contractRepository.save(contract);
 
         // Email the newly-hired TA if a contact email is specified
         sendContractCreatedEmail(contractModel.getTaContactEmail(), contract);
@@ -183,7 +183,7 @@ public class ContractService {
      *
      * @param netId The contract's netId (required)
      * @param courseId The contract's courseId (required)
-     * @returns boolean whether contract exists.
+     * @return boolean whether contract exists.
      */
     public boolean contractExists(String netId, String courseId) {
         try {
@@ -271,7 +271,7 @@ public class ContractService {
             throw new IllegalCallerException("Contract has not been signed yet");
         }
         contract.setActualWorkedHours(hours);
-        save(contract);
+        contractRepository.save(contract);
     }
 
     /**
