@@ -167,18 +167,6 @@ public class ContractService {
 
 
     /**
-     * Returns all the contracts that have a certain netId.
-     *
-     * @param netId The users netid
-     * @return a list of contracts with the requested netId.
-     * @throws NoSuchElementException Thrown when no contracts were found.
-     */
-    public List<Contract> getContractsBy(String netId) throws NoSuchElementException {
-        return getContractsBy(netId, null);
-    }
-
-
-    /**
      * Returns whether a contract already exists.
      *
      * @param netId The contract's netId (required)
