@@ -3,7 +3,6 @@ package nl.tudelft.sem.tams.hiring.integration;
 import static nl.tudelft.sem.tams.hiring.utils.JsonUtil.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -21,77 +20,20 @@ import java.util.Map;
 import nl.tudelft.sem.tams.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
-import nl.tudelft.sem.tams.hiring.interfaces.ContractInformation;
-import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
 import nl.tudelft.sem.tams.hiring.models.TeachingAssistantApplicationAcceptRequestModel;
 import nl.tudelft.sem.tams.hiring.models.TeachingAssistantApplicationRequestModel;
-import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
-import nl.tudelft.sem.tams.hiring.repositories.TeachingAssistantApplicationRepository;
-import nl.tudelft.sem.tams.hiring.security.AuthManager;
-import nl.tudelft.sem.tams.hiring.security.TokenVerifier;
 import nl.tudelft.sem.tams.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.tams.hiring.utils.JsonUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 
-@SpringBootTest
-@ExtendWith(SpringExtension.class)
-@ActiveProfiles({"test", "mockAuthenticationManager", "mockTokenVerifier",
-                    "mockCourseInformation", "mockContractInformation", "mockTimeProvider"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@AutoConfigureMockMvc
-public class ApplicantHiringControllerTest {
-    private static final transient String exampleNetId = "johndoe";
-
-    //This is the assumed current time for testing.
-    //Because LocalDateTime.now() can't be used to test properly, we use this time as the current time
-    private static final transient LocalDateTime assumedCurrentTime = LocalDateTime.of(2022, 1, 1, 0, 0);
-
-    @Autowired
-    private transient TimeProvider timeProvider;
-    @Autowired
-    private transient TeachingAssistantApplicationRepository taApplicationRepository;
-
-    @Autowired
-    private transient MockMvc mockMvc;
-
-    @Autowired
-    private transient CourseInformation mockCourseInformation;
-
-    @Autowired
-    private transient ContractInformation mockContractInformation;
-
-    @Autowired
-    private transient AuthManager mockAuthenticationManager;
-
-    @Autowired
-    private transient TokenVerifier mockTokenVerifier;
-
-    /**
-     * Setup mocking before tests run.
-     */
-    @BeforeEach
-    public void setup() {
-        when(mockAuthenticationManager.getNetid()).thenReturn(exampleNetId);
-        when(mockTokenVerifier.validate(anyString())).thenReturn(true);
-        when(mockTokenVerifier.parseNetid(anyString())).thenReturn(exampleNetId);
-        when(timeProvider.getCurrentLocalDateTime()).thenReturn(assumedCurrentTime);
-    }
+public class ApplicantHiringControllerTest extends BaseHiringControllerTest {
 
     @Test
     public void gradeBelowMin() throws Exception {
