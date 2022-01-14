@@ -24,8 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 public class ApplicantHiringController extends BaseHiringController {
 
-    private final transient HiringService taApplicationService;
-
     /**
      * Instantiates a new ApplicantHiringController.
      *
@@ -36,8 +34,7 @@ public class ApplicantHiringController extends BaseHiringController {
     public ApplicantHiringController(AuthManager authManager,
                                      HiringService taApplicationService,
                                      CourseInformation courseInformation) {
-        super(authManager, courseInformation);
-        this.taApplicationService = taApplicationService;
+        super(authManager, courseInformation, taApplicationService);
     }
 
     /**
