@@ -30,7 +30,6 @@ import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
 import nl.tudelft.sem.tams.hiring.repositories.TeachingAssistantApplicationRepository;
 import nl.tudelft.sem.tams.hiring.security.AuthManager;
 import nl.tudelft.sem.tams.hiring.security.TokenVerifier;
-import nl.tudelft.sem.tams.hiring.services.HiringService;
 import nl.tudelft.sem.tams.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.tams.hiring.utils.JsonUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,9 +66,6 @@ public class ApplicantHiringControllerTest {
     private transient TimeProvider timeProvider;
     @Autowired
     private transient TeachingAssistantApplicationRepository taApplicationRepository;
-
-    @Autowired
-    private transient HiringService taApplicationService;
 
     @Autowired
     private transient MockMvc mockMvc;
