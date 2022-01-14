@@ -23,23 +23,23 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The HiringController.
+ * A controller that contains application methods for students.
  */
 @RestController
-public class HiringController extends BaseHiringController {
+public class ApplicantHiringController extends BaseHiringController {
 
     private final transient HiringService taApplicationService;
 
     /**
-     * Instantiates a new HiringController.
+     * Instantiates a new ApplicantHiringController.
      *
      * @param authManager        the auth manager
      * @param taApplicationService the application service
      * @param courseInformation  the course information
      */
-    public HiringController(AuthManager authManager,
-                            HiringService taApplicationService,
-                            CourseInformation courseInformation) {
+    public ApplicantHiringController(AuthManager authManager,
+                                     HiringService taApplicationService,
+                                     CourseInformation courseInformation) {
         super(authManager, courseInformation);
         this.taApplicationService = taApplicationService;
     }
