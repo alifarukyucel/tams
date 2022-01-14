@@ -1,12 +1,10 @@
 package nl.tudelft.sem.tams.hiring.controllers;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import nl.tudelft.sem.tams.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
-import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
 import nl.tudelft.sem.tams.hiring.models.RetrieveTeachingAssistantApplicationStatusModel;
@@ -28,11 +26,9 @@ import org.springframework.web.server.ResponseStatusException;
  * The HiringController.
  */
 @RestController
-public class HiringController {
-    private final transient AuthManager authManager;
+public class HiringController extends BaseHiringController {
 
     private final transient HiringService taApplicationService;
-    private final transient CourseInformation courseInformation;
 
     /**
      * Instantiates a new HiringController.
@@ -44,9 +40,8 @@ public class HiringController {
     public HiringController(AuthManager authManager,
                             HiringService taApplicationService,
                             CourseInformation courseInformation) {
-        this.authManager = authManager;
+        super(authManager, courseInformation);
         this.taApplicationService = taApplicationService;
-        this.courseInformation = courseInformation;
     }
 
     /**
@@ -207,9 +202,4 @@ public class HiringController {
         return ResponseEntity.ok(extendedApplications);
     }
 
-    private void checkIsResponsibleLecturer(String courseId) {
-        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-    }
 }
