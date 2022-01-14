@@ -56,7 +56,7 @@ import org.springframework.test.web.servlet.ResultActions;
                     "mockCourseInformation", "mockContractInformation", "mockTimeProvider"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
-public class HiringControllerTest {
+public class ApplicantHiringControllerTest {
     private static final transient String exampleNetId = "johndoe";
 
     //This is the assumed current time for testing.
