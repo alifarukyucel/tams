@@ -60,16 +60,8 @@ public class HiringController {
      */
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody TeachingAssistantApplicationRequestModel request) {
-        if (taApplicationService.hasReachedMaxApplication(authManager.getNetid())) {
-            // It is not allowed to have more than 3 applications
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Maximum number of applications has been reached!");
-        }
         TeachingAssistantApplication teachingAssistantApplication = TeachingAssistantApplication.createPendingApplication(
-                request.getCourseId(),
-                authManager.getNetid(),
-                request.getGrade(),
-                request.getMotivation(),
-                request.getContactEmail());
+                request, authManager.getNetid());
 
         try {
             // NoSuchElementException thrown when the course cannot be found
@@ -110,10 +102,10 @@ public class HiringController {
      */
     @DeleteMapping ("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody TeachingAssistantApplicationKey model) {
-        if (taApplicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
-            return ResponseEntity.ok().build();
+        if (!taApplicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
+            throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
         }
-        throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -127,10 +119,7 @@ public class HiringController {
      */
     @PostMapping("/reject")
     public ResponseEntity<String> reject(@RequestBody TeachingAssistantApplicationKey model) {
-
-        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), model.getCourseId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
+        checkIsResponsibleLecturer(model.getCourseId());       //Throws ResponseStatusException 403
 
         try {
             this.taApplicationService.reject(model.getCourseId(), model.getNetId());
@@ -152,10 +141,7 @@ public class HiringController {
      */
     @PostMapping("/accept")
     public ResponseEntity<String> accept(@RequestBody TeachingAssistantApplicationAcceptRequestModel model) {
-
-        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), model.getCourseId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
+        checkIsResponsibleLecturer(model.getCourseId());       //Throws ResponseStatusException 403
 
         try {
             this.taApplicationService.accept(model.getCourseId(), model.getNetId(), model.getDuties(),
@@ -178,14 +164,10 @@ public class HiringController {
     @GetMapping("/applications/{courseId}/pending")
     public ResponseEntity<List<PendingTeachingAssistantApplicationResponseModel>> getPendingApplications(
             @PathVariable String courseId) {
-        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        checkIsResponsibleLecturer(courseId);       //Throws ResponseStatusException 403
 
-        List<TeachingAssistantApplication> teachingAssistantApplications = taApplicationService
-                .findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
-        var extendedApplications = taApplicationService
-                .extendWithRating(teachingAssistantApplications);
+        List<PendingTeachingAssistantApplicationResponseModel> extendedApplications =
+                taApplicationService.getExtendedPendingApplications(courseId, false, null);
 
         return ResponseEntity.ok(extendedApplications);
     }
@@ -202,23 +184,22 @@ public class HiringController {
     @GetMapping("/applications/{courseId}/recommended/{amount}")
     public ResponseEntity<List<PendingTeachingAssistantApplicationResponseModel>> getRecommendedApplications(
             @PathVariable String courseId, @PathVariable int amount) {
-        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        checkIsResponsibleLecturer(courseId);       //Throws ResponseStatusException 403
 
         if (amount <= 0) {
             return ResponseEntity.ok(new ArrayList<>());
         }
 
-        List<TeachingAssistantApplication> applications = taApplicationService.findAllByCourseAndStatus(
-                courseId, ApplicationStatus.PENDING);
-        var extendedApplications = taApplicationService.extendWithRating(applications);
-        Collections.sort(extendedApplications);
+        List<PendingTeachingAssistantApplicationResponseModel> extendedApplications =
+                taApplicationService.getExtendedPendingApplications(courseId, true, amount);
 
-        if (amount > extendedApplications.size()) {
-            amount = extendedApplications.size();
+        return ResponseEntity.ok(extendedApplications);
+    }
+
+    private void checkIsResponsibleLecturer(String courseId) {
+        if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        return ResponseEntity.ok(extendedApplications.subList(0, amount));
     }
 
     /**

@@ -1,6 +1,7 @@
 package nl.tudelft.sem.tams.hiring.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -62,11 +63,19 @@ public class HiringService {
      * @throws IllegalArgumentException when the deadline for the course has already passed
      */
     public void checkAndSave(TeachingAssistantApplication teachingAssistantApplication) {
+        checkMaximumApplications(teachingAssistantApplication.getNetId());
+
         checkApplicationDeadline(teachingAssistantApplication);
 
         checkApplicationRequirements(teachingAssistantApplication);
 
         taApplicationRepository.save(teachingAssistantApplication);
+    }
+
+    private void checkMaximumApplications(String netId) {
+        if (hasReachedMaxApplication(netId)) {
+            throw new IllegalArgumentException("Maximum number of applications has been reached!");
+        }
     }
 
     private void checkApplicationDeadline(TeachingAssistantApplication teachingAssistantApplication) {
@@ -283,5 +292,30 @@ public class HiringService {
     private boolean isApplicationPeriodOpen(String courseId) {
         return courseInformation.startDate(courseId).isAfter(timeProvider.getCurrentLocalDateTime()
                 .plusWeeks(applicationWindowDurationInWeeks));
+    }
+
+    /**
+     * Creates a list of pending TA-applications, extended with a rating fetched from the TA-microservice.
+     *
+     * @param courseId  The course to fetch the applications for.
+     * @param sorted    Whether the list should be sorted.
+     * @param amount    Number of entries in the returned list, null indicates the full list.
+     * @return a list of extended TeachingAssistantApplications.
+     */
+    public List<PendingTeachingAssistantApplicationResponseModel> getExtendedPendingApplications(String courseId,
+                                                                                                 boolean sorted,
+                                                                                                 Integer amount) {
+        List<TeachingAssistantApplication> applications = findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        var extended = extendWithRating(applications);
+
+        if (amount == null || amount > extended.size()) {
+            amount = extended.size();
+        }
+
+        if (sorted) {
+            Collections.sort(extended);
+        }
+
+        return extended.subList(0, amount);
     }
 }

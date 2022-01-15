@@ -13,4 +13,5 @@ public interface TeachingAssistantApplicationRepository
     List<TeachingAssistantApplication> findAllByStatus(ApplicationStatus status);
 
     List<TeachingAssistantApplication> findAllByCourseIdAndStatus(String courseId, ApplicationStatus status);
+
 }
