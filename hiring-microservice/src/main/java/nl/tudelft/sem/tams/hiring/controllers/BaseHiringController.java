@@ -1,9 +1,12 @@
 package nl.tudelft.sem.tams.hiring.controllers;
 
+import java.util.NoSuchElementException;
 import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.security.AuthManager;
 import nl.tudelft.sem.tams.hiring.services.HiringService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -31,5 +34,18 @@ public abstract class BaseHiringController {
         if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
+    }
+
+    /**
+     * ExceptionHandler for NoSuchElementExceptions thrown throughout the class.
+     *
+     * @param ex    NoSuchElementException
+     * @return      404 NOT FOUND
+     */
+    @ExceptionHandler(value = {NoSuchElementException.class})
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND); // although some
+        // NoSuchElementExceptions were not returning a message, there is no way to distinguish when to return a message
+        // and when not to. Therefore, taking the safe route and returning a description for the issue at hand for all.
     }
 }

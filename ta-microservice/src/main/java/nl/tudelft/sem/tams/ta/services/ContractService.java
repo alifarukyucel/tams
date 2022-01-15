@@ -13,7 +13,6 @@ import nl.tudelft.sem.tams.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.ta.interfaces.EmailSender;
 import nl.tudelft.sem.tams.ta.models.CreateContractRequestModel;
 import nl.tudelft.sem.tams.ta.repositories.ContractRepository;
-import nl.tudelft.sem.tams.ta.services.communication.models.CourseInformationResponseModel;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -27,23 +26,11 @@ import org.springframework.util.StringUtils;
 public class ContractService {
 
 
-    // This value represents how many students there need to be to justify the need of a TA.
-    // It is used to calculate how many TAs are needed for a course.
-    private final transient double studentsPerOneTa = 20f;
-
     private final transient ContractRepository contractRepository;
 
     private final transient CourseInformation courseInformation;
 
     private final transient EmailSender emailSender;
-
-    // Subject and body of the email sent to TAs when creating a contract
-    private final transient String taEmailSubjectTemplate = "You have been offered a TA position for %s";
-    private final transient String taEmailBodyTemplate = "Hi %s,\n\n"
-            + "The course staff of %s is offering you a TA position. Congratulations!\n"
-            + "Your duties are \"%s\", and the maximum number of hours is %s.\n"
-            + "Please log into TAMS to review and sign the contract.\n\n"
-            + "Best regards,\nThe programme administration of your faculty";
 
     /**
      * Create an instance of a ContractService.
@@ -93,10 +80,10 @@ public class ContractService {
             .build();
 
         // save can also throw an IllegalArgumentException if failed.
-        contract = save(contract);
+        contract = contractRepository.save(contract);
 
         // Email the newly-hired TA if a contact email is specified
-        sendContractCreatedEmail(contractModel.getTaContactEmail(), contract);
+        emailSender.sendContractCreatedEmail(contractModel.getTaContactEmail(), contract);
 
         return contract;
     }
@@ -108,12 +95,22 @@ public class ContractService {
      * @return true if more TAs can be hired.
      * @throws IllegalArgumentException if the course cannot be retrieved.
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")  // it does not like the try catch trick
     private boolean isTaLimitReached(String courseId) {
         int numberOfTas = courseInformation.getAmountOfStudents(courseId);
 
+        // This value represents how many students there need to be to justify the need of a TA.
+        // It is used to calculate how many TAs are needed for a course.
+        double studentsPerOneTa = 20f;
         int allowedTas = (int) Math.ceil(numberOfTas / studentsPerOneTa);
 
-        long hiredTas = contractRepository.count(createContractExample(null, courseId));
+        long hiredTas;
+
+        try {
+            hiredTas = getContractsBy(null, courseId).size();
+        } catch (NoSuchElementException e) {
+            hiredTas = 0;
+        }
 
         return hiredTas >= allowedTas;
     }
@@ -150,11 +147,15 @@ public class ContractService {
      */
     public List<Contract> getContractsBy(String netId, String courseId)
             throws NoSuchElementException {
-        if (netId == null) {
-            throw new NoSuchElementException("netId must be specified to search for contracts");
-        }
 
-        Example<Contract> example = createContractExample(netId, courseId);
+        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
+            .withIgnoreNullValues()
+            .withIgnorePaths("rating", "actualWorkedHours");
+        Example<Contract> example = Example.of(
+            new ConcreteContractBuilder()
+                .withCourseId(courseId)
+                .withNetId(netId)
+                .build(), ignoreAllFields);
 
         // Search for all the contract with a certain netId.
         List<Contract> contracts = contractRepository.findAll(example);
@@ -163,36 +164,6 @@ public class ContractService {
         }
 
         return contracts;
-    }
-
-
-    /**
-     * Returns all the contracts that have a certain netId.
-     *
-     * @param netId The users netid
-     * @return a list of contracts with the requested netId.
-     * @throws NoSuchElementException Thrown when no contracts were found.
-     */
-    public List<Contract> getContractsBy(String netId) throws NoSuchElementException {
-        return getContractsBy(netId, null);
-    }
-
-
-    /**
-     * Returns whether a contract already exists.
-     *
-     * @param netId The contract's netId (required)
-     * @param courseId The contract's courseId (required)
-     * @returns boolean whether contract exists.
-     */
-    public boolean contractExists(String netId, String courseId) {
-        try {
-            // This method throws an exception when contract does not exist.
-            getContract(netId, courseId);
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
-        }
     }
 
     /**
@@ -271,7 +242,7 @@ public class ContractService {
             throw new IllegalCallerException("Contract has not been signed yet");
         }
         contract.setActualWorkedHours(hours);
-        save(contract);
+        contractRepository.save(contract);
     }
 
     /**
@@ -282,26 +253,6 @@ public class ContractService {
      */
     public Contract save(Contract contract) {
         return contractRepository.save(contract);
-    }
-
-    /**
-     * Creates an example which can be used to find a Contract
-     * with a certain netId and courseId inside the database.
-     *
-     * @param netId the example's netId
-     * @param courseId  the example's courseId
-     * @return an example contract.
-     */
-    private Example<Contract> createContractExample(String netId, String courseId) {
-        ExampleMatcher ignoreAllFields = ExampleMatcher.matchingAll()
-                                                        .withIgnoreNullValues()
-                                                        .withIgnorePaths("rating", "actualWorkedHours");
-        Example<Contract> example = Example.of(
-                new ConcreteContractBuilder()
-                        .withCourseId(courseId)
-                        .withNetId(netId)
-                        .build(), ignoreAllFields);
-        return example;
     }
 
     /**
@@ -324,7 +275,7 @@ public class ContractService {
         }
 
         // Check if contract already exists - return an error if not.
-        if (contractExists(netId, courseId)) {
+        if (contractRepository.existsById(new ContractId(netId, courseId))) {
             throw new IllegalArgumentException("This contract already exists!");
         }
 
@@ -333,20 +284,6 @@ public class ContractService {
         }
     }
 
-    /**
-     * Sends an email to the given email address describing the given contract.
-     * Does nothing when the email is null.
-     *
-     * @param email email address to which the email should be sent
-     * @param contract the contract that will be detailed inside of the email.
-     */
-    private void sendContractCreatedEmail(String email, Contract contract) {
-        if (email != null && contract != null) {
-            String emailSubject = String.format(taEmailSubjectTemplate, contract.getCourseId());
-            String emailBody = String.format(taEmailBodyTemplate, contract.getNetId(), contract.getCourseId(),
-                contract.getDuties(), contract.getMaxHours());
-            this.emailSender.sendEmail(email, emailSubject, emailBody);
-        }
-    }
+
 
 }

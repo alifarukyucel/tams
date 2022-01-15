@@ -78,6 +78,7 @@ public class ApplicantHiringController extends BaseHiringController {
 
             return ResponseEntity.ok(status);
         } catch (NoSuchElementException e) {
+            // NoSuchElementException thrown when the course cannot be found
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
@@ -90,15 +91,9 @@ public class ApplicantHiringController extends BaseHiringController {
      */
     @DeleteMapping ("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody TeachingAssistantApplicationKey model) {
-
-        try {
-            if (hiringService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
-                return ResponseEntity.ok().build();
-            }
+        if (!hiringService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
             throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
-
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        return ResponseEntity.ok().build();
     }
 }
