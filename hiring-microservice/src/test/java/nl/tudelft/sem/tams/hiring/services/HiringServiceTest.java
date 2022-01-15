@@ -21,6 +21,7 @@ import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.tams.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
+import nl.tudelft.sem.tams.hiring.models.TeachingAssistantApplicationRequestModel;
 import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
 import nl.tudelft.sem.tams.hiring.repositories.TeachingAssistantApplicationRepository;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -205,6 +206,35 @@ public class HiringServiceTest {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
         assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
+    }
+
+    @Test
+    public void tooManyApplicationsCheckAndSaveTest() {
+        //Arrange
+        TeachingAssistantApplication taApplication1 = new TeachingAssistantApplication("CSE1100", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(taApplication1);
+
+        TeachingAssistantApplication taApplication2 = new TeachingAssistantApplication("CSE1200", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(taApplication2);
+
+        TeachingAssistantApplication taApplication3 = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(taApplication3);
+
+        TeachingAssistantApplication taApplication4 = new TeachingAssistantApplication("CSE1400", "jsmith", 7.0f,
+                "I want to be cool", ApplicationStatus.PENDING);
+
+        TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
+                taApplication4.getCourseId(), "jsmith");
+
+        //Act
+        ThrowingCallable c = () -> taApplicationService.checkAndSave(taApplication4);
+
+        //Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
+        assertThat(taApplicationRepository.findById(key)).isEmpty();
     }
 
     /**
@@ -863,5 +893,134 @@ public class HiringServiceTest {
                         && contract.getDuties().equals(expectedDuties)
                         && contract.getMaxHours() == expectedMaxHours
         ));
+    }
+
+    @Test
+    public void getNonSortedExtendedApplicationsTest() {
+        //Arrange
+        TeachingAssistantApplication application = new TeachingAssistantApplication("CSE1300", "asmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        TeachingAssistantApplication application2 = new TeachingAssistantApplication("CSE1300", "bsmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(application);
+        taApplicationRepository.save(application2);
+
+        String[] netIds = new String[]{"asmith", "bsmith"};
+        Map<String, Double> expectedMap = new HashMap<>() {{
+                put("asmith", 8.0d);
+                put("bsmith", 9.0d);
+            }
+        };
+        when(mockContractInformation.getTaRatings(List.of(netIds)))
+                .thenReturn(expectedMap);
+
+        PendingTeachingAssistantApplicationResponseModel model = new PendingTeachingAssistantApplicationResponseModel(
+                application, 8.0d);
+        PendingTeachingAssistantApplicationResponseModel model2 = new PendingTeachingAssistantApplicationResponseModel(
+                application2, 9.0d);
+        List<PendingTeachingAssistantApplicationResponseModel> expected = List.of(model, model2);
+
+        //Act
+        var actual = taApplicationService.getExtendedPendingApplications("CSE1300", false, 2);
+
+        //Assert
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void getSortedExtendedApplicationsTest() {
+        //Arrange
+        TeachingAssistantApplication application = new TeachingAssistantApplication("CSE1300", "asmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        TeachingAssistantApplication application2 = new TeachingAssistantApplication("CSE1300", "bsmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(application);
+        taApplicationRepository.save(application2);
+
+        String[] netIds = new String[]{"asmith", "bsmith"};
+        Map<String, Double> expectedMap = new HashMap<>() {{
+                put("asmith", 8.0d);
+                put("bsmith", 9.0d);
+            }
+        };
+        when(mockContractInformation.getTaRatings(List.of(netIds)))
+                .thenReturn(expectedMap);
+
+        PendingTeachingAssistantApplicationResponseModel model2 = new PendingTeachingAssistantApplicationResponseModel(
+                application2, 9.0d);
+        PendingTeachingAssistantApplicationResponseModel model = new PendingTeachingAssistantApplicationResponseModel(
+                application, 8.0d);
+
+        List<PendingTeachingAssistantApplicationResponseModel> expected = List.of(model2, model);
+
+        //Act
+        var actual = taApplicationService.getExtendedPendingApplications("CSE1300", true, 2);
+
+        //Assert
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void getTooManyExtendedApplicationsTest() {
+        //Arrange
+        TeachingAssistantApplication application = new TeachingAssistantApplication("CSE1300", "asmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        TeachingAssistantApplication application2 = new TeachingAssistantApplication("CSE1300", "bsmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(application);
+        taApplicationRepository.save(application2);
+
+        String[] netIds = new String[]{"asmith", "bsmith"};
+        Map<String, Double> expectedMap = new HashMap<>() {{
+                put("asmith", 8.0d);
+                put("bsmith", 9.0d);
+            }
+        };
+        when(mockContractInformation.getTaRatings(List.of(netIds)))
+                .thenReturn(expectedMap);
+
+        PendingTeachingAssistantApplicationResponseModel model = new PendingTeachingAssistantApplicationResponseModel(
+                application, 8.0d);
+        PendingTeachingAssistantApplicationResponseModel model2 = new PendingTeachingAssistantApplicationResponseModel(
+                application2, 9.0d);
+        List<PendingTeachingAssistantApplicationResponseModel> expected = List.of(model, model2);
+
+        //Act
+        var actual = taApplicationService.getExtendedPendingApplications("CSE1300", false, 3);
+
+        //Assert
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void getNullExtendedApplicationsTest() {
+        //Arrange
+        TeachingAssistantApplication application = new TeachingAssistantApplication("CSE1300", "asmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        TeachingAssistantApplication application2 = new TeachingAssistantApplication("CSE1300", "bsmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(application);
+        taApplicationRepository.save(application2);
+
+        String[] netIds = new String[]{"asmith", "bsmith"};
+        Map<String, Double> expectedMap = new HashMap<>() {{
+                put("asmith", 8.0d);
+                put("bsmith", 9.0d);
+            }
+        };
+        when(mockContractInformation.getTaRatings(List.of(netIds)))
+                .thenReturn(expectedMap);
+
+        PendingTeachingAssistantApplicationResponseModel model = new PendingTeachingAssistantApplicationResponseModel(
+                application, 8.0d);
+        PendingTeachingAssistantApplicationResponseModel model2 = new PendingTeachingAssistantApplicationResponseModel(
+                application2, 9.0d);
+        List<PendingTeachingAssistantApplicationResponseModel> expected = List.of(model, model2);
+
+        //Act
+        var actual = taApplicationService.getExtendedPendingApplications("CSE1300", false, null);
+
+        //Assert
+        assertThat(actual).isEqualTo(expected);
     }
 }
