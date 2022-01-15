@@ -14,6 +14,7 @@ import nl.tudelft.sem.tams.ta.security.AuthManager;
 import nl.tudelft.sem.tams.ta.services.HourService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -101,8 +102,6 @@ public class HourController {
             checkAuthorized(contract.getCourseId());
             hourService.approveHours(request.getId(), request.getAccept());
 
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
@@ -126,8 +125,6 @@ public class HourController {
                 hourService.createAndSaveDeclaration(authManager.getNetid(), request);
 
             return ResponseEntity.ok(hourDeclaration.getId());
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
@@ -166,5 +163,16 @@ public class HourController {
         if (!authorized) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
+    }
+
+    /**
+     * ExceptionHandler for NoSuchElementExceptions thrown throughout the class.
+     *
+     * @param ex    NoSuchElementException
+     * @return      404 NOT FOUND
+     */
+    @ExceptionHandler(value = {NoSuchElementException.class})
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex) {
+        return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
