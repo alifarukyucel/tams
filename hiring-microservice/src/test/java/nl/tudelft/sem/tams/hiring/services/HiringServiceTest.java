@@ -23,7 +23,6 @@ import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
 import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
 import nl.tudelft.sem.tams.hiring.repositories.TeachingAssistantApplicationRepository;
-import nl.tudelft.sem.tams.hiring.services.communication.models.CourseInformationResponseModel;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,13 +76,7 @@ public class HiringServiceTest {
                 motivation, ApplicationStatus.PENDING);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
-                "CSE1300",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1300")).thenReturn(LocalDateTime.MAX);
         // Act
 
         ThrowingCallable c = () ->  taApplicationService.checkAndSave(invalidGradeTeachingAssistantApplication);
@@ -103,13 +96,7 @@ public class HiringServiceTest {
                 motivation, ApplicationStatus.PENDING);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
-                "CSE1300",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1300")).thenReturn(LocalDateTime.MAX);
         // Act
 
         ThrowingCallable c = () ->  taApplicationService.checkAndSave(validUnsufficientGradeTeachingAssistantApplication);
@@ -129,13 +116,7 @@ public class HiringServiceTest {
                 motivation, ApplicationStatus.PENDING);
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
-                "CSE1300",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1300")).thenReturn(LocalDateTime.MAX);
         // Act
 
         ThrowingCallable c = () ->  taApplicationService.checkAndSave(invalidGradeTeachingAssistantApplication);
@@ -156,13 +137,7 @@ public class HiringServiceTest {
         assertThat(validTeachingAssistantApplication.meetsRequirements()).isTrue();
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
-                "CSE1300",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1300")).thenReturn(LocalDateTime.MAX);
 
         //Act
         taApplicationService.checkAndSave(validTeachingAssistantApplication);
@@ -182,13 +157,7 @@ public class HiringServiceTest {
         assertThat(validTeachingAssistantApplication.meetsRequirements()).isTrue();
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1200")).thenReturn(new CourseInformationResponseModel(
-                "CSE1200",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1200")).thenReturn(LocalDateTime.MAX);
 
         //Act
         taApplicationService.checkAndSave(validTeachingAssistantApplication);
@@ -206,7 +175,7 @@ public class HiringServiceTest {
                 "CSE1300", "jsmith", 6.0f,
                 motivation, ApplicationStatus.PENDING);
 
-        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(null);
+        when(mockCourseInformation.startDate("CSE1300")).thenThrow(NoSuchElementException.class);
 
         //Act
         ThrowingCallable c = () -> taApplicationService.checkAndSave(invalidTeachingAssistantApplication);
@@ -227,13 +196,7 @@ public class HiringServiceTest {
         assertThat(invalidTeachingAssistantApplication.meetsRequirements()).isFalse();
 
         //LocalDateTime.MAX is used here to guarantee the deadline hasn't passed yet
-        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
-                "CSE1300",
-                LocalDateTime.MAX,
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1300")).thenReturn(LocalDateTime.MAX);
 
         //Act
         ThrowingCallable c = () -> taApplicationService.checkAndSave(invalidTeachingAssistantApplication);
@@ -255,13 +218,7 @@ public class HiringServiceTest {
                 "CSE1300", "jsmith", (float) 6.9,
                 motivation, ApplicationStatus.PENDING);
 
-        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
-                "CSE1300",
-                assumedCurrentTime.plusWeeks(3),
-                "CourseName",
-                "CourseDescription",
-                100,
-                new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1300")).thenReturn(assumedCurrentTime.plusWeeks(3));
 
         //Act
         ThrowingCallable c = () -> taApplicationService.checkAndSave(invalidTeachingAssistantApplication);
@@ -282,13 +239,8 @@ public class HiringServiceTest {
         TeachingAssistantApplication invalidApplication = new TeachingAssistantApplication("CSE1300", "jsmith", (float) 6.9,
             motivation, ApplicationStatus.PENDING);
 
-        when(mockCourseInformation.getCourseById("CSE1300")).thenReturn(new CourseInformationResponseModel(
-            "CSE1300",
-            assumedCurrentTime.plusWeeks(3).plusDays(1),
-            "CourseName",
-            "CourseDescription",
-            100,
-            new ArrayList<>()));
+        when(mockCourseInformation.startDate("CSE1300")).thenReturn(
+                assumedCurrentTime.plusWeeks(3).plusNanos(1));
 
         //Act
         taApplicationService.checkAndSave(invalidApplication);

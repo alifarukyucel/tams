@@ -487,11 +487,7 @@ class ContractControllerTest {
             .courseId("CSE2310").netId("BillGates").maxHours(10).duties("My duties").build();
         int size = contractRepository.findAll().size();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(41)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(41);
 
         // Act
         ResultActions action = mockMvc.perform(post("/contracts/create")
@@ -527,11 +523,7 @@ class ContractControllerTest {
             .courseId("CSE2310").netId("BillGates").maxHours(10).duties("My duties").build();
         int size = contractRepository.findAll().size();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(39)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(39);
 
         // Act
         ResultActions action = mockMvc.perform(post("/contracts/create")
@@ -564,11 +556,7 @@ class ContractControllerTest {
                 .build();
         int size = contractRepository.findAll().size();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(41)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(41);
 
         // Act
         ResultActions action = mockMvc.perform(post("/contracts/create")
@@ -610,11 +598,7 @@ class ContractControllerTest {
             .courseId("CSE2310").netId("BillGates").maxHours(10).duties("My duties").build();
         int size = contractRepository.findAll().size();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(40)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(40);
 
         // Act
         ResultActions action = mockMvc.perform(post("/contracts/create")
@@ -660,11 +644,7 @@ class ContractControllerTest {
             .courseId("CSE2310").netId("SteveJobs").maxHours(-10).duties("My duties").build();
         int size = contractRepository.findAll().size();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(10000)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(10000);
 
         // Act
         ResultActions action = mockMvc.perform(post("/contracts/create")
@@ -686,11 +666,7 @@ class ContractControllerTest {
             .courseId("CSE2310").netId("WinstijnSmit").maxHours(10).duties("My duties").build();
         int size = contractRepository.findAll().size();
 
-        when(mockCourseInformation.getCourseById("CSE2310")).thenReturn(CourseInformationResponseModel.builder()
-                .id("CSE2310")
-                .description("Very cool course")
-                .numberOfStudents(10000)
-                .build());
+        when(mockCourseInformation.getAmountOfStudents("CSE2310")).thenReturn(10000);
 
         // Act
         ResultActions action = mockMvc.perform(post("/contracts/create")
