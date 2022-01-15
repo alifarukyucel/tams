@@ -1,6 +1,5 @@
 package nl.tudelft.sem.tams.hiring.controllers;
 
-import java.util.NoSuchElementException;
 import nl.tudelft.sem.tams.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
@@ -53,9 +52,6 @@ public class ApplicantHiringController extends BaseHiringController {
         try {
             hiringService.checkAndSave(teachingAssistantApplication);
             return ResponseEntity.ok("Applied successfully");
-        } catch (NoSuchElementException e) {
-            //Thrown when the course is not found.
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
@@ -70,17 +66,12 @@ public class ApplicantHiringController extends BaseHiringController {
 
     @GetMapping("/status/{course}")
     public ResponseEntity<RetrieveTeachingAssistantApplicationStatusModel> getStatusByCourse(@PathVariable String course) {
-        try {
-            TeachingAssistantApplication teachingAssistantApplication = hiringService
-                    .get(course, authManager.getNetid());
-            RetrieveTeachingAssistantApplicationStatusModel status = RetrieveTeachingAssistantApplicationStatusModel
-                    .fromApplication(teachingAssistantApplication);
+        TeachingAssistantApplication teachingAssistantApplication = hiringService
+                .get(course, authManager.getNetid());
+        RetrieveTeachingAssistantApplicationStatusModel status = RetrieveTeachingAssistantApplicationStatusModel
+                .fromApplication(teachingAssistantApplication);
 
-            return ResponseEntity.ok(status);
-        } catch (NoSuchElementException e) {
-            // NoSuchElementException thrown when the course cannot be found
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
+        return ResponseEntity.ok(status);
     }
 
     /**

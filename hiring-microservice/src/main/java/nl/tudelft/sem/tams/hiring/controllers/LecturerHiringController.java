@@ -2,7 +2,6 @@ package nl.tudelft.sem.tams.hiring.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
@@ -53,8 +52,6 @@ public class LecturerHiringController extends BaseHiringController {
         try {
             this.hiringService.accept(model.getCourseId(), model.getNetId(), model.getDuties(),
                     model.getMaxHours());
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
@@ -77,8 +74,6 @@ public class LecturerHiringController extends BaseHiringController {
 
         try {
             this.hiringService.reject(model.getCourseId(), model.getNetId());
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
