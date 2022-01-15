@@ -11,6 +11,7 @@ import nl.tudelft.sem.tams.ta.entities.builders.directors.ContractDirector;
 import nl.tudelft.sem.tams.ta.entities.compositekeys.ContractId;
 import nl.tudelft.sem.tams.ta.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.ta.interfaces.EmailSender;
+import nl.tudelft.sem.tams.ta.models.CreateContractRequestModel;
 import nl.tudelft.sem.tams.ta.repositories.ContractRepository;
 import nl.tudelft.sem.tams.ta.services.communication.models.CourseInformationResponseModel;
 import org.springframework.data.domain.Example;
@@ -64,59 +65,41 @@ public class ContractService {
      * Optionally email the newly-hired TA to inform them they have a new contract to sign.
      * Note that this method ensures that the contract does not exist.
      *
-     * @param courseId courseId of contract
-     * @param netId netId of TA.
-     * @param maxHours max amount of hours a TA can work
-     * @param duties duties of the TA
-     * @param taContactEmail an email to contact the TA
+     * @param contractModel a model containing netId of the TA, courseId of contract,
+     *                      max amount of hours a TA can work, duties of the TA
+     *                      and an email to contact the TA with.
      * @return a saved instance of Contract.
      * @throws IllegalArgumentException if any of the parameters are null or invalid,
      *                                  the contract already exists, or
      *                                  no more TAs are allowed to be hired for the course.
      */
-    public Contract createUnsignedContract(String netId, String courseId, int maxHours, String duties,
-                                           String taContactEmail) throws IllegalArgumentException {
+    public Contract createUnsignedContract(CreateContractRequestModel contractModel) throws IllegalArgumentException {
 
-        // Check if parameters were given are valid.
-        if (StringUtils.isEmpty(netId)
-            || StringUtils.isEmpty(courseId)
-            || maxHours <= 0) {
-            throw new IllegalArgumentException("netId, courseId, maxHours are required and need to be valid.");
-        }
+        // Verify if a contract can be made with the parameters given.
+        verifyContractCreationParameters(contractModel.getNetId(),
+                                         contractModel.getCourseId(),
+                                         contractModel.getMaxHours());
 
-        // Check if contract already exists - return an error if not.
-        if (contractExists(netId, courseId)) {
-            throw new IllegalArgumentException("This contract already exists!");
-        }
-
-        if (isTaLimitReached(courseId)) {
-            throw new IllegalArgumentException("No more TAs can be hired for this course.");
-        }
-
+        // Create a new unsigned contract with a builder.
         var builder = new ConcreteContractBuilder();
         new ContractDirector().createUnsignedContract(builder);
 
         // Create the actual contract with the builder.
         Contract contract = builder
-            .withNetId(netId)
-            .withCourseId(courseId)
-            .withMaxHours(maxHours)
-            .withDuties(duties)
+            .withNetId(contractModel.getNetId())
+            .withCourseId(contractModel.getCourseId())
+            .withMaxHours(contractModel.getMaxHours())
+            .withDuties(contractModel.getDuties())
             .build();
 
         // save can also throw an IllegalArgumentException if failed.
         contract = save(contract);
 
-        // email the newly-hired TA if a contact email is specified
-        if (taContactEmail != null) {
-            String emailSubject = String.format(taEmailSubjectTemplate, courseId);
-            String emailBody = String.format(taEmailBodyTemplate, netId, courseId, duties, maxHours);
-            this.emailSender.sendEmail(taContactEmail, emailSubject, emailBody);
-        }
+        // Email the newly-hired TA if a contact email is specified
+        sendContractCreatedEmail(contractModel.getTaContactEmail(), contract);
 
         return contract;
     }
-
 
     /**
      * Returns the requested contract based on the users netId and the specified CourseId.
@@ -126,12 +109,9 @@ public class ContractService {
      * @throws IllegalArgumentException if the course cannot be retrieved.
      */
     private boolean isTaLimitReached(String courseId) {
-        CourseInformationResponseModel model = courseInformation.getCourseById(courseId);
-        if (model == null) {
-            throw new IllegalArgumentException("Could not retrieve course");
-        }
+        int numberOfTas = courseInformation.getAmountOfStudents(courseId);
 
-        int allowedTas = (int) Math.ceil(model.getNumberOfStudents() / studentsPerOneTa);
+        int allowedTas = (int) Math.ceil(numberOfTas / studentsPerOneTa);
 
         long hiredTas = contractRepository.count(createContractExample(null, courseId));
 
@@ -322,6 +302,51 @@ public class ContractService {
                         .withNetId(netId)
                         .build(), ignoreAllFields);
         return example;
+    }
+
+    /**
+     * Checks and verifies if a contract can be created with the given netId, courseId and maxHours.
+     * Throws an IllegalArgumentException if it is not possible.
+     *
+     * @param netId the netId of the contract
+     * @param courseId the courseId of the contract
+     * @param maxHours the maximum hours of the contract
+     * @throws IllegalArgumentException if parameters are invalid
+     */
+    private void verifyContractCreationParameters(String netId, String courseId, int maxHours)
+        throws IllegalArgumentException {
+
+        // Check if parameters were given are valid.
+        if (StringUtils.isEmpty(netId)
+            || StringUtils.isEmpty(courseId)
+            || maxHours <= 0) {
+            throw new IllegalArgumentException("netId, courseId, maxHours are required and need to be valid.");
+        }
+
+        // Check if contract already exists - return an error if not.
+        if (contractExists(netId, courseId)) {
+            throw new IllegalArgumentException("This contract already exists!");
+        }
+
+        if (isTaLimitReached(courseId)) {
+            throw new IllegalArgumentException("No more TAs can be hired for this course.");
+        }
+    }
+
+    /**
+     * Sends an email to the given email address describing the given contract.
+     * Does nothing when the email is null.
+     *
+     * @param email email address to which the email should be sent
+     * @param contract the contract that will be detailed inside of the email.
+     */
+    private void sendContractCreatedEmail(String email, Contract contract) {
+        if (email != null && contract != null) {
+            String emailSubject = String.format(taEmailSubjectTemplate, contract.getCourseId());
+            String emailBody = String.format(taEmailBodyTemplate, contract.getNetId(), contract.getCourseId(),
+                contract.getDuties(), contract.getMaxHours());
+            this.emailSender.sendEmail(email, emailSubject, emailBody);
+        }
     }
 
 }

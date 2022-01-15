@@ -1,7 +1,7 @@
 package nl.tudelft.sem.tams.hiring.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -15,7 +15,6 @@ import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
 import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
 import nl.tudelft.sem.tams.hiring.repositories.TeachingAssistantApplicationRepository;
-import nl.tudelft.sem.tams.hiring.services.communication.models.CourseInformationResponseModel;
 import nl.tudelft.sem.tams.hiring.services.communication.models.CreateContractRequestModel;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,7 @@ public class HiringService {
 
     // Amount of weeks before a course starts when withdrawal is still allowed
     // e.g. withdrawal is allowed x weeks before the course starts.
-    private static final transient int withdrawalWindow = 3;
+    private static final transient int applicationWindowDurationInWeeks = 3;
 
     /**
      * Constructor for the application service, with the corresponding repositories / information classes.
@@ -65,12 +64,28 @@ public class HiringService {
      * @throws IllegalArgumentException when the deadline for the course has already passed
      */
     public void checkAndSave(TeachingAssistantApplication teachingAssistantApplication) {
-        CourseInformationResponseModel course = courseInformation.getCourseById(teachingAssistantApplication.getCourseId());
-        if (course == null) {
-            //Course does not exist
-            throw new NoSuchElementException("This course does not exist.");
-        }
+        checkMaximumApplications(teachingAssistantApplication.getNetId());
 
+        checkApplicationDeadline(teachingAssistantApplication);
+
+        checkApplicationRequirements(teachingAssistantApplication);
+
+        taApplicationRepository.save(teachingAssistantApplication);
+    }
+
+    private void checkMaximumApplications(String netId) {
+        if (hasReachedMaxApplication(netId)) {
+            throw new IllegalArgumentException("Maximum number of applications has been reached!");
+        }
+    }
+
+    private void checkApplicationDeadline(TeachingAssistantApplication teachingAssistantApplication) {
+        if (!isApplicationPeriodOpen(teachingAssistantApplication.getCourseId())) {
+            throw new IllegalArgumentException("The deadline for applying for this course has already passed");
+        }
+    }
+
+    private void checkApplicationRequirements(TeachingAssistantApplication teachingAssistantApplication) {
         if (!teachingAssistantApplication.hasValidGrade()) {
             throw new IllegalArgumentException("Please provide a valid grade between 1.0 and 10.0.");
         }
@@ -78,13 +93,8 @@ public class HiringService {
         if (!teachingAssistantApplication.meetsRequirements()) {
             throw new IllegalArgumentException("Your TA-application does not meet the requirements.");
         }
-
-        if (!course.getStartDate().isAfter(timeProvider.getCurrentLocalDateTime().plusWeeks(3))) {
-            throw new IllegalArgumentException("The deadline for applying for this course has already passed");
-        }
-
-        taApplicationRepository.save(teachingAssistantApplication);
     }
+
 
     /**
      * Finds all applications with a given courseId and status.
@@ -126,12 +136,14 @@ public class HiringService {
      * @return true if on time or false if too late
      */
     public boolean checkAndWithdraw(String courseId, String netId) {
-        LocalDateTime deadline = courseInformation.startDate(courseId).minusWeeks(withdrawalWindow);
-        if (timeProvider.getCurrentLocalDateTime().isBefore(deadline)) {
-            taApplicationRepository.delete(this.get(courseId, netId));
-            return true;
+        boolean canApplyAndWithdraw = isApplicationPeriodOpen(courseId);
+
+        if (!canApplyAndWithdraw) {
+            return false;
         }
-        return false;
+
+        taApplicationRepository.delete(this.get(courseId, netId));
+        return true;
     }
 
     /**
@@ -271,5 +283,35 @@ public class HiringService {
                 .count();
 
         return pendingApplicationsCount >= maxCandidacies;
+    }
+
+    private boolean isApplicationPeriodOpen(String courseId) {
+        return courseInformation.startDate(courseId).isAfter(timeProvider.getCurrentLocalDateTime()
+                .plusWeeks(applicationWindowDurationInWeeks));
+    }
+
+    /**
+     * Creates a list of pending TA-applications, extended with a rating fetched from the TA-microservice.
+     *
+     * @param courseId  The course to fetch the applications for.
+     * @param sorted    Whether the list should be sorted.
+     * @param amount    Number of entries in the returned list, null indicates the full list.
+     * @return a list of extended TeachingAssistantApplications.
+     */
+    public List<PendingTeachingAssistantApplicationResponseModel> getExtendedPendingApplications(String courseId,
+                                                                                                 boolean sorted,
+                                                                                                 Integer amount) {
+        List<TeachingAssistantApplication> applications = findAllByCourseAndStatus(courseId, ApplicationStatus.PENDING);
+        var extended = extendWithRating(applications);
+
+        if (amount == null || amount > extended.size()) {
+            amount = extended.size();
+        }
+
+        if (sorted) {
+            Collections.sort(extended);
+        }
+
+        return extended.subList(0, amount);
     }
 }
