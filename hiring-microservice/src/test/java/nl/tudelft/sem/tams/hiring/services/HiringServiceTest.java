@@ -1004,9 +1004,9 @@ public class HiringServiceTest {
 
         String[] netIds = new String[]{"asmith", "bsmith"};
         Map<String, Double> expectedMap = new HashMap<>() {{
-            put("asmith", 8.0d);
-            put("bsmith", 9.0d);
-        }
+                put("asmith", 8.0d);
+                put("bsmith", 9.0d);
+            }
         };
         when(mockContractInformation.getTaRatings(List.of(netIds)))
                 .thenReturn(expectedMap);
