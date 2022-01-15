@@ -961,7 +961,7 @@ public class HiringServiceTest {
     }
 
     @Test
-    public void getTooManyOrNullExtendedApplicationsTest() {
+    public void getTooManyExtendedApplicationsTest() {
         //Arrange
         TeachingAssistantApplication application = new TeachingAssistantApplication("CSE1300", "asmith", 7.0f,
                 "I want to be cool too!", ApplicationStatus.PENDING);
@@ -987,10 +987,40 @@ public class HiringServiceTest {
 
         //Act
         var actual = taApplicationService.getExtendedPendingApplications("CSE1300", false, 3);
-        var actual2 = taApplicationService.getExtendedPendingApplications("CSE1300", false, null);
 
         //Assert
         assertThat(actual).isEqualTo(expected);
-        assertThat(actual2).isEqualTo(expected);
+    }
+
+    @Test
+    public void getNullExtendedApplicationsTest() {
+        //Arrange
+        TeachingAssistantApplication application = new TeachingAssistantApplication("CSE1300", "asmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        TeachingAssistantApplication application2 = new TeachingAssistantApplication("CSE1300", "bsmith", 7.0f,
+                "I want to be cool too!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(application);
+        taApplicationRepository.save(application2);
+
+        String[] netIds = new String[]{"asmith", "bsmith"};
+        Map<String, Double> expectedMap = new HashMap<>() {{
+            put("asmith", 8.0d);
+            put("bsmith", 9.0d);
+        }
+        };
+        when(mockContractInformation.getTaRatings(List.of(netIds)))
+                .thenReturn(expectedMap);
+
+        PendingTeachingAssistantApplicationResponseModel model = new PendingTeachingAssistantApplicationResponseModel(
+                application, 8.0d);
+        PendingTeachingAssistantApplicationResponseModel model2 = new PendingTeachingAssistantApplicationResponseModel(
+                application2, 9.0d);
+        List<PendingTeachingAssistantApplicationResponseModel> expected = List.of(model, model2);
+
+        //Act
+        var actual = taApplicationService.getExtendedPendingApplications("CSE1300", false, null);
+
+        //Assert
+        assertThat(actual).isEqualTo(expected);
     }
 }
