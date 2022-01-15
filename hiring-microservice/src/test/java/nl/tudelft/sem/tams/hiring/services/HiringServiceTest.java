@@ -21,6 +21,7 @@ import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
 import nl.tudelft.sem.tams.hiring.interfaces.ContractInformation;
 import nl.tudelft.sem.tams.hiring.interfaces.CourseInformation;
 import nl.tudelft.sem.tams.hiring.models.PendingTeachingAssistantApplicationResponseModel;
+import nl.tudelft.sem.tams.hiring.models.TeachingAssistantApplicationRequestModel;
 import nl.tudelft.sem.tams.hiring.providers.TimeProvider;
 import nl.tudelft.sem.tams.hiring.repositories.TeachingAssistantApplicationRepository;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -205,6 +206,35 @@ public class HiringServiceTest {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
         assertThat(taApplicationRepository.findById(new TeachingAssistantApplicationKey("CSE1300", "jsmith")))
                 .isEmpty();
+    }
+
+    @Test
+    public void tooManyApplicationsCheckAndSaveTest() {
+        //Arrange
+        TeachingAssistantApplication taApplication1 = new TeachingAssistantApplication("CSE1100", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(taApplication1);
+
+        TeachingAssistantApplication taApplication2 = new TeachingAssistantApplication("CSE1200", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(taApplication2);
+
+        TeachingAssistantApplication taApplication3 = new TeachingAssistantApplication("CSE1300", "jsmith", 7.0f,
+                "I just want to be a cool!", ApplicationStatus.PENDING);
+        taApplicationRepository.save(taApplication3);
+
+        TeachingAssistantApplication taApplication4 = new TeachingAssistantApplication("CSE1400", "jsmith", 7.0f,
+                "I want to be cool", ApplicationStatus.PENDING);
+
+        TeachingAssistantApplicationKey key = new TeachingAssistantApplicationKey(
+                taApplication4.getCourseId(), "jsmith");
+
+        //Act
+        ThrowingCallable c = () -> taApplicationService.checkAndSave(taApplication4);
+
+        //Assert
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(c);
+        assertThat(taApplicationRepository.findById(key)).isEmpty();
     }
 
     /**

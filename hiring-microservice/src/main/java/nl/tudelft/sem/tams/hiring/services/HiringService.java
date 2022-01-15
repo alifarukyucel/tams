@@ -69,10 +69,6 @@ public class HiringService {
 
         checkApplicationRequirements(teachingAssistantApplication);
 
-        if (hasReachedMaxApplication(teachingAssistantApplication.getNetId())) {
-            throw new IllegalArgumentException("Maximum number of applications has been reached!");
-        }
-
         taApplicationRepository.save(teachingAssistantApplication);
     }
 
