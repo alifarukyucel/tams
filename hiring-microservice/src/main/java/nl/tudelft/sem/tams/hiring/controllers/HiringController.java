@@ -17,6 +17,7 @@ import nl.tudelft.sem.tams.hiring.services.HiringService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,11 +64,9 @@ public class HiringController {
                 request, authManager.getNetid());
 
         try {
+            // NoSuchElementException thrown when the course cannot be found
             taApplicationService.checkAndSave(teachingAssistantApplication);
             return ResponseEntity.ok("Applied successfully");
-        } catch (NoSuchElementException e) {
-            //Thrown when the course is not found.
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
@@ -103,14 +102,10 @@ public class HiringController {
      */
     @DeleteMapping ("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody TeachingAssistantApplicationKey model) {
-        try {
-            if (!taApplicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
-                throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
-            }
-            return ResponseEntity.ok().build();
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!taApplicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
+            throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
         }
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -128,8 +123,6 @@ public class HiringController {
 
         try {
             this.taApplicationService.reject(model.getCourseId(), model.getNetId());
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
@@ -153,8 +146,6 @@ public class HiringController {
         try {
             this.taApplicationService.accept(model.getCourseId(), model.getNetId(), model.getDuties(),
                     model.getMaxHours());
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
@@ -209,5 +200,18 @@ public class HiringController {
         if (!courseInformation.isResponsibleLecturer(authManager.getNetid(), courseId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
+    }
+
+    /**
+     * ExceptionHandler for NoSuchElementExceptions thrown throughout the class.
+     *
+     * @param ex    NoSuchElementException
+     * @return      404 NOT FOUND
+     */
+    @ExceptionHandler(value = {NoSuchElementException.class})
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND); // although some
+        // NoSuchElementExceptions were not returning a message, there is no way to distinguish when to return a message
+        // and when not to. Therefore, taking the safe route and returning a description for the issue at hand for all.
     }
 }
