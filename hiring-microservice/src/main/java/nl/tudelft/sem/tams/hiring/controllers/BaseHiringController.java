@@ -24,7 +24,8 @@ public abstract class BaseHiringController {
      * @param hiringService the application service
      * @param courseInformation  the course information
      */
-    protected BaseHiringController(AuthManager authManager, CourseInformation courseInformation, HiringService hiringService) {
+    protected BaseHiringController(AuthManager authManager, CourseInformation courseInformation,
+                                   HiringService hiringService) {
         this.authManager = authManager;
         this.courseInformation = courseInformation;
         this.hiringService = hiringService;
