@@ -103,13 +103,11 @@ public class HiringController {
      */
     @DeleteMapping ("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody TeachingAssistantApplicationKey model) {
-
         try {
-            if (taApplicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
-                return ResponseEntity.ok().build();
+            if (!taApplicationService.checkAndWithdraw(model.getCourseId(), model.getNetId())) {
+                throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
             }
-            throw new ResponseStatusException((HttpStatus.FORBIDDEN), "Withdrawing isn't possible at this moment");
-
+            return ResponseEntity.ok().build();
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
