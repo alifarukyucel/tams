@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.tams.hiring.entities.compositekeys.TeachingAssistantApplicationKey;
 import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
+import nl.tudelft.sem.tams.hiring.models.TeachingAssistantApplicationRequestModel;
 
 @Data
 @NoArgsConstructor
@@ -56,7 +57,7 @@ public class TeachingAssistantApplication {
     }
 
     /**
-     * Create an application with the status "Pending".
+     * Create a TA-application with the status "Pending".
      *
      * @param courseId String courseId
      * @param netId String netId
@@ -75,6 +76,23 @@ public class TeachingAssistantApplication {
         teachingAssistantApplication.setContactEmail(contactEmail);
         teachingAssistantApplication.setStatus(ApplicationStatus.PENDING);
         return teachingAssistantApplication;
+    }
+
+    /**
+     * Create a TA-application with the status "Pending" from a requestModel.
+     *
+     * @param model TeachingAssistantApplicationRequestModel model
+     * @param netId String netId
+     * @return a newly created instance of an Application with the status "Pending".
+     */
+    public static TeachingAssistantApplication createPendingApplication(TeachingAssistantApplicationRequestModel model,
+                                                                        String netId) {
+        return new TeachingAssistantApplication(model.getCourseId(),
+                netId,
+                model.getGrade(),
+                model.getMotivation(),
+                ApplicationStatus.PENDING,
+                model.getContactEmail());
     }
 
     /**
