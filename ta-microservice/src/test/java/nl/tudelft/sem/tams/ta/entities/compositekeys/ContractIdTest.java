@@ -1,6 +1,8 @@
 package nl.tudelft.sem.tams.ta.entities.compositekeys;
 
-import org.junit.jupiter.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
 class ContractIdTest {
@@ -12,11 +14,13 @@ class ContractIdTest {
     void testEquals() {
         ContractId c1 = ContractId.builder().withNetId("MCanning").withCourseId("CSE2310").build();
         ContractId c2 = ContractId.builder().withNetId("MCanning").withCourseId("CSE2310").build();
-        Assertions.assertEquals(c1, c2);
+        assertEquals(c1, c2);
     }
 
     @Test
     void builder() {
-        ContractId.builder().withNetId("MCanning").withCourseId("CSE2310").build();
+        ContractId contractId = ContractId.builder().withNetId("MCanning").withCourseId("CSE2310").build();
+        assertThat(contractId.getNetId()).isEqualTo("MCanning");
+        assertThat(contractId.getCourseId()).isEqualTo("CSE2310");
     }
 }
