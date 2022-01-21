@@ -1,11 +1,11 @@
 package nl.tudelft.sem.tams.hiring.models;
 
+import static nl.tudelft.sem.tams.hiring.models.RetrieveTeachingAssistantApplicationStatusModel.fromApplication;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import nl.tudelft.sem.tams.hiring.entities.TeachingAssistantApplication;
 import nl.tudelft.sem.tams.hiring.entities.enums.ApplicationStatus;
 import org.junit.jupiter.api.Test;
-
-import static nl.tudelft.sem.tams.hiring.models.RetrieveTeachingAssistantApplicationStatusModel.fromApplication;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class RetrieveTeachingAssistantApplicationStatusModelTest {
     @Test
