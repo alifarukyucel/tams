@@ -5,21 +5,22 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.Collections;
-
 
 @SpringBootTest
 @ActiveProfiles({"test", "mockRestTemplate", "mockHttpServletRequest"})
-//@TestPropertySource(properties = {"microservice.course.base_url=" + ConnectedCourseInformationServiceTests.testUrl})
 public class MicroserviceCommunicationHelperTests {
 
     @Autowired
@@ -117,7 +118,7 @@ public class MicroserviceCommunicationHelperTests {
     }
 
 
-    private <T> HttpEntity<T> requestEntity(T body, String authHeader){
+    private <T> HttpEntity<T> requestEntity(T body, String authHeader) {
         // Create the request entity with the body given
         // and setting the following headers.
         // Is later compared by mockito in "when()".
