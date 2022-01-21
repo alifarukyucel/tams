@@ -23,6 +23,10 @@ public class MicroserviceCommunicationHelperTests {
     private static transient HttpServletRequest request;
     private static transient MicroserviceCommunicationHelper microserviceCommunicationHelper;
 
+    /**
+     * Setup for testing by mocking a RestTemplate and HttpServletRequest
+     * and creating a MicroserviceCommunicationHelper with these mocks.
+     */
     @BeforeAll
     public static void setup() {
         request = Mockito.mock(HttpServletRequest.class);
