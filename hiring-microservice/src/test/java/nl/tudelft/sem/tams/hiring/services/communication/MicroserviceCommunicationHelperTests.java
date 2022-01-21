@@ -2,35 +2,33 @@ package nl.tudelft.sem.tams.hiring.services.communication;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mockito;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootTest
-@ActiveProfiles({"test", "mockRestTemplate", "mockHttpServletRequest"})
 public class MicroserviceCommunicationHelperTests {
 
-    @Autowired
-    private transient RestTemplate restTemplate;
+    private static transient RestTemplate restTemplate;
+    private static transient HttpServletRequest request;
+    private static transient MicroserviceCommunicationHelper microserviceCommunicationHelper;
 
-    @Autowired
-    private transient HttpServletRequest request;
-
-    @Autowired
-    private transient MicroserviceCommunicationHelper microserviceCommunicationHelper;
+    @BeforeAll
+    public static void setup() {
+        request = Mockito.mock(HttpServletRequest.class);
+        restTemplate = Mockito.mock(RestTemplate.class);
+        microserviceCommunicationHelper = new MicroserviceCommunicationHelper(request, restTemplate);
+    }
 
     @BeforeEach
     public void resetMock() {
@@ -60,7 +58,6 @@ public class MicroserviceCommunicationHelperTests {
 
         // Assert
         assertThat(response.getBody()).isEqualTo(mockedResponse);
-        verify(request).getHeader("Authorization");
     }
 
     // Note:
@@ -90,7 +87,6 @@ public class MicroserviceCommunicationHelperTests {
 
         // Assert
         assertThat(response.getBody()).isEqualTo(mockedResponse);
-        verify(request).getHeader("Authorization");
     }
 
     @Test
@@ -114,7 +110,6 @@ public class MicroserviceCommunicationHelperTests {
 
         // Assert
         assertThat(response.getBody()).isEqualTo(mockedResponse);
-        verify(request).getHeader("Authorization");
     }
 
 
