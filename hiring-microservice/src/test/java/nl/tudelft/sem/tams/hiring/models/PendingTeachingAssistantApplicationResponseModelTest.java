@@ -54,6 +54,8 @@ public class PendingTeachingAssistantApplicationResponseModelTest {
         var p4 = new PendingTeachingAssistantApplicationResponseModel(application, -1.0d);
         var p5 = new PendingTeachingAssistantApplicationResponseModel(application, 9.0d);
 
+        var p6 = new PendingTeachingAssistantApplicationResponseModel(application, 5.73d);
+
         //Compare 2 sufficient ratings
         assertThat(p1.compareTo(p2)).isEqualTo(-1);
         assertThat(p2.compareTo(p1)).isEqualTo(1);
@@ -67,6 +69,10 @@ public class PendingTeachingAssistantApplicationResponseModelTest {
 
         //Compare 2 equal ratings
         assertThat(p1.compareTo(p5)).isEqualTo(0);
+
+        //Compare 2 insufficient grades
+        assertThat(p3.compareTo(p6)).isEqualTo(-1);
+        assertThat(p6.compareTo(p3)).isEqualTo(1);
     }
 
 }
