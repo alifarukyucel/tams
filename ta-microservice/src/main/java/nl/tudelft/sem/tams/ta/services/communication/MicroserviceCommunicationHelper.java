@@ -13,9 +13,11 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class MicroserviceCommunicationHelper {
     private final transient HttpServletRequest request;
+    private final transient RestTemplate restTemplate;
 
-    public MicroserviceCommunicationHelper(HttpServletRequest request) {
+    public MicroserviceCommunicationHelper(HttpServletRequest request, RestTemplate restTemplate) {
         this.request = request;
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -35,7 +37,6 @@ public class MicroserviceCommunicationHelper {
     private <T, J> ResponseEntity<T> send(String url, Class<T> responseType, J body,
                                           HttpMethod method, String... variables)
             throws Exception {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));

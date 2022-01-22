@@ -3,12 +3,12 @@ package nl.tudelft.sem.tams.ta.entities.compositekeys;
 import java.io.Serializable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@EqualsAndHashCode
 public class ContractId implements Serializable {
     private String netId;
     private String courseId;
