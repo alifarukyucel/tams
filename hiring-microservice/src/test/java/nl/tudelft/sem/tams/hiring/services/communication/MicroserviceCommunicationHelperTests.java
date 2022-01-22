@@ -2,6 +2,7 @@ package nl.tudelft.sem.tams.hiring.services.communication;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -62,12 +63,8 @@ public class MicroserviceCommunicationHelperTests {
 
         // Assert
         assertThat(response.getBody()).isEqualTo(mockedResponse);
+        verify(restTemplate).exchange(url, HttpMethod.GET, httpEntity, String.class, (Object[]) variables);
     }
-
-    // Note:
-    // that most of the "assertions" happen by the mockito "when" of the restTemplate.exchange.
-    // Only if every parameter is as expected (HTTP method, headers, body, etc)
-    // a valid response will be returned.
 
     @Test
     public void testPost() throws Exception {
@@ -91,6 +88,7 @@ public class MicroserviceCommunicationHelperTests {
 
         // Assert
         assertThat(response.getBody()).isEqualTo(mockedResponse);
+        verify(restTemplate).exchange(url, HttpMethod.POST, httpEntity, String.class, (Object[]) variables);
     }
 
     @Test
@@ -114,8 +112,8 @@ public class MicroserviceCommunicationHelperTests {
 
         // Assert
         assertThat(response.getBody()).isEqualTo(mockedResponse);
+        verify(restTemplate).exchange(url, HttpMethod.PUT, httpEntity, String.class);
     }
-
 
     private <T> HttpEntity<T> requestEntity(T body, String authHeader) {
         // Create the request entity with the body given
