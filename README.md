@@ -1,4 +1,4 @@
-![TAMS](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/-/raw/c0d6906ba57f40a6a43761e02c6dd7d797946a52/docs/tams.png?inline=false)
+![TAMS](https://user-images.githubusercontent.com/34458230/175769244-61d94d36-9492-4ca0-8f79-bd1840a1bead.png)
 
 Authentication: ![Authentication coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-authentication-microservice)
 Course: ![Course coverage](https://gitlab.ewi.tudelft.nl/cse2115/2021-2022/sem-group-13b/sem-repo-13b/badges/main/coverage.svg?job=test-course-microservice)
